@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <IncludePath>$(SolutionDir)SDK\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)SDK\libraries\x86;$(LibraryPath)</LibraryPath>
+    <OutDir>F:\repo\clear_sky_abram_ga\cs_ga\outx86\</OutDir>
+    <IntDir>$(SolutionDir)intermediate\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <DisableSpecificWarnings>4456;4457;4458;4459;4577;4595</DisableSpecificWarnings>
+      <PreprocessorDefinitions>CI_VERSION="$(APPVEYOR_VERSION)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/we5037 /we4840 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

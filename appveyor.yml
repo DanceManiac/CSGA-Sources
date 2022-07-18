@@ -1,0 +1,144 @@
+version: cs-1.8.0.{build}
+image: Visual Studio 2019
+configuration: Release
+platform:
+- Win32
+- x64
+shallow_clone: true
+before_build:
+- cmd: >-
+    echo %PLATFORM%
+
+    echo %CONFIGURATION%
+
+    echo cs_%APPVEYOR_REPO_TAG_NAME%_%PLATFORM%.7z
+
+    set COR_PLAT=%PLATFORM%
+
+    IF "%COR_PLAT%" == "Win32" set COR_PLAT=x86
+
+    set APPVEYOR_VERSION=%APPVEYOR_BUILD_VERSION%_%COR_PLAT%
+
+    echo %APPVEYOR_VERSION%
+build:
+  project: ./engine.sln
+  verbosity: minimal
+after_build:
+- cmd: >-
+    IF "%COR_PLAT%" == "x86" set TBB_PLAT=ia32
+
+    IF "%COR_PLAT%" == "x64" set TBB_PLAT=intel64
+
+    set BUGTRAP=BugTrap-%COR_PLAT%.dll
+
+    IF "%COR_PLAT%" == "x86" set BUGTRAP=BugTrap.dll
+
+    md dist
+
+    echo ===================== engine files =====================
+
+    md dist\engine
+
+    copy opt\start_%COR_PLAT%.bat dist\engine
+
+    md dist\engine\bin_%COR_PLAT%
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\*.exe dist\engine\bin_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\*.dll dist\engine\bin_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\*.pdb dist\engine\bin_%COR_PLAT%\
+
+    copy SDK\binaries\%COR_PLAT%\lua51.dll dist\engine\bin_%COR_PLAT%\
+
+    md dist\engine\bin_%COR_PLAT%\lua\jit
+
+    copy SDK\binaries\%COR_PLAT%\lua\jit\* dist\engine\bin_%COR_PLAT%\lua\jit\
+
+    copy SDK\binaries\%COR_PLAT%\%BUGTRAP% dist\engine\bin_%COR_PLAT%\
+
+    md dist\engine\gamedata
+
+    xcopy gamedata dist\engine\gamedata /S /E
+
+    cd dist\engine
+
+    7z a ..\..\cs_%APPVEYOR_REPO_TAG_NAME%_%COR_PLAT%.7z
+
+    cd ..\..
+
+    echo appveyor PushArtifact cs_%APPVEYOR_REPO_TAG_NAME%_%COR_PLAT%.7z release
+
+    copy cs_%APPVEYOR_REPO_TAG_NAME%_%COR_PLAT%.7z cs_%APPVEYOR_VERSION%.7z
+
+    appveyor PushArtifact cs_%APPVEYOR_VERSION%.7z
+
+    echo ===================== sdk files =====================
+
+    md dist\sdk_%COR_PLAT%
+
+    copy SDK\binaries\%COR_PLAT%\MagicFM.dll dist\sdk_%COR_PLAT%\
+
+    copy SDK\binaries\%COR_PLAT%\FreeImage.dll dist\sdk_%COR_PLAT%\
+
+    copy SDK\binaries\%COR_PLAT%\nvtt.dll dist\sdk_%COR_PLAT%\
+
+    copy SDK\binaries\%COR_PLAT%\%BUGTRAP% dist\sdk_%COR_PLAT%\
+
+    copy SDK\binaries\%COR_PLAT%\lua51.dll dist\sdk_%COR_PLAT%\
+
+    md dist\sdk_%COR_PLAT%\lua\jit
+
+    copy SDK\binaries\%COR_PLAT%\lua\jit\* dist\sdk_%COR_PLAT%\lua\jit\
+
+    copy "3rd party\tbb\bin\%TBB_PLAT%\vc14\tbb.dll" dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\xrCore.dll dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\xrCore.pdb dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\luabind.dll dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\luabind.pdb dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\xrCDB.dll dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\xrCDB.pdb dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\xrAPI.dll dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\xrAPI.pdb dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\xrXMLParser.dll dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\xrXMLParser.pdb dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\ETools.dll dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\ETools.pdb dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\SDK\*.exe dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\SDK\*.dll dist\sdk_%COR_PLAT%\
+
+    copy intermediate\%PLATFORM%-%CONFIGURATION%\SDK\*.pdb dist\sdk_%COR_PLAT%\
+
+    7z a cs_compilers_%APPVEYOR_REPO_TAG_NAME%_%COR_PLAT%.7z dist\sdk_%COR_PLAT%\*
+
+    echo appveyor PushArtifact cs_compilers_%APPVEYOR_REPO_TAG_NAME%_%COR_PLAT%.7z release
+
+    copy cs_compilers_%APPVEYOR_REPO_TAG_NAME%_%COR_PLAT%.7z cs_compilers_%APPVEYOR_VERSION%.7z
+
+    appveyor PushArtifact cs_compilers_%APPVEYOR_VERSION%.7z
+artifacts:
+- path: .\cs_$(appveyor_repo_tag_name)_$(cor_plat).7z
+  name: release
+- path: .\cs_compilers_$(appveyor_repo_tag_name)_$(cor_plat).7z
+  name: release  
+deploy:
+- provider: GitHub
+  auth_token:
+    secure: pXJeBrB1oq+/lPsy2jphy4dRQ542dkJRbAEOD3y/YgSVsoRTSgIt01EI92q9whrl
+  artifact: release
+  on:
+    appveyor_repo_tag: true
