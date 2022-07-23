@@ -4,3 +4,5 @@
 *.user
 *.VC.opendb
 *.VC.db
+/outx64
+/outx86
