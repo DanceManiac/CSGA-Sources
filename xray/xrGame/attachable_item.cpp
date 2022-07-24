@@ -162,30 +162,76 @@ void attach_adjust_mode_keyb(int dik)
 	case DIK_LEFT:
 		{
 			if(b_move)
+			{
 				CAttachableItem::mov(axis, ATT_ITEM_MOVE_CURR);
+				Fvector _pos = CAttachableItem::get_pos_offset();
+				Fvector _ang = CAttachableItem::get_angle_offset();
+				Msg("[%s]", CAttachableItem::m_dbgItem->object().cNameSect().c_str());
+				Msg("attach_position_offset = %3.3f, %3.3f, %3.3f", _pos.x, _pos.y, _pos.z);
+				Msg("attach_angle_offset = %3.3f, %3.3f, %3.3f", _ang.x, _ang.y, _ang.z);
+				Log("-----------");
+			}
 			else
+			{
 				CAttachableItem::rot(axis, ATT_ITEM_ROT_CURR);
+				Fvector _pos = CAttachableItem::get_pos_offset();
+				Fvector _ang = CAttachableItem::get_angle_offset();
+				Msg("[%s]", CAttachableItem::m_dbgItem->object().cNameSect().c_str());
+				Msg("attach_position_offset = %3.3f, %3.3f, %3.3f", _pos.x, _pos.y, _pos.z);
+				Msg("attach_angle_offset = %3.3f, %3.3f, %3.3f", _ang.x, _ang.y, _ang.z);
+				Log("-----------");
+			}
 		}break;
 	case DIK_RIGHT:
-		{
+			{
 			if(b_move)
+			{
 				CAttachableItem::mov(axis, -ATT_ITEM_MOVE_CURR);
+				Fvector _pos = CAttachableItem::get_pos_offset();
+				Fvector _ang = CAttachableItem::get_angle_offset();
+				Msg("[%s]", CAttachableItem::m_dbgItem->object().cNameSect().c_str());
+				Msg("attach_position_offset = %3.3f, %3.3f, %3.3f", _pos.x, _pos.y, _pos.z);
+				Msg("attach_angle_offset = %3.3f, %3.3f, %3.3f", _ang.x, _ang.y, _ang.z);
+				Log("-----------");
+			}
 			else
+			{
 				CAttachableItem::rot(axis, -ATT_ITEM_ROT_CURR);
+				Fvector _pos = CAttachableItem::get_pos_offset();
+				Fvector _ang = CAttachableItem::get_angle_offset();
+				Msg("[%s]", CAttachableItem::m_dbgItem->object().cNameSect().c_str());
+				Msg("attach_position_offset = %3.3f, %3.3f, %3.3f", _pos.x, _pos.y, _pos.z);
+				Msg("attach_angle_offset = %3.3f, %3.3f, %3.3f", _ang.x, _ang.y, _ang.z);
+				Log("-----------");
+			}
 		}break;
 	case DIK_PRIOR:
 		{
 			if(b_move)
-				ATT_ITEM_MOVE_CURR +=ATT_ITEM_MOVE_STEP;
+				ATT_ITEM_MOVE_CURR += ATT_ITEM_MOVE_STEP;
 			else
-				ATT_ITEM_ROT_CURR +=ATT_ITEM_ROT_STEP;
+				ATT_ITEM_ROT_CURR += ATT_ITEM_ROT_STEP;
 		}break;
 	case DIK_NEXT:
 		{
 			if(b_move)
-				ATT_ITEM_MOVE_CURR -=ATT_ITEM_MOVE_STEP;
+				ATT_ITEM_MOVE_CURR -= ATT_ITEM_MOVE_STEP;
 			else
-				ATT_ITEM_ROT_CURR -=ATT_ITEM_ROT_STEP;
+				ATT_ITEM_ROT_CURR -= ATT_ITEM_ROT_STEP;
+		}break;
+	case DIK_NUMPADPLUS:
+		{
+			if (b_move)
+				ATT_ITEM_MOVE_CURR += ATT_ITEM_MOVE_STEP;
+			else
+				ATT_ITEM_ROT_CURR += ATT_ITEM_ROT_STEP;
+		}break;
+	case DIK_NUMPADMINUS:
+		{
+			if (b_move)
+				ATT_ITEM_MOVE_CURR -= ATT_ITEM_MOVE_STEP;
+			else
+				ATT_ITEM_ROT_CURR -= ATT_ITEM_ROT_STEP;
 		}break;
 	};
 }

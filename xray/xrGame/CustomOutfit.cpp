@@ -107,6 +107,9 @@ void CCustomOutfit::Load(LPCSTR section)
 	}
 	CActor* pActor = smart_cast<CActor*>( Level().CurrentViewEntity() );
 	ReloadBonesProtection( pActor );
+
+	// Added by Axel, to enable optional condition use on any item
+	m_flags.set(FUsingCondition, READ_IF_EXISTS(pSettings, r_bool, section, "use_condition", true));
 }
 
 void CCustomOutfit::ReloadBonesProtection( CActor* pActor )

@@ -9,6 +9,7 @@
 #include "level.h"
 #include "script_debugger.h"
 #include "ai_debug.h"
+#include "ai_object_location.h"
 #include "alife_simulator.h"
 #include "game_cl_base.h"
 #include "game_cl_single.h"
@@ -406,6 +407,17 @@ public:
 			  g_pGameLevel->Cameras().AddCamEffector(xr_new<CDemoPlay> (fn, 1.0f, loops));
 		  }
 	  }
+};
+
+class CCC_UI_Reload : public IConsole_Command
+{
+public:
+	CCC_UI_Reload(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = TRUE; };
+	virtual void Execute(LPCSTR args)
+	{
+		if (g_pGamePersistent && g_pGameLevel && Level().game)
+			HUD().OnScreenRatioChanged();// перезагружаем UI через эту команду
+	}
 };
 
 bool valid_saved_game_name(LPCSTR file_name)
@@ -1142,6 +1154,90 @@ public:
 	}
 };
 
+class CCC_Spawn : public IConsole_Command {
+public:
+	CCC_Spawn(pcstr name) : IConsole_Command(name) {}
+
+	void Execute(pcstr args) override
+	{
+		if (!g_pGameLevel)
+			return;
+
+		string256 string;
+		sscanf(args, "%s", &string);
+		if (pSettings->line_exist(string, "player_hud_section") || pSettings->line_exist(string, "character_profile"))
+			Msg("~ Section [%s] spawn isn`t good idea...", args);//maybe block the spawn of these creatures?
+
+		if (!IsGameTypeSingle())
+		{
+			Log("Spawn command is available only in singleplayer mode.");
+			return;
+		}
+
+		if (!pSettings->section_exist(args))
+		{
+			InvalidSyntax();
+			return;
+		}
+
+		Fvector pos = Actor()->Position();
+		Level().g_cl_Spawn(args, 0xff, M_SPAWN_OBJECT_LOCAL, pos);
+	}
+	virtual void fill_tips(vecTips& tips, u32 mode)
+	{
+		for (auto sect : pSettings->sections())
+		{
+			if (sect->line_exist("class") && sect->line_exist("inv_weight") || sect->line_exist("class") && sect->line_exist("$spawn") && sect->line_exist("Spawn_Inventory_Item_Section"))
+				tips.push_back(sect->Name.c_str());
+		}
+	}
+	void Info(TInfo& I) override
+	{
+		strcpy(I, "valid name of entity or item that can be spawned");
+	}
+};
+
+class CCC_Spawn_to_inventory : public IConsole_Command
+{
+public:
+	CCC_Spawn_to_inventory(LPCSTR N)
+		: IConsole_Command(N) {};
+	virtual void Execute(LPCSTR args)
+	{
+		if (!g_pGameLevel)
+			return;
+		if (!Level().CurrentControlEntity())
+			return;
+
+		int count = 1;
+		string256 string;
+		string[0] = 1;
+		sscanf(args, "%s %d", &string, &count);
+
+		if (!pSettings->section_exist(string))
+		{
+			Msg("! Section [%s] isn`t exist...", string);
+			return;
+		}
+		if (!pSettings->line_exist(string, "class") || !pSettings->line_exist(string, "inv_weight") || !pSettings->line_exist(string, "visual"))
+		{
+			Msg("!Failed to load section!");
+			return;
+		}
+		if (auto* pCurActor = smart_cast<CActor*>(Level().CurrentControlEntity()))
+			for (int i = 0; i < count; ++i)
+				Level().spawn_item(string, pCurActor->Position(), pCurActor->ai_location().level_vertex_id(), pCurActor->ID());
+	}
+	virtual void fill_tips(vecTips& tips, u32 mode)
+	{
+		for (auto sect : pSettings->sections()) {
+			if (sect->line_exist("class") && sect->line_exist("inv_weight"))
+				tips.push_back(sect->Name.c_str());
+		}
+	}
+	virtual void Info(TInfo& I) { strcpy(I, "name,team,squad,group"); }
+};
+
 #endif // MASTER_GOLD
 
 #include "GamePersistent.h"
@@ -1571,7 +1667,8 @@ void CCC_RegisterCommands()
 	CMD1(CCC_LoadLastSave,		"load_last_save"		);		// load last saved game from ...
 
 	CMD1(CCC_FlushLog,			"flush"					);		// flush log
-	CMD1(CCC_ClearLog,			"clear_log"					);
+	CMD1(CCC_ClearLog,			"clear_log"				);
+	CMD1(CCC_UI_Reload,			"ui_reload"				);	// перезагрузка UI
 
 #ifndef MASTER_GOLD
 	CMD1(CCC_ALifeTimeFactor,		"al_time_factor"		);		// set time factor
@@ -1736,10 +1833,12 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 #endif // DEBUG
 
 #ifndef MASTER_GOLD
-	CMD1(CCC_JumpToLevel,	"jump_to_level"		);
-	CMD3(CCC_Mask,			"g_god",			&psActorFlags,	AF_GODMODE	);
-	CMD3(CCC_Mask,			"g_unlimitedammo",	&psActorFlags,	AF_UNLIMITEDAMMO);
-	CMD1(CCC_TimeFactor, "time_factor");
+	CMD1(CCC_JumpToLevel,		"jump_to_level"		);
+	CMD3(CCC_Mask,				"g_god",			&psActorFlags,	AF_GODMODE	);
+	CMD3(CCC_Mask,				"g_unlimitedammo",	&psActorFlags,	AF_UNLIMITEDAMMO);
+	CMD1(CCC_TimeFactor,		"time_factor");
+	CMD1(CCC_Spawn,				"g_spawn");		
+	CMD1(CCC_Spawn_to_inventory,"g_spawn_to_inventory");
 #endif // MASTER_GOLD
 	CMD1(CCC_Script,		"run_script");
 	CMD1(CCC_ScriptCommand,	"run_string");

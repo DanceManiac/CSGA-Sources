@@ -110,6 +110,9 @@ void CInventoryItem::Load(LPCSTR section)
 	m_flags.set(FCanTrade, m_can_trade);
 	m_flags.set(FIsQuestItem,	READ_IF_EXISTS(pSettings, r_bool, section, "quest_item",FALSE));
 
+	// Added by Axel, to enable optional condition use on any item
+	m_flags.set(FUsingCondition, READ_IF_EXISTS(pSettings, r_bool, section, "use_condition", false));
+
 
 	//время убирания объекта с уровня
 	m_dwItemRemoveTime			= READ_IF_EXISTS(pSettings, r_u32, section,"item_remove_time",	ITEM_REMOVE_TIME);
@@ -133,7 +136,8 @@ void  CInventoryItem::ChangeCondition(float fDeltaCondition)
 
 void	CInventoryItem::Hit					(SHit* pHDS)
 {
-	if( !m_flags.test(FUsingCondition) ) return;
+	if (IsUsingCondition() == false)
+		return;
 
 	float hit_power = pHDS->damage();
 	hit_power *= m_HitTypeK[pHDS->hit_type];
