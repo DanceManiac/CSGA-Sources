@@ -42,7 +42,10 @@ public:
 		eIdleThrow,
 		eIdleThrowEnd,
 		eIdleKick,
-		eIdleKick2
+		eIdleKick2,
+		eIdleZoom,
+		eIdleZoomIn,
+		eIdleZoomOut
 	};
 
 

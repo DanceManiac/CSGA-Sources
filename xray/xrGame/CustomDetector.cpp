@@ -74,11 +74,13 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
 			SwitchState				(eShowing);
 			TurnDetectorInternal	(true);
 		}
-		else {
+		else
+		{
 			m_pInventory->Activate(m_lastParentSlot);
 			m_bNeedActivation = true;
 		}
-	}else
+	}
+	else
 	if(GetState()==eIdle)
 		SwitchState					(eHiding);
 }
@@ -137,6 +139,21 @@ void CCustomDetector::OnStateSwitch(u32 S)
 			PlayHUDMotion ("anm_kick2", TRUE, this, GetState());
 			SetPending(TRUE);
 		}break;
+	case eIdleZoom:
+		{
+			PlayHUDMotion ("anm_idle_zoom", TRUE, this, GetState());
+			SetPending(FALSE);
+		}break;
+	case eIdleZoomIn:
+		{
+			PlayHUDMotion ("anm_zoom_in", TRUE, this, GetState());
+			SetPending(FALSE);
+		}break;
+	case eIdleZoomOut:
+		{
+			PlayHUDMotion ("anm_zoom_out", TRUE, this, GetState());
+			SetPending(FALSE);
+		}break;
 	}
 }
 
@@ -168,6 +185,14 @@ void CCustomDetector::OnAnimationEnd(u32 state)
 			SwitchState(eIdle);
 		}break;
 	case eIdleKick2:
+		{
+			SwitchState(eIdle);
+		}break;
+	case eIdleZoomIn:
+		{
+			SwitchState(eIdleZoom);
+		}break;
+	case eIdleZoomOut:
 		{
 			SwitchState(eIdle);
 		}break;
@@ -254,35 +279,51 @@ void CCustomDetector::UpdateVisibility()
 	attachable_hud_item* i0		= g_player_hud->attached_item(0);
 	if(i0 && HudItemData())
 	{
-		CWeapon* wpn = smart_cast<CWeapon*>(i0->m_parent_hud_item);
-		CMissile* msl = smart_cast<CMissile*>(i0->m_parent_hud_item);
-		CWeaponKnife* knf = smart_cast<CWeaponKnife*>(i0->m_parent_hud_item);
-		if(knf)
+		bool bClimb			= ( (Actor()->MovingState()&mcClimb) != 0 );
+		if(bClimb)
 		{
-			u32 state = knf->GetState();
-			if(state == CWeaponKnife::eFire && GetState() == eIdle)
-				SwitchState(eIdleKick);
-			else if(state == CWeaponKnife::eFire2 && GetState() == eIdle)
-				SwitchState(eIdleKick2);
+			HideDetector		(true);
+			m_bNeedActivation	= true;
 		}
-		if(msl)
+		else
 		{
-			u32 state = msl->GetState();
-			if ((state == CMissile::eThrowStart || state == CMissile::eReady) && GetState() == eIdle)
-				SwitchState(eIdleThrowStart);
-			else if (state == CMissile::eThrow && GetState() == eIdleThrow)
-				SwitchState(eIdleThrowEnd);
-			else if (state == CMissile::eHiding && (GetState() == eIdleThrowStart || GetState() == eIdleThrow))
-				SwitchState(eIdle);
-		}
-		if(wpn)
-		{
-			u32 state			= wpn->GetState();
-			bool bClimb			= ( (Actor()->MovingState()&mcClimb) != 0 );
-			if(bClimb || wpn->IsZoomed() || state==CWeapon::eReload || state==CWeapon::eSwitch)
+			CWeapon* wpn = smart_cast<CWeapon*>(i0->m_parent_hud_item);
+			CMissile* msl = smart_cast<CMissile*>(i0->m_parent_hud_item);
+			CWeaponKnife* knf = smart_cast<CWeaponKnife*>(i0->m_parent_hud_item);
+			if(knf)
 			{
-				HideDetector		(true);
-				m_bNeedActivation	= true;
+				u32 state = knf->GetState();
+				if(state == CWeaponKnife::eFire && GetState() == eIdle)
+					SwitchState(eIdleKick);
+				else if(state == CWeaponKnife::eFire2 && GetState() == eIdle)
+					SwitchState(eIdleKick2);
+			}
+			if(msl)
+			{
+				u32 state = msl->GetState();
+				if ((state == CMissile::eThrowStart || state == CMissile::eReady) && GetState() == eIdle)
+					SwitchState(eIdleThrowStart);
+				else if (state == CMissile::eThrow && GetState() == eIdleThrow)
+					SwitchState(eIdleThrowEnd);
+				else if (state == CMissile::eHiding && (GetState() == eIdleThrowStart || GetState() == eIdleThrow))
+					SwitchState(eIdle);
+			}
+			if(wpn)
+			{
+				u32 state = wpn->GetState();
+			
+				if(state==CWeapon::eReload || state==CWeapon::eSwitch)
+				{
+					HideDetector		(true);
+					m_bNeedActivation	= true;
+				}
+				else if (wpn->IsZoomed())
+				{
+					if(GetState() == eIdle || GetState() == eIdleZoomOut)
+						SwitchState(eIdleZoomIn);
+				}
+				else if (GetState() == eIdleZoom || GetState() == eIdleZoomIn)
+					SwitchState(eIdleZoomOut);
 			}
 		}
 	}
@@ -294,12 +335,7 @@ void CCustomDetector::UpdateVisibility()
 		if(!bClimb)
 		{
 			CWeapon* wpn			= (i0)?smart_cast<CWeapon*>(i0->m_parent_hud_item) : NULL;
-			if(	!wpn || 
-				(	!wpn->IsZoomed() && 
-					wpn->GetState()!=CWeapon::eReload && 
-					wpn->GetState()!=CWeapon::eSwitch
-				)
-			)
+			if(	!wpn || (wpn->GetState()!=CWeapon::eReload && wpn->GetState()!=CWeapon::eSwitch))
 			{
 				ShowDetector		(true);
 			}
