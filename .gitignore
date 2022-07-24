@@ -1,8 +1,12 @@
 /intermediate
 /ipch
 /.vs
+Bin/
+*.obj
+*.log
+*.lastbuildstate
+*.tlog
+3rd party/libtheora-1.1.1/win32/VS2008/libtheora/x64/Release/libtheora_static.tlog/unsuccessfulbuild
 *.user
 *.VC.opendb
 *.VC.db
-/outx64
-/outx86
