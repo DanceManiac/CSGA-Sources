@@ -40,7 +40,9 @@ public:
 	{
 		eIdleThrowStart = 5,
 		eIdleThrow,
-		eIdleThrowEnd
+		eIdleThrowEnd,
+		eIdleKick,
+		eIdleKick2
 	};
 
 

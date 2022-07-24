@@ -7,6 +7,7 @@
 #include "player_hud.h"
 #include "ui/ArtefactDetectorUI.h"
 #include "Missile.h"
+#include "WeaponKnife.h"
 
 bool  CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 {
@@ -126,6 +127,16 @@ void CCustomDetector::OnStateSwitch(u32 S)
 			else
 				SwitchState(eIdle);
 		}break;
+	case eIdleKick:
+		{
+			PlayHUDMotion ("anm_kick", TRUE, this, GetState());
+			SetPending(TRUE);
+		}break;
+	case eIdleKick2:
+		{
+			PlayHUDMotion ("anm_kick2", TRUE, this, GetState());
+			SetPending(TRUE);
+		}break;
 	}
 }
 
@@ -151,7 +162,15 @@ void CCustomDetector::OnAnimationEnd(u32 state)
 	case eIdleThrowEnd:
 		{
 			SwitchState(eIdle);
-		}
+		}break;
+	case eIdleKick:
+		{
+			SwitchState(eIdle);
+		}break;
+	case eIdleKick2:
+		{
+			SwitchState(eIdle);
+		}break;
 	}
 }
 
@@ -235,8 +254,17 @@ void CCustomDetector::UpdateVisibility()
 	attachable_hud_item* i0		= g_player_hud->attached_item(0);
 	if(i0 && HudItemData())
 	{
-		CWeapon* wpn			= smart_cast<CWeapon*>(i0->m_parent_hud_item);
+		CWeapon* wpn = smart_cast<CWeapon*>(i0->m_parent_hud_item);
 		CMissile* msl = smart_cast<CMissile*>(i0->m_parent_hud_item);
+		CWeaponKnife* knf = smart_cast<CWeaponKnife*>(i0->m_parent_hud_item);
+		if(knf)
+		{
+			u32 state = knf->GetState();
+			if(state == CWeaponKnife::eFire && GetState() == eIdle)
+				SwitchState(eIdleKick);
+			else if(state == CWeaponKnife::eFire2 && GetState() == eIdle)
+				SwitchState(eIdleKick2);
+		}
 		if(msl)
 		{
 			u32 state = msl->GetState();
@@ -257,7 +285,8 @@ void CCustomDetector::UpdateVisibility()
 				m_bNeedActivation	= true;
 			}
 		}
-	}else
+	}
+	else
 	if(m_bNeedActivation)
 	{
 		attachable_hud_item* i0		= g_player_hud->attached_item(0);
