@@ -6,6 +6,7 @@
 #include "Weapon.h"
 #include "player_hud.h"
 #include "ui/ArtefactDetectorUI.h"
+#include "Missile.h"
 
 bool  CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 {
@@ -105,7 +106,27 @@ void CCustomDetector::OnStateSwitch(u32 S)
 			PlayAnimIdle				();
 			SetPending					(FALSE);
 		}break;
-}
+	case eIdleThrowStart:
+		{
+			PlayHUDMotion ("anm_throw_begin", TRUE, this, GetState());
+			SetPending(TRUE);
+		}break;
+	case eIdleThrow:
+		{
+			PlayHUDMotion ("anm_throw_idle", TRUE, this, GetState());
+			SetPending(TRUE);
+		}break;
+	case eIdleThrowEnd:
+		{
+			if(isHUDAnimationExist("anm_throw"))
+			{
+				PlayHUDMotion ("anm_throw", TRUE, this, GetState());
+				SetPending(TRUE);
+			}
+			else
+				SwitchState(eIdle);
+		}break;
+	}
 }
 
 void CCustomDetector::OnAnimationEnd(u32 state)
@@ -123,6 +144,14 @@ void CCustomDetector::OnAnimationEnd(u32 state)
 			TurnDetectorInternal		(false);
 			g_player_hud->detach_item	(this);
 		} break;
+	case eIdleThrowStart:
+		{
+			SwitchState(eIdleThrow);
+		}break;
+	case eIdleThrowEnd:
+		{
+			SwitchState(eIdle);
+		}
 	}
 }
 
@@ -207,6 +236,17 @@ void CCustomDetector::UpdateVisibility()
 	if(i0 && HudItemData())
 	{
 		CWeapon* wpn			= smart_cast<CWeapon*>(i0->m_parent_hud_item);
+		CMissile* msl = smart_cast<CMissile*>(i0->m_parent_hud_item);
+		if(msl)
+		{
+			u32 state = msl->GetState();
+			if ((state == CMissile::eThrowStart || state == CMissile::eReady) && GetState() == eIdle)
+				SwitchState(eIdleThrowStart);
+			else if (state == CMissile::eThrow && GetState() == eIdleThrow)
+				SwitchState(eIdleThrowEnd);
+			else if (state == CMissile::eHiding && (GetState() == eIdleThrowStart || GetState() == eIdleThrow))
+				SwitchState(eIdle);
+		}
 		if(wpn)
 		{
 			u32 state			= wpn->GetState();
