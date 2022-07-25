@@ -7,7 +7,6 @@
 #include "player_hud.h"
 #include "ui/ArtefactDetectorUI.h"
 #include "Missile.h"
-#include "WeaponKnife.h"
 
 bool  CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 {
@@ -289,15 +288,6 @@ void CCustomDetector::UpdateVisibility()
 		{
 			CWeapon* wpn = smart_cast<CWeapon*>(i0->m_parent_hud_item);
 			CMissile* msl = smart_cast<CMissile*>(i0->m_parent_hud_item);
-			CWeaponKnife* knf = smart_cast<CWeaponKnife*>(i0->m_parent_hud_item);
-			if(knf)
-			{
-				u32 state = knf->GetState();
-				if(state == CWeaponKnife::eFire && GetState() == eIdle)
-					SwitchState(eIdleKick);
-				else if(state == CWeaponKnife::eFire2 && GetState() == eIdle)
-					SwitchState(eIdleKick2);
-			}
 			if(msl)
 			{
 				u32 state = msl->GetState();
