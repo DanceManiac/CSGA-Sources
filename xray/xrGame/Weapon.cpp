@@ -440,6 +440,10 @@ void CWeapon::Load		(LPCSTR section)
 
 	// Added by Axel, to enable optional condition use on any item
 	m_flags.set(FUsingCondition, READ_IF_EXISTS(pSettings, r_bool, section, "use_condition", true));
+	
+	m_zoom_params.m_bUseDynamicZoom				= READ_IF_EXISTS(pSettings,r_bool,section,"scope_dynamic_zoom",FALSE);
+	m_zoom_params.m_sUseZoomPostprocess			= 0;
+	m_zoom_params.m_sUseBinocularVision			= 0;
 }
 
 void CWeapon::LoadFireParams		(LPCSTR section)
@@ -468,6 +472,7 @@ void CWeapon::LoadFireParams		(LPCSTR section)
 
 BOOL CWeapon::net_Spawn		(CSE_Abstract* DC)
 {
+	m_fRTZoomFactor					= m_zoom_params.m_fScopeZoomFactor;
 	BOOL bResult					= inherited::net_Spawn(DC);
 	CSE_Abstract					*e	= (CSE_Abstract*)(DC);
 	CSE_ALifeItemWeapon			    *E	= smart_cast<CSE_ALifeItemWeapon*>(e);
@@ -1287,25 +1292,61 @@ float CWeapon::CurrentZoomFactor()
 	return IsScopeAttached() ? m_zoom_params.m_fScopeZoomFactor : m_zoom_params.m_fIronSightZoomFactor;
 };
 
+void GetZoomData(const float scope_factor, float& delta, float& min_zoom_factor);
+
 void CWeapon::OnZoomIn()
 {
 	m_zoom_params.m_bIsZoomModeNow		= true;
-	m_zoom_params.m_fCurrentZoomFactor	= CurrentZoomFactor();
+	if(m_zoom_params.m_bUseDynamicZoom)
+		SetZoomFactor(m_fRTZoomFactor);
+	else
+		m_zoom_params.m_fCurrentZoomFactor	= CurrentZoomFactor();
+
 	EnableHudInertion					(FALSE);
 
 	
-	if(m_zoom_params.m_bZoomDofEnabled && !IsScopeAttached())
-		GamePersistent().SetEffectorDOF	(m_zoom_params.m_ZoomDof);
+	//if(m_zoom_params.m_bZoomDofEnabled && !IsScopeAttached())
+	//	GamePersistent().SetEffectorDOF	(m_zoom_params.m_ZoomDof);
+
+	if(GetHUDmode())
+		GamePersistent().SetPickableEffectorDOF(true);
+
+	if(m_zoom_params.m_sUseBinocularVision.size() && IsScopeAttached() && NULL==m_zoom_params.m_pVision) 
+		m_zoom_params.m_pVision	= xr_new<CBinocularsVision>(m_zoom_params.m_sUseBinocularVision/*"wpn_binoc"*/);
+
+	if(m_zoom_params.m_sUseZoomPostprocess.size() && IsScopeAttached()) 
+	{
+		CActor *pA = smart_cast<CActor *>(H_Parent());
+		if(pA)
+		{
+			if(NULL==m_zoom_params.m_pNight_vision)
+			{
+				m_zoom_params.m_pNight_vision	= xr_new<CNightVisionEffector>(m_zoom_params.m_sUseZoomPostprocess/*"device_torch"*/);
+			}
+		}
+	}
 }
 
 void CWeapon::OnZoomOut()
 {
 	m_zoom_params.m_bIsZoomModeNow		= false;
+	m_fRTZoomFactor = GetZoomFactor();//store current
 	m_zoom_params.m_fCurrentZoomFactor	= g_fov;
 	EnableHudInertion					(TRUE);
 
- 	GamePersistent().RestoreEffectorDOF	();
+// 	GamePersistent().RestoreEffectorDOF	();
+
+	if(GetHUDmode())
+		GamePersistent().SetPickableEffectorDOF(false);
+
 	ResetSubStateTime					();
+
+	xr_delete							(m_zoom_params.m_pVision);
+	if(m_zoom_params.m_pNight_vision)
+	{
+		m_zoom_params.m_pNight_vision->Stop(100000.0f, false);
+		xr_delete(m_zoom_params.m_pNight_vision);
+	}
 }
 
 CUIWindow* CWeapon::ZoomTexture()
@@ -1761,4 +1802,29 @@ bool CWeapon::MovingAnimAllowedNow()
 bool CWeapon::IsHudModeNow()
 {
 	return (HudItemData()!=NULL);
+}
+
+void CWeapon::ZoomInc()
+{
+	if(!IsScopeAttached())					return;
+	if(!m_zoom_params.m_bUseDynamicZoom)	return;
+	float delta,min_zoom_factor;
+	GetZoomData(m_zoom_params.m_fScopeZoomFactor, delta, min_zoom_factor);
+
+	float f					= GetZoomFactor()-delta;
+	clamp					(f,m_zoom_params.m_fScopeZoomFactor,min_zoom_factor);
+	SetZoomFactor			( f );
+}
+
+void CWeapon::ZoomDec()
+{
+	if(!IsScopeAttached())					return;
+	if(!m_zoom_params.m_bUseDynamicZoom)	return;
+	float delta,min_zoom_factor;
+	GetZoomData(m_zoom_params.m_fScopeZoomFactor,delta,min_zoom_factor);
+
+	float f					= GetZoomFactor()+delta;
+	clamp					(f,m_zoom_params.m_fScopeZoomFactor,min_zoom_factor);
+	SetZoomFactor			( f );
+
 }
