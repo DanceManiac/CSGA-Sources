@@ -27,6 +27,8 @@ static const float		OPTIMIZATION_DISTANCE		= 100.f;
 
 static bool stalker_use_dynamic_lights	= false;
 
+ENGINE_API int g_current_renderer;
+
 CTorch::CTorch(void) 
 {
 	light_render				= ::Render->light_create();
@@ -47,7 +49,7 @@ CTorch::CTorch(void)
 
 	// Disabling shift by x and z axes for 1st render, 
 	// because we don't have dynamic lighting in it. 
-	if(::Render->get_generation() == IRender_interface::GENERATION_R1)
+	if( g_current_renderer == 1 )
 	{
 		TORCH_OFFSET.x = 0;
 		TORCH_OFFSET.z = 0;
@@ -467,12 +469,12 @@ void CTorch::enable(bool value)
 
 }
 
-CNightVisionEffector::CNightVisionEffector(const shared_str& section)
+CNightVisionEffector::CNightVisionEffector(LPCSTR section)
 {
-	m_sounds.LoadSound1(section,"snd_night_vision_on", "NightVisionOnSnd", SOUND_TYPE_ITEM_USING);
-	m_sounds.LoadSound1(section,"snd_night_vision_off", "NightVisionOffSnd", SOUND_TYPE_ITEM_USING);
-	m_sounds.LoadSound1(section,"snd_night_vision_idle", "NightVisionIdleSnd", SOUND_TYPE_ITEM_USING);
-	m_sounds.LoadSound1(section,"snd_night_vision_broken", "NightVisionBrokenSnd", SOUND_TYPE_ITEM_USING);
+	m_sounds.LoadSound(section,"snd_night_vision_on", "NightVisionOnSnd", SOUND_TYPE_ITEM_USING);
+	m_sounds.LoadSound(section,"snd_night_vision_off", "NightVisionOffSnd", SOUND_TYPE_ITEM_USING);
+	m_sounds.LoadSound(section,"snd_night_vision_idle", "NightVisionIdleSnd", SOUND_TYPE_ITEM_USING);
+	m_sounds.LoadSound(section,"snd_night_vision_broken", "NightVisionBrokenSnd", SOUND_TYPE_ITEM_USING);
 }
 
 void CNightVisionEffector::Start(const shared_str& sect, CActor* pA, bool play_sound)

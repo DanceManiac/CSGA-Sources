@@ -11,7 +11,6 @@
 #include "firedeps.h"
 #include "game_cl_single.h"
 #include "first_bullet_controller.h"
-#include "Torch.h"
 
 #include "CameraRecoil.h"
 

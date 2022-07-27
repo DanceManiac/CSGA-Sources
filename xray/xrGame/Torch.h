@@ -98,7 +98,7 @@ public:
 		eIdleSound,
 		eBrokeSound
 	};
-				CNightVisionEffector(const shared_str& section);
+				CNightVisionEffector(LPCSTR section);
 	void		Start		(const shared_str& sect, CActor* pA, bool play_sound=true);
 	void		Stop		(const float factor, bool play_sound=true);
 	bool		IsActive	();
