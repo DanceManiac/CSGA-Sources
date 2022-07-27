@@ -26,7 +26,65 @@ void HUD_SOUND_ITEM::LoadSound(	LPCSTR section, LPCSTR line,
 	}//while
 }
 
+void HUD_SOUND_ITEM::LoadSound1(	const shared_str& section, LPCSTR line, 
+							HUD_SOUND_ITEM& hud_snd, int type)
+{
+	hud_snd.m_activeSnd		= NULL;
+	hud_snd.sounds.clear	();
+
+	string256	sound_line;
+	strcpy_s		(sound_line,line);
+	int k=0;
+	while( pSettings->line_exist(section, sound_line) ){
+		hud_snd.sounds.push_back( SSnd() );
+		SSnd& s = hud_snd.sounds.back();
+
+		LoadSound1	(section, sound_line, s.snd, type, &s.volume, &s.delay);
+		sprintf_s		(sound_line,"%s%d",line,++k);
+	}//while
+}
+
 void  HUD_SOUND_ITEM::LoadSound(LPCSTR section, 
+								LPCSTR line, 
+								ref_sound& snd, 
+								int type,
+								float* volume, 
+								float* delay)
+{
+	LPCSTR str = pSettings->r_string(section, line);
+	string256 buf_str;
+
+	int	count = _GetItemCount	(str);
+	R_ASSERT(count);
+
+	_GetItem(str, 0, buf_str);
+	snd.create(buf_str, st_Effect,type);
+
+
+	if(volume != NULL)
+	{
+		*volume = 1.f;
+		if(count>1)
+		{
+			_GetItem (str, 1, buf_str);
+			if(xr_strlen(buf_str)>0)
+				*volume = (float)atof(buf_str);
+		}
+	}
+
+	if(delay != NULL)
+	{
+		*delay = 0;
+		if(count>2)
+		{
+			_GetItem (str, 2, buf_str);
+			if(xr_strlen(buf_str)>0)
+				*delay = (float)atof(buf_str);
+		}
+	}
+}
+
+void  HUD_SOUND_ITEM::LoadSound1(const shared_str& section, 
 								LPCSTR line, 
 								ref_sound& snd, 
 								int type,
@@ -185,5 +243,17 @@ void HUD_SOUND_COLLECTION::LoadSound(	LPCSTR section,
 	m_sound_items.resize		(m_sound_items.size()+1);
 	HUD_SOUND_ITEM& snd_item	= m_sound_items.back();
 	HUD_SOUND_ITEM::LoadSound	(section, line, snd_item, type);
+	snd_item.m_alias			= alias;
+}
+
+void HUD_SOUND_COLLECTION::LoadSound1(const shared_str& section,
+										LPCSTR line,
+										LPCSTR alias,													
+										int type)
+{
+	R_ASSERT					(NULL==FindSoundItem(alias, false));
+	m_sound_items.resize		(m_sound_items.size()+1);
+	HUD_SOUND_ITEM& snd_item	= m_sound_items.back();
+	HUD_SOUND_ITEM::LoadSound1	(section, line, snd_item, type);
 	snd_item.m_alias			= alias;
 }

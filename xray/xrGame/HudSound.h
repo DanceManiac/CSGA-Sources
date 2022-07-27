@@ -11,7 +11,18 @@ struct HUD_SOUND_ITEM
 										float* volume = NULL,
 										float* delay = NULL);
 
+	static void		LoadSound1		(	const shared_str& section, LPCSTR line,
+										ref_sound& hud_snd,
+										int type = sg_SourceType,
+										float* volume = NULL,
+										float* delay = NULL);
+
 	static void		LoadSound		(	LPCSTR section, 
+										LPCSTR line,
+										HUD_SOUND_ITEM& hud_snd,  
+										int type = sg_SourceType);
+
+	static void		LoadSound1		(	const shared_str& section, 
 										LPCSTR line,
 										HUD_SOUND_ITEM& hud_snd,  
 										int type = sg_SourceType);
@@ -70,6 +81,11 @@ public:
 	void						StopSound		(	LPCSTR alias);
 
 	void						LoadSound		(	LPCSTR section, 
+													LPCSTR line,
+													LPCSTR alias,													
+													int type = sg_SourceType);
+
+	void						LoadSound1		(	const shared_str& section, 
 													LPCSTR line,
 													LPCSTR alias,													
 													int type = sg_SourceType);
