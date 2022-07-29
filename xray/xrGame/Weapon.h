@@ -11,7 +11,6 @@
 #include "firedeps.h"
 #include "game_cl_single.h"
 #include "first_bullet_controller.h"
-#include "Torch.h"
 
 #include "CameraRecoil.h"
 
@@ -22,8 +21,6 @@ class CSE_ALifeItemWeaponAmmo;
 class CWeaponMagazined;
 class CParticlesObject;
 class CUIWindow;
-class CBinocularsVision;
-class CNightVisionEffector;
 
 class CWeapon : public CHudItemObject,
 				public CShootingObject
@@ -209,21 +206,14 @@ protected:
 		Fvector			m_ZoomDof;
 		Fvector4		m_ReloadDof;
 
-		BOOL			m_bUseDynamicZoom;
-		shared_str		m_sUseZoomPostprocess;
-		shared_str		m_sUseBinocularVision;
-		CBinocularsVision*		m_pVision;
-		CNightVisionEffector*	m_pNight_vision;
-
 	} m_zoom_params;
 	
-	float			m_fRTZoomFactor; //run-time zoom factor
 	CUIWindow*				m_UIScope;
 public:
 
 	IC bool					IsZoomEnabled		()	const		{return m_zoom_params.m_bZoomEnabled;}
-	virtual	void			ZoomInc				();
-	virtual	void			ZoomDec				();
+	virtual	void			ZoomInc				(){};
+	virtual	void			ZoomDec				(){};
 	virtual void			OnZoomIn			();
 	virtual void			OnZoomOut			();
 	IC		bool			IsZoomed			()	const		{return m_zoom_params.m_bIsZoomModeNow;};
@@ -408,10 +398,6 @@ protected:
 
 public:
 	xr_vector<shared_str>	m_ammoTypes;
-
-	DEFINE_VECTOR(shared_str, SCOPES_VECTOR, SCOPES_VECTOR_IT);
-	SCOPES_VECTOR			m_scopes;
-	u8						m_cur_scope;
 
 	CWeaponAmmo*			m_pAmmo;
 	u32						m_ammoType;
