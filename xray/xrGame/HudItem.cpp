@@ -17,7 +17,6 @@ CHudItem::CHudItem()
 	RenderHud					(TRUE);
 	EnableHudInertion			(TRUE);
 	AllowHudInertion			(TRUE);
-//	m_hud_item_shared_data		= NULL;
 	m_bStopAtEndAnimIsRunning	= false;
 	m_current_motion_def		= NULL;
 	m_started_rnd_anim_idx		= u8(-1);
@@ -43,7 +42,6 @@ void CHudItem::Load(LPCSTR section)
 	hud_sect				= pSettings->r_string		(section,"hud");
 	m_animation_slot		= pSettings->r_u32			(section,"animation_slot");
 
-//	if(pSettings->line_exist(section,"snd_bore"))
 	m_sounds.LoadSound(section,"snd_bore","sndBore");
 }
 
@@ -146,7 +144,13 @@ void CHudItem::OnAnimationEnd(u32 state)
 
 void CHudItem::PlayAnimBore()
 {
-	PlayHUDMotion	("anm_bore", TRUE, this, GetState());
+	if (isHUDAnimationExist("anm_bore"))
+	{
+		PlayHUDMotion	("anm_bore", TRUE, this, GetState());
+		return true;
+	}
+	
+	return false;
 }
 
 bool CHudItem::ActivateItem() 
