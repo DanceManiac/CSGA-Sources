@@ -702,26 +702,33 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 
 			if(m_bGrenadeMode)
 			{
-				if(act_state==0)
+				switch(act_state)
+				{
+				case 0:
 					PlayHUDMotion("anm_idle_g", FALSE, NULL, GetState());
-				else
-				if(act_state==1)
+					break;
+				case 1:
 					PlayHUDMotion("anm_idle_sprint_g", TRUE, NULL,GetState());
-				else
-				if(act_state==2)
+					break;
+				case 2:
 					PlayHUDMotion("anm_idle_moving_g", TRUE, NULL,GetState());
-
+					break;
+				}
 			}
 			else
 			{
-				if(act_state==0)
+				switch(act_state)
+				{
+				case 0:
 					PlayHUDMotion("anm_idle_w_gl", FALSE, NULL, GetState());
-				else
-				if(act_state==1)
+					break;
+				case 1:
 					PlayHUDMotion("anm_idle_sprint_w_gl", TRUE, NULL,GetState());
-				else
-				if(act_state==2)
+					break;
+				case 2:
 					PlayHUDMotion("anm_idle_moving_w_gl", TRUE, NULL,GetState());
+					break;
+				}
 			}
 		
 		}
