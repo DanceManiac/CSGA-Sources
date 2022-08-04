@@ -290,6 +290,24 @@ void CHudItem::on_a_hud_attach()
 
 u32 CHudItem::PlayHUDMotion(const shared_str& M, BOOL bMixIn, CHudItem*  W, u32 state)
 {
+	u32 anim_time = PlayHUDMotion_noCB(M, bMixIn);
+	if (anim_time > 0)
+	{
+		m_bStopAtEndAnimIsRunning = true;
+		m_dwMotionStartTm = Device.dwTimeGlobal;
+		m_dwMotionCurrTm = m_dwMotionStartTm;
+		m_dwMotionEndTm = m_dwMotionStartTm + anim_time;
+		m_startedMotionState = state;
+	}
+	else
+		m_bStopAtEndAnimIsRunning = false;
+
+	return anim_time;
+}
+
+u32 CHudItem::PlayHUDMotionNew(const shared_str& M, const bool bMixIn, const u32 state, const bool randomAnim)
+{
+	//Msg("~~[%s] Playing motion [%s] for [%s]", __FUNCTION__, M.c_str(), HudSection().c_str());
 	u32 anim_time					= PlayHUDMotion_noCB(M, bMixIn);
 	if (anim_time>0)
 	{
@@ -325,7 +343,7 @@ bool CHudItem::isHUDAnimationExist(LPCSTR anim_name)
 	return false;
 }
 
-u32 CHudItem::PlayHUDMotion_noCB(const shared_str& motion_name, BOOL bMixIn)
+u32 CHudItem::PlayHUDMotion_noCB(const shared_str& motion_name, const bool bMixIn, const bool randomAnim)
 {
 	m_current_motion					= motion_name;
 

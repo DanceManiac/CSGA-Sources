@@ -33,6 +33,7 @@ protected:
 	u32				dwUpdateSounds_Frame;
 protected:
 	virtual void	OnMagazineEmpty	();
+	virtual void	MsgGunEmpty		();
 
 	virtual void	switch2_Idle	();
 	virtual void	switch2_Fire	();
@@ -47,6 +48,7 @@ protected:
 	virtual void	OnEmptyClick	();
 
 	virtual void	OnAnimationEnd	(u32 state);
+	virtual void	Unmisfire		();
 	virtual void	OnStateSwitch	(u32 S);
 
 	virtual void	UpdateSounds	();
@@ -149,6 +151,12 @@ protected:
 	virtual void	PlayAnimHide		();
 	virtual void	PlayAnimReload		();
 	virtual void	PlayAnimIdle		();
+
+private:
+	string64 guns_aim_anm;
+protected:
+	const char* GetAnimAimName();
+	
 	virtual void	PlayAnimShoot		();
 	virtual void	PlayReloadSound		();
 	virtual void	PlayAnimAim			();
