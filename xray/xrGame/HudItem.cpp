@@ -146,7 +146,8 @@ void CHudItem::OnAnimationEnd(u32 state)
 
 void CHudItem::PlayAnimBore()
 {
-	PlayHUDMotion	("anm_bore", TRUE, this, GetState());
+	if(isHUDAnimationExist("anm_bore"))
+		PlayHUDMotion	("anm_bore", TRUE, this, GetState());
 }
 
 bool CHudItem::ActivateItem() 

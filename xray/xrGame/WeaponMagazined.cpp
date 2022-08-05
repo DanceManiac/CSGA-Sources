@@ -1092,8 +1092,13 @@ void CWeaponMagazined::PlayAnimAim()
 	{
 		if (isHUDAnimationExist("anm_idle_aim_start"))
 		{
-			PlayHUDMotionNew("anm_idle_aim_start", TRUE, GetState());
-			return;
+			if(iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_aim_start_empty"))
+				PlayHUDMotionNew("anm_idle_aim_start_empty", TRUE, GetState());
+			else if(IsMisfire() && isHUDAnimationExist("anm_idle_aim_start_jammed"))
+				PlayHUDMotionNew("anm_idle_aim_start_jammed", TRUE, GetState());
+			else
+				if (isHUDAnimationExist("anm_idle_aim_start"))
+					PlayHUDMotionNew("anm_idle_aim_start", TRUE, GetState());
 		}
 	}
 
@@ -1111,7 +1116,8 @@ void CWeaponMagazined::PlayAnimAim()
 	else if (IsMisfire() && isHUDAnimationExist("anm_idle_aim_jammed"))
 		PlayHUDMotion("anm_idle_aim_jammed", TRUE, NULL, GetState());
 	else
-		PlayHUDMotion("anm_idle_aim", TRUE, NULL, GetState());
+		if (isHUDAnimationExist("anm_idle_aim"))
+			PlayHUDMotion("anm_idle_aim", TRUE, NULL, GetState());
 }
 
 void CWeaponMagazined::PlayAnimIdle()
@@ -1130,11 +1136,13 @@ void CWeaponMagazined::PlayAnimIdle()
 	{
 		if (IsRotatingFromZoom())
 		{
-			if (isHUDAnimationExist("anm_idle_aim_end"))
-			{
-				PlayHUDMotionNew("anm_idle_aim_end", TRUE, GetState());
-				return;
-			}
+			if(iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_aim_end_empty"))
+				PlayHUDMotionNew("anm_idle_aim_end_empty", TRUE, GetState());
+			else if(IsMisfire() && isHUDAnimationExist("anm_idle_aim_end_jammed"))
+				PlayHUDMotionNew("anm_idle_aim_end_jammed", TRUE, GetState());
+			else
+				if (isHUDAnimationExist("anm_idle_aim_end"))
+					PlayHUDMotionNew("anm_idle_aim_end", TRUE, GetState());
 		}
 		inherited::PlayAnimIdle();
 	}
