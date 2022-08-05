@@ -454,10 +454,16 @@ public:
 	virtual float						MaxCarryWeight		() const;
 			float						MaxWalkWeight		() const;
 			float						get_additional_weight() const;
-	IC const u32 get_state() const
-	{
-		return this->mstate_real;
-	}
+
+    IC u32 get_state() const
+    {
+        return this->mstate_real;
+    }
+
+    IC void set_state(u32 state)
+    {
+        mstate_real = state;
+    }
 
 protected:
 	CFireDispertionController			m_fdisp_controller;

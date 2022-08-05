@@ -163,5 +163,8 @@ protected:
 
 	virtual	int		ShotsFired			() { return m_iShotNum; }
 	virtual float	GetWeaponDeterioration	();
+	
+	virtual void	PlayAnimIdleMoving();
+	virtual void	PlayAnimIdleSprint();
 
 };

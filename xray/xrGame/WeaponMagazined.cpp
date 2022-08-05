@@ -1409,3 +1409,25 @@ bool CWeaponMagazined::install_upgrade_impl( LPCSTR section, bool test )
 
 	return result;
 }
+
+void CWeaponMagazined::PlayAnimIdleMoving()
+{
+	if(iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_moving_empty"))
+		PlayHUDMotion("anm_idle_moving_empty", TRUE, NULL, GetState());
+	else if(IsMisfire() && isHUDAnimationExist("anm_idle_moving_jammed"))
+		PlayHUDMotion("anm_idle_moving_jammed", TRUE, NULL, GetState());
+	else
+		if(isHUDAnimationExist("anm_idle_moving"))
+			PlayHUDMotion("anm_idle_moving", TRUE, NULL, GetState());
+}
+
+void CWeaponMagazined::PlayAnimIdleSprint()
+{
+	if(iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_sprint_empty"))
+		PlayHUDMotion("anm_idle_sprint_empty", TRUE, NULL, GetState());
+	else if(IsMisfire() && isHUDAnimationExist("anm_idle_sprint_jammed"))
+		PlayHUDMotion("anm_idle_sprint_jammed", TRUE, NULL, GetState());
+	else
+		if(isHUDAnimationExist("anm_idle_sprint"))
+			PlayHUDMotion("anm_idle_sprint", TRUE, NULL, GetState());
+}
