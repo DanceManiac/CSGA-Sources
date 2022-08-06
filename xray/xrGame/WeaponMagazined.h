@@ -37,7 +37,6 @@ protected:
 
 	virtual void	switch2_Idle	();
 	virtual void	switch2_Fire	();
-	virtual void	switch2_Empty	();
 	virtual void	switch2_Reload	();
 	virtual void	switch2_Hiding	();
 	virtual void	switch2_Hidden	();
@@ -46,6 +45,7 @@ protected:
 	virtual void	OnShot			();	
 	
 	virtual void	OnEmptyClick	();
+	virtual	void	EmptyMove();
 
 	virtual void	OnAnimationEnd	(u32 state);
 	virtual void	Unmisfire		();
@@ -61,7 +61,6 @@ protected:
 			void	ResetSilencerKoeffs();
 
 	virtual void	state_Fire		(float dt);
-	virtual void	state_MagEmpty	(float dt);
 	virtual void	state_Misfire	(float dt);
 public:
 					CWeaponMagazined	(ESoundTypes eSoundType=SOUND_TYPE_WEAPON_SUBMACHINEGUN);

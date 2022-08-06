@@ -130,21 +130,16 @@ void CWeaponMagazined::FireStart		()
 				if(GetState()==eMisfire) return;
 
 				inherited::FireStart();
-				
-				if (iAmmoElapsed == 0) 
-					OnMagazineEmpty();
-				else
-				{
+
 					R_ASSERT(H_Parent());
 					SwitchState(eFire);
-				}
 			}
 		}
 		else 
 		{
 			if(eReload!=GetState()) 
 				MsgGunEmpty();//сообщение о том, что магазин пуст
-				OnMagazineEmpty();
+				SwitchState(eEmpty);
 		}
 	}
 	else
@@ -247,11 +242,6 @@ void CWeaponMagazined::OnMagazineEmpty()
 	{
 		OnEmptyClick			();
 		return;
-	}
-
-	if( GetNextState() != eMagEmpty && GetNextState() != eReload)
-	{
-		SwitchState(eMagEmpty);
 	}
 
 	inherited::OnMagazineEmpty();
@@ -398,8 +388,8 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
 		if(smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity()==H_Parent()) )
 			HUD().GetUI()->AddInfoMessage("gun_jammed");
 		break;
-	case eMagEmpty:
-		switch2_Empty	();
+	case eEmpty:
+		EmptyMove();
 		break;
 	case eReload:
 		switch2_Reload	();
@@ -416,6 +406,16 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
 	}
 }
 
+void CWeaponMagazined::EmptyMove()
+{
+	OnEmptyClick();//звук
+
+	if(IsZoomed() && isHUDAnimationExist("anm_fakeshoot_aim_empty"))
+		PlayHUDMotion("anm_fakeshoot_aim_empty", FALSE, this, GetState());
+	else
+		if(isHUDAnimationExist("anm_fakeshoot_empty"))
+			PlayHUDMotion("anm_fakeshoot_empty", FALSE, this, GetState());
+}
 
 void CWeaponMagazined::UpdateCL			()
 {
@@ -443,7 +443,8 @@ void CWeaponMagazined::UpdateCL			()
 				state_Fire		(dt);
 			}break;
 		case eMisfire:		state_Misfire	(dt);	break;
-		case eMagEmpty:		state_MagEmpty	(dt);	break;
+		case eEmpty:
+		break;//блять нахуй это здесь нужно
 		case eHidden:		break;
 		}
 	}
@@ -461,9 +462,7 @@ void CWeaponMagazined::UpdateSounds	()
 	Fvector P						= get_LastFP();
 	m_sounds.SetPosition("sndShow", P);
 	m_sounds.SetPosition("sndHide", P);
-//. nah	m_sounds.SetPosition("sndShot", P);
 	m_sounds.SetPosition("sndReload", P);
-//. nah	m_sounds.SetPosition("sndEmptyClick", P);
 }
 
 void CWeaponMagazined::state_Fire(float dt)
@@ -551,8 +550,6 @@ void CWeaponMagazined::state_Fire(float dt)
 					m_iShotNum);
 		}
 */
-		if(iAmmoElapsed == 0)
-			OnMagazineEmpty();
 
 		StopShooting();
 	}
@@ -570,10 +567,6 @@ void CWeaponMagazined::state_Misfire	(float dt)
 	bMisfire				= true;
 
 	UpdateSounds			();
-}
-
-void CWeaponMagazined::state_MagEmpty	(float dt)
-{
 }
 
 void CWeaponMagazined::SetDefaults	()
@@ -615,7 +608,7 @@ void CWeaponMagazined::OnEmptyClick	()
 	PlaySound	("sndEmptyClick",get_LastFP());
 }
 
-void CWeaponMagazined::OnAnimationEnd(u32 state) 
+void CWeaponMagazined::OnAnimationEnd(u32 state)
 {
 	switch(state) 
 	{
@@ -639,6 +632,9 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		case eIdle:
 		switch2_Idle();
 		break;  // Keep showing idle
+		case eEmpty:
+		SwitchState(eIdle);
+		break;
 	}
 	inherited::OnAnimationEnd(state);
 }
@@ -701,19 +697,6 @@ void CWeaponMagazined::switch2_Fire	()
 
 }
 
-void CWeaponMagazined::switch2_Empty()
-{
-	/*OnZoomOut();
-	
-	if(!TryReload())
-	{
-		OnEmptyClick();
-	}
-	else
-	{*/
-		inherited::FireEnd();
-	//}
-}
 void CWeaponMagazined::PlayReloadSound()
 {
 	if(iAmmoElapsed == 0)
