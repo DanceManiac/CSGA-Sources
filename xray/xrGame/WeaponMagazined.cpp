@@ -1153,7 +1153,7 @@ void CWeaponMagazined::PlayAnimShoot()
 	VERIFY(GetState()==eFire);
 	
     string_path guns_shoot_anm{};
-    strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? (IsScopeAttached() ? "_aim_scope" : "_aim") : "", IsMisfire() ? "_jammed" : "" ,IsSilencerAttached() ? "_sil" : "");
+    strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? (IsScopeAttached() ?  "_aim_scope" : "_aim")  : "", IsMisfire() ? "_jammed" : (iAmmoElapsed == 1 ? "_last" : "") ,IsSilencerAttached() ? "_sil" : "");
 
     PlayHUDMotionNew(guns_shoot_anm, FALSE, GetState());
 	
