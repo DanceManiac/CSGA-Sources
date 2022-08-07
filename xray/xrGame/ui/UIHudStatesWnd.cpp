@@ -252,7 +252,6 @@ void CUIHudStatesWnd::UpdateActiveItemInfo( CActor* actor )
 		m_fire_mode->SetText		( str_fire_mode );
 		SetAmmoIcon					( icon_sect_name.c_str() );
 		m_ui_weapon_sign_ammo->SetText( str_count.c_str() );
-		m_ui_weapon_sign_ammo->SetTextAlignment(m_ui_weapon_sign_ammo->GetTextAlignment());
 		
 		// hack ^ begin
 
@@ -269,8 +268,10 @@ void CUIHudStatesWnd::UpdateActiveItemInfo( CActor* actor )
 			if ( str_count.size() > 5 )
 			{
 				pFont = pFont22;
-				m_ui_weapon_sign_ammo->SetTextPos(+0,+3);
+				m_ui_weapon_sign_ammo->SetTextY(4);
 			}
+			else
+				m_ui_weapon_sign_ammo->SetTextY(0);
 		}
 		m_ui_weapon_sign_ammo->SetFont( pFont );
 	}
@@ -448,12 +449,12 @@ void CUIHudStatesWnd::UpdateZones()
 			if ( dist_to_zone < rad_zone )
 			{
 				fRelPow *= 0.3f;
-				fRelPow *= ( 2.5f - 2.0f * power ); // çâóê çàâèñèò îò ñèëû çîíû
+				fRelPow *= ( 2.5f - 2.0f * power ); // Ð·Ð²ÑƒÐº Ð·Ð°Ð²Ð¸ÑÐ¸Ñ‚ Ð¾Ñ‚ ÑÐ¸Ð»Ñ‹ Ð·Ð¾Ð½Ñ‹
 			}
 		}
 		clamp( fRelPow, 0.0f, 1.0f );
 
-		//îïðåäåëèòü òåêóùóþ ÷àñòîòó ñðàáàòûâàíèÿ ñèãíàëà
+		//Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»Ð¸Ñ‚ÑŒ Ñ‚ÐµÐºÑƒÑ‰ÑƒÑŽ Ñ‡Ð°ÑÑ‚Ð¾Ñ‚Ñƒ ÑÑ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°Ð½Ð¸Ñ ÑÐ¸Ð³Ð½Ð°Ð»Ð°
 		zone_info.cur_period = zone_type->freq.x + (zone_type->freq.y - zone_type->freq.x) * (fRelPow * fRelPow);
 		
 		//string256	buff_z;
