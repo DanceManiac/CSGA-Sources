@@ -329,11 +329,18 @@ protected:
 	//(на сколько процентов увеличится дисперсия)
 	float					fireDispersionConditionFactor;
 	//вероятность осечки при максимальной изношености
-	float					misfireProbability;
-	float					misfireConditionK;
-	//увеличение изношености при выстреле
-	float					conditionDecreasePerShot;
-	
+	float misfireStartCondition;			//изношенность, при которой появляется шанс осечки
+	float misfireEndCondition;				//изношеность при которой шанс осечки становится константным
+	float misfireStartProbability;			//шанс осечки при изношености больше чем misfireStartCondition
+	float misfireEndProbability;			//шанс осечки при изношености больше чем misfireEndCondition
+	float conditionDecreasePerQueueShot;	//увеличение изношености при выстреле очередью
+	float conditionDecreasePerShot;			//увеличение изношености при одиночном выстреле
+
+public:
+	float GetMisfireStartCondition	() const {return misfireStartCondition;};
+	float GetMisfireEndCondition	() const {return misfireEndCondition;};
+
+protected:
 	struct SPDM
 	{
 		float					m_fPDM_disp_base			;
