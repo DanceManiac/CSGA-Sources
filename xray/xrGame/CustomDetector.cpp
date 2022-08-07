@@ -27,8 +27,7 @@ bool  CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 			bres = bres
 				&& (W->GetState() != CHUDState::eBore)
 				&& (W->GetState() != CWeapon::eReload)
-				&& (W->GetState() != CWeapon::eSwitch)
-				&& !W->IsZoomed();
+				&& (W->GetState() != CWeapon::eSwitch);
 	}
 	if (bres)
 		m_lastParentSlot = slot;
