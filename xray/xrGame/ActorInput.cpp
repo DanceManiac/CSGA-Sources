@@ -28,6 +28,7 @@
 #include "flare.h"
 #include "CustomDetector.h"
 #include "clsid_game.h"
+#include "Weapon.h"
 
 bool g_bAutoClearCrouch = true;
 extern u32 hud_adj_mode;
@@ -168,6 +169,16 @@ void CActor::IR_OnKeyboardPress(int cmd)
 					_s->wnd()->SetText			(str);
 				}
 			}
+		}break;
+	case kFLASHLIGHT:
+		{
+			if (auto wpn = smart_cast<CWeapon*>(inventory().ActiveItem()))
+				wpn->SwitchFlashlight(!wpn->IsFlashlightOn());
+		}break;
+	case kLASER_ON:
+		{
+			if (auto wpn = smart_cast<CWeapon*>(inventory().ActiveItem()))
+				wpn->SwitchLaser(!wpn->IsLaserOn());
 		}break;
 	}
 }

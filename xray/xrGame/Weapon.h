@@ -21,6 +21,7 @@ class CSE_ALifeItemWeaponAmmo;
 class CWeaponMagazined;
 class CParticlesObject;
 class CUIWindow;
+class CLAItem;
 
 class CWeapon : public CHudItemObject,
 				public CShootingObject
@@ -180,6 +181,12 @@ protected:
 	shared_str		m_sScopeName;
 	shared_str		m_sSilencerName;
 	shared_str		m_sGrenadeLauncherName;
+
+	shared_str m_sWpn_laser_bone;
+	shared_str m_sHud_wpn_laser_bone;
+
+	shared_str m_sWpn_flashlight_bone;
+	shared_str m_sHud_wpn_flashlight_bone;
 
 	//смещение иконов апгрейдов в инвентаре
 	int	m_iScopeX, m_iScopeY;
@@ -461,4 +468,58 @@ public:
 	
 	virtual void				DumpActiveParams			(shared_str const & section_name, CInifile & dst_ini) const;
 	virtual shared_str const	GetAnticheatSectionName		() const { return cNameSect(); };
+
+	virtual void processing_deactivate() {
+		UpdateLaser();
+		UpdateFlashlight();
+		inherited::processing_deactivate();
+	}
+
+	void GetBoneOffsetPosDir(const shared_str& bone_name, Fvector& dest_pos, Fvector& dest_dir, const Fvector& offset);
+	//Функция из ганслингера для приблизительной коррекции разности фовов худа и мира. Так себе на самом деле, но более годных способов я не нашел.
+	void CorrectDirFromWorldToHud(Fvector& dir);
+
+private:
+	bool has_laser{};
+	ref_light laser_light_render;
+	CLAItem* laser_lanim{};
+	float laser_fBrightness{ 1.f };
+
+	void UpdateLaser();
+public:
+	void SwitchLaser(bool on) {
+		if (!has_laser)
+			return;
+
+		if (on)
+			m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonLaserOn;
+		else
+			m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonLaserOn;
+	}
+	inline bool IsLaserOn() const {
+		return m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonLaserOn;
+	}
+
+private:
+	bool has_flashlight{};
+	ref_light flashlight_render;
+	ref_light flashlight_omni;
+	ref_glow flashlight_glow;
+	CLAItem* flashlight_lanim{};
+	float flashlight_fBrightness{ 1.f };
+
+	void UpdateFlashlight();
+public:
+	void SwitchFlashlight(bool on) {
+		if (!has_flashlight)
+			return;
+
+		if (on)
+			m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonFlashlightOn;
+		else
+			m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonFlashlightOn;
+	}
+	inline bool IsFlashlightOn() const {
+		return m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonFlashlightOn;
+	}
 };

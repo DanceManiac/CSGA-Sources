@@ -22,6 +22,8 @@
 #include "inventory.h"
 
 #include "../Include/xrRender/UIRender.h"
+#include "Weapon.h"
+#include "Actor.h"
 
 
 u32 C_ON_ENEMY		D3DCOLOR_RGBA(0xff,0,0,0x80);
@@ -270,8 +272,14 @@ void CHUDTarget::Render()
 		F->OutNext		("%4.1f - %4.2f - %d",PP.RQ.range, PP.power, PP.pass);
 	}
 
+	CActor* Actor = smart_cast<CActor*>(Level().CurrentEntity());
+	CWeapon* Wpn = smart_cast<CWeapon*>(Actor->inventory().ActiveItem());
+	/*if (auto Wpn = smart_cast<CWeapon*>(Actor->inventory().ActiveItem());
+	Wpn && Wpn->IsLaserOn())
+		return;*/
+
 	//отрендерить кружочек или крестик
-	if(!m_bShowCrosshair)
+	if(!m_bShowCrosshair || !Wpn->IsLaserOn())
 	{
 		
 		UIRender->StartPrimitive	(6, IUIRender::ptTriList, UI()->m_currentPointType);
