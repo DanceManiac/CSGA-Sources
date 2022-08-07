@@ -252,6 +252,7 @@ void CUIHudStatesWnd::UpdateActiveItemInfo( CActor* actor )
 		m_fire_mode->SetText		( str_fire_mode );
 		SetAmmoIcon					( icon_sect_name.c_str() );
 		m_ui_weapon_sign_ammo->SetText( str_count.c_str() );
+		m_ui_weapon_sign_ammo->SetTextAlignment(m_ui_weapon_sign_ammo->GetTextAlignment());
 		
 		// hack ^ begin
 
@@ -268,6 +269,7 @@ void CUIHudStatesWnd::UpdateActiveItemInfo( CActor* actor )
 			if ( str_count.size() > 5 )
 			{
 				pFont = pFont22;
+				m_ui_weapon_sign_ammo->SetTextPos(+0,+3);
 			}
 		}
 		m_ui_weapon_sign_ammo->SetFont( pFont );
@@ -314,6 +316,9 @@ void CUIHudStatesWnd::SetAmmoIcon( const shared_str& sect_name )
 		// all others ammo (1x1, 1x2) will be not scaled (original picture)
 		float h = gridHeight * INV_GRID_HEIGHT * 0.65f;
 		float w = gridWidth  * INV_GRID_WIDTH  * 0.65f;
+		float posx_16 = 8.33f;
+		float posx = 10.0f;
+
 		if ( gridWidth > 2.01f )
 		{
 			w = INV_GRID_WIDTH * 1.5f;
@@ -322,11 +327,11 @@ void CUIHudStatesWnd::SetAmmoIcon( const shared_str& sect_name )
 		bool is_16x10 = UI()->is_16_9_mode();
 		if ( gridWidth < 1.01f )
 		{
-			m_ui_weapon_icon->SetTextureOffset( (is_16x10)? 8.33f : 10.0f, 0.0f );
+			m_ui_weapon_icon->SetTextureOffset( (is_16x10)? posx_16 : posx, 0.0f);
 		}
 		else
 		{
-			m_ui_weapon_icon->SetTextureOffset( 0.0f, 0.0f );
+			m_ui_weapon_icon->SetTextureOffset( 0.0f, 2.0f );
 		}
 
 
