@@ -981,10 +981,12 @@ void CActor::UpdateCL	()
 		Cameras().hud_camera_Matrix		(trans);
 	}else
 		Cameras().camera_Matrix			(trans);
-	
-	
+
 	if(IsFocused())
-		g_player_hud->update			(trans);
+	{
+		trans.c.sub(Device.vCameraPosition);
+		g_player_hud->update(trans);
+	}
 }
 
 float	NET_Jump = 0;
