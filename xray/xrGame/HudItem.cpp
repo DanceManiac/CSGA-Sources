@@ -43,10 +43,8 @@ void CHudItem::Load(LPCSTR section)
 	hud_sect				= pSettings->r_string		(section,"hud");
 	m_animation_slot		= pSettings->r_u32			(section,"animation_slot");
 
-//	if(pSettings->line_exist(section,"snd_bore"))
 	m_sounds.LoadSound(section,"snd_bore","sndBore");
 }
-
 
 void CHudItem::PlaySound(LPCSTR alias, const Fvector& position)
 {
@@ -169,6 +167,7 @@ void CHudItem::SendDeactivateItem	()
 {
 	SendHiddenItem	();
 }
+
 void CHudItem::SendHiddenItem()
 {
 	if (!object().getDestroy())
@@ -177,18 +176,8 @@ void CHudItem::SendHiddenItem()
 		object().u_EventGen		(P,GE_WPN_STATE_CHANGE,object().ID());
 		P.w_u8					(u8(eHiding));
 		object().u_EventSend	(P, net_flags(TRUE, TRUE, FALSE, TRUE));
-
-		/*NET_Packet		P;
-		CHudItem::object().u_EventGen		(P,GE_WPN_STATE_CHANGE,CHudItem::object().ID());
-		P.w_u8			(u8(eHidden));
-		P.w_u8			(u8(m_sub_state));
-		P.w_u8			(u8(m_ammoType& 0xff));
-		P.w_u8			(u8(iAmmoElapsed & 0xff));
-		P.w_u8			(u8(m_set_next_ammoType_on_reload & 0xff));
-		CHudItem::object().u_EventSend		(P, net_flags(TRUE, TRUE, FALSE, TRUE));*/
 	}
 }
-
 
 void CHudItem::UpdateHudAdditonal		(Fmatrix& hud_trans)
 {
@@ -216,7 +205,7 @@ void CHudItem::UpdateCL()
 	
 					const motion_marks::interval* Iprev = M.pick_mark(motion_prev_time);
 					const motion_marks::interval* Icurr = M.pick_mark(motion_curr_time);
-					if(Iprev==NULL && Icurr!=NULL /* || M.is_mark_between(motion_prev_time, motion_curr_time)*/)
+					if(Iprev==NULL && Icurr!=NULL)
 					{
 						OnMotionMark				(m_startedMotionState, M);
 					}
@@ -250,20 +239,6 @@ void CHudItem::OnH_B_Independent	(bool just_before_destroy)
 {
 	m_sounds.StopAllSounds	();
 	UpdateXForm				();
-	
-	// next code was commented 
-	/*
-	if(HudItemData() && !just_before_destroy)
-	{
-		object().XFORM().set( HudItemData()->m_item_transform );
-	}
-	
-	if (HudItemData())
-	{
-		g_player_hud->detach_item(this);
-		Msg("---Detaching hud item [%s][%d]", this->HudSection().c_str(), this->object().ID());
-	}*/
-	//SetHudItemData			(NULL);
 }
 
 void CHudItem::OnH_A_Independent	()
@@ -308,7 +283,6 @@ u32 CHudItem::PlayHUDMotion(const shared_str& M, BOOL bMixIn, CHudItem*  W, u32 
 
 u32 CHudItem::PlayHUDMotionNew(const shared_str& M, const bool bMixIn, const u32 state, const bool randomAnim)
 {
-	//Msg("~~[%s] Playing motion [%s] for [%s]", __FUNCTION__, M.c_str(), HudSection().c_str());
 	u32 anim_time					= PlayHUDMotion_noCB(M, bMixIn);
 	if (anim_time>0)
 	{
@@ -383,10 +357,6 @@ BOOL CHudItem::GetHUDmode()
 		CActor* A = smart_cast<CActor*>(object().H_Parent());
 		return ( A && A->HUDview() && HudItemData() && 
 				(HudItemData())
-//				(
-//				HudItemData()==g_player_hud->attached_item(0) ||
-//				HudItemData()==g_player_hud->attached_item(1) 
-//				)
 			);
 	}else
 		return FALSE;
@@ -460,4 +430,17 @@ attachable_hud_item* CHudItem::HudItemData()
 		return hi;
 
 	return NULL;
+}
+
+void CHudItem::TimeLockAnimation()//OGSR GA
+{
+	/*if (GetState() != eDeviceSwitch)
+		return;*/
+	
+	string128 anm_time_param;
+	strconcat(sizeof(anm_time_param), anm_time_param, "lock_time_end_", m_current_motion.c_str());
+	const float time = READ_IF_EXISTS(pSettings, r_float, HudSection(), anm_time_param, 0) * 1000.f;
+	const float current_time = Device.dwTimeGlobal - m_dwMotionStartTm;
+	if (time && current_time >= time)
+		DeviceUpdate();
 }
