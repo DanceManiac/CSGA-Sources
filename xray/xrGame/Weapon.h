@@ -369,6 +369,9 @@ protected:
 	float					m_fMinRadius;
 	float					m_fMaxRadius;
 
+public:
+	bool m_bDisableBore;
+
 protected:	
 	//для второго ствола
 			void			StartFlameParticles2();

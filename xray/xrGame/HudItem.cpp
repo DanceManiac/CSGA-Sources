@@ -146,7 +146,7 @@ void CHudItem::OnAnimationEnd(u32 state)
 
 void CHudItem::PlayAnimBore()
 {
-	if(isHUDAnimationExist("anm_bore"))
+	if(isHUDAnimationExist("anm_bore"))//чтобы не пришлось добавлять заглушки если disable_bore = false
 		PlayHUDMotion	("anm_bore", TRUE, this, GetState());
 }
 
