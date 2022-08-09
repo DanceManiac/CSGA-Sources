@@ -1507,7 +1507,9 @@ void CWeapon::UpdateAddonsVisibility()
 		{
 			if(!pWeaponVisual->LL_GetBoneVisible		(bone_id))
 			pWeaponVisual->LL_SetBoneVisible				(bone_id,TRUE,TRUE);
-		}else{
+		}
+		else
+		{
 			if(pWeaponVisual->LL_GetBoneVisible				(bone_id))
 				pWeaponVisual->LL_SetBoneVisible			(bone_id,FALSE,TRUE);
 		}
@@ -1572,7 +1574,9 @@ void CWeapon::UpdateAddonsVisibility()
 		{
 			if(!pWeaponVisual->LL_GetBoneVisible		(bone_id))
 				pWeaponVisual->LL_SetBoneVisible			(bone_id,TRUE,TRUE);
-		}else{
+		}
+		else
+		{
 			if(pWeaponVisual->LL_GetBoneVisible				(bone_id))
 				pWeaponVisual->LL_SetBoneVisible			(bone_id,FALSE,TRUE);
 		}
@@ -1584,6 +1588,21 @@ void CWeapon::UpdateAddonsVisibility()
 //		Log("gl", pWeaponVisual->LL_GetBoneVisible			(bone_id));
 	}
 	
+	for (const auto& boneName : m_defHiddenBones)
+	{
+		bone_id = pWeaponVisual->LL_BoneID(boneName);
+		if (bone_id != BI_NONE && pWeaponVisual->LL_GetBoneVisible(bone_id))
+			pWeaponVisual->LL_SetBoneVisible(bone_id, FALSE, TRUE);
+	}
+	
+	for (const auto& boneName : m_defShownBones)
+	{
+		bone_id = pWeaponVisual->LL_BoneID(boneName);
+		if (bone_id != BI_NONE && pWeaponVisual->LL_GetBoneVisible(bone_id))
+			pWeaponVisual->LL_SetBoneVisible(bone_id, TRUE, TRUE);
+	}
+
+	///////////////////////////////////////////////////////////////////
 
 	pWeaponVisual->CalculateBones_Invalidate				();
 	pWeaponVisual->CalculateBones							(TRUE);
