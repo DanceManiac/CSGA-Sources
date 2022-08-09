@@ -527,6 +527,27 @@ void CWeapon::Load		(LPCSTR section)
 		flashlight_glow->set_radius(READ_IF_EXISTS(pSettings, r_float, m_light_section, "glow_radius", 0.3f));
 	}
 	hud_recalc_koef = READ_IF_EXISTS(pSettings, r_float, hud_sect, "hud_recalc_koef", 1.35f); //На калаше при 1.35 вроде норм смотрится, другим стволам возможно придется подбирать другие значения.
+	
+	auto LoadBoneNames = [](pcstr section, pcstr line, RStringVec& list)
+	{
+		list.clear();
+		if(pSettings->line_exist(section, line))
+		{
+			pcstr lineStr = pSettings->r_string(section, line);
+			for (int j = 0, cnt = _GetItemCount(lineStr); j < cnt; ++j)
+			{
+				string128 bone_name;
+				_GetItem(lineStr, j, bone_name);
+				list.push_back(bone_name);
+			}
+			return true;
+		}
+		return false;
+	};
+	
+	LoadBoneNames(section, "def_show_bones", m_defShownBones);
+	
+	LoadBoneNames(section, "def_hide_bones", m_defHiddenBones);
 }
 
 void CWeapon::LoadFireParams		(LPCSTR section)
@@ -1407,6 +1428,21 @@ void CWeapon::UpdateHUDAddonsVisibility()
 	if(!GetHUDmode())										return;
 
 //.	return;
+
+	auto SetBoneVisible = [&](const shared_str& boneName, BOOL visibility)
+	{
+		HudItemData()->set_bone_visible(boneName, visibility, TRUE);
+	};
+	
+	for (const shared_str& bone : m_defHiddenBones)
+	{
+		SetBoneVisible(bone, FALSE);
+	}
+	
+	for (const shared_str& bone : m_defShownBones)
+	{
+		SetBoneVisible(bone, TRUE);
+	}
 
 	if (m_sHud_wpn_laser_bone.size() && has_laser)
 	{

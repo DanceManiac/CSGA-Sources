@@ -192,6 +192,9 @@ protected:
 	int	m_iScopeX, m_iScopeY;
 	int	m_iSilencerX, m_iSilencerY;
 	int	m_iGrenadeLauncherX, m_iGrenadeLauncherY;
+	
+	RStringVec		m_defShownBones;
+	RStringVec		m_defHiddenBones;
 
 protected:
 
