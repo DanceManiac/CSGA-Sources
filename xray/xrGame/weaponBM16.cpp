@@ -18,15 +18,12 @@ void CWeaponBM16::PlayReloadSound()
 	{
 	case 1:
 		if(IsMisfire())
-			PlaySound	("sndReloadJammed",get_LastFP());
+			PlaySound	("sndReloadJammedLast",get_LastFP());
 		else
 			PlaySound	("sndReload1",get_LastFP());
 		break;
-	case 2:
-		if(IsMisfire())
-			PlaySound	("sndReloadJammedLast",get_LastFP());
-		else
-			PlaySound	("sndReload",get_LastFP());
+	case 0:
+		PlaySound	("sndReload",get_LastFP());
 		break;
 	}
 }
