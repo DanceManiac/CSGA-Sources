@@ -35,12 +35,20 @@ void CWeaponBM16::PlayAnimShoot()
 	case 1:
 		if(IsMisfire())
 			PlayHUDMotion("anm_shoot_jammed_1",FALSE,this,GetState());
+		else if(IsZoomed())
+			PlayHUDMotion("anm_shoot_aim_1",FALSE,this,GetState());
+		else if(IsZoomed() && IsMisfire())
+			PlayHUDMotion("anm_shoot_aim_jammed_1",FALSE,this,GetState());
 		else
 			PlayHUDMotion("anm_shoot_1",FALSE,this,GetState());
 		break;
 	case 2:
 		if(IsMisfire())
 			PlayHUDMotion("anm_shoot_jammed_2",FALSE,this,GetState());
+		else if(IsZoomed())
+			PlayHUDMotion("anm_shoot_aim_2",FALSE,this,GetState());
+		else if(IsZoomed() && IsMisfire())
+			PlayHUDMotion("anm_shoot_aim_jammed_2",FALSE,this,GetState());
 		else
 			PlayHUDMotion("anm_shoot_2",FALSE,this,GetState());
 		break;
