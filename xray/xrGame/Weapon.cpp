@@ -1124,7 +1124,8 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 						}else
 							OnZoomOut	();
 					}
-				}else
+				}
+				else
 				{
 					if(flags&CMD_START)
 					{
@@ -1134,22 +1135,27 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 								SwitchState(eIdle);
 							OnZoomIn	();
 						}
-					}else 
+					}
+					else 
 						if(IsZoomed())
 							OnZoomOut	();
 				}
 				return true;
-			}else 
+			}
+			else 
 				return false;
 
 		case kWPN_ZOOM_INC:
 		case kWPN_ZOOM_DEC:
-			if(IsZoomEnabled() && IsZoomed())
+			if( IsZoomEnabled() && IsZoomed() && (flags&CMD_START) )
 			{
-				if(cmd==kWPN_ZOOM_INC)  ZoomInc();
-				else					ZoomDec();
+				if(cmd==kWPN_ZOOM_INC)
+					ZoomInc();
+				else
+					ZoomDec();
 				return true;
-			}else
+			}
+			else
 				return false;
 	}
 	return false;
