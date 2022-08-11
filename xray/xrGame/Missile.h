@@ -47,7 +47,7 @@ public:
 
 	virtual bool 			Action						(s32 cmd, u32 flags);
 
-	virtual void 			State						(u32 state);
+	virtual void 			State						(u32 state, u32 old_state);
 	virtual void 			OnStateSwitch				(u32 S);
 	virtual void			GetBriefInfo				(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count, string16& fire_mode);
 

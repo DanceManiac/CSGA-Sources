@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "grenade.h"
 #include "PhysicsShell.h"
-//.#include "WeaponHUD.h"
 #include "entity.h"
 #include "ParticlesObject.h"
 #include "actor.h"
@@ -87,7 +86,7 @@ void CGrenade::OnH_A_Chield()
 	inherited::OnH_A_Chield				();
 }
 
-void CGrenade::State(u32 state) 
+void CGrenade::State(u32 state, u32 old_state) 
 {
 	switch (state)
 	{
@@ -117,7 +116,7 @@ void CGrenade::State(u32 state)
 			};
 		}break;
 	};
-	inherited::State( state );
+	inherited::State( state, old_state );
 }
 
 bool CGrenade::DropGrenade()

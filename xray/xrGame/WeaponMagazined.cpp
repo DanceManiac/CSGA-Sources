@@ -377,6 +377,7 @@ void CWeaponMagazined::ReloadMagazine()
 
 void CWeaponMagazined::OnStateSwitch	(u32 S)
 {
+	u32 old_state = GetState();
 	inherited::OnStateSwitch(S);
 	switch (S)
 	{
@@ -400,7 +401,8 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
 		switch2_Showing	();
 		break;
 	case eHiding:
-		switch2_Hiding	();
+		if(old_state != eHiding)
+			switch2_Hiding	();
 		break;
 	case eHidden:
 		switch2_Hidden	();
