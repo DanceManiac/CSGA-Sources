@@ -286,7 +286,9 @@ void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 		}
 		if(l_it->second && !unlimited_ammo()) SpawnAmmo(l_it->second, l_it->first);
 	}
-	SwitchState(eIdle);//чтобы обновлялся худ после анлода, и проигрывалась анимация anm_idle_empty. Спасибо Валерку.
+	
+	if(GetState() == eIdle)
+		SwitchState(eIdle);//чтобы обновлялся худ после анлода, и проигрывалась анимация anm_idle_empty. Спасибо Валерку.
 }
 
 void CWeaponMagazined::ReloadMagazine() 
