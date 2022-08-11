@@ -1334,6 +1334,18 @@ public:
 	virtual void Info(TInfo& I) { strcpy(I, "name,team,squad,group"); }
 };
 
+class CCC_SetMoney : public IConsole_Command {
+public:
+	CCC_SetMoney(LPCSTR N) : IConsole_Command(N) { };
+	virtual void Execute(LPCSTR args)
+	{
+		if (!g_pGameLevel) return;
+		int val = atoi(args);
+		CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
+		if (pActor)
+			pActor->set_money(val,true);
+	}
+};
 #endif // MASTER_GOLD
 
 #include "GamePersistent.h"
@@ -1935,6 +1947,7 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 	CMD1(CCC_TimeFactor,		"time_factor");
 	CMD1(CCC_Spawn,				"g_spawn");		
 	CMD1(CCC_Spawn_to_inventory,"g_spawn_to_inventory");
+	CMD1(CCC_SetMoney,			"g_set_money");
 #endif // MASTER_GOLD
 	CMD1(CCC_Script,		"run_script");
 	CMD1(CCC_ScriptCommand,	"run_string");
