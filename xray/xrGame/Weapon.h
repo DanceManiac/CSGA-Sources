@@ -373,7 +373,7 @@ protected:
 	float					m_fMaxRadius;
 
 public:
-	bool m_bDisableBore;
+	bool m_bDisableBore; // отключение анимаций "скуки"
 
 protected:	
 	//для второго ствола

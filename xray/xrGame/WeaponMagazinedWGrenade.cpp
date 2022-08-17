@@ -37,7 +37,8 @@ void CWeaponMagazinedWGrenade::Load	(LPCSTR section)
 	//// Sounds
 	m_sounds.LoadSound(section,"snd_shoot_grenade"	, "sndShotG"		, m_eSoundShot);
 	m_sounds.LoadSound(section,"snd_reload_grenade"	, "sndReloadG"	, m_eSoundReload);
-	m_sounds.LoadSound(section,"snd_switch"			, "sndSwitch"		, m_eSoundReload);
+	m_sounds.LoadSound(section,"snd_switch"			, "sndSwitchToG"		, m_eSoundReload);
+	m_sounds.LoadSound(section,"snd_switch_from_g"			, "sndSwitchFromG"		, m_eSoundReload);
 	
 
 	m_sFlameParticles2 = pSettings->r_string(section, "grenade_flame_particles");
@@ -166,7 +167,14 @@ bool CWeaponMagazinedWGrenade::SwitchMode()
 
 	PerformSwitchGL			();
 	
-	PlaySound				("sndSwitch", get_LastFP());
+	if(m_bGrenadeMode)
+	{
+		PlaySound				("sndSwitchFromG", get_LastFP());
+	}
+	else
+	{
+		PlaySound				("sndSwitchToG", get_LastFP());
+	}
 
 	PlayAnimModeSwitch		();
 
@@ -872,7 +880,8 @@ void CWeaponMagazinedWGrenade::UpdateSounds	()
 	Fvector P						= get_LastFP();
 	m_sounds.SetPosition("sndShotG", P);
 	m_sounds.SetPosition("sndReloadG", P);
-	m_sounds.SetPosition("sndSwitch", P);
+	m_sounds.SetPosition("sndSwitchToG", P);
+	m_sounds.SetPosition("sndSwitchFromG", P);
 }
 
 void CWeaponMagazinedWGrenade::UpdateGrenadeVisibility(bool visibility)
@@ -1011,7 +1020,11 @@ bool CWeaponMagazinedWGrenade::install_upgrade_impl( LPCSTR section, bool test )
 	result |= result2;
 
 	result2 = process_if_exists_set( section, "snd_switch", &CInifile::r_string, str, test );
-	if ( result2 && !test ) { m_sounds.LoadSound( section, "snd_switch", "sndSwitch", m_eSoundReload );	}
+	if ( result2 && !test ) { m_sounds.LoadSound( section, "snd_switch", "sndSwitchToG", m_eSoundReload );	}
+	result |= result2;
+	
+	result2 = process_if_exists_set( section, "snd_switch_from_g", &CInifile::r_string, str, test );
+	if ( result2 && !test ) { m_sounds.LoadSound( section, "snd_switch", "sndSwitchFromG", m_eSoundReload );	}
 	result |= result2;
 
 	return result;
