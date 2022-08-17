@@ -13,6 +13,7 @@
 #include "game_base_space.h"
 #include "MathUtils.h"
 #include "player_hud.h"
+#include "WeaponGroza.h"
 
 #ifdef DEBUG
 #	include "phdebug.h"
@@ -40,6 +41,12 @@ void CWeaponMagazinedWGrenade::Load	(LPCSTR section)
 	m_sounds.LoadSound(section,"snd_switch"			, "sndSwitchToG"		, m_eSoundReload);
 	m_sounds.LoadSound(section,"snd_switch_from_g"			, "sndSwitchFromG"		, m_eSoundReload);
 	
+	CWeaponGroza* groza = smart_cast<CWeaponGroza*>(this);
+	if(groza && IsScopeAttached())
+	{
+		m_sounds.LoadSound(section,"snd_switch_scope"			, "sndSwitchToGScope"		, m_eSoundReload);
+		m_sounds.LoadSound(section,"snd_switch_from_g_scope"			, "sndSwitchFromGScope"		, m_eSoundReload);
+	}
 
 	m_sFlameParticles2 = pSettings->r_string(section, "grenade_flame_particles");
 
@@ -74,7 +81,6 @@ void CWeaponMagazinedWGrenade::net_Destroy()
 	inherited::net_Destroy();
 }
 
-
 BOOL CWeaponMagazinedWGrenade::net_Spawn(CSE_Abstract* DC) 
 {
 	CSE_ALifeItemWeapon* const weapon		= smart_cast<CSE_ALifeItemWeapon*>(DC);
@@ -105,7 +111,8 @@ BOOL CWeaponMagazinedWGrenade::net_Spawn(CSE_Abstract* DC)
 
 			CRocketLauncher::SpawnRocket(*fake_grenade_name, this);
 		}
-	}else
+	}
+	else
 	{
 		xr_vector<CCartridge>* pM = NULL;
 		bool b_if_grenade_mode	= (m_bGrenadeMode && iAmmoElapsed && !getRocketCount());
@@ -445,6 +452,26 @@ void CWeaponMagazinedWGrenade::OnStateSwitch(u32 S)
 	
 	inherited::OnStateSwitch(S);
 	UpdateGrenadeVisibility(!!iAmmoElapsed || S == eReload);
+}
+
+void CWeaponMagazinedWGrenade::EmptyMove()
+{
+	if(m_bGrenadeMode)
+	{
+		if(IsZoomed())
+			PlayHUDMotion("anm_fakeshoot_aim_empty_g", false, this, GetState());
+		else
+			PlayHUDMotion("anm_fakeshoot_empty_g", false, this, GetState());
+	}
+	else if (IsGrenadeLauncherAttached() && !m_bGrenadeMode)
+	{
+		if(IsZoomed())
+			PlayHUDMotion("anm_fakeshoot_aim_empty_w_gl", false, this, GetState());
+		else
+			PlayHUDMotion("anm_fakeshoot_empty_w_gl", false, this, GetState());
+	}
+	else
+		inherited::EmptyMove();
 }
 
 void CWeaponMagazinedWGrenade::OnAnimationEnd(u32 state)

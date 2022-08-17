@@ -7,7 +7,7 @@
 #include "Actor.h"
 #include "Level.h"
 
-CWeaponGroza::CWeaponGroza() :CWeaponMagazinedWGrenade(SOUND_TYPE_WEAPON_SUBMACHINEGUN) 
+CWeaponGroza::CWeaponGroza() :CWeaponMagazined(SOUND_TYPE_WEAPON_SUBMACHINEGUN) 
 {
 }
 
@@ -18,59 +18,6 @@ CWeaponGroza::~CWeaponGroza()
 void CWeaponGroza::Load(LPCSTR section)
 {
 	inherited::Load		(section);
-	
-	m_sounds.LoadSound(section,"snd_switch_scope"			, "sndSwitchToGScope"		, m_eSoundReload);
-	m_sounds.LoadSound(section,"snd_switch_from_g_scope"			, "sndSwitchFromGScope"		, m_eSoundReload);
-}
-
-bool CWeaponGroza::SwitchMode()
-{
-	if(m_bGrenadeMode)
-	{
-		if(IsScopeAttached())
-		{
-			PlaySound				("sndSwitchFromGScope", get_LastFP());
-		}
-	}
-	else if(!m_bGrenadeMode)
-	{
-		if(IsScopeAttached())
-		{
-			PlaySound				("sndSwitchToGScope", get_LastFP());
-		}
-	}
-	else
-		inherited::SwitchMode();
-	return true;
-}
-
-void CWeaponGroza::PlayAnimModeSwitch()
-{
-	if(IsScopeAttached())
-	{
-		if(m_bGrenadeMode)
-		{
-			if(iAmmoElapsed == 0 && isHUDAnimationExist("anm_switch_empty_g_scope"))
-				PlayHUDMotion("anm_switch_empty_g_scope" , false, this, eSwitch);
-			else if(IsMisfire() && isHUDAnimationExist("anm_switch_jammed_g_scope"))
-				PlayHUDMotion("anm_switch_jammed_g_scope" , false, this, eSwitch);
-			else
-				if(isHUDAnimationExist("anm_switch_g_scope"))
-					PlayHUDMotion("anm_switch_g_scope" , true, this, eSwitch);
-		}
-		else 
-		{
-			if(iAmmoElapsed == 0 && isHUDAnimationExist("anm_switch_empty_w_gl_scope"))
-				PlayHUDMotion("anm_switch_empty_w_gl_scope" , false, this, eSwitch);
-			else if(IsMisfire() && isHUDAnimationExist("anm_switch_jammed_w_gl_scope"))
-				PlayHUDMotion("anm_switch_jammed_w_gl_scope" , false, this, eSwitch);
-			else
-				if(isHUDAnimationExist("anm_switch_w_gl_scope"))
-					PlayHUDMotion("anm_switch_w_gl_scope" , true, this, eSwitch);
-		}
-	}
-	else
-		inherited::PlayAnimModeSwitch();
 }
 
 void CWeaponGroza::PlayAnimIdle()
@@ -216,49 +163,6 @@ void CWeaponGroza::PlayAnimIdleSprint()
 	}
 	else
 		inherited::PlayAnimIdleSprint();
-}
-
-bool CWeaponGroza::CanAttach(PIItem pIItem)
-{
-	CScope*				pScope				= smart_cast<CScope*>(pIItem);
-	CSilencer*			pSilencer			= smart_cast<CSilencer*>(pIItem);
-	CGrenadeLauncher*	pGrenadeLauncher	= smart_cast<CGrenadeLauncher*>(pIItem);
-
-	if(			pScope &&
-				 m_eScopeStatus == ALife::eAddonAttachable &&
-				(m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonScope) == 0 &&
-				(m_sScopeName == pIItem->object().cNameSect()) )
-       return true;
-	else if(	pSilencer &&
-				m_eSilencerStatus == ALife::eAddonAttachable &&
-				(m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonSilencer) == 0 &&
-				(m_sSilencerName == pIItem->object().cNameSect()) )
-       return true;
-	else if (	pGrenadeLauncher &&
-				m_eGrenadeLauncherStatus == ALife::eAddonAttachable &&
-				(m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) == 0 &&
-				(m_sGrenadeLauncherName  == pIItem->object().cNameSect()) )
-		return true;
-	else if (	pGrenadeLauncher && IsSilencerAttached() &&
-				m_eGrenadeLauncherStatus == ALife::eAddonAttachable &&
-				(m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) == 0 &&
-				(m_sGrenadeLauncherName  == pIItem->object().cNameSect()) )
-				{
-		if(smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity()==H_Parent()) )
-			HUD().GetUI()->AddInfoMessage("nope_gl_else_sil");
-		return false;
-				}
-	else if(	pSilencer && IsGrenadeLauncherAttached() &&
-				m_eSilencerStatus == ALife::eAddonAttachable &&
-				(m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonSilencer) == 0 &&
-				(m_sSilencerName == pIItem->object().cNameSect()) )
-				{
-		if(smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity()==H_Parent()) )
-			HUD().GetUI()->AddInfoMessage("nope_sil_else_gl");
-       return false;
-				}
-	else
-		return inherited::CanAttach(pIItem);
 }
 
 using namespace luabind;

@@ -883,7 +883,6 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
         return inherited::Attach(pIItem, b_send_event);
 }
 
-
 bool CWeaponMagazined::Detach(const char* item_section_name, bool b_spawn_item)
 {
 	if(		m_eScopeStatus == ALife::eAddonAttachable &&
@@ -920,13 +919,7 @@ bool CWeaponMagazined::Detach(const char* item_section_name, bool b_spawn_item)
 	else
 		return inherited::Detach(item_section_name, b_spawn_item);;
 }
-/*
-void CWeaponMagazined::LoadAddons()
-{
-	m_zoom_params.m_fIronSightZoomFactor = READ_IF_EXISTS( pSettings, r_float, cNameSect(), "ironsight_zoom_factor", 50.0f );
 
-}
-*/
 void CWeaponMagazined::InitAddons()
 {
 	m_zoom_params.m_fIronSightZoomFactor = READ_IF_EXISTS( pSettings, r_float, cNameSect(), "ironsight_zoom_factor", 50.0f );

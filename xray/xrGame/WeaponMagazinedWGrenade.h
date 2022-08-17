@@ -39,6 +39,7 @@ public:
 			void	LaunchGrenade			();
 	
 	virtual void	OnStateSwitch	(u32 S);
+	virtual void	EmptyMove		();
 	
 	virtual void	switch2_Reload	();
 	virtual void	state_Fire		(float dt);
