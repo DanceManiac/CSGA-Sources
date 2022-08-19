@@ -13,7 +13,6 @@
 #include "game_base_space.h"
 #include "MathUtils.h"
 #include "player_hud.h"
-#include "WeaponGroza.h"
 
 #ifdef DEBUG
 #	include "phdebug.h"
@@ -41,12 +40,8 @@ void CWeaponMagazinedWGrenade::Load	(LPCSTR section)
 	m_sounds.LoadSound(section,"snd_switch"			, "sndSwitchToG"		, m_eSoundReload);
 	m_sounds.LoadSound(section,"snd_switch_from_g"			, "sndSwitchFromG"		, m_eSoundReload);
 	
-	CWeaponGroza* groza = smart_cast<CWeaponGroza*>(this);
-	if(groza && IsScopeAttached())
-	{
-		m_sounds.LoadSound(section,"snd_switch_scope"			, "sndSwitchToGScope"		, m_eSoundReload);
-		m_sounds.LoadSound(section,"snd_switch_from_g_scope"			, "sndSwitchFromGScope"		, m_eSoundReload);
-	}
+	m_sounds.LoadSound(section,"snd_switch_scope"			, "sndSwitchToGScope"		, m_eSoundReload);
+	m_sounds.LoadSound(section,"snd_switch_from_g_scope"			, "sndSwitchFromGScope"		, m_eSoundReload);
 
 	m_sFlameParticles2 = pSettings->r_string(section, "grenade_flame_particles");
 
@@ -176,11 +171,17 @@ bool CWeaponMagazinedWGrenade::SwitchMode()
 	
 	if(m_bGrenadeMode)
 	{
-		PlaySound				("sndSwitchFromG", get_LastFP());
+		if(IsScopeAttached())
+			PlaySound				("sndSwitchFromGScope", get_LastFP());
+		else
+			PlaySound				("sndSwitchFromG", get_LastFP());
 	}
 	else
 	{
-		PlaySound				("sndSwitchToG", get_LastFP());
+		if(IsScopeAttached())
+			PlaySound				("sndSwitchToGScope", get_LastFP());
+		else
+			PlaySound				("sndSwitchToG", get_LastFP());
 	}
 
 	PlayAnimModeSwitch		();
