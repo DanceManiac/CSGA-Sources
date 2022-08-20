@@ -18,6 +18,7 @@
 #include "MPPlayersBag.h"
 #include "ui/UIXmlInit.h"
 #include "ui/UIWindow.h"
+#include "HudSound.h"
 
 ENGINE_API	bool	g_dedicated_server;
 
@@ -60,6 +61,23 @@ void CWeaponMagazined::net_Destroy()
 	inherited::net_Destroy();
 }
 
+//AVO: for custom added sounds check if sound exists
+bool CWeaponMagazined::WeaponSoundExist(LPCSTR section, LPCSTR sound_name)
+{
+	LPCSTR str;
+	bool sec_exist = process_if_exists_set(section, sound_name, &CInifile::r_string, str, true);
+	if (sec_exist)
+		return true;
+	else
+	{
+#ifdef DEBUG
+        Msg("~ [WARNING] ------ Sound [%s] does not exist in [%s]", sound_name, section);
+#endif
+		return false;
+	}
+}
+
+//-AVO
 
 void CWeaponMagazined::Load	(LPCSTR section)
 {
@@ -68,7 +86,12 @@ void CWeaponMagazined::Load	(LPCSTR section)
 	// Sounds
 	m_sounds.LoadSound(section,"snd_draw", "sndShow", false, m_eSoundShow);
 	m_sounds.LoadSound(section,"snd_holster", "sndHide", false, m_eSoundHide);
-	m_sounds.LoadSound(section,"snd_shoot", "sndShot", false, m_eSoundShot);
+
+	//Alundaio: LAYERED_SND_SHOOT
+	m_layered_sounds.LoadSound(section, "snd_shoot", "sndShot", false, m_eSoundShot);
+	if (WeaponSoundExist(section, "snd_shoot_actor"))
+		m_layered_sounds.LoadSound(section, "snd_shoot_actor", "sndShotActor", false, m_eSoundShot);
+
 	m_sounds.LoadSound(section,"snd_empty", "sndEmptyClick", false, m_eSoundEmptyClick);
 	m_sounds.LoadSound(section,"snd_reload", "sndReload", true, m_eSoundReload);
 	m_sounds.LoadSound(section,"snd_reload_empty", "sndReloadEmpty", true, m_eSoundReload);
@@ -84,7 +107,11 @@ void CWeaponMagazined::Load	(LPCSTR section)
 		if(pSettings->line_exist(section, "silencer_smoke_particles"))
 			m_sSilencerSmokeParticles = pSettings->r_string(section, "silencer_smoke_particles");
 		
-		m_sounds.LoadSound(section,"snd_silncer_shot", "sndSilencerShot", false, m_eSoundShot);
+		//Alundaio: LAYERED_SND_SHOOT Silencer
+		m_layered_sounds.LoadSound(section, "snd_silncer_shot", "sndSilencerShot", false, m_eSoundShot);
+		if (WeaponSoundExist(section, "snd_silncer_shot_actor"))
+			m_layered_sounds.LoadSound(section, "snd_silncer_shot_actor", "sndSilencerShotActor", false, m_eSoundShot);
+		//-Alundaio
 	}
 
 	if (pSettings->line_exist(section, "dispersion_start"))
@@ -584,11 +611,26 @@ void CWeaponMagazined::SetDefaults	()
 	CWeapon::SetDefaults		();
 }
 
+void CWeaponMagazined::PlaySoundShot()
+{
+	if (ParentIsActor())
+	{
+		string128 sndName;
+		strconcat(sizeof(sndName), sndName, m_sSndShotCurrent.c_str(), "Actor");
+		if (m_layered_sounds.FindSoundItem(sndName, false))
+		{
+			m_layered_sounds.PlaySound(sndName, get_LastFP(), H_Root(), !!GetHUDmode(), false, (u8)-1);
+			return;
+		}
+	}
+
+	m_layered_sounds.PlaySound(m_sSndShotCurrent.c_str(), get_LastFP(), H_Root(), !!GetHUDmode(), false, (u8)-1);
+}
 
 void CWeaponMagazined::OnShot()
 {
 	// Sound
-	PlaySound					(m_sSndShotCurrent.c_str(), get_LastFP());
+	PlaySoundShot();
 
 	// Camera	
 	AddShotEffector				();
@@ -1359,7 +1401,14 @@ bool CWeaponMagazined::install_upgrade_impl( LPCSTR section, bool test )
 	result2 = process_if_exists_set(section, "snd_shoot", &CInifile::r_string, str, test );
 	if ( result2 && !test )
 	{
-		m_sounds.LoadSound(section, "snd_shoot", "sndShot", false, m_eSoundShot);
+		m_layered_sounds.LoadSound(section, "snd_shoot", "sndShot", false, m_eSoundShot);
+	}
+	result |= result2;
+	
+	result2 = process_if_exists_set(section, "snd_shoot_actor", &CInifile::r_string, str, test );
+	if ( result2 && !test )
+	{
+		m_layered_sounds.LoadSound(section, "snd_shoot_actor", "sndShotActor", false, m_eSoundShot);
 	}
 	result |= result2;
 
@@ -1382,10 +1431,17 @@ bool CWeaponMagazined::install_upgrade_impl( LPCSTR section, bool test )
 		result |= process_if_exists_set( section, "silencer_flame_particles", &CInifile::r_string, m_sSilencerFlameParticles, test );
 		result |= process_if_exists_set( section, "silencer_smoke_particles", &CInifile::r_string, m_sSilencerSmokeParticles, test );
 
-		result2 = process_if_exists_set( section, "snd_silncer_shot", &CInifile::r_string, str, test );
+		result2 = process_if_exists_set(section, "snd_silncer_shot", &CInifile::r_string, str, test);
 		if ( result2 && !test )
 		{
-			m_sounds.LoadSound(section, "snd_silncer_shot", "sndSilencerShot", false, m_eSoundShot);
+			m_layered_sounds.LoadSound(section, "snd_silncer_shot", "sndSilencerShot", false, m_eSoundShot);
+		}
+		result |= result2;
+		
+		result2 = process_if_exists_set(section, "snd_silncer_shot_actor", &CInifile::r_string, str, test);
+		if ( result2 && !test )
+		{
+			m_layered_sounds.LoadSound(section, "snd_silncer_shot_actor", "sndSilencerShotActor", false, m_eSoundShot);
 		}
 		result |= result2;
 	}

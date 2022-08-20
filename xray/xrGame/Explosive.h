@@ -12,6 +12,7 @@
 #include "DamageSource.h"
 #include "wallmark_manager.h"
 #include "ParticlesObject.h"
+#include "HudSound.h"
 class IRender_Light;
 DEFINE_VECTOR(CPhysicsShellHolder*,BLASTED_OBJECTS_V,BLASTED_OBJECTS_I);
 class CExplosive : 
@@ -77,6 +78,8 @@ static		float				TestPassEffect			(const	Fvector	&source_p,	const	Fvector	&dir,f
 			void				LightCreate				();
 			void				LightDestroy			();
 protected:
+
+	HUD_SOUND_COLLECTION_LAYERED m_layered_sounds;
 
 	CWalmarkManager				m_wallmark_manager;
 	//ID персонажа который иницировал действие

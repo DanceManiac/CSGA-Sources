@@ -115,30 +115,9 @@ void CWeaponPistol::OnAnimationEnd(u32 state)
 	inherited::OnAnimationEnd(state);
 }
 
-void CWeaponPistol::OnShot		()
+void CWeaponPistol::OnShot()
 {
-	PlaySound		(m_sSndShotCurrent.c_str(),get_LastFP());
-
-	AddShotEffector	();
-	
-	PlayAnimShoot	();
-
-	// Shell Drop
-	Fvector vel; 
-	PHGetLinearVell(vel);
-	if(!bMisfire)
-	{
-		OnShellDrop					(get_LastSP(),  vel);
-	}
-
-	// ќгонь из ствола
-	
-	StartFlameParticles	();
-	R_ASSERT2(!m_pFlameParticles || !m_pFlameParticles->IsLooped(),
-			  "can't set looped particles system for shoting with pistol");
-	
-	//дым из ствола
-	StartSmokeParticles	(get_LastFP(), vel);
+	inherited::OnShot();
 }
 
 void CWeaponPistol::UpdateSounds()

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "weapon.h"
-#include "hudsound.h"
+#include "HudSound.h"
 #include "ai_sounds.h"
 
 class ENGINE_API CMotionDef;
@@ -157,6 +157,7 @@ protected:
 	const char* GetAnimAimName();
 	
 	virtual void	PlayAnimShoot		();
+	virtual void	PlaySoundShot		();
 	virtual void	PlayReloadSound		();
 	virtual void	PlayAnimAim			();
 
@@ -166,4 +167,8 @@ protected:
 	virtual void	PlayAnimIdleMoving();
 	virtual void	PlayAnimIdleSprint();
 
+	HUD_SOUND_COLLECTION_LAYERED m_layered_sounds;
+
+	//AVO: for custom added sounds check if sound exists
+	bool WeaponSoundExist(LPCSTR section, LPCSTR sound_name);
 };
