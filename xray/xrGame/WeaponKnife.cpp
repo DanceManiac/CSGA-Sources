@@ -36,10 +36,10 @@ void CWeaponKnife::Load	(LPCSTR section)
 
 	fWallmarkSize = pSettings->r_float(section,"wm_size");
 
-	m_sounds.LoadSound(section,"snd_kick_1"		, "SndKick1"		, ESoundTypes(SOUND_TYPE_WEAPON_SHOOTING)		);
-	m_sounds.LoadSound(section,"snd_kick_2"		, "SndKick2"		, ESoundTypes(SOUND_TYPE_WEAPON_SHOOTING)		);
-	m_sounds.LoadSound(section,"snd_draw", "SndShow"		, ESoundTypes(SOUND_TYPE_ITEM_TAKING)		);
-	m_sounds.LoadSound(section,"snd_holster", "SndHide"		, ESoundTypes(SOUND_TYPE_ITEM_HIDING)		);
+	m_sounds.LoadSound(section,"snd_kick_1", "SndKick1", false, ESoundTypes(SOUND_TYPE_WEAPON_SHOOTING));
+	m_sounds.LoadSound(section,"snd_kick_2", "SndKick2", false, ESoundTypes(SOUND_TYPE_WEAPON_SHOOTING));
+	m_sounds.LoadSound(section,"snd_draw", "SndShow", false, ESoundTypes(SOUND_TYPE_ITEM_TAKING));
+	m_sounds.LoadSound(section,"snd_holster", "SndHide", false, ESoundTypes(SOUND_TYPE_ITEM_HIDING));
 
 	knife_material_idx =  GMLib.GetMaterialIdx(KNIFE_MATERIAL_NAME);
 }

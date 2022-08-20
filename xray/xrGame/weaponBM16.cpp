@@ -8,8 +8,8 @@ CWeaponBM16::~CWeaponBM16()
 void CWeaponBM16::Load	(LPCSTR section)
 {
 	inherited::Load		(section);
-	m_sounds.LoadSound	(section, "snd_reload_1", "sndReload1", m_eSoundReload);
-	m_sounds.LoadSound	(section, "snd_reload_jammed_last", "sndReloadJammedLast", m_eSoundReload);
+	m_sounds.LoadSound	(section, "snd_reload_1", "sndReload1", true, m_eSoundReload);
+	m_sounds.LoadSound	(section, "snd_reload_jammed_last", "sndReloadJammedLast", true, m_eSoundReload);
 }
 
 void CWeaponBM16::PlayReloadSound()
