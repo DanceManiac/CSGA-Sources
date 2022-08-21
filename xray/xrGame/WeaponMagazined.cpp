@@ -114,10 +114,7 @@ void CWeaponMagazined::Load	(LPCSTR section)
 		//-Alundaio
 	}
 
-	if (pSettings->line_exist(section, "dispersion_start"))
-		m_iShootEffectorStart = pSettings->r_u8(section, "dispersion_start");
-	else
-		m_iShootEffectorStart = 0;
+	pSettings->line_exist(section, "dispersion_start") ? m_iShootEffectorStart = pSettings->r_u8(section, "dispersion_start") : m_iShootEffectorStart = 0;
 
 	if (pSettings->line_exist(section, "fire_modes"))
 	{
@@ -173,8 +170,6 @@ void CWeaponMagazined::FireStart		()
 	{//misfire
 		if(smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity()==H_Parent()) )
 			HUD().GetUI()->AddInfoMessage("gun_jammed");
-
-		OnEmptyClick();
 	}
 }
 
@@ -208,11 +203,8 @@ bool CWeaponMagazined::TryReload()
 			int	AC					= GetSuitableAmmoTotal();
 			Actor()->callback(GameObject::eWeaponNoAmmoAvailable)(lua_game_object(), AC);
 		}
-		if (m_ammoType < m_ammoTypes.size())
-			m_pAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[m_ammoType] ));
-		else
-			m_pAmmo = nullptr;
 
+		m_ammoType < m_ammoTypes.size() ? m_pAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[m_ammoType] )) : m_pAmmo = nullptr;
 		
 		if(IsMisfire() && iAmmoElapsed)
 		{
@@ -303,7 +295,7 @@ void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 		if(l_it->second && !unlimited_ammo()) SpawnAmmo(l_it->second, l_it->first);
 	}
 	
-	if(GetState() == eIdle)
+	if(GetState()!=eIdle)
 		SwitchState(eIdle);//чтобы обновлялся худ после анлода, и проигрывалась анимация anm_idle_empty. Спасибо Валерку.
 }
 
@@ -311,8 +303,9 @@ void CWeaponMagazined::ReloadMagazine()
 {
 	m_dwAmmoCurrentCalcFrame = 0;	
 	
-	if (!m_bLockType) {
-		m_ammoName	= NULL;
+	if (!m_bLockType)
+	{
+		m_ammoName	= nullptr;
 		m_pAmmo		= nullptr;
 	}
 	
@@ -439,8 +432,6 @@ void CWeaponMagazined::UpdateCL			()
 	inherited::UpdateCL	();
 	float dt = Device.fTimeDelta;
 
-	
-
 	//когда происходит апдейт состояния оружия
 	//ничего другого не делать
 	if(GetNextState() == GetState())
@@ -537,20 +528,14 @@ void CWeaponMagazined::state_Fire(float dt)
 
             //Alundaio: Use fModeShotTime instead of fOneShotTime if current fire mode is 2-shot burst
             //Alundaio: Cycle down RPM after two shots; used for Abakan/AN-94
-            if (GetCurrentFireMode() == 2 || (cycleDown == true && m_iShotNum <= 1))
-                fShotTimeCounter = modeShotTime;
-			else
-				fShotTimeCounter = fOneShotTime;
+			(GetCurrentFireMode() == 2 || (cycleDown == true && m_iShotNum <= 1)) ? fShotTimeCounter = modeShotTime : fShotTimeCounter = fOneShotTime;
             //Alundaio: END
 			
 			++m_iShotNum;
 			
 			OnShot					();
-
-			if (m_iShotNum>m_iShootEffectorStart)
-				FireTrace		(p1,d);
-			else
-				FireTrace		(m_vStartPos, m_vStartDir);
+			
+			(m_iShotNum>m_iShootEffectorStart) ? FireTrace		(p1,d) : FireTrace		(m_vStartPos, m_vStartDir);
 		}
 	
 		if(m_iShotNum == m_iQueueSize)
@@ -559,15 +544,7 @@ void CWeaponMagazined::state_Fire(float dt)
 		UpdateSounds			();
 	}
 
-	if(fShotTimeCounter<0)
-	{
-
-		StopShooting();
-	}
-	else
-	{
-		fShotTimeCounter			-=	dt;
-	}
+	fShotTimeCounter<0 ? StopShooting() : fShotTimeCounter -= dt;
 }
 
 void CWeaponMagazined::state_Misfire	(float dt)
@@ -868,8 +845,6 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 	{
 		if (b_send_event && OnServer())
 		{
-			//уничтожить подсоединенную вещь из инвентаря
-//.			pIItem->Drop					();
 			pIItem->object().DestroyObject	();
 		};
 
@@ -927,9 +902,6 @@ void CWeaponMagazined::InitAddons()
 		shared_str scope_tex_name;
 		if ( m_eScopeStatus == ALife::eAddonAttachable )
 		{
-			//m_sScopeName = pSettings->r_string(cNameSect(), "scope_name");
-			//m_iScopeX	 = pSettings->r_s32(cNameSect(),"scope_x");
-			//m_iScopeY	 = pSettings->r_s32(cNameSect(),"scope_y");
 
 			VERIFY( *m_sScopeName );
 			scope_tex_name						= pSettings->r_string(*m_sScopeName, "scope_texture");
@@ -1192,18 +1164,13 @@ void CWeaponMagazined::OnZoomOut		()
 bool CWeaponMagazined::SwitchMode			()
 {
 	if(eIdle != GetState() || IsPending()) return false;
-
-	if(SingleShotMode())
-		m_iQueueSize = WEAPON_ININITE_QUEUE;
-	else
-		m_iQueueSize = 1;
 	
-	PlaySound	("sndEmptyClick", get_LastFP());
+	SingleShotMode() ? m_iQueueSize = WEAPON_ININITE_QUEUE : m_iQueueSize = 1;
 
 	return true;
 }
  
-void	CWeaponMagazined::OnNextFireMode		()
+void CWeaponMagazined::OnNextFireMode()
 {
 	if (!m_bHasDifferentFireModes) return;
 	if (GetState() != eIdle) return;
@@ -1211,7 +1178,7 @@ void	CWeaponMagazined::OnNextFireMode		()
 	SetQueueSize(GetCurrentFireMode());
 };
 
-void	CWeaponMagazined::OnPrevFireMode		()
+void CWeaponMagazined::OnPrevFireMode()
 {
 	if (!m_bHasDifferentFireModes) return;
 	if (GetState() != eIdle) return;
@@ -1219,23 +1186,22 @@ void	CWeaponMagazined::OnPrevFireMode		()
 	SetQueueSize(GetCurrentFireMode());	
 };
 
-void	CWeaponMagazined::OnH_A_Chield		()
+void CWeaponMagazined::OnH_A_Chield()
 {
 	if (m_bHasDifferentFireModes)
 	{
 		CActor	*actor = smart_cast<CActor*>(H_Parent());
-		if (!actor) SetQueueSize(-1);
-		else SetQueueSize(GetCurrentFireMode());
-	};	
+		!actor ? SetQueueSize(-1) : SetQueueSize(GetCurrentFireMode());
+	};
 	inherited::OnH_A_Chield();
 };
 
-void	CWeaponMagazined::SetQueueSize			(int size)  
+void CWeaponMagazined::SetQueueSize (int size)  
 {
 	m_iQueueSize = size; 
 };
 
-float	CWeaponMagazined::GetWeaponDeterioration	()
+float CWeaponMagazined::GetWeaponDeterioration()
 {
 	if (!m_bHasDifferentFireModes || m_iPrefferedFireMode == -1 || u32(GetCurrentFireMode()) <= u32(m_iPrefferedFireMode)) 
 		return inherited::GetWeaponDeterioration();
@@ -1278,20 +1244,10 @@ void CWeaponMagazined::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_na
 {
 	int	AE		= GetAmmoElapsed();
 	int	AC		= 0;
-	if ( IsGameTypeSingle() )
-	{
-		AC		= GetCurrentTypeAmmoTotal();
-	}
-	else
-	{
-		AC		= GetSuitableAmmoTotal();//mp = all type
-	}
 	
-	if(AE==0 || 0==m_magazine.size() )
-		icon_sect_name	= *m_ammoTypes[m_ammoType];
-	else
-		icon_sect_name	= *m_ammoTypes[m_magazine.back().m_LocalAmmoType];
+	IsGameTypeSingle() ? AC = GetCurrentTypeAmmoTotal() : AC = GetSuitableAmmoTotal();//mp = all type
 
+	( AE == 0 || 0 == m_magazine.size() ) ? icon_sect_name	= *m_ammoTypes[m_ammoType] : icon_sect_name	= *m_ammoTypes[m_magazine.back().m_LocalAmmoType];
 
 	string256		sItemName;
 	strcpy_s			(sItemName, *CStringTable().translate(pSettings->r_string(icon_sect_name.c_str(), "inv_name_short")));
@@ -1299,19 +1255,13 @@ void CWeaponMagazined::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_na
 	strcpy_s( fire_mode, sizeof(fire_mode), "" );
 	if ( HasFireModes() )
 	{
-		if (m_iQueueSize == -1)
-			strcpy_s(fire_mode, "A");
-		else
-			sprintf_s(fire_mode, "%d", m_iQueueSize);
+		m_iQueueSize == -1 ? strcpy_s(fire_mode, "A") : sprintf_s(fire_mode, "%d", m_iQueueSize);
 	}
 
 	str_name		= sItemName;
 
 	{
-		if (!unlimited_ammo())
-			sprintf_s			(sItemName, "%d/%d",AE,AC - AE);
-		else
-			sprintf_s			(sItemName, "%d/--",AE);
+		!unlimited_ammo() ? sprintf_s			(sItemName, "%d/%d",AE,AC - AE) : sprintf_s			(sItemName, "%d/--",AE);
 
 		str_count				= sItemName;
 	}
