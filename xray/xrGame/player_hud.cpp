@@ -722,6 +722,9 @@ void player_hud::detach_item_idx(u16 idx)
 		for(u32 bidx=0; bidx<bc; ++bidx)
 		{
 			CBlend* BR			= m_model->LL_PartBlend(part_idR, bidx);
+			if(!BR)
+				continue;
+
 			MotionID M			= BR->motionID;
 
 			u16 pc					= m_model->partitions().count();
@@ -736,6 +739,11 @@ void player_hud::detach_item_idx(u16 idx)
 				}
 			}
 		}
+	}
+	else
+	if(idx==0 && attached_item(1))
+	{
+		OnMovementChanged(mcAnyMove);  
 	}
 }
 
