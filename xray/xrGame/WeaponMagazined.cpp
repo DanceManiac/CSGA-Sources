@@ -187,10 +187,6 @@ void CWeaponMagazined::MsgGunEmpty()
 void CWeaponMagazined::FireEnd() 
 {
 	inherited::FireEnd();
-
-	/*CActor	*actor = smart_cast<CActor*>(H_Parent());
-	if(!iAmmoElapsed && actor && GetState()!=eReload) 
-		Reload();*/
 }
 
 void CWeaponMagazined::Reload() 
@@ -264,13 +260,6 @@ bool CWeaponMagazined::IsAmmoAvailable()
 
 void CWeaponMagazined::OnMagazineEmpty() 
 {
-
-	if(GetState() == eIdle) 
-	{
-		OnEmptyClick			();
-		return;
-	}
-
 	inherited::OnMagazineEmpty();
 }
 
@@ -321,9 +310,6 @@ void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 void CWeaponMagazined::ReloadMagazine() 
 {
 	m_dwAmmoCurrentCalcFrame = 0;	
-
-	//устранить осечку при перезарядке
-	if(IsMisfire())	bMisfire = false;
 	
 	if (!m_bLockType) {
 		m_ammoName	= NULL;
@@ -475,7 +461,6 @@ void CWeaponMagazined::UpdateCL			()
 			}break;
 		case eMisfire:		state_Misfire	(dt);	break;
 		case eEmpty:
-		break;//блять нахуй это здесь нужно
 		case eHidden:		break;
 		}
 	}
@@ -502,7 +487,7 @@ void CWeaponMagazined::state_Fire(float dt)
 	{
 		VERIFY(fOneShotTime>0.f);
 
-		Fvector					p1, d; 
+		Fvector p1 {}, d {};
 		p1.set(get_LastFP());
 		d.set(get_LastFD());
 
@@ -576,17 +561,6 @@ void CWeaponMagazined::state_Fire(float dt)
 
 	if(fShotTimeCounter<0)
 	{
-/*
-		if(bDebug && H_Parent() && (H_Parent()->ID() != Actor()->ID()))
-		{
-			Msg("stop shooting w=[%s] magsize=[%d] sshot=[%s] qsize=[%d] shotnum=[%d]",
-					IsWorking()?"true":"false", 
-					m_magazine.size(),
-					m_bFireSingleShot?"true":"false",
-					m_iQueueSize,
-					m_iShotNum);
-		}
-*/
 
 		StopShooting();
 	}
@@ -665,14 +639,7 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 	switch(state) 
 	{
 		case eReload:
-		if(IsMisfire())
-		{
-			Unmisfire();
-		}
-		else
-		{
-			ReloadMagazine();
-		}
+		IsMisfire()? Unmisfire() : ReloadMagazine();
 		SwitchState(eIdle);
 		break;	// End of reload animation
 		case eHiding:
@@ -729,16 +696,6 @@ void CWeaponMagazined::switch2_Fire	()
 	if (!io)
 		return;
 #endif // DEBUG
-
-//
-//	VERIFY2(
-//		io && (ii == io->inventory().ActiveItem()),
-//		make_string(
-//			"item[%s], parent[%s]",
-//			*cName(),
-//			H_Parent() ? *H_Parent()->cName() : "no_parent"
-//		)
-//	);
 
 	m_bStopedAfterQueueFired = false;
 	m_bFireSingleShot = true;
@@ -1101,7 +1058,7 @@ const char* CWeaponMagazined::GetAnimAimName()
 	auto pActor = smart_cast<const CActor*>(H_Parent());
 	if (pActor)
 	{
-		if (const u32 state = pActor->get_state() && state & mcAnyMove)
+            if (const u32 state = pActor->get_state() && state & mcAnyMove)
 		{
 			if (IsScopeAttached())
 			{
@@ -1404,13 +1361,6 @@ bool CWeaponMagazined::install_upgrade_impl( LPCSTR section, bool test )
 		m_layered_sounds.LoadSound(section, "snd_shoot", "sndShot", false, m_eSoundShot);
 	}
 	result |= result2;
-	
-	result2 = process_if_exists_set(section, "snd_shoot_actor", &CInifile::r_string, str, test );
-	if ( result2 && !test )
-	{
-		m_layered_sounds.LoadSound(section, "snd_shoot_actor", "sndShotActor", false, m_eSoundShot);
-	}
-	result |= result2;
 
 	result2 = process_if_exists_set(section, "snd_empty", &CInifile::r_string, str, test );
 	if ( result2 && !test )
@@ -1435,13 +1385,6 @@ bool CWeaponMagazined::install_upgrade_impl( LPCSTR section, bool test )
 		if ( result2 && !test )
 		{
 			m_layered_sounds.LoadSound(section, "snd_silncer_shot", "sndSilencerShot", false, m_eSoundShot);
-		}
-		result |= result2;
-		
-		result2 = process_if_exists_set(section, "snd_silncer_shot_actor", &CInifile::r_string, str, test);
-		if ( result2 && !test )
-		{
-			m_layered_sounds.LoadSound(section, "snd_silncer_shot_actor", "sndSilencerShotActor", false, m_eSoundShot);
 		}
 		result |= result2;
 	}
