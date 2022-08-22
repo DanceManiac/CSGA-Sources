@@ -727,28 +727,15 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 				if(st.bSprint)
 				{
 					act_state = 1;
-					if(iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_sprint_empty"))
-						PlayHUDMotion("anm_idle_sprint_empty", true, nullptr,GetState());
-					else if(IsMisfire() && isHUDAnimationExist("anm_idle_sprint_jammed"))
-						PlayHUDMotion("anm_idle_sprint_jammed", true, nullptr,GetState());
-					else
-						if(isHUDAnimationExist("anm_idle_sprint"))
-							PlayHUDMotion("anm_idle_sprint", true, nullptr,GetState());
+					inherited::PlayAnimIdleSprint();
 				}
 				else
 				if(pActor->AnyMove())
 				{
 					act_state = 2;
-					if(iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_moving_empty"))
-						PlayHUDMotion("anm_idle_moving", true, nullptr, GetState());
-					else if(IsMisfire() && isHUDAnimationExist("anm_idle_moving_jammed"))
-						PlayHUDMotion("anm_idle_moving_jammed", true, nullptr, GetState());
-					else
-						if(isHUDAnimationExist("anm_idle_moving"))
-							PlayHUDMotion("anm_idle_moving", true, nullptr, GetState());
+					inherited::PlayAnimIdleMoving();
 				}
 			}
-
 			if(m_bGrenadeMode)
 			{
 				switch(act_state)
