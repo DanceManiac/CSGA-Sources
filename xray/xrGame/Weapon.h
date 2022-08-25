@@ -50,6 +50,16 @@ public:
 	virtual void			load				(IReader &input_packet);
 	virtual BOOL			net_SaveRelevant	()								{return inherited::net_SaveRelevant();}
 
+	IC bool bInZoomRightNow() const { return m_zoom_params.m_fZoomRotationFactor > 0.05; }
+
+	//SWM3.0 Âòîðîé ðåíäåð
+	float CWeapon::GetSecondVPFov() const;
+	IC float GetZRotatingFactor()    const { return m_zoom_params.m_fZoomRotationFactor; }
+	IC float GetSecondVPZoomFactor() const { return m_zoom_params.m_fSecondVPFovFactor; }
+	IC float IsSecondVPZoomPresent() const { return GetSecondVPZoomFactor() > 0.005f; }
+
+	void UpdateSecondVP();
+
 	virtual void			UpdateCL			();
 	virtual void			shedule_Update		(u32 dt);
 
@@ -213,17 +223,21 @@ protected:
 
 		float			m_fZoomRotationFactor;
 		
+		float m_fSecondVPFovFactor;
+		
 		Fvector			m_ZoomDof;
 		Fvector4		m_ReloadDof;
 
 	} m_zoom_params;
 	
+	float			m_fRTZoomFactor; //run-time zoom factor
+	bool			m_bUseDynamicZoom;
 	CUIWindow*				m_UIScope;
 public:
 
 	IC bool					IsZoomEnabled		()	const		{return m_zoom_params.m_bZoomEnabled;}
-	virtual	void			ZoomInc				(){};
-	virtual	void			ZoomDec				(){};
+	virtual	void			ZoomInc				();
+	virtual	void			ZoomDec				();
 	virtual void			OnZoomIn			();
 	virtual void			OnZoomOut			();
 	IC		bool			IsZoomed			()	const		{return m_zoom_params.m_bIsZoomModeNow;};

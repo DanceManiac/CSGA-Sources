@@ -32,6 +32,28 @@ class engine_impl;
 // refs
 class ENGINE_API CRenderDevice 
 {
+	public:
+	class ENGINE_API CSecondVPParams //--#SM+#-- +SecondVP+
+	{
+		bool isActive; // Ôëàã àêòèâàöèè ðåíäåðà âî âòîðîé âüþïîðò
+		u8 frameDelay;  // Íà êàêîì êàäðå ñ ìîìåíòà ïðîøëîãî ðåíäåðà âî âòîðîé âüþïîðò ìû íà÷í¸ì íîâûé
+						  //(íå ìîæåò áûòü ìåíüøå 2 - êàæäûé âòîðîé êàäð, ÷åì áîëüøå òåì áîëåå íèçêèé FPS âî âòîðîì âüþïîðòå)
+
+	public:
+		bool isCamReady; // Ôëàã ãîòîâíîñòè êàìåðû (FOV, ïîçèöèÿ, è ò.ï) ê ðåíäåðó âòîðîãî âüþïîðòà
+
+		IC bool IsSVPActive() { return isActive; }
+		IC void SetSVPActive(bool bState) { isActive = bState; }
+		bool    IsSVPFrame();
+
+		IC u8 GetSVPFrameDelay() { return frameDelay; }
+		void  SetSVPFrameDelay(u8 iDelay)
+		{
+			frameDelay = iDelay;
+			clamp<u8>(frameDelay, 2, u8(-1));
+		}
+	};
+
 private:
     // Main objects used for creating and rendering the 3D scene
     u32										m_dwWindowStyle;
@@ -93,6 +115,7 @@ public:
 	CRegistrator	<pureFrame			>			seqFrameMT;
 	CRegistrator	<pureDeviceReset	>			seqDeviceReset;
 	xr_vector		<fastdelegate::FastDelegate0<> >	seqParallel;
+	CSecondVPParams m_SecondViewport; //--#SM+#-- +SecondVP+
 
 	// Dependent classes
 	//CResourceManager*						Resources;	  
@@ -136,6 +159,11 @@ public:
 		b_is_Ready			= FALSE;
 		Timer.Start			();
 		m_bNearer			= FALSE;
+
+		//--#SM+#-- +SecondVP+
+		m_SecondViewport.SetSVPActive(false);
+		m_SecondViewport.SetSVPFrameDelay(2);
+		m_SecondViewport.isCamReady = false;
 	};
 
 	void	Pause							(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason);

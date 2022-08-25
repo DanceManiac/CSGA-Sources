@@ -620,3 +620,8 @@ void CRenderDevice::OnWM_Activate(WPARAM wParam, LPARAM lParam)
 		}
 	}
 }
+
+bool CRenderDevice::CSecondVPParams::IsSVPFrame() //--#SM+#-- +SecondVP+
+{
+	return IsSVPActive() && Device.dwFrame % frameDelay == 0;
+}

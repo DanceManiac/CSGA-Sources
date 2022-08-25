@@ -7,6 +7,8 @@
 #include "IGame_ObjectPool.h"
 #endif
 
+#include "ShadersExternalData.h" //--#SM+#--
+
 class IRenderVisual;
 class IMainMenu;
 class ENGINE_API CPS_Instance;
@@ -68,6 +70,7 @@ public:
 #endif
 	IMainMenu*						m_pMainMenu;	
 
+	ShadersExternalData* m_pGShaderConstants; //--#SM+#--
 
 	virtual bool					OnRenderPPUI_query	() { return FALSE; };	// should return true if we want to have second function called
 	virtual void					OnRenderPPUI_main	() {};

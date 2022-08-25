@@ -52,6 +52,7 @@ CWeapon::CWeapon()
 
 	m_zoom_params.m_fCurrentZoomFactor			= g_fov;
 	m_zoom_params.m_fZoomRotationFactor			= 0.f;
+	m_zoom_params.m_fSecondVPFovFactor = 0.0f;
 
 	m_pAmmo					= NULL;
 
@@ -429,7 +430,10 @@ void CWeapon::Load		(LPCSTR section)
 	else
 		m_bAutoSpawnAmmo = TRUE;
 
+	bool SWM_3D_SCOPES = READ_IF_EXISTS(pSettings, r_bool, "gameplay", "SWM_3D_scopes", false);
 
+	if(SWM_3D_SCOPES)
+		m_zoom_params.m_fSecondVPFovFactor = READ_IF_EXISTS(pSettings, r_float, section, "3d_fov", 0.0f);
 
 	m_zoom_params.m_bHideCrosshairInZoom		= true;
 
@@ -548,6 +552,8 @@ void CWeapon::Load		(LPCSTR section)
 	LoadBoneNames(section, "def_show_bones", m_defShownBones);
 	
 	LoadBoneNames(section, "def_hide_bones", m_defHiddenBones);
+	
+	m_bUseDynamicZoom = READ_IF_EXISTS(pSettings,r_bool,section,"scope_dynamic_zoom",false);
 }
 
 void CWeapon::LoadFireParams		(LPCSTR section)
@@ -576,6 +582,7 @@ void CWeapon::LoadFireParams		(LPCSTR section)
 
 BOOL CWeapon::net_Spawn		(CSE_Abstract* DC)
 {
+	m_fRTZoomFactor					= m_zoom_params.m_fScopeZoomFactor;
 	BOOL bResult					= inherited::net_Spawn(DC);
 	CSE_Abstract					*e	= (CSE_Abstract*)(DC);
 	CSE_ALifeItemWeapon			    *E	= smart_cast<CSE_ALifeItemWeapon*>(e);
@@ -1033,9 +1040,9 @@ void CWeapon::UpdateFlashlight()
 	}
 }
 
-bool  CWeapon::need_renderable()
+bool CWeapon::need_renderable()
 {
-	return !( IsZoomed() && ZoomTexture() && !IsRotatingToZoom() );
+	return !Device.m_SecondViewport.IsSVPFrame() && !(IsZoomed() && ZoomTexture() && !IsRotatingToZoom());
 }
 
 void CWeapon::renderable_Render		()
@@ -1622,11 +1629,15 @@ float CWeapon::CurrentZoomFactor()
 {
 	return IsScopeAttached() ? m_zoom_params.m_fScopeZoomFactor : m_zoom_params.m_fIronSightZoomFactor;
 };
-
+void GetZoomData(const float scope_factor, float& delta, float& min_zoom_factor);
 void CWeapon::OnZoomIn()
 {
 	m_zoom_params.m_bIsZoomModeNow		= true;
-	m_zoom_params.m_fCurrentZoomFactor	= CurrentZoomFactor();
+	if(m_bUseDynamicZoom)
+		SetZoomFactor(m_fRTZoomFactor);
+	else
+		m_zoom_params.m_fCurrentZoomFactor	= CurrentZoomFactor();
+
 	EnableHudInertion					(FALSE);
 
 	
@@ -2097,4 +2108,57 @@ bool CWeapon::MovingAnimAllowedNow()
 bool CWeapon::IsHudModeNow()
 {
 	return (HudItemData()!=NULL);
+}
+
+// Ïîëó÷èòü FOV îò òåêóùåãî îðóæèÿ èãðîêà äëÿ âòîðîãî ðåíäåðà
+float CWeapon::GetSecondVPFov() const
+{
+	if (m_bUseDynamicZoom && IsSecondVPZoomPresent())
+		return (m_fRTZoomFactor / 100.f) * g_fov;
+
+	return GetSecondVPZoomFactor() * g_fov;
+}
+
+// Îáíîâëåíèå íåîáõîäèìîñòè âêëþ÷åíèÿ âòîðîãî âüþïîðòà +SecondVP+
+// Âûçûâàåòñÿ òîëüêî äëÿ àêòèâíîãî îðóæèÿ èãðîêà
+void CWeapon::UpdateSecondVP()
+{
+	// + CActor::UpdateCL();
+	bool b_is_active_item = (m_pInventory != NULL) && (m_pInventory->ActiveItem() == this);
+	R_ASSERT(
+		ParentIsActor() && b_is_active_item); // Ýòà ôóíêöèÿ äîëæíà âûçûâàòüñÿ òîëüêî äëÿ îðóæèÿ â ðóêàõ íàøåãî èãðîêà
+
+	CActor* pActor = smart_cast<CActor*>(H_Parent());
+
+	bool bCond_1 = m_zoom_params.m_fZoomRotationFactor > 0.05f; // Ìû äîëæíû öåëèòüñÿ
+	bool bCond_2 = IsSecondVPZoomPresent(); // Â êîíôèãå äîëæåí áûòü ïðîïèñàí ôàêòîð çóìà äëÿ ëèíçû (scope_lense_factor
+											// áîëüøå ÷åì 0)
+	bool bCond_3 = pActor->cam_Active() == pActor->cam_FirstEye(); // Ìû äîëæíû áûòü îò 1-ãî ëèöà
+
+	Device.m_SecondViewport.SetSVPActive(bCond_1 && bCond_2 && bCond_3);
+}
+
+void CWeapon::ZoomInc()
+{
+	if(!IsScopeAttached())					return;
+	if(!m_bUseDynamicZoom)	return;
+	float delta,min_zoom_factor;
+	GetZoomData(m_zoom_params.m_fScopeZoomFactor, delta, min_zoom_factor);
+
+	float f					= GetZoomFactor()-delta;
+	clamp					(f,m_zoom_params.m_fScopeZoomFactor,min_zoom_factor);
+	SetZoomFactor			( f );
+}
+
+void CWeapon::ZoomDec()
+{
+	if(!IsScopeAttached())					return;
+	if(!m_bUseDynamicZoom)	return;
+	float delta,min_zoom_factor;
+	GetZoomData(m_zoom_params.m_fScopeZoomFactor,delta,min_zoom_factor);
+
+	float f					= GetZoomFactor()+delta;
+	clamp					(f,m_zoom_params.m_fScopeZoomFactor,min_zoom_factor);
+	SetZoomFactor			( f );
+
 }
