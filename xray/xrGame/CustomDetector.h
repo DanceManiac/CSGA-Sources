@@ -35,21 +35,9 @@ public:
 
 	virtual void 	shedule_Update		(u32 dt);
 	virtual void 	UpdateCL			();
-	
-	enum EDetectorStates
-	{
-		eIdleThrowStart = 5,
-		eIdleThrow,
-		eIdleThrowEnd,
-		eIdleKick,
-		eIdleKick2,
-		eIdleZoom,
-		eIdleZoomIn,
-		eIdleZoomOut
-	};
 
 
-	bool 	IsWorking			();
+			bool 	IsWorking			();
 
 	virtual void 	OnMoveToSlot		();
 	virtual void 	OnMoveToRuck		(EItemPlace prev);

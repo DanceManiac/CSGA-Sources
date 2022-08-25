@@ -6,7 +6,6 @@
 #include "Weapon.h"
 #include "player_hud.h"
 #include "ui/ArtefactDetectorUI.h"
-#include "Missile.h"
 
 bool  CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 {
@@ -27,7 +26,8 @@ bool  CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 			bres = bres
 				&& (W->GetState() != CHUDState::eBore)
 				&& (W->GetState() != CWeapon::eReload)
-				&& (W->GetState() != CWeapon::eSwitch);
+				&& (W->GetState() != CWeapon::eSwitch)
+				&& !W->IsZoomed();
 	}
 	if (bres)
 		m_lastParentSlot = slot;
@@ -72,20 +72,17 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
 			SwitchState				(eShowing);
 			TurnDetectorInternal	(true);
 		}
-		else
-		{
+		else {
 			m_pInventory->Activate(m_lastParentSlot);
 			m_bNeedActivation = true;
 		}
-	}
-	else
+	}else
 	if(GetState()==eIdle)
 		SwitchState					(eHiding);
 }
 
 void CCustomDetector::OnStateSwitch(u32 S)
 {
-	u32 oldState = GetState();
 	inherited::OnStateSwitch(S);
 
 	switch(S)
@@ -99,64 +96,16 @@ void CCustomDetector::OnStateSwitch(u32 S)
 		}break;
 	case eHiding:
 		{
-			if(oldState != eHiding)
-			{
-				m_sounds.PlaySound			("sndHide", Fvector().set(0,0,0), this, true, false);
-				PlayHUDMotion				(m_bFastAnimMode?"anm_hide_fast":"anm_hide", TRUE, this, GetState());
-				SetPending					(TRUE);
-			}
+			m_sounds.PlaySound			("sndHide", Fvector().set(0,0,0), this, true, false);
+			PlayHUDMotion				(m_bFastAnimMode?"anm_hide_fast":"anm_hide", TRUE, this, GetState());
+			SetPending					(TRUE);
 		}break;
 	case eIdle:
 		{
 			PlayAnimIdle				();
 			SetPending					(FALSE);
 		}break;
-	case eIdleThrowStart:
-		{
-			PlayHUDMotion ("anm_throw_begin", TRUE, this, GetState());
-			SetPending(TRUE);
-		}break;
-	case eIdleThrow:
-		{
-			PlayHUDMotion ("anm_throw_idle", TRUE, this, GetState());
-			SetPending(TRUE);
-		}break;
-	case eIdleThrowEnd:
-		{
-			if(isHUDAnimationExist("anm_throw"))
-			{
-				PlayHUDMotion ("anm_throw", TRUE, this, GetState());
-				SetPending(TRUE);
-			}
-			else
-				SwitchState(eIdle);
-		}break;
-	case eIdleKick:
-		{
-			PlayHUDMotion ("anm_kick", TRUE, this, GetState());
-			SetPending(TRUE);
-		}break;
-	case eIdleKick2:
-		{
-			PlayHUDMotion ("anm_kick2", TRUE, this, GetState());
-			SetPending(TRUE);
-		}break;
-	case eIdleZoom:
-		{
-			PlayHUDMotion ("anm_idle_zoom", TRUE, this, GetState());
-			SetPending(FALSE);
-		}break;
-	case eIdleZoomIn:
-		{
-			PlayHUDMotion ("anm_zoom_in", TRUE, this, GetState());
-			SetPending(FALSE);
-		}break;
-	case eIdleZoomOut:
-		{
-			PlayHUDMotion ("anm_zoom_out", TRUE, this, GetState());
-			SetPending(FALSE);
-		}break;
-	}
+}
 }
 
 void CCustomDetector::OnAnimationEnd(u32 state)
@@ -174,30 +123,6 @@ void CCustomDetector::OnAnimationEnd(u32 state)
 			TurnDetectorInternal		(false);
 			g_player_hud->detach_item	(this);
 		} break;
-	case eIdleThrowStart:
-		{
-			SwitchState(eIdleThrow);
-		}break;
-	case eIdleThrowEnd:
-		{
-			SwitchState(eIdle);
-		}break;
-	case eIdleKick:
-		{
-			SwitchState(eIdle);
-		}break;
-	case eIdleKick2:
-		{
-			SwitchState(eIdle);
-		}break;
-	case eIdleZoomIn:
-		{
-			SwitchState(eIdleZoom);
-		}break;
-	case eIdleZoomOut:
-		{
-			SwitchState(eIdle);
-		}break;
 	}
 }
 
@@ -243,8 +168,8 @@ void CCustomDetector::Load(LPCSTR section)
 	m_fAfVisRadius			= pSettings->r_float(section,"af_vis_radius");
 	m_artefacts.load		(section, "af");
 
-	m_sounds.LoadSound( section, "snd_draw", "sndShow", false);
-	m_sounds.LoadSound( section, "snd_holster", "sndHide", false);
+	m_sounds.LoadSound( section, "snd_draw", "sndShow");
+	m_sounds.LoadSound( section, "snd_holster", "sndHide");
 }
 
 
@@ -281,46 +206,18 @@ void CCustomDetector::UpdateVisibility()
 	attachable_hud_item* i0		= g_player_hud->attached_item(0);
 	if(i0 && HudItemData())
 	{
-		bool bClimb			= ( (Actor()->MovingState()&mcClimb) != 0 );
-		if(bClimb)
+		CWeapon* wpn			= smart_cast<CWeapon*>(i0->m_parent_hud_item);
+		if(wpn)
 		{
-			HideDetector		(true);
-			m_bNeedActivation	= true;
-		}
-		else
-		{
-			CWeapon* wpn = smart_cast<CWeapon*>(i0->m_parent_hud_item);
-			CMissile* msl = smart_cast<CMissile*>(i0->m_parent_hud_item);
-			if(msl)
+			u32 state			= wpn->GetState();
+			bool bClimb			= ( (Actor()->MovingState()&mcClimb) != 0 );
+			if(bClimb || wpn->IsZoomed() || state==CWeapon::eReload || state==CWeapon::eSwitch)
 			{
-				u32 state = msl->GetState();
-				if ((state == CMissile::eThrowStart || state == CMissile::eReady) && GetState() == eIdle)
-					SwitchState(eIdleThrowStart);
-				else if (state == CMissile::eThrow && GetState() == eIdleThrow)
-					SwitchState(eIdleThrowEnd);
-				else if (state == CMissile::eHiding && (GetState() == eIdleThrowStart || GetState() == eIdleThrow))
-					SwitchState(eIdle);
-			}
-			if(wpn)
-			{
-				u32 state = wpn->GetState();
-			
-				if(state==CWeapon::eReload || state==CWeapon::eSwitch)
-				{
-					HideDetector		(true);
-					m_bNeedActivation	= true;
-				}
-				else if (wpn->IsZoomed())
-				{
-					if(GetState() == eIdle || GetState() == eIdleZoomOut)
-						SwitchState(eIdleZoomIn);
-				}
-				else if (GetState() == eIdleZoom || GetState() == eIdleZoomIn)
-					SwitchState(eIdleZoomOut);
+				HideDetector		(true);
+				m_bNeedActivation	= true;
 			}
 		}
-	}
-	else
+	}else
 	if(m_bNeedActivation)
 	{
 		attachable_hud_item* i0		= g_player_hud->attached_item(0);
@@ -328,7 +225,12 @@ void CCustomDetector::UpdateVisibility()
 		if(!bClimb)
 		{
 			CWeapon* wpn			= (i0)?smart_cast<CWeapon*>(i0->m_parent_hud_item) : NULL;
-			if(	!wpn || (wpn->GetState()!=CWeapon::eReload && wpn->GetState()!=CWeapon::eSwitch))
+			if(	!wpn || 
+				(	!wpn->IsZoomed() && 
+					wpn->GetState()!=CWeapon::eReload && 
+					wpn->GetState()!=CWeapon::eSwitch
+				)
+			)
 			{
 				ShowDetector		(true);
 			}
