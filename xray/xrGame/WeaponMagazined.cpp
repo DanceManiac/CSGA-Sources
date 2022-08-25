@@ -232,7 +232,7 @@ bool CWeaponMagazined::TryReload()
 			m_pAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny( *m_ammoTypes[i] ));
 			if(m_pAmmo) 
 			{ 
-				m_ammoType			= i; 
+				m_set_next_ammoType_on_reload = i;
 				SetPending			(true);
 				SwitchState			(eReload);
 				return				true;
@@ -934,6 +934,7 @@ void CWeaponMagazined::InitAddons()
 			VERIFY( *m_sScopeName );
 			scope_tex_name						= pSettings->r_string(*m_sScopeName, "scope_texture");
 			m_zoom_params.m_fScopeZoomFactor	= pSettings->r_float( *m_sScopeName, "scope_zoom_factor");
+			m_fRTZoomFactor = m_zoom_params.m_fScopeZoomFactor;
 		}
 		else if( m_eScopeStatus == ALife::eAddonPermanent )
 		{
