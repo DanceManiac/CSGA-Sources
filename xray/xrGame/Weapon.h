@@ -386,9 +386,6 @@ protected:
 	float					m_fMinRadius;
 	float					m_fMaxRadius;
 
-public:
-	bool m_bDisableBore; // отключение анимаций "скуки"
-
 protected:	
 	//для второго ствола
 			void			StartFlameParticles2();

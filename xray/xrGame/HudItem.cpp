@@ -43,7 +43,10 @@ void CHudItem::Load(LPCSTR section)
 	hud_sect				= pSettings->r_string		(section,"hud");
 	m_animation_slot		= pSettings->r_u32			(section,"animation_slot");
 
-	m_sounds.LoadSound(section,"snd_bore","sndBore", true);
+	m_bDisableBore = READ_IF_EXISTS(pSettings, r_bool, hud_sect, "disable_bore", FALSE);//параметр из ганса, случайно нашёл способ реализации, чтобы не васянить, нужно добавить условие !m_bDisableBore в функции, которая вызывает eBore, по умолчанию false
+
+	if(!m_bDisableBore)
+		m_sounds.LoadSound(section,"snd_bore","sndBore", true);
 }
 
 void CHudItem::PlaySound(LPCSTR alias, const Fvector& position)

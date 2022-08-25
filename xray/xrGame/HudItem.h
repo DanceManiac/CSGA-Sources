@@ -144,6 +144,9 @@ public:
 	virtual bool				render_item_3d_ui_query	()					{return false;}
 
 	virtual bool				CheckCompatibility		(CHudItem*)			{return true;}
+public:
+	bool m_bDisableBore; // отключение анимаций "скуки"
+
 protected:
 
 	IC		void				SetPending			(BOOL H)			{ m_huditem_flags.set(fl_pending, H);}
