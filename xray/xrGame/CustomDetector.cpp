@@ -7,9 +7,9 @@
 #include "player_hud.h"
 #include "ui/ArtefactDetectorUI.h"
 
-bool  CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
+bool CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 {
-	if(itm==NULL)
+	if(itm==nullptr)
 		return true;
 
 	CInventoryItem iitm				= itm->item();
@@ -34,7 +34,7 @@ bool  CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 	return bres;
 }
 
-bool  CCustomDetector::CheckCompatibility(CHudItem* itm)
+bool CCustomDetector::CheckCompatibility(CHudItem* itm)
 {
 	if(!inherited::CheckCompatibility(itm) )	
 		return false;
@@ -72,17 +72,20 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
 			SwitchState				(eShowing);
 			TurnDetectorInternal	(true);
 		}
-		else {
+		else
+		{
 			m_pInventory->Activate(m_lastParentSlot);
 			m_bNeedActivation = true;
 		}
-	}else
+	}
+	else
 	if(GetState()==eIdle)
 		SwitchState					(eHiding);
 }
 
 void CCustomDetector::OnStateSwitch(u32 S)
 {
+	u32 oldState = GetState();
 	inherited::OnStateSwitch(S);
 
 	switch(S)
@@ -91,19 +94,22 @@ void CCustomDetector::OnStateSwitch(u32 S)
 		{
 			g_player_hud->attach_item	(this);
 			m_sounds.PlaySound			("sndShow", Fvector().set(0,0,0), this, true, false);
-			PlayHUDMotion				(m_bFastAnimMode?"anm_show_fast":"anm_show", TRUE, this, GetState());
-			SetPending					(TRUE);
+			PlayHUDMotion				(m_bFastAnimMode?"anm_show_fast":"anm_show", false, this, GetState());
+			SetPending					(true);
 		}break;
 	case eHiding:
 		{
-			m_sounds.PlaySound			("sndHide", Fvector().set(0,0,0), this, true, false);
-			PlayHUDMotion				(m_bFastAnimMode?"anm_hide_fast":"anm_hide", TRUE, this, GetState());
-			SetPending					(TRUE);
+			if(oldState != eHiding)
+			{
+				m_sounds.PlaySound			("sndHide", Fvector().set(0,0,0), this, true, false);
+				PlayHUDMotion				(m_bFastAnimMode?"anm_hide_fast":"anm_hide", false, this, GetState());
+				SetPending					(true);
+			}
 		}break;
 	case eIdle:
 		{
 			PlayAnimIdle				();
-			SetPending					(FALSE);
+			SetPending					(false);
 		}break;
 }
 }
@@ -142,7 +148,7 @@ void CCustomDetector::OnHiddenItem()
 
 CCustomDetector::CCustomDetector() 
 {
-	m_ui				= NULL;
+	m_ui				= nullptr;
 	m_bFastAnimMode		= false;
 	m_bNeedActivation	= false;
 }
@@ -171,7 +177,6 @@ void CCustomDetector::Load(LPCSTR section)
 	m_sounds.LoadSound( section, "snd_draw", "sndShow");
 	m_sounds.LoadSound( section, "snd_holster", "sndHide");
 }
-
 
 void CCustomDetector::shedule_Update(u32 dt) 
 {
@@ -217,7 +222,8 @@ void CCustomDetector::UpdateVisibility()
 				m_bNeedActivation	= true;
 			}
 		}
-	}else
+	}
+	else
 	if(m_bNeedActivation)
 	{
 		attachable_hud_item* i0		= g_player_hud->attached_item(0);
@@ -290,10 +296,8 @@ void CCustomDetector::TurnDetectorInternal(bool b)
 	if(b && m_ui==NULL)
 	{
 		CreateUI			();
-	}else
-	{
-//.		xr_delete			(m_ui);
 	}
+	else{}
 
 	UpdateNightVisionMode	(b);
 }
