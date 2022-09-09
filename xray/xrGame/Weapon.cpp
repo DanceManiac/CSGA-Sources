@@ -1122,12 +1122,19 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 						{
 							if(!IsPending())
 							{
-								if(GetState()!=eIdle)
-									SwitchState(eIdle);
-								OnZoomIn	();
+								if(GetState()==eIdle || GetState()==eZoomEnd) {
+									SwitchState(eZoomStart);
+									OnZoomIn();
+								}
 							}
-						}else
-							OnZoomOut	();
+						}
+						else
+						{
+                            if (GetState()==eIdle || GetState()==eZoomStart) {
+								SwitchState(eZoomEnd);
+								OnZoomOut();
+							}
+                        }
 					}
 				}
 				else
@@ -1136,14 +1143,27 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 					{
 						if(!IsZoomed() && !IsPending())
 						{
-							if(GetState()!=eIdle)
-								SwitchState(eIdle);
-							OnZoomIn	();
+							if(GetState()==eIdle || GetState()==eZoomEnd || GetState()==eFire) {
+                                if (GetState()==eFire){
+									FireEnd();
+								}
+
+								SwitchState(eZoomStart);
+								OnZoomIn();
+							}
 						}
 					}
-					else 
-						if(IsZoomed())
-							OnZoomOut	();
+					else
+					{
+                        if (IsZoomed() && (GetState()==eIdle || GetState()==eZoomStart || GetState()==eFire)) {
+							if (GetState() == eFire) {
+                               FireEnd();
+                            }
+
+                           SwitchState(eZoomEnd);
+                           OnZoomOut();
+						}
+                    }
 				}
 				return true;
 			}

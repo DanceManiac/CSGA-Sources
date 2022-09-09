@@ -679,7 +679,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 	{
 		if(IsZoomed())
 		{
-			if (IsRotatingToZoom())
+            /* if (IsRotatingToZoom())
 			{
 				string32 guns_aim_anm;
 				strconcat(sizeof(guns_aim_anm), guns_aim_anm, "anm_idle_aim_start", m_bGrenadeMode ? "_g" : "_w_gl");
@@ -688,7 +688,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 					PlayHUDMotionNew(guns_aim_anm, true, GetState());
 					return;
 				}
-			}
+			}*/
 
 			if (const char* guns_aim_anm = GetAnimAimName())
 			{
@@ -722,7 +722,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 		}
 		else
 		{
-			if (IsRotatingFromZoom())
+            /* if (IsRotatingFromZoom())
 			{
 				string32 guns_aim_anm;
 				strconcat(sizeof(guns_aim_anm), guns_aim_anm, "anm_idle_aim_end", m_bGrenadeMode ? "_g" : "_w_gl");
@@ -731,7 +731,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 					PlayHUDMotionNew(guns_aim_anm, true, GetState());
 					return;
 				}
-			}
+			}*/
 
 			int act_state = 0;
 			CActor* pActor = smart_cast<CActor*>(H_Parent());
@@ -907,6 +907,26 @@ void CWeaponMagazinedWGrenade::PlayAnimBore()
 	else
 		inherited::PlayAnimBore();
 }
+
+/*void CWeaponMagazinedWGrenade::PlayAnimAimStart()
+{
+    if (m_bGrenadeMode) {
+        if (iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_aim_start_empty_g"))
+            PlayHUDMotion("anm_idle_aim_start_empty_g", true, this, GetState());
+        else if (IsMisfire() && isHUDAnimationExist("anm_idle_aim_start_jammed_g"))
+            PlayHUDMotion("anm_idle_aim_start_jammed_g", true, this, GetState());
+        else
+            PlayHUDMotion("anm_idle_aim_start_g", true, this, GetState());
+    }
+	else {
+        if (iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_aim_start_empty_w_gl"))
+            PlayHUDMotion("anm_idle_aim_start_empty_w_gl", true, this, GetState());
+        else if (IsMisfire() && isHUDAnimationExist("anm_idle_aim_start_jammed_w_gl"))
+            PlayHUDMotion("anm_idle_aim_start_jammed_w_gl", true, this, GetState());
+        else
+            PlayHUDMotion("anm_idle_aim_start_w_gl", true, this, GetState());
+    }
+}*/
 
 void CWeaponMagazinedWGrenade::UpdateSounds	()
 {

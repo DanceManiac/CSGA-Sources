@@ -55,9 +55,16 @@ public:
 	virtual bool	CheckCompatibility	(CHudItem*);
 
 	virtual u32		ef_detector_type	() const	{return 1;};
+	void 	TurnDetectorInternal		(bool b);
+
+	/*virtual void PlayAnimIdle();
+    const char* GetAnimAimName();*/
+
+/*private:
+        string64 guns_aim_anm_detector;*/
+
 protected:
 			bool	CheckCompatibilityInt		(CHudItem*);
-			void 	TurnDetectorInternal		(bool b);
 	void 			UpdateNightVisionMode		(bool b_off);
 	void			UpdateVisibility			();
 	virtual void	UpfateWork					();

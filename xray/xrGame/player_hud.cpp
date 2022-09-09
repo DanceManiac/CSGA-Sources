@@ -20,9 +20,9 @@ constexpr float PITCH_OFFSET_N    = 0.0f;   // Насколько сильно �
 constexpr float PITCH_OFFSET_D    = 0.02f;  // Насколько сильно ствол приближается\отдаляется при вертикальных поворотах камеры
 constexpr float PITCH_LOW_LIMIT   = -PI;    // Минимальное значение pitch при использовании совместно с PITCH_OFFSET_N
 constexpr float ORIGIN_OFFSET     = -0.05f; // Фактор влияния инерции на положение ствола (чем меньше, тем масштабней инерция)
-constexpr float ORIGIN_OFFSET_AIM = -0.03f; // (Для прицеливания)
+constexpr float ORIGIN_OFFSET_AIM = 0.20f; // (Для прицеливания)
 constexpr float TENDTO_SPEED      = 5.f;    // Скорость нормализации положения ствола
-constexpr float TENDTO_SPEED_AIM  = 8.f;    // (Для прицеливания)
+constexpr float TENDTO_SPEED_AIM  = 3.f;    // (Для прицеливания)
 // --#SM+# End--
 // clang-format on
 
@@ -306,7 +306,6 @@ void hud_item_measures::load(const shared_str& sect_name, IKinematics* K)
 	m_hands_offset[0][2]		= pSettings->r_fvector3(sect_name, val_name);
 	strconcat					(sizeof(val_name),val_name,"gl_hud_offset_rot",_prefix);
 	m_hands_offset[1][2]		= pSettings->r_fvector3(sect_name, val_name);
-
 
 	R_ASSERT2(pSettings->line_exist(sect_name,"fire_point")==pSettings->line_exist(sect_name,"fire_bone"),		sect_name.c_str());
 	R_ASSERT2(pSettings->line_exist(sect_name,"fire_point2")==pSettings->line_exist(sect_name,"fire_bone2"),	sect_name.c_str());

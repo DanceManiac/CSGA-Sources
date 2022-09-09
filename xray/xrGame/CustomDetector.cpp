@@ -6,6 +6,7 @@
 #include "Weapon.h"
 #include "player_hud.h"
 #include "ui/ArtefactDetectorUI.h"
+#include "WeaponKnife.h"
 
 bool CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 {
@@ -30,7 +31,8 @@ bool CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 				&& !W->IsZoomed();
 	}
 	if (bres)
-		m_lastParentSlot = slot;
+		m_lastParentSlot = slot;/*p.s: удалить или заменить на ганс вариант (ганс варик, это когда оружие активно, а после переключение на детектор берется ещё и болт, если оружие
+								не активно, то берем просто детектор)*/
 	return bres;
 }
 
@@ -49,38 +51,37 @@ bool CCustomDetector::CheckCompatibility(CHudItem* itm)
 
 void CCustomDetector::HideDetector(bool bFastMode)
 {
-	if(GetState()==eIdle)
+    if (GetState() == eIdle)
 		ToggleDetector(bFastMode);
 }
 
 void CCustomDetector::ShowDetector(bool bFastMode)
 {
-	if(GetState()==eHidden)
+    if (GetState() == eHidden)
 		ToggleDetector(bFastMode);
 }
 
 void CCustomDetector::ToggleDetector(bool bFastMode)
 {
-	m_bNeedActivation = false;
-	m_bFastAnimMode = bFastMode;
-	if(GetState()==eHidden)
-	{
-		PIItem iitem = m_pInventory->ActiveItem();
-		CHudItem* itm = (iitem)?iitem->cast_hud_item():NULL;
-		if(CheckCompatibilityInt(itm))
-		{
-			SwitchState				(eShowing);
-			TurnDetectorInternal	(true);
-		}
-		else
-		{
-			m_pInventory->Activate(m_lastParentSlot);
-			m_bNeedActivation = true;
-		}
-	}
-	else
-	if(GetState()==eIdle)
-		SwitchState					(eHiding);
+    m_bNeedActivation = false;
+    m_bFastAnimMode = bFastMode;
+    if (GetState() == eHidden) {
+        PIItem iitem = m_pInventory->ActiveItem();
+        CHudItem* itm = (iitem) ? iitem->cast_hud_item() : NULL;
+        CWeapon* wpn = smart_cast<CWeapon*>(itm);
+        CWeaponKnife* knf = smart_cast<CWeaponKnife*>(itm);
+        if (CheckCompatibilityInt(itm) && wpn && !knf && wpn->GetState() == eIdle) {
+            wpn->SwitchState(CWeapon::eShowingDet);
+        } else if (CheckCompatibilityInt(itm) && !wpn || CheckCompatibilityInt(itm) && !wpn && knf) {
+            SwitchState(eShowing);
+            TurnDetectorInternal(true);
+        }
+        else {
+            m_pInventory->Activate(m_lastParentSlot);
+            m_bNeedActivation = true;
+        }
+    } else if (GetState() == eIdle)
+        SwitchState(eHiding);
 }
 
 void CCustomDetector::OnStateSwitch(u32 S)
@@ -103,7 +104,13 @@ void CCustomDetector::OnStateSwitch(u32 S)
 			{
 				m_sounds.PlaySound			("sndHide", Fvector().set(0,0,0), this, true, false);
 				PlayHUDMotion				(m_bFastAnimMode?"anm_hide_fast":"anm_hide", false, this, GetState());
-				SetPending					(true);
+                SetPending(true);
+                PIItem iitem = m_pInventory->ActiveItem();
+                CHudItem* itm = (iitem) ? iitem->cast_hud_item() : NULL;
+                CWeapon* wpn = smart_cast<CWeapon*>(itm);
+                CWeaponKnife* knf = smart_cast<CWeaponKnife*>(itm);
+                if (!knf && wpn && wpn->GetState() == CWeapon::eIdle)
+					wpn->SwitchState(CWeapon::eHideDet);
 			}
 		}break;
 	case eIdle:
@@ -111,8 +118,45 @@ void CCustomDetector::OnStateSwitch(u32 S)
 			PlayAnimIdle				();
 			SetPending					(false);
 		}break;
+	}
 }
+
+/*void CCustomDetector::PlayAnimIdle()
+{
+
+    attachable_hud_item* i0 = g_player_hud->attached_item(0);
+    CWeapon* wpn = (i0) ? smart_cast<CWeapon*>(i0->m_parent_hud_item) : NULL;
+
+	if (wpn && wpn->IsZoomed()) {
+		if (const char* guns_aim_anm_detector = GetAnimAimName())
+		{
+			if (isHUDAnimationExist(guns_aim_anm_detector))
+			{
+				PlayHUDMotionNew(guns_aim_anm_detector, true, GetState());
+				return;
+			}
+		}
+	}
+
+	if (wpn && wpn->IsZoomed() && isHUDAnimationExist("anm_idle_aim"))
+		PlayHUDMotion("anm_idle_aim", true, nullptr, GetState());
+	else
+		PlayHUDMotion("anm_idle", true, nullptr, GetState());
 }
+
+const char* CCustomDetector::GetAnimAimName()
+{
+	auto pActor = smart_cast<const CActor*>(H_Parent());
+    u32 state = pActor->get_state();
+	if (pActor)
+	{
+        if (state & mcAnyMove)
+		{
+			return strconcat(sizeof(guns_aim_anm_detector), guns_aim_anm_detector, "anm_idle_aim_moving", (state & mcFwd) ? "_forward" : ((state & mcBack) ? "_back" : ""), (state & mcLStrafe) ? "_left" : ((state & mcRStrafe) ? "_right" : ""));
+		}
+	}
+	return nullptr;
+}*/
 
 void CCustomDetector::OnAnimationEnd(u32 state)
 {
@@ -174,8 +218,8 @@ void CCustomDetector::Load(LPCSTR section)
 	m_fAfVisRadius			= pSettings->r_float(section,"af_vis_radius");
 	m_artefacts.load		(section, "af");
 
-	m_sounds.LoadSound( section, "snd_draw", "sndShow");
-	m_sounds.LoadSound( section, "snd_holster", "sndHide");
+	m_sounds.LoadSound(section, "snd_draw", "sndShow");
+	m_sounds.LoadSound(section, "snd_holster", "sndHide");
 }
 
 void CCustomDetector::shedule_Update(u32 dt) 
@@ -205,8 +249,6 @@ void CCustomDetector::UpfateWork()
 
 void CCustomDetector::UpdateVisibility()
 {
-
-
 	//check visibility
 	attachable_hud_item* i0		= g_player_hud->attached_item(0);
 	if(i0 && HudItemData())
@@ -216,7 +258,7 @@ void CCustomDetector::UpdateVisibility()
 		{
 			u32 state			= wpn->GetState();
 			bool bClimb			= ( (Actor()->MovingState()&mcClimb) != 0 );
-			if(bClimb || wpn->IsZoomed() || state==CWeapon::eReload || state==CWeapon::eSwitch)
+			if(bClimb || state==CWeapon::eReload || state==CWeapon::eSwitch)
 			{
 				HideDetector		(true);
 				m_bNeedActivation	= true;
@@ -231,12 +273,7 @@ void CCustomDetector::UpdateVisibility()
 		if(!bClimb)
 		{
 			CWeapon* wpn			= (i0)?smart_cast<CWeapon*>(i0->m_parent_hud_item) : NULL;
-			if(	!wpn || 
-				(	!wpn->IsZoomed() && 
-					wpn->GetState()!=CWeapon::eReload && 
-					wpn->GetState()!=CWeapon::eSwitch
-				)
-			)
+			if(	!wpn || ( !wpn->IsZoomed() && wpn->GetState()!=CWeapon::eReload && wpn->GetState()!=CWeapon::eSwitch ) )
 			{
 				ShowDetector		(true);
 			}

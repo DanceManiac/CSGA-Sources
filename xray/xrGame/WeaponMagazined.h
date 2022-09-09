@@ -147,9 +147,16 @@ protected:
 
 	//виртуальные функции для проигрывания анимации HUD
 	virtual void	PlayAnimShow		();
+	virtual void	PlayAnimShowDet		();
+    virtual void	PlayAnimShowEndDet	();
 	virtual void	PlayAnimHide		();
+    virtual void	PlayAnimHideDet		();
 	virtual void	PlayAnimReload		();
 	virtual void	PlayAnimIdle		();
+    virtual void	PlayAnimIdleMoving	();
+    virtual void	PlayAnimIdleSprint	();
+    virtual void	PlayAnimAimStart	();
+    virtual void	PlayAnimAimEnd		();
 
 private:
 	string64 guns_aim_anm;
@@ -163,9 +170,6 @@ protected:
 
 	virtual	int		ShotsFired			() { return m_iShotNum; }
 	virtual float	GetWeaponDeterioration	();
-	
-	virtual void	PlayAnimIdleMoving();
-	virtual void	PlayAnimIdleSprint();
 
 	HUD_SOUND_COLLECTION_LAYERED m_layered_sounds;
 
