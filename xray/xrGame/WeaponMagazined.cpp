@@ -85,18 +85,21 @@ void CWeaponMagazined::Load	(LPCSTR section)
 	inherited::Load		(section);
 		
 	// Sounds
-	m_sounds.LoadSound(section,"snd_draw", "sndShow", false, m_eSoundShow);
-	m_sounds.LoadSound(section,"snd_holster", "sndHide", false, m_eSoundHide);
+	m_sounds.LoadSound(section, "snd_draw", "sndShow", false, m_eSoundShow);
+	m_sounds.LoadSound(section, "snd_holster", "sndHide", false, m_eSoundHide);
 
 	//Alundaio: LAYERED_SND_SHOOT
 	m_layered_sounds.LoadSound(section, "snd_shoot", "sndShot", false, m_eSoundShot);
 	if (WeaponSoundExist(section, "snd_shoot_actor"))
 		m_layered_sounds.LoadSound(section, "snd_shoot_actor", "sndShotActor", false, m_eSoundShot);
 
-	m_sounds.LoadSound(section,"snd_empty", "sndEmptyClick", false, m_eSoundEmptyClick);
-	m_sounds.LoadSound(section,"snd_reload", "sndReload", true, m_eSoundReload);
-	m_sounds.LoadSound(section,"snd_reload_empty", "sndReloadEmpty", true, m_eSoundReload);
-	m_sounds.LoadSound(section,"snd_reload_jammed", "sndReloadJammed", true, m_eSoundReload);
+	m_sounds.LoadSound(section, "snd_empty", "sndEmptyClick", false, m_eSoundEmptyClick);
+	m_sounds.LoadSound(section, "snd_reload", "sndReload", true, m_eSoundReload);
+	m_sounds.LoadSound(section, "snd_reload_empty", "sndReloadEmpty", true, m_eSoundReload);
+	m_sounds.LoadSound(section, "snd_reload_jammed", "sndReloadJammed", true, m_eSoundReload);
+
+	m_sounds.LoadSound(section, "snd_aim_start", "sndAimStart", false, m_eSoundShow);
+    m_sounds.LoadSound(section, "snd_aim_end", "sndAimEnd", false, m_eSoundHide);
 	
 	m_sSndShotCurrent = "sndShot";
 		
@@ -397,10 +400,12 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
             switch2_Idle();
             break;
         case eZoomStart: {
+            PlaySound("sndAimStart", get_LastFP());
             PlayAnimAimStart();
             SetPending(false);
         } break;
         case eZoomEnd: {
+            PlaySound("sndAimEnd", get_LastFP());
             PlayAnimAimEnd();
             SetPending(false);
         }

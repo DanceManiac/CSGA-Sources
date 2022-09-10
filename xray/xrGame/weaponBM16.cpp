@@ -105,22 +105,6 @@ void CWeaponBM16::PlayAnimHide()
 	}
 }
 
-void CWeaponBM16::PlayAnimBore()//в ганс двухстволках не юзаются анимы скуки
-{
-	switch( m_magazine.size() )
-	{
-	case 0:
-		PlayHUDMotion("anm_bore_0",TRUE,this,GetState());
-		break;
-	case 1:
-		PlayHUDMotion("anm_bore_1",TRUE,this,GetState());
-		break;
-	case 2:
-		PlayHUDMotion("anm_bore_2",TRUE,this,GetState());
-		break;
-	}
-}
-
 void CWeaponBM16::PlayAnimReload()
 {
 	bool b_both = HaveCartridgeInInventory(2);

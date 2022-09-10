@@ -45,7 +45,7 @@ void CHudItem::Load(LPCSTR section)
 
 	m_bDisableBore = READ_IF_EXISTS(pSettings, r_bool, hud_sect, "disable_bore", FALSE);//параметр из ганса, случайно нашёл способ реализации, чтобы не васянить, нужно добавить условие !m_bDisableBore в функции, которая вызывает eBore, по умолчанию false
 
-	if(!m_bDisableBore)
+	if(!m_bDisableBore && isHUDAnimationExist("anm_bore"))
 		m_sounds.LoadSound(section,"snd_bore","sndBore", true);
 }
 
@@ -124,7 +124,7 @@ void CHudItem::OnStateSwitch(u32 S)
 		SetPending		(FALSE);
 
 		PlayAnimBore	();
-		if(HudItemData())
+		if(HudItemData() && !m_bDisableBore && isHUDAnimationExist("anm_bore"))
 		{
 			Fvector P		= HudItemData()->m_item_transform.c;
 			m_sounds.PlaySound("sndBore", P, object().H_Root(), !!GetHUDmode(), false, m_started_rnd_anim_idx);
@@ -147,7 +147,7 @@ void CHudItem::OnAnimationEnd(u32 state)
 
 void CHudItem::PlayAnimBore()
 {
-	if(isHUDAnimationExist("anm_bore"))//чтобы не пришлось добавлять заглушки если disable_bore = false
+	if(!m_bDisableBore && isHUDAnimationExist("anm_bore"))//чтобы не пришлось добавлять заглушки если disable_bore = false
 		PlayHUDMotion	("anm_bore", TRUE, this, GetState());
 }
 
@@ -369,7 +369,7 @@ void CHudItem::PlayAnimIdle()
 {
 	if (TryPlayAnimIdle()) return;
 
-	PlayHUDMotion("anm_idle", TRUE, NULL, GetState());
+	PlayHUDMotion("anm_idle", true, nullptr, GetState());
 }
 
 bool CHudItem::TryPlayAnimIdle()
