@@ -1,18 +1,18 @@
 #include "pch_script.h"
 #include "hudmanager.h"
 #include "WeaponMagazined.h"
-#include "entity.h"
-#include "actor.h"
+#include "Entity.h"
+#include "Actor.h"
 #include "ParticlesObject.h"
-#include "scope.h"
-#include "silencer.h"
+#include "Scope.h"
+#include "Silencer.h"
 #include "GrenadeLauncher.h"
 #include "Inventory.h"
 #include "xrserver_objects_alife_items.h"
 #include "ActorEffector.h"
 #include "EffectorZoomInertion.h"
 #include "xr_level_controller.h"
-#include "level.h"
+#include "Level.h"
 #include "object_broker.h"
 #include "string_table.h"
 #include "MPPlayersBag.h"
@@ -20,6 +20,7 @@
 #include "ui/UIWindow.h"
 #include "HudSound.h"
 #include "CustomDetector.h"
+#include "game_cl_single.h"
 
 ENGINE_API	bool	g_dedicated_server;
 
@@ -168,14 +169,15 @@ void CWeaponMagazined::FireStart		()
 		}
 		else 
 		{
-			if(eReload!=GetState() && eZoomStart!=GetState() && eZoomEnd!=GetState()) 
+			if(GetState()!=eReload && GetState()!=eZoomStart && GetState()!=eZoomEnd) {
 				MsgGunEmpty();//сообщение о том, что магазин пуст
 				SwitchState(eEmpty);
+			}
 		}
 	}
 	else
 	{//misfire
-		if(smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity()==H_Parent()) )
+            if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()) && (g_SingleGameDifficulty == egdNovice))
 			HUD().GetUI()->AddInfoMessage("gun_jammed");
 
 		OnEmptyClick();
@@ -184,7 +186,7 @@ void CWeaponMagazined::FireStart		()
 
 void CWeaponMagazined::MsgGunEmpty()
 {
-	if(smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity()==H_Parent()) )
+	if(smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity()==H_Parent()) && (g_SingleGameDifficulty == egdNovice))
 		HUD().GetUI()->AddInfoMessage("gun_empty");
 }
 
@@ -413,7 +415,7 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
             switch2_Fire();
             break;
         case eMisfire:
-            if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
+            if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()) && (g_SingleGameDifficulty == egdNovice))
                 HUD().GetUI()->AddInfoMessage("gun_jammed");
             break;
         case eEmpty:

@@ -492,7 +492,6 @@ void CWeaponMagazinedWGrenade::OnAnimationEnd(u32 state)
 	inherited::OnAnimationEnd(state);
 }
 
-
 void CWeaponMagazinedWGrenade::OnH_B_Independent(bool just_before_destroy)
 {
 	inherited::OnH_B_Independent(just_before_destroy);
@@ -581,9 +580,6 @@ bool CWeaponMagazinedWGrenade::Detach(LPCSTR item_section_name, bool b_spawn_ite
 	else
 		return inherited::Detach(item_section_name, b_spawn_item);
 }
-
-
-
 
 void CWeaponMagazinedWGrenade::InitAddons()
 {	
@@ -691,16 +687,6 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 	{
 		if(IsZoomed())
 		{
-            /* if (IsRotatingToZoom())
-			{
-				string32 guns_aim_anm;
-				strconcat(sizeof(guns_aim_anm), guns_aim_anm, "anm_idle_aim_start", m_bGrenadeMode ? "_g" : "_w_gl");
-				if (isHUDAnimationExist(guns_aim_anm))
-				{
-					PlayHUDMotionNew(guns_aim_anm, true, GetState());
-					return;
-				}
-			}*/
 
 			if (const char* guns_aim_anm = GetAnimAimName())
 			{
@@ -734,17 +720,6 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 		}
 		else
 		{
-            /* if (IsRotatingFromZoom())
-			{
-				string32 guns_aim_anm;
-				strconcat(sizeof(guns_aim_anm), guns_aim_anm, "anm_idle_aim_end", m_bGrenadeMode ? "_g" : "_w_gl");
-				if (isHUDAnimationExist(guns_aim_anm))
-				{
-					PlayHUDMotionNew(guns_aim_anm, true, GetState());
-					return;
-				}
-			}*/
-
 			int act_state = 0;
 			CActor* pActor = smart_cast<CActor*>(H_Parent());
 			if(pActor)

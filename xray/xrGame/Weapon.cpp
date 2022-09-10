@@ -1143,7 +1143,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 					{
 						if(!IsZoomed() && !IsPending())
 						{
-							if(GetState()==eIdle || GetState()==eZoomEnd || GetState()==eFire) {
+							if(GetState()==eIdle || GetState()==eZoomEnd || GetState()==eFire || GetState()==eEmpty) {
                                 if (GetState()==eFire){
 									FireEnd();
 								}
@@ -1155,7 +1155,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 					}
 					else
 					{
-                        if (IsZoomed() && (GetState()==eIdle || GetState()==eZoomStart || GetState()==eFire)) {
+                        if (IsZoomed() && (GetState()==eIdle || GetState()==eZoomStart || GetState()==eFire || GetState()==eEmpty)) {
 							if (GetState() == eFire) {
                                FireEnd();
                             }
