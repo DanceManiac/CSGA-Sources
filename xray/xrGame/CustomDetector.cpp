@@ -31,8 +31,8 @@ bool CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 				&& !W->IsZoomed();
 	}
 	if (bres)
-		m_lastParentSlot = slot;/*p.s: удалить или заменить на ганс вариант (ганс варик, это когда оружие активно, а после переключение на детектор берется ещё и болт, если оружие
-								не активно, то берем просто детектор)*/
+		m_lastParentSlot = BOLT_SLOT;//Не трогать блэт!!!!
+
 	return bres;
 }
 
