@@ -77,11 +77,6 @@ void CWeaponKnife::OnStateSwitch	(u32 S)
 					fCurrentHit			= fvHitPower_1[g_SingleGameDifficulty];
 					fCurrentHitCritical	= fvHitPowerCritical_1[g_SingleGameDifficulty];
 				}
-				else
-				{
-					fCurrentHit			= fvHitPower_1[egdMaster];
-					fCurrentHitCritical	= fvHitPowerCritical_1[egdMaster];
-				}
 			}
 			else
 			{
@@ -103,11 +98,6 @@ void CWeaponKnife::OnStateSwitch	(u32 S)
 				{
 					fCurrentHit			= fvHitPower_2[g_SingleGameDifficulty];
 					fCurrentHitCritical	= fvHitPowerCritical_2[g_SingleGameDifficulty];
-				}
-				else
-				{
-					fCurrentHit			= fvHitPower_2[egdMaster];
-					fCurrentHitCritical	= fvHitPowerCritical_2[egdMaster];
 				}
 			}
 			else

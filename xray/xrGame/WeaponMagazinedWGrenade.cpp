@@ -157,7 +157,7 @@ void CWeaponMagazinedWGrenade::OnShot		()
 
 bool CWeaponMagazinedWGrenade::SwitchMode() 
 {
-	bool bUsefulStateToSwitch = ((eIdle==GetState())||(eHidden==GetState())||(eMisfire==GetState())||(eEmpty==GetState())) && (!IsPending());
+	bool bUsefulStateToSwitch = ((eIdle==GetState())||(eHidden==GetState())||(eMisfire==GetState())||(eEmpty==GetState())) && (!IsZoomed()) && (!IsPending());
 
 	if(!bUsefulStateToSwitch)
 		return false;

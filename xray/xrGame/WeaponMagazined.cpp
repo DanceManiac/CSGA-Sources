@@ -681,11 +681,12 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		break;
 	case eShowingDet:
 	{
-        auto det_active = smart_cast<CInventoryItem*>(m_pInventory->ItemFromSlot(DETECTOR_SLOT));
-        auto det = smart_cast<CCustomDetector*>(det_active);
-		det->SwitchState(CCustomDetector::eShowing);
-        SwitchState(eShowingEndDet);
-		det->TurnDetectorInternal(true);
+        auto det = smart_cast<CCustomDetector*>(m_pInventory->ItemFromSlot(DETECTOR_SLOT));
+        if (det) {
+			det->SwitchState(CCustomDetector::eShowing);
+			SwitchState(eShowingEndDet);
+			det->TurnDetectorInternal(true);
+		}
 	}break;
     case eShowingEndDet:
 		SwitchState(eIdle);
@@ -803,7 +804,7 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 	
 	switch(cmd) 
 	{
-	case kWPN_RELOAD:
+	case kWPN_RELOAD://немножко переделать под разклин
 		{
 			if(flags&CMD_START) 
 				if(iAmmoElapsed < iMagazineSize || IsMisfire()) 

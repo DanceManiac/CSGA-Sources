@@ -43,7 +43,7 @@ void CHudItem::Load(LPCSTR section)
 	hud_sect				= pSettings->r_string		(section,"hud");
 	m_animation_slot		= pSettings->r_u32			(section,"animation_slot");
 
-	m_bDisableBore = READ_IF_EXISTS(pSettings, r_bool, hud_sect, "disable_bore", FALSE);//параметр из ганса, случайно нашёл способ реализации, чтобы не васянить, нужно добавить условие !m_bDisableBore в функции, которая вызывает eBore, по умолчанию false
+	m_bDisableBore = !!READ_IF_EXISTS(pSettings, r_bool, hud_sect, "disable_bore", false);//параметр из ганса, случайно нашёл способ реализации, чтобы не васянить, нужно добавить условие !m_bDisableBore в функции, которая вызывает eBore, по умолчанию false
 
 	if(!m_bDisableBore && isHUDAnimationExist("anm_bore"))
 		m_sounds.LoadSound(section,"snd_bore","sndBore", true);
@@ -312,9 +312,12 @@ bool CHudItem::isHUDAnimationExist(LPCSTR anim_name)
 		if (anm)
 			return true;
 	}
-	else // Third person
+	else {// Third person
 		if (g_player_hud->motion_length(anim_name, HudSection(), m_current_motion_def) > 100)
 			return true;
+	}
+
+
 #ifdef DEBUG
 	Msg("~ [WARNING] ------ Animation [%s] does not exist in [%s]", anim_name, HudSection().c_str());
 #endif

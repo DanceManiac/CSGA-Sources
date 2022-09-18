@@ -879,16 +879,12 @@ void CWeapon::UpdateCL		()
 	if(!IsGameTypeSingle())
 		make_Interpolation		();
 	
-	if( (GetNextState()==GetState()) && IsGameTypeSingle() && H_Parent()==Level().CurrentEntity())
+	if (!m_bDisableBore && (GetNextState() == GetState()) && IsGameTypeSingle() && H_Parent() == Level().CurrentEntity())
 	{
 		CActor* pActor	= smart_cast<CActor*>(H_Parent());
 		if(pActor && !pActor->AnyMove() && this==pActor->inventory().ActiveItem())
 		{
-			if (hud_adj_mode==0 && 
-				GetState()==eIdle && 
-				(Device.dwTimeGlobal-m_dw_curr_substate_time>20000) && 
-				!IsZoomed()&&
-				g_player_hud->attached_item(1)==NULL && !m_bDisableBore)
+			if (hud_adj_mode==0 && GetState()==eIdle && (Device.dwTimeGlobal-m_dw_curr_substate_time>20000) && !IsZoomed() && g_player_hud->attached_item(1)==NULL)
 			{
 				SwitchState			(eBore);
 				ResetSubStateTime	();

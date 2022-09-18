@@ -66,10 +66,11 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
     m_bNeedActivation = false;
     m_bFastAnimMode = bFastMode;
     if (GetState() == eHidden) {
+        CWeapon* wpn = smart_cast<CWeapon*>(m_pInventory->ActiveItem());
+        CWeaponKnife* knf = smart_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
         PIItem iitem = m_pInventory->ActiveItem();
         CHudItem* itm = (iitem) ? iitem->cast_hud_item() : NULL;
-        CWeapon* wpn = smart_cast<CWeapon*>(itm);
-        CWeaponKnife* knf = smart_cast<CWeaponKnife*>(itm);
+
         if (CheckCompatibilityInt(itm) && wpn && !knf && wpn->GetState() == eIdle) {
             wpn->SwitchState(CWeapon::eShowingDet);
         } else if (CheckCompatibilityInt(itm) && !wpn || CheckCompatibilityInt(itm) && !wpn && knf) {
@@ -105,11 +106,9 @@ void CCustomDetector::OnStateSwitch(u32 S)
 				m_sounds.PlaySound			("sndHide", Fvector().set(0,0,0), this, true, false);
 				PlayHUDMotion				(m_bFastAnimMode?"anm_hide_fast":"anm_hide", false, this, GetState());
                 SetPending(true);
-                PIItem iitem = m_pInventory->ActiveItem();
-                CHudItem* itm = (iitem) ? iitem->cast_hud_item() : NULL;
-                CWeapon* wpn = smart_cast<CWeapon*>(itm);
-                CWeaponKnife* knf = smart_cast<CWeaponKnife*>(itm);
-                if (!knf && wpn && wpn->GetState() == CWeapon::eIdle)
+                CWeapon* wpn = smart_cast<CWeapon*>(m_pInventory->ActiveItem());
+                CWeaponKnife* knf = smart_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
+                if (!knf && wpn && wpn->GetState() == eIdle)
 					wpn->SwitchState(CWeapon::eHideDet);
 			}
 		}break;
