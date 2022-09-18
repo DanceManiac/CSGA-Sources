@@ -165,8 +165,6 @@ void CHUDManager::OnFrame()
 }
 //--------------------------------------------------------------------
 
-ENGINE_API extern float psHUD_FOV;
-
 void CHUDManager::Render_First()
 {
 	if ( !m_Renderable )
