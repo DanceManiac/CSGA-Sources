@@ -547,10 +547,12 @@ void CWeapon::Load		(LPCSTR section)
 		return false;
 	};
 	
-	LoadBoneNames(section, "def_show_bones", m_defShownBones);
+	LoadBoneNames(section, "def_show_bones", m_defShownBones);//Показ костей по дефолту
 	
-	LoadBoneNames(section, "def_hide_bones", m_defHiddenBones);
+	LoadBoneNames(section, "def_hide_bones", m_defHiddenBones);//Скрытие костей по дефолту
 	
+	LoadBoneNames(section, "def_hide_bones_override_when_gl_attached", m_defGLHiddenBones);//Скрытие костей по дефолту с надетым ПГ, без ПГ кости будут отображены
+
 	m_bUseDynamicZoom = READ_IF_EXISTS(pSettings,r_bool,section,"scope_dynamic_zoom",false);
 }
 
@@ -878,7 +880,7 @@ void CWeapon::UpdateCL		()
 
 	if(!IsGameTypeSingle())
 		make_Interpolation		();
-	
+
 	if (!m_bDisableBore && (GetNextState() == GetState()) && IsGameTypeSingle() && H_Parent() == Level().CurrentEntity())
 	{
 		CActor* pActor	= smart_cast<CActor*>(H_Parent());
@@ -1471,6 +1473,13 @@ void CWeapon::UpdateHUDAddonsVisibility()
 		SetBoneVisible(bone, TRUE);
 	}
 
+	if (IsGrenadeLauncherAttached()) {
+		for (const shared_str& bone : m_defGLHiddenBones)
+		{
+			SetBoneVisible(bone, FALSE);
+		}
+	}
+
 	if (m_sHud_wpn_laser_bone.size() && has_laser)
 	{
 		HudItemData()->set_bone_visible(m_sHud_wpn_laser_bone, IsLaserOn(), TRUE);
@@ -1545,7 +1554,6 @@ void CWeapon::UpdateAddonsVisibility()
 		pWeaponVisual->LL_GetBoneVisible(bone_id) )
 	{
 		pWeaponVisual->LL_SetBoneVisible					(bone_id,FALSE,TRUE);
-//		Log("scope", pWeaponVisual->LL_GetBoneVisible		(bone_id));
 	}
 	bone_id = pWeaponVisual->LL_BoneID						(wpn_silencer);
 	if(SilencerAttachable())
@@ -1621,6 +1629,15 @@ void CWeapon::UpdateAddonsVisibility()
 		if (bone_id != BI_NONE && pWeaponVisual->LL_GetBoneVisible(bone_id))
 			pWeaponVisual->LL_SetBoneVisible(bone_id, FALSE, TRUE);
 	}
+
+	if (IsGrenadeLauncherAttached()) {
+		for (const auto& boneName : m_defGLHiddenBones)
+		{
+			bone_id = pWeaponVisual->LL_BoneID(boneName);
+			if (bone_id != BI_NONE && pWeaponVisual->LL_GetBoneVisible(bone_id))
+				pWeaponVisual->LL_SetBoneVisible(bone_id, FALSE, TRUE);
+		}
+	}
 	
 	for (const auto& boneName : m_defShownBones)
 	{
@@ -1692,31 +1709,30 @@ void CWeapon::SwitchState(u32 S)
 	}
 #endif // #ifndef MASTER_GOLD
 
-	SetNextState		( S );
+	SetNextState( S );
 	if (CHudItem::object().Local() && !CHudItem::object().getDestroy() && m_pInventory && OnServer())	
 	{
 		// !!! Just single entry for given state !!!
-		NET_Packet		P;
-		CHudItem::object().u_EventGen		(P,GE_WPN_STATE_CHANGE,CHudItem::object().ID());
-		P.w_u8			(u8(S));
-		P.w_u8			(u8(m_sub_state));
-		P.w_u8			(u8(m_ammoType& 0xff));
-		P.w_u8			(u8(iAmmoElapsed & 0xff));
-		P.w_u8			(u8(m_set_next_ammoType_on_reload & 0xff));
-		CHudItem::object().u_EventSend		(P, net_flags(TRUE, TRUE, FALSE, TRUE));
+		NET_Packet P;
+		CHudItem::object().u_EventGen(P,GE_WPN_STATE_CHANGE,CHudItem::object().ID());
+		P.w_u8(u8(S));
+		P.w_u8(u8(m_sub_state));
+		P.w_u8(u8(m_ammoType& 0xff));
+		P.w_u8(u8(iAmmoElapsed & 0xff));
+		P.w_u8(u8(m_set_next_ammoType_on_reload & 0xff));
+		CHudItem::object().u_EventSend(P, net_flags(TRUE, TRUE, FALSE, TRUE));
 	}
 }
 
-void CWeapon::OnMagazineEmpty	()
+void CWeapon::OnMagazineEmpty()
 {
 	VERIFY((u32)iAmmoElapsed == m_magazine.size());
 }
 
-
-void CWeapon::reinit			()
+void CWeapon::reinit()
 {
-	CShootingObject::reinit		();
-	CHudItemObject::reinit			();
+	CShootingObject::reinit();
+	CHudItemObject::reinit();
 }
 
 void CWeapon::reload			(LPCSTR section)

@@ -210,6 +210,7 @@ protected:
 	
 	RStringVec		m_defShownBones;
 	RStringVec		m_defHiddenBones;
+	RStringVec		m_defGLHiddenBones;
 
 protected:
 
