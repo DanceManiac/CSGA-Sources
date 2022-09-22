@@ -65,9 +65,11 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
 {
     m_bNeedActivation = false;
     m_bFastAnimMode = bFastMode;
+
+    CWeapon* wpn = smart_cast<CWeapon*>(m_pInventory->ActiveItem());
+    CWeaponKnife* knf = smart_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
+
     if (GetState() == eHidden) {
-        CWeapon* wpn = smart_cast<CWeapon*>(m_pInventory->ActiveItem());
-        CWeaponKnife* knf = smart_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
         PIItem iitem = m_pInventory->ActiveItem();
         CHudItem* itm = (iitem) ? iitem->cast_hud_item() : NULL;
 
@@ -108,7 +110,7 @@ void CCustomDetector::OnStateSwitch(u32 S)
                 SetPending(true);
                 CWeapon* wpn = smart_cast<CWeapon*>(m_pInventory->ActiveItem());
                 CWeaponKnife* knf = smart_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
-                if (!knf && wpn && wpn->GetState() == eIdle)
+                if (!knf && wpn && (wpn->GetState() == eIdle || wpn->GetState() == CWeapon::eEmpty ))
 					wpn->SwitchState(CWeapon::eHideDet);
 			}
 		}break;
