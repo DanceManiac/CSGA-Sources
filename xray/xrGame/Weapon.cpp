@@ -23,6 +23,7 @@
 #include "clsid_game.h"
 #include "ui/UIWindow.h"
 #include "../xrEngine/LightAnimLibrary.h"
+#include "WeaponBinoculars.h"
 
 #define WEAPON_REMOVE_TIME		60000
 #define ROTATION_TIME			0.25f
@@ -1087,7 +1088,8 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 {
 	if(inherited::Action(cmd, flags)) return true;
 
-	
+	CWeaponBinoculars* binoc = smart_cast<CWeaponBinoculars*>(m_pInventory->ActiveItem());
+
 	switch(cmd) 
 	{
 		case kWPN_FIRE: 
@@ -1121,7 +1123,10 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 							if(!IsPending())
 							{
 								if(GetState()==eIdle || GetState()==eZoomEnd) {
-									SwitchState(eZoomStart);
+									if(!binoc)
+										SwitchState(eZoomStart);
+
+
 									OnZoomIn();
 								}
 							}
@@ -1129,7 +1134,10 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 						else
 						{
                             if (GetState()==eIdle || GetState()==eZoomStart) {
-								SwitchState(eZoomEnd);
+								if(!binoc)
+									SwitchState(eZoomEnd);
+
+
 								OnZoomOut();
 							}
                         }
@@ -1142,11 +1150,13 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 						if(!IsZoomed() && !IsPending())
 						{
 							if(GetState()==eIdle || GetState()==eZoomEnd || GetState()==eFire || GetState()==eEmpty) {
-                                if (GetState()==eFire){
+                                if (GetState()==eFire)
 									FireEnd();
-								}
 
-								SwitchState(eZoomStart);
+								if (!binoc)
+									SwitchState(eZoomStart);
+
+
 								OnZoomIn();
 							}
 						}
@@ -1154,11 +1164,13 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 					else
 					{
                         if (IsZoomed() && (GetState()==eIdle || GetState()==eZoomStart || GetState()==eFire || GetState()==eEmpty)) {
-							if (GetState() == eFire) {
+							if (GetState() == eFire)
                                FireEnd();
-                            }
 
-                           SwitchState(eZoomEnd);
+                            if (!binoc)
+								SwitchState(eZoomEnd);
+
+
                            OnZoomOut();
 						}
                     }
