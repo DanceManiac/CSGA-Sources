@@ -21,6 +21,7 @@
 #include "HudSound.h"
 #include "CustomDetector.h"
 #include "game_cl_single.h"
+#include "WeaponBinoculars.h"
 
 ENGINE_API	bool	g_dedicated_server;
 
@@ -207,7 +208,8 @@ void CWeaponMagazined::Reload()
 
 bool CWeaponMagazined::TryReload() 
 {
-	if(m_pInventory) 
+    CWeaponBinoculars* binoc = smart_cast<CWeaponBinoculars*>(m_pInventory->ActiveItem());
+	if(m_pInventory && !binoc) 
 	{
 		if(IsGameTypeSingle() && ParentIsActor())
 		{
@@ -246,7 +248,7 @@ bool CWeaponMagazined::TryReload()
 
 	}
 	
-	if(GetState()!=eIdle)
+	if(GetState()==eIdle)
 		SwitchState(eIdle);
 
 	return false;
