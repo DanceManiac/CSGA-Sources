@@ -559,7 +559,7 @@ void CWeapon::Load		(LPCSTR section)
 
 	m_bUseLowAmmoSnd = READ_IF_EXISTS(pSettings, r_bool, section, "use_lowammo_snd", false);
 
-	m_fACPlaySnd = READ_IF_EXISTS(pSettings, r_float, section, "lowammo_snd_ammo_count", 0);
+	m_u32ACPlaySnd = READ_IF_EXISTS(pSettings, r_u32, section, "lowammo_snd_ammo_count", 0);
 }
 
 void CWeapon::LoadFireParams		(LPCSTR section)

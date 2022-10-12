@@ -410,12 +410,12 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
             switch2_Idle();
             break;
         case eZoomStart: {
-            PlaySound("sndAimStart", get_LastFP());
+            PlaySound("sndAimStart", get_LastSP());
             PlayAnimAimStart();
             SetPending(false);
         } break;
         case eZoomEnd: {
-            PlaySound("sndAimEnd", get_LastFP());
+            PlaySound("sndAimEnd", get_LastSP());
             PlayAnimAimEnd();
             SetPending(false);
         }
@@ -624,7 +624,7 @@ void CWeaponMagazined::PlaySoundLowAmmo()
     if (iAmmoElapsed == 0)
         return;
 
-	if (m_fACPlaySnd == 0)
+	if (m_u32ACPlaySnd == 0)
         return;
 
     CWeaponKnife* knf = smart_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
@@ -637,7 +637,7 @@ void CWeaponMagazined::PlaySoundLowAmmo()
 	if (binoc)
 		return;
 
-	if (iAmmoElapsed <= m_fACPlaySnd)
+	if (iAmmoElapsed <= m_u32ACPlaySnd)
 		PlaySound("sndLowAmmo", get_LastSP());
 }
 
