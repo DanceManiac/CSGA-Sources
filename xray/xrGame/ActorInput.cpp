@@ -35,7 +35,14 @@ extern u32 hud_adj_mode;
 
 void CActor::IR_OnKeyboardPress(int cmd)
 {
-	if(hud_adj_mode && pInput->iGetAsyncKeyState(DIK_LSHIFT))	return;
+    if (hud_adj_mode && pInput->iGetAsyncKeyState(DIK_LSHIFT)) {
+        if (pInput->iGetAsyncKeyState(DIK_RETURN) || pInput->iGetAsyncKeyState(DIK_BACKSPACE)
+            || pInput->iGetAsyncKeyState(DIK_DELETE))
+            g_player_hud->tune(Ivector().set(0, 0, 0));
+
+        return;
+    }
+
 	if (m_blockedActions.test(cmd)) return;
 	if (Remote())		return;
 	if (IsTalking())	return;
@@ -118,25 +125,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 				return;
 			}
 		}break;
-/*
-	case kFLARE:{
-			PIItem fl_active = inventory().ItemFromSlot(FLARE_SLOT);
-			if(fl_active)
-			{
-				CFlare* fl			= smart_cast<CFlare*>(fl_active);
-				fl->DropFlare		();
-				return				;
-			}
-
-			PIItem fli = inventory().Get(CLSID_DEVICE_FLARE, true);
-			if(!fli)			return;
-
-			CFlare* fl			= smart_cast<CFlare*>(fli);
-			
-			if(inventory().Slot(fl))
-				fl->ActivateFlare	();
-		}break;
-*/
 	case kUSE:
 		ActorUse();
 		break;
@@ -187,7 +175,7 @@ void CActor::IR_OnMouseWheel(int direction)
 {
 	if(hud_adj_mode)
 	{
-		g_player_hud->tune	(Ivector().set(0,0,direction));
+		//g_player_hud->tune	(Ivector().set(0,0,direction));
 		return;
 	}
 
@@ -202,7 +190,7 @@ void CActor::IR_OnMouseWheel(int direction)
 
 void CActor::IR_OnKeyboardRelease(int cmd)
 {
-	if(hud_adj_mode && pInput->iGetAsyncKeyState(DIK_LSHIFT))	return;
+    if (hud_adj_mode && pInput->iGetAsyncKeyState(DIK_LSHIFT)) return;
 	if (m_blockedActions.test(cmd)) return;
 	if (Remote())	return;
 	if (m_input_external_handler && !m_input_external_handler->authorized(cmd))	return;
@@ -234,7 +222,22 @@ void CActor::IR_OnKeyboardRelease(int cmd)
 
 void CActor::IR_OnKeyboardHold(int cmd)
 {
-	if(hud_adj_mode && pInput->iGetAsyncKeyState(DIK_LSHIFT))	return;
+    if (hud_adj_mode && pInput->iGetAsyncKeyState(DIK_LSHIFT)) {
+        if (pInput->iGetAsyncKeyState(DIK_UP))
+            g_player_hud->tune(Ivector().set(0, -1, 0));//y - высота, ниже
+        if (pInput->iGetAsyncKeyState(DIK_DOWN))
+            g_player_hud->tune(Ivector().set(0, 1, 0));//y - высота, выше
+        if (pInput->iGetAsyncKeyState(DIK_LEFT))
+            g_player_hud->tune(Ivector().set(-1, 0, 0));//x - ширина, влево
+        if (pInput->iGetAsyncKeyState(DIK_RIGHT))
+            g_player_hud->tune(Ivector().set(1, 0, 0));//x - ширина, вправо
+        if (pInput->iGetAsyncKeyState(DIK_PRIOR))
+            g_player_hud->tune(Ivector().set(0, 0, 1));//z - вперёд
+        if (pInput->iGetAsyncKeyState(DIK_NEXT))
+            g_player_hud->tune(Ivector().set(0, 0, -1));//z - назад
+        return;
+    }
+
 	if (m_blockedActions.test(cmd)) return;
 	if (Remote() || !g_Alive())					return;
 	if (m_input_external_handler && !m_input_external_handler->authorized(cmd))	return;
@@ -276,7 +279,7 @@ void CActor::IR_OnMouseMove(int dx, int dy)
 {
 	if(hud_adj_mode)
 	{
-		g_player_hud->tune	(Ivector().set(dx,dy,0));
+		//g_player_hud->tune	(Ivector().set(dx,dy,0));
 		return;
 	}
 
