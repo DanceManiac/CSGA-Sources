@@ -70,6 +70,8 @@ public:
 	virtual void	PlayAnimAimStart	();
     virtual void	PlayAnimAimEnd		();
 	
+	virtual void	PlaySoundLowAmmo();
+
 private:
 	virtual	void	net_Spawn_install_upgrades	( Upgrades_type saved_upgrades );
 	virtual bool	install_upgrade_impl		( LPCSTR section, bool test );

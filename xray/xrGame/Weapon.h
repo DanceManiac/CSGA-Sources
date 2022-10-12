@@ -212,6 +212,9 @@ protected:
 	RStringVec		m_defHiddenBones;
 	RStringVec		m_defGLHiddenBones;
 
+	bool m_bUseLowAmmoSnd;
+	float m_fACPlaySnd;
+
 protected:
 
 	struct SZoomParams

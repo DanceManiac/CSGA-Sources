@@ -530,6 +530,7 @@ void CWeapon::Load		(LPCSTR section)
 		flashlight_glow->set_radius(READ_IF_EXISTS(pSettings, r_float, m_light_section, "glow_radius", 0.3f));
 	}
 	hud_recalc_koef = READ_IF_EXISTS(pSettings, r_float, hud_sect, "hud_recalc_koef", 1.35f); //На калаше при 1.35 вроде норм смотрится, другим стволам возможно придется подбирать другие значения.
+
 	
 	auto LoadBoneNames = [](pcstr section, pcstr line, RStringVec& list)
 	{
@@ -554,7 +555,11 @@ void CWeapon::Load		(LPCSTR section)
 	
 	LoadBoneNames(section, "def_hide_bones_override_when_gl_attached", m_defGLHiddenBones);//Скрытие костей по дефолту с надетым ПГ, без ПГ кости будут отображены
 
-	m_bUseDynamicZoom = READ_IF_EXISTS(pSettings,r_bool,section,"scope_dynamic_zoom",false);
+	m_bUseDynamicZoom = READ_IF_EXISTS(pSettings, r_bool, section, "scope_dynamic_zoom", false);
+
+	m_bUseLowAmmoSnd = READ_IF_EXISTS(pSettings, r_bool, section, "use_lowammo_snd", false);
+
+	m_fACPlaySnd = READ_IF_EXISTS(pSettings, r_float, section, "lowammo_snd_ammo_count", 0);
 }
 
 void CWeapon::LoadFireParams		(LPCSTR section)

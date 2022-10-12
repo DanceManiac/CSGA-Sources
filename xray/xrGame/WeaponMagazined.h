@@ -163,10 +163,11 @@ private:
 protected:
 	const char* GetAnimAimName();
 	
-	virtual void	PlayAnimShoot		();
-	virtual void	PlaySoundShot		();
-	virtual void	PlayReloadSound		();
-	virtual void	PlayAnimAim			();
+	virtual void	PlayAnimShoot();
+	virtual void	PlaySoundShot();
+	virtual void	PlayReloadSound();
+	virtual void	PlaySoundLowAmmo();
+	virtual void	PlayAnimAim();
 
 	virtual	int		ShotsFired			() { return m_iShotNum; }
 	virtual float	GetWeaponDeterioration	();

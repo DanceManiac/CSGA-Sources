@@ -22,6 +22,7 @@
 #include "CustomDetector.h"
 #include "game_cl_single.h"
 #include "WeaponBinoculars.h"
+#include "WeaponKnife.h"
 
 ENGINE_API	bool	g_dedicated_server;
 
@@ -103,6 +104,11 @@ void CWeaponMagazined::Load	(LPCSTR section)
 	m_sounds.LoadSound(section, "snd_aim_start", "sndAimStart", false, m_eSoundShow);
     m_sounds.LoadSound(section, "snd_aim_end", "sndAimEnd", false, m_eSoundHide);
 	
+	if (m_bUseLowAmmoSnd)
+        m_sounds.LoadSound(section, "snd_lowammo", "sndLowAmmo", false, m_eSoundShot);
+
+
+
 	m_sSndShotCurrent = "sndShot";
 		
 	//звуки и партиклы глушителя, еслит такой есть
@@ -610,6 +616,31 @@ void CWeaponMagazined::SetDefaults	()
 	CWeapon::SetDefaults		();
 }
 
+void CWeaponMagazined::PlaySoundLowAmmo()
+{
+	if (!m_bUseLowAmmoSnd)
+		return;
+
+    if (iAmmoElapsed == 0)
+        return;
+
+	if (m_fACPlaySnd == 0)
+        return;
+
+    CWeaponKnife* knf = smart_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
+
+	if (knf)
+		return;
+
+    CWeaponBinoculars* binoc = smart_cast<CWeaponBinoculars*>(m_pInventory->ActiveItem());
+
+	if (binoc)
+		return;
+
+	if (iAmmoElapsed <= m_fACPlaySnd)
+		PlaySound("sndLowAmmo", get_LastSP());
+}
+
 void CWeaponMagazined::PlaySoundShot()
 {
 	if (ParentIsActor())
@@ -630,6 +661,7 @@ void CWeaponMagazined::OnShot()
 {
 	// Sound
 	PlaySoundShot();
+    PlaySoundLowAmmo();
 
 	// Camera	
 	AddShotEffector				();

@@ -244,6 +244,14 @@ bool CWeaponMagazinedWGrenade::Action(s32 cmd, u32 flags)
 	return false;
 }
 
+void CWeaponMagazinedWGrenade::PlaySoundLowAmmo()
+{
+    if (m_bGrenadeMode)
+        return;
+
+	inherited::PlaySoundLowAmmo();
+}
+
 #include "inventory.h"
 #include "inventoryOwner.h"
 void CWeaponMagazinedWGrenade::state_Fire(float dt) 
