@@ -1166,6 +1166,8 @@ void CWeaponMagazined::PlayAnimReload()
 
 void CWeaponMagazined::PlayAnimAimStart()
 {
+    VERIFY(GetState() == eZoomStart);
+
     if (iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_aim_start_empty"))
         PlayHUDMotion("anm_idle_aim_start_empty", true, this, GetState());
     else if (IsMisfire() && isHUDAnimationExist("anm_idle_aim_start_jammed"))
@@ -1176,6 +1178,8 @@ void CWeaponMagazined::PlayAnimAimStart()
 
 void CWeaponMagazined::PlayAnimAimEnd()
 {
+    VERIFY(GetState() == eZoomEnd);
+
     if (iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_aim_end_empty"))
         PlayHUDMotion("anm_idle_aim_end_empty", true, this, GetState());
     else if (IsMisfire() && isHUDAnimationExist("anm_idle_aim_end_jammed"))
@@ -1186,6 +1190,8 @@ void CWeaponMagazined::PlayAnimAimEnd()
 
 void CWeaponMagazined::EmptyMove()
 {
+    VERIFY(GetState() == eEmpty);
+
     OnEmptyClick(); //звук
 
     if (IsZoomed() && isHUDAnimationExist("anm_fakeshoot_aim_empty"))
@@ -1200,7 +1206,7 @@ const char* CWeaponMagazined::GetAnimAimName()
     u32 state = pActor->get_state();
 	if (pActor)
 	{
-            if (state & mcAnyMove)
+        if (state & mcAnyMove)
 		{
 			if (IsScopeAttached())
 			{
@@ -1248,28 +1254,6 @@ void CWeaponMagazined::PlayAnimIdle()
         PlayHUDMotion("anm_idle_jammed", true, nullptr, GetState());
     else
         PlayHUDMotion("anm_idle", true, nullptr, GetState());
-
- /* if (IsZoomed()) {
-        if (IsRotatingToZoom()) {
-            if (isHUDAnimationExist("anm_idle_aim_start")) {
-                if (iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_aim_start_empty"))
-                    PlayHUDMotion("anm_idle_aim_start_empty", true, nullptr, GetState());
-                else if (IsMisfire() && isHUDAnimationExist("anm_idle_aim_start_jammed"))
-                    PlayHUDMotion("anm_idle_aim_start_jammed", true, nullptr, GetState());
-                else
-                    PlayHUDMotion("anm_idle_aim_start", true, nullptr, GetState());
-            }
-        }
-     } else {
-        if (IsRotatingFromZoom()) {
-            if (iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_aim_end_empty"))
-                PlayHUDMotion("anm_idle_aim_end_empty", true, nullptr, GetState());
-            else if (IsMisfire() && isHUDAnimationExist("anm_idle_aim_end_jammed"))
-                PlayHUDMotion("anm_idle_aim_end_jammed", true, nullptr, GetState());
-            else
-                PlayHUDMotion("anm_idle_aim_end", true, nullptr, GetState());
-        }
-    }*/
 }
 
 void CWeaponMagazined::PlayAnimShoot()

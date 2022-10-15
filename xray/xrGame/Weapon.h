@@ -213,7 +213,7 @@ protected:
 	RStringVec		m_defGLHiddenBones;
 
 	bool m_bUseLowAmmoSnd;
-	u32 m_u32ACPlaySnd;
+	int m_u32ACPlaySnd;
 
 protected:
 
