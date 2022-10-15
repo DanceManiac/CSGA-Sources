@@ -168,15 +168,15 @@ public:
 	virtual void InitAddons();
 
 	//для отоброажения иконок апгрейдов в интерфейсе
-	int	GetScopeX() {return pSettings->r_s32(m_scopes[m_cur_scope], "scope_x");}
-	int	GetScopeY() {return pSettings->r_s32(m_scopes[m_cur_scope], "scope_y");}
+	int	GetScopeX() {return m_iScopeX;}
+	int	GetScopeY() {return m_iScopeY;}
 	int	GetSilencerX() {return m_iSilencerX;}
 	int	GetSilencerY() {return m_iSilencerY;}
 	int	GetGrenadeLauncherX() {return m_iGrenadeLauncherX;}
 	int	GetGrenadeLauncherY() {return m_iGrenadeLauncherY;}
 
 	const shared_str& GetGrenadeLauncherName	()		{return m_sGrenadeLauncherName;}
-	const shared_str GetScopeName				() const{return pSettings->r_string(m_scopes[m_cur_scope], "scope_name");}
+	const shared_str& GetScopeName				()		{return m_sScopeName;}
 	const shared_str& GetSilencerName			()		{return m_sSilencerName;}
 
 	IC void	ForceUpdateAmmo						()		{ m_dwAmmoCurrentCalcFrame = 0; }
@@ -222,7 +222,6 @@ protected:
 		bool			m_bZoomEnabled;			//разрешение режима приближения
 		bool			m_bHideCrosshairInZoom;
 		bool			m_bZoomDofEnabled;
-		bool			m_bUseDynamicZoom;
 
 		bool			m_bIsZoomModeNow;		//когда режим приближения включен
 		float			m_fCurrentZoomFactor;	//текущий фактор приближения
@@ -241,6 +240,7 @@ protected:
 	} m_zoom_params;
 	
 	float			m_fRTZoomFactor; //run-time zoom factor
+	bool			m_bUseDynamicZoom;
 	CUIWindow*				m_UIScope;
 public:
 
@@ -444,10 +444,6 @@ protected:
 
 public:
 	xr_vector<shared_str>	m_ammoTypes;
-
-	DEFINE_VECTOR(shared_str, SCOPES_VECTOR, SCOPES_VECTOR_IT);
-	SCOPES_VECTOR			m_scopes;
-	u8						m_cur_scope;
 
 	CWeaponAmmo*			m_pAmmo;
 	u32						m_ammoType;

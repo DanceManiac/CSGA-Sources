@@ -22,7 +22,6 @@
 #include "static_cast_checked.hpp"
 #include "clsid_game.h"
 #include "ui/UIWindow.h"
-#include "ui/UIXmlInit.h"
 #include "../xrEngine/LightAnimLibrary.h"
 #include "WeaponBinoculars.h"
 
@@ -30,7 +29,6 @@
 #define ROTATION_TIME			0.25f
 
 BOOL	b_toggle_weapon_aim		= FALSE;
-extern CUIXml* pWpnScopeXml;
 
 CWeapon::CWeapon(): m_fLR_MovingFactor(0.f), m_strafe_offset{}
 {
@@ -81,8 +79,7 @@ CWeapon::CWeapon(): m_fLR_MovingFactor(0.f), m_strafe_offset{}
 CWeapon::~CWeapon		()
 {
 	xr_delete	(m_UIScope);
-    delete_data(m_scopes);
-
+	
 	laser_light_render.destroy();
 	flashlight_render.destroy();
 	flashlight_omni.destroy();
@@ -400,35 +397,9 @@ void CWeapon::Load		(LPCSTR section)
 
 	if ( m_eScopeStatus == ALife::eAddonAttachable )
 	{
-		if(pSettings->line_exist(section, "scopes_sect"))		
-		{
-			LPCSTR str = pSettings->r_string(section, "scopes_sect");
-			for(int i = 0, count = _GetItemCount(str); i < count; ++i )	
-			{
-				string128						scope_section;
-				_GetItem						(str, i, scope_section);
-				m_scopes.push_back				(scope_section);
-			}
-		}
-		else
-		{
-			m_scopes.push_back(section);
-		}
-	}
-	else if( m_eScopeStatus == ALife::eAddonPermanent )
-	{
-		shared_str scope_tex_name			= pSettings->r_string(cNameSect(), "scope_texture");
-		m_zoom_params.m_fScopeZoomFactor	= pSettings->r_float( cNameSect(), "scope_zoom_factor");
-		if ( !g_dedicated_server )
-		{
-			m_UIScope				= xr_new<CUIWindow>();
-			if(!pWpnScopeXml)
-			{
-				pWpnScopeXml			= xr_new<CUIXml>();
-				pWpnScopeXml->Load		(CONFIG_PATH, UI_PATH, "scopes.xml");
-			}
-			CUIXmlInit::InitWindow	(*pWpnScopeXml, scope_tex_name.c_str(), 0, m_UIScope);
-		}
+		m_sScopeName = pSettings->r_string(section,"scope_name");
+		m_iScopeX = pSettings->r_s32(section,"scope_x");
+		m_iScopeY = pSettings->r_s32(section,"scope_y");
 	}
 
     
@@ -584,7 +555,7 @@ void CWeapon::Load		(LPCSTR section)
 	
 	LoadBoneNames(section, "def_hide_bones_override_when_gl_attached", m_defGLHiddenBones);//Скрытие костей по дефолту с надетым ПГ, без ПГ кости будут отображены
 
-	m_zoom_params.m_bUseDynamicZoom = READ_IF_EXISTS(pSettings, r_bool, section, "scope_dynamic_zoom", false);
+	m_bUseDynamicZoom = READ_IF_EXISTS(pSettings, r_bool, section, "scope_dynamic_zoom", false);
 
 	m_bUseLowAmmoSnd = READ_IF_EXISTS(pSettings, r_bool, section, "use_lowammo_snd", false);
 
@@ -767,7 +738,6 @@ void CWeapon::save(NET_Packet &output_packet)
 {
 	inherited::save	(output_packet);
 	save_data		(iAmmoElapsed,					output_packet);
-	save_data		(m_cur_scope, 					output_packet);
 	save_data		(m_flagsAddOnState, 			output_packet);
 	save_data		(m_ammoType,					output_packet);
 	save_data		(m_zoom_params.m_bIsZoomModeNow,output_packet);
@@ -777,7 +747,6 @@ void CWeapon::load(IReader &input_packet)
 {
 	inherited::load	(input_packet);
 	load_data		(iAmmoElapsed,					input_packet);
-	load_data		(m_cur_scope,					input_packet);
 	load_data		(m_flagsAddOnState,				input_packet);
 	UpdateAddonsVisibility			();
 	load_data		(m_ammoType,					input_packet);
@@ -1737,7 +1706,7 @@ void GetZoomData(const float scope_factor, float& delta, float& min_zoom_factor)
 void CWeapon::OnZoomIn()
 {
 	m_zoom_params.m_bIsZoomModeNow		= true;
-	if(m_zoom_params.m_bUseDynamicZoom)
+	if(m_bUseDynamicZoom)
 		SetZoomFactor(m_fRTZoomFactor);
 	else
 		m_zoom_params.m_fCurrentZoomFactor	= CurrentZoomFactor();
@@ -1760,6 +1729,14 @@ void CWeapon::OnZoomOut()
 
  	GamePersistent().RestoreEffectorDOF	();
 	ResetSubStateTime					();
+}
+
+CUIWindow* CWeapon::ZoomTexture()
+{
+	if (UseScopeTexture())
+		return m_UIScope;
+	else
+		return NULL;
 }
 
 void CWeapon::SwitchState(u32 S)
@@ -2193,14 +2170,6 @@ bool CWeapon::show_indicators()
 	return ! ( IsZoomed() && ZoomTexture() );
 }
 
-CUIWindow* CWeapon::ZoomTexture()
-{
-    if (UseScopeTexture())
-        return m_UIScope;
-    else
-        return NULL;
-}
-
 float CWeapon::GetConditionToShow	() const
 {
 	return	(GetCondition());//powf(GetCondition(),4.0f));
@@ -2300,7 +2269,7 @@ bool CWeapon::IsHudModeNow()
 // Ïîëó÷èòü FOV îò òåêóùåãî îðóæèÿ èãðîêà äëÿ âòîðîãî ðåíäåðà
 float CWeapon::GetSecondVPFov() const
 {
-	if (m_zoom_params.m_bUseDynamicZoom && IsSecondVPZoomPresent())
+	if (m_bUseDynamicZoom && IsSecondVPZoomPresent())
 		return (m_fRTZoomFactor / 100.f) * g_fov;
 
 	return GetSecondVPZoomFactor() * g_fov;
@@ -2328,7 +2297,7 @@ void CWeapon::UpdateSecondVP()
 void CWeapon::ZoomInc()
 {
 	if(!IsScopeAttached())					return;
-	if(!m_zoom_params.m_bUseDynamicZoom)	return;
+	if(!m_bUseDynamicZoom)	return;
 	float delta,min_zoom_factor;
 	GetZoomData(m_zoom_params.m_fScopeZoomFactor, delta, min_zoom_factor);
 
@@ -2340,7 +2309,7 @@ void CWeapon::ZoomInc()
 void CWeapon::ZoomDec()
 {
 	if(!IsScopeAttached())					return;
-	if(!m_zoom_params.m_bUseDynamicZoom)	return;
+	if(!m_bUseDynamicZoom)	return;
 	float delta,min_zoom_factor;
 	GetZoomData(m_zoom_params.m_fScopeZoomFactor,delta,min_zoom_factor);
 
