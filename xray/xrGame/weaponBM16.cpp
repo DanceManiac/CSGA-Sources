@@ -16,6 +16,9 @@ void CWeaponBM16::PlayReloadSound()
 {
 	switch( m_magazine.size() )
 	{
+	case 2:
+		if(IsMisfire())
+			PlaySound	("sndReloadJammed",get_LastFP());
 	case 1:
 		if(IsMisfire())
 			PlaySound	("sndReloadJammedLast",get_LastFP());
