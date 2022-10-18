@@ -889,3 +889,19 @@ void CUICellContainer::Draw()
 
 	UI()->PopScissor			();
 }
+
+void CUIDragDropListEx::clear_select_armament()
+{
+	m_container->clear_select_armament(); }
+
+void CUICellContainer::clear_select_armament()
+{
+    UI_CELLS_VEC_IT itb = m_cells.begin();
+    UI_CELLS_VEC_IT ite = m_cells.end();
+    for (; itb != ite; ++itb) {
+        CUICell& cell = (*itb);
+        if (cell.m_item) {
+            cell.m_item->m_select_armament = false;
+        }
+    }
+}
