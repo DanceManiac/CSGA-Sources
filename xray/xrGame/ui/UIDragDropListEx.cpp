@@ -841,15 +841,21 @@ void CUICellContainer::Draw()
 			cpos.add( TopVisibleCell() );
 			CUICell& ui_cell = GetCellAt( cpos );
 			u8 select_mode = 0;
-			if ( !ui_cell.Empty() && ui_cell.m_item->m_cur_mark )
+			if ( !ui_cell.Empty() )
 			{
-				select_mode = 2;
+				if ( ui_cell.m_item->m_cur_mark )
+				{
+					select_mode = 2;
+				}
+				else if ( ui_cell.m_item->m_selected )
+				{
+					select_mode = 1;
+				}
+				else if ( ui_cell.m_item->m_select_armament )
+				{
+					select_mode = 3;
+				}
 			}
-			else if ( !ui_cell.Empty() && ui_cell.m_item->m_selected )
-			{
-				select_mode = 1;
-			}
-
 			Fvector2			tp;
 			GetTexUVLT			(tp, tgt_cells.x1+x, tgt_cells.y1+y, select_mode);
 
