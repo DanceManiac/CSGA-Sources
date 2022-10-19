@@ -10,52 +10,46 @@
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-u32		CBreakableObject		::	m_remove_time		=0		;
-float	CBreakableObject		::	m_damage_threshold	=5.f	;
-float	CBreakableObject		::	m_health_threshhold	=0.f	;
-float	CBreakableObject		::  m_immunity_factor	=0.1f	;
-CBreakableObject::CBreakableObject	()
+u32 CBreakableObject::m_remove_time = 0;
+float CBreakableObject::m_damage_threshold = 5.f;
+float CBreakableObject::m_health_threshhold	= 0.f;
+float CBreakableObject::m_immunity_factor = 0.1f;
+CBreakableObject::CBreakableObject()
 {
 	Init();
 }
 
-CBreakableObject::~CBreakableObject	()
-{
-}
+CBreakableObject::~CBreakableObject()
+{}
 
-void CBreakableObject::Load		(LPCSTR section)
+void CBreakableObject::Load(LPCSTR section)
 {
-	inherited::Load			(section);
-	m_remove_time=pSettings	->r_u32(section,"remove_time")*1000;
-	m_health_threshhold=pSettings	->r_float(section,"hit_break_threthhold");
-	m_damage_threshold=pSettings	->r_float(section,"collision_break_threthhold");
-	m_immunity_factor  =pSettings	->r_float(section,"immunity_factor");
+	inherited::Load(section);
+	m_remove_time = pSettings->r_u32(section,"remove_time") * 1000;
+	m_health_threshhold = pSettings->r_float(section, "hit_break_threthhold");
+	m_damage_threshold = pSettings->r_float(section, "collision_break_threthhold");
+	m_immunity_factor = pSettings->r_float(section, "immunity_factor");
 	this->shedule.t_min	= 1000;
 	this->shedule.t_max	= 1000;
 }
 
 BOOL CBreakableObject::net_Spawn(CSE_Abstract* DC)
 {
-
-	CSE_Abstract			*e		= (CSE_Abstract*)(DC);
-	CSE_ALifeObjectBreakable *obj	= smart_cast<CSE_ALifeObjectBreakable*>(e);
-	R_ASSERT				(obj);
-	inherited::net_Spawn	(DC);
-	VERIFY(!collidable.model);
+	CSE_Abstract* e = (CSE_Abstract*)(DC);
+	CSE_ALifeObjectBreakable* obj = smart_cast<CSE_ALifeObjectBreakable*>(e);
+	R_ASSERT(obj);
+	bool res = inherited::net_Spawn(DC);
+	xr_delete(collidable.model);
 	collidable.model = xr_new<CCF_Skeleton>(this);
 	// set bone id
-	R_ASSERT				(Visual()&&smart_cast<IKinematics*>(Visual()));
-//	IKinematics* K			= smart_cast<IKinematics*>(Visual());
-	fHealth					= obj->m_health;
-	processing_deactivate	();
-	setVisible				(TRUE);
-	setEnabled				(TRUE);
-	CreateUnbroken			();
-	//CreateBroken			();
-	bRemoved				=false;
-	//Break					();
-//	shedule_unregister		();
-	return					(TRUE);
+	R_ASSERT(Visual()&&smart_cast<IKinematics*>(Visual()));
+	fHealth	= obj->m_health;
+	processing_deactivate();
+	setVisible(TRUE);
+	setEnabled(TRUE);
+	CreateUnbroken();
+	bRemoved = false;
+	return (res);
 }
 
 void CBreakableObject::shedule_Update	(u32 dt)
