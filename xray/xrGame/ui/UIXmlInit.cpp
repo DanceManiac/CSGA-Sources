@@ -68,6 +68,27 @@ CUIXmlInit::~CUIXmlInit()
 {
 }
 
+u32 CUIXmlInit::ParseDiffCond(LPCSTR show_difficulty_cond)
+{
+	if (show_difficulty_cond)
+	{
+		u32 res = !xr_strcmp(show_difficulty_cond, "master") ? CondMaster
+			: !xr_strcmp(show_difficulty_cond, "veteran") ? CondVeteran : !xr_strcmp(show_difficulty_cond, "stalker")
+			? CondStalker : !xr_strcmp(show_difficulty_cond, "novice") ? CondNovice : !xr_strcmp(show_difficulty_cond, "never") ? CondNever : CondNotSet;
+
+		//Msg("show_difficulty_cond %s %u", show_difficulty_cond, res);
+
+		return res;
+	}
+
+	return CondNotSet;
+}
+
+void CUIXmlInit::SetDifficultyCond(CUIXml& xml_doc, LPCSTR path, int index, CUIWindow* pWnd)
+{
+	pWnd->SetShowGameDifficulty((EDifficultyShowCondition)ParseDiffCond(xml_doc.ReadAttrib(path, index, "difficulty_cond", nullptr)));
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 Frect CUIXmlInit::GetFRect(CUIXml& xml_doc, const char* path, int index){
@@ -113,6 +134,7 @@ bool CUIXmlInit::InitWindow(CUIXml& xml_doc, LPCSTR path,
 
 	InitAutoStaticGroup			(xml_doc, path, index, pWnd);
 	InitAutoFrameLineGroup		(xml_doc, path, index, pWnd);
+	SetDifficultyCond			(xml_doc, path, index, pWnd);
 
 	return true;
 }
@@ -226,6 +248,7 @@ bool CUIXmlInit::InitStatic(CUIXml& xml_doc, LPCSTR path,
 	bool bComplexMode = xml_doc.ReadAttribInt(path, index, "complex_mode",0)?true:false;
 	if(bComplexMode)
 		pWnd->SetTextComplexMode(bComplexMode);
+	SetDifficultyCond		(xml_doc, path, index, pWnd);
 	
 	return true;
 }
@@ -363,6 +386,8 @@ bool CUIXmlInit::Init3tButton(CUIXml& xml_doc, const char* path, int index, CUI3
 	if(text_hint)
 		pWnd->m_hint_text	= CStringTable().translate(text_hint);
 
+	SetDifficultyCond		(xml_doc, path, index, pWnd);
+
 	return true;
 }
 
@@ -447,6 +472,8 @@ bool CUIXmlInit::InitButton(CUIXml& xml_doc, LPCSTR path,
 	pWnd->SetShadowOffset	(Fvector2().set(shadowOffsetX, shadowOffsetY) );
 	pWnd->SetPushOffset		(Fvector2().set(pushOffsetX,pushOffsetY) );
 
+	SetDifficultyCond		(xml_doc, path, index, pWnd);
+
 	return true;
 }
 
@@ -495,6 +522,8 @@ bool CUIXmlInit::InitDragDropListEx(CUIXml& xml_doc, const char* path, int index
 	pWnd->SetAlwaysShowScroll(tmp!=0);
 
 	pWnd->back_color		= GetColor( xml_doc, path, index, 0xFFFFFFFF );
+
+	SetDifficultyCond		(xml_doc, path, index, pWnd);
 
 	return true;
 }
@@ -627,6 +656,8 @@ bool CUIXmlInit::InitProgressBar(CUIXml& xml_doc, LPCSTR path,
 		color = GetColor	(xml_doc, buf, index, 0xff);
 		pWnd->m_maxColor.set(color);
 	}
+
+	SetDifficultyCond		(xml_doc, path, index, pWnd);
 
 	return true;
 }
@@ -858,6 +889,7 @@ bool CUIXmlInit::InitFrameLine(CUIXml& xml_doc, const char* path, int index, CUI
 
 	InitWindow		(xml_doc, path, index, pWnd);
 	pWnd->InitFrameLineWnd(*base_name, pos, size, !vertical);
+	SetDifficultyCond(xml_doc, path, index, pWnd);
 	return true;
 }
 
@@ -1036,6 +1068,7 @@ bool CUIXmlInit::InitAnimatedStatic(CUIXml &xml_doc, const char *path, int index
 	u32 frameHeight		= static_cast<u32>(xml_doc.ReadAttribInt(path, index, "frame_height", 0));
 	bool cyclic			= !!xml_doc.ReadAttribInt(path, index, "cyclic", 0);
 	bool play			= !!xml_doc.ReadAttribInt(path, index, "autoplay", 0);
+	SetDifficultyCond	(xml_doc, path, index, pWnd);
 
 	pWnd->SetFrameDimentions(frameWidth, frameHeight);
 	pWnd->SetFramesCount(framesCount);
@@ -1334,6 +1367,8 @@ bool CUIXmlInit::InitScrollView	(CUIXml& xml_doc, const char* path, int index, C
 		pWnd->AddWindow					(newStatic, true);
 	}
 	xml_doc.SetLocalRoot(_stored_root);
+	SetDifficultyCond					(xml_doc, path, index, pWnd);
+
 	return								true;
 }
 
@@ -1437,6 +1472,7 @@ bool CUIXmlInit::InitHintWindow(CUIXml& xml_doc, LPCSTR path, int index, UIHintW
 	InitWindow( xml_doc, path, index, pWnd );
 	LPCSTR hint_text = xml_doc.Read( path, index, "no hint" );
 	pWnd->set_hint_text_ST( hint_text );
+	SetDifficultyCond(xml_doc, path, index, pWnd);
 
 	pWnd->set_hint_delay( (u32)xml_doc.ReadAttribInt( path, index, "delay" ) );
 	return true;

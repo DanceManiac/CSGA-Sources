@@ -180,6 +180,9 @@ void CUIScrollView::SetFixedScrollBar	(bool b)
 
 void CUIScrollView::Draw				()
 {
+	if (!GameDifficultyAllows())
+		return;
+
 	if(m_flags.test	(eNeedRecalc) )
 		RecalcSize			();
 

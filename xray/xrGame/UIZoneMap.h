@@ -12,6 +12,7 @@ class CUIZoneMap
 {
 public:
 	bool						visible;
+	CUIStatic					m_Counter;
 
 private:
 	CUICustomMap*				m_activeMap;
@@ -22,7 +23,6 @@ private:
 	CUIStatic					m_compass;
 	CUIStatic					m_clipFrame;
 	CUIStatic					m_pointerDistanceText;
-	CUIStatic					m_Counter;
 	CUIStatic					m_Counter_text;
 	u8							m_current_map_idx;
 
