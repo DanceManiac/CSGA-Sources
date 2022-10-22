@@ -152,7 +152,7 @@ u32	mem_usage_impl	(HANDLE heap_handle, u32* pBlocksUsed, u32* pBlocksFree)
 		break;
 	case _HEAPBADNODE:
 #ifndef MASTER_GOLD
-		FATAL			("bad node in heap");
+		Msg			("bad node in heap");
 #else // #ifndef MASTER_GOLD
 		Msg				("! bad node in heap");
 #endif // #ifndef MASTER_GOLD
