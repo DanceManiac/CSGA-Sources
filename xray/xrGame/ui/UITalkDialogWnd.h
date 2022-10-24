@@ -39,12 +39,12 @@ public:
 
 	bool				mechanic_mode; // for inventory upgrades
 	
-	//номер выбранного вопроса
+	//РЅРѕРјРµСЂ РІС‹Р±СЂР°РЅРЅРѕРіРѕ РІРѕРїСЂРѕСЃР°
 	shared_str			m_ClickedQuestionID;
 
-	//список вопросов, которые мы можем задавать персонажу
+	//СЃРїРёСЃРѕРє РІРѕРїСЂРѕСЃРѕРІ, РєРѕС‚РѕСЂС‹Рµ РјС‹ РјРѕР¶РµРј Р·Р°РґР°РІР°С‚СЊ РїРµСЂСЃРѕРЅР°Р¶Сѓ
 
-	//элементы интерфейса диалога
+	//СЌР»РµРјРµРЅС‚С‹ РёРЅС‚РµСЂС„РµР№СЃР° РґРёР°Р»РѕРіР°
 	CUIStatic			UIDialogFrameTop;
 	CUIStatic			UIDialogFrameBottom;
 	
@@ -52,13 +52,13 @@ public:
 	CUI3tButtonEx		UIToTradeButton;
 	CUI3tButtonEx		UIToExitButton;
 
-	//информация о персонажах 
+	//РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ РїРµСЂСЃРѕРЅР°Р¶Р°С… 
 	CUIStatic			UIOurIcon;
 	CUIStatic			UIOthersIcon;
 	CUICharacterInfo	UICharacterInfoLeft;
 	CUICharacterInfo	UICharacterInfoRight;
 
-	void				AddQuestion			(LPCSTR str, LPCSTR value);
+	void				AddQuestion			(LPCSTR str, LPCSTR value, int number);
 	void				AddAnswer			(LPCSTR SpeakerName, const char* str, bool bActor);
 	void				AddIconedAnswer		(LPCSTR caption, LPCSTR text, LPCSTR texture_name, LPCSTR templ_name);
 	void				ClearAll			();
@@ -72,10 +72,10 @@ private:
 	CUIScrollView*			UIQuestionsList;
 	CUIScrollView*			UIAnswersList;
 
-	// Шрифт и цвет текста с именем персонажа
+	// РЁСЂРёС„С‚ Рё С†РІРµС‚ С‚РµРєСЃС‚Р° СЃ РёРјРµРЅРµРј РїРµСЂСЃРѕРЅР°Р¶Р°
 	CGameFont			*m_pNameTextFont;
 	u32					m_iNameTextColor;
-	// Цвет тeкста и шрифт наших реплик
+	// Р¦РІРµС‚ С‚eРєСЃС‚Р° Рё С€СЂРёС„С‚ РЅР°С€РёС… СЂРµРїР»РёРє
 	u32					m_uOurReplicsColor;
 
 	void __stdcall		OnTradeClicked			(CUIWindow* w, void*);
@@ -90,6 +90,7 @@ class CUIQuestionItem :public CUIWindow, public CUIWndCallback
 	typedef CUIWindow inherited;
 	float			m_min_height;
 public:
+	CUIStatic*		m_num_text;
 	CUI3tButtonEx*	m_text;
 	shared_str		m_s_value;
 					CUIQuestionItem			(CUIXml* xml_doc, LPCSTR path);
