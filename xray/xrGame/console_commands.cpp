@@ -415,8 +415,7 @@ public:
 	CCC_UI_Reload(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = TRUE; };
 	virtual void Execute(LPCSTR args)
 	{
-		if (g_pGamePersistent && g_pGameLevel && Level().game)
-			HUD().OnScreenRatioChanged();// перезагружаем UI через эту команду
+		HUD().OnScreenRatioChanged();// перезагружаем UI через эту команду
 	}
 };
 
