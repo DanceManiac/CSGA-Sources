@@ -417,9 +417,11 @@ _DDS_2D:
 
 			//	Inited to default by provided default constructor
 			D3DX10_IMAGE_LOAD_INFO LoadInfo;
-			//LoadInfo.FirstMipLevel = img_loaded_lod;
-			LoadInfo.Width	= IMG.Width;
-			LoadInfo.Height	= IMG.Height;
+			//From Zagolski, those two lines should increase loading time, especially for UI
+			LoadInfo.FirstMipLevel	= img_loaded_lod;
+			LoadInfo.MipLevels		= IMG.MipLevels;
+			LoadInfo.Width			= IMG.Width;
+			LoadInfo.Height			= IMG.Height;
 
 			if (img_loaded_lod)
 			{
