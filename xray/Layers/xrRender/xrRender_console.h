@@ -195,8 +195,7 @@ extern ECORE_API int			ps_r__detail_radius;
 extern ECORE_API Flags32		ps_common_flags;
 enum
 {
-	RFLAG_BLOODMARKS			= (1 << 0),
-	RFLAG_ACTOR_SHADOW			= (1 << 1),
+	RFLAG_BLOODMARKS			= (1 << 0)
 };
 
 #endif

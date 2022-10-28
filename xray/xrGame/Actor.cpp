@@ -1230,7 +1230,9 @@ void CActor::shedule_Update	(u32 DT)
 	
 	//если в режиме HUD, то сама модель актера не рисуется
 	if(!character_physics_support()->IsRemoved())
-		setVisible				(!HUDview	());
+	{
+		setVisible				(!HUDview	(), psActorFlags.test(AF_ACTOR_SHADOW));
+	}
 
 	//что актер видит перед собой
 	collide::rq_result& RQ				= HUD().GetCurrentRayQuery();
@@ -1303,7 +1305,7 @@ void CActor::renderable_Render	()
 {
 	VERIFY(_valid(XFORM()));
 	inherited::renderable_Render			();
-	if (!HUDview()){
+	if (!HUDview() || psActorFlags.test(AF_ACTOR_SHADOW)){
 		CInventoryOwner::renderable_Render	();
 	}
 	VERIFY(_valid(XFORM()));

@@ -1943,6 +1943,7 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 #ifndef MASTER_GOLD
 	CMD1(CCC_JumpToLevel,		"jump_to_level"		);
 	CMD3(CCC_Mask,				"g_god",			&psActorFlags,	AF_GODMODE	);
+	CMD3(CCC_Mask,				"r__actor_shadow",	&psActorFlags,	AF_ACTOR_SHADOW);
 	CMD3(CCC_Mask,				"g_unlimitedammo",	&psActorFlags,	AF_UNLIMITEDAMMO);
 	CMD1(CCC_TimeFactor,		"time_factor");
 	CMD1(CCC_Spawn,				"g_spawn");		

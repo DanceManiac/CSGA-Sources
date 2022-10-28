@@ -791,7 +791,6 @@ void		xrRender_initconsole	()
 //	CMD3(CCC_Mask,		"r2_sun_ignore_portals",		&ps_r2_ls_flags,			R2FLAG_SUN_IGNORE_PORTALS);
 
 	CMD4(CCC_detail_radius, "r__detail_radius",			&ps_r__detail_radius,		49, 250);
-	CMD3(CCC_Mask,		 "r__actor_shadow",				&ps_common_flags,			RFLAG_ACTOR_SHADOW);
 }
 
 void	xrRender_apply_tf		()
