@@ -16,7 +16,7 @@
 #include "xr_object.h"
 
 xr_token*							vid_quality_token = NULL;
-
+extern int psFPSLimit;
 xr_token							vid_bpp_token							[ ]={
 	{ "16",							16											},
 	{ "32",							32											},
@@ -734,6 +734,7 @@ void CCC_Register()
 	CMD2(CCC_Gamma,		"rs_c_contrast"			,&ps_contrast		);
 //	CMD4(CCC_Integer,	"rs_vb_size",			&rsDVB_Size,		32,		4096);
 //	CMD4(CCC_Integer,	"rs_ib_size",			&rsDIB_Size,		32,		4096);
+	CMD4(CCC_Integer,	"rs_fps_limit",			&psFPSLimit,		0, 1024);
 
 	// Texture manager	
 	CMD4(CCC_Integer,	"texture_lod",			&psTextureLOD,				0,	4	);

@@ -127,7 +127,7 @@ public:
 	u32										dwTimeDelta;
 	u32										dwTimeGlobal;
 	u32										dwTimeContinual;
-
+	u32										dwFPS;
 	// Cameras & projection
 	Fvector									vCameraPosition;
 	Fvector									vCameraDirection;

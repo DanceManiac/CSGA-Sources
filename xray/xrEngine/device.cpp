@@ -279,12 +279,31 @@ void ImGui_NewFrame()
 	ImGui::NewFrame();
 	ImGuizmo::BeginFrame();
 }
-
+int psFPSLimit = 0;
 void CRenderDevice::on_idle		()
 {
 	if (!b_is_Ready) {
 		Sleep	(100);
 		return;
+	}
+	// FPS Limit
+	bool mm_active = !!(g_pGamePersistent && g_pGamePersistent->m_pMainMenu->IsActive());
+	if (psFPSLimit > 0 || mm_active)
+	{
+		static DWORD dwLastFrameTime = 0;
+		int dwCurrentTime = timeGetTime();
+		if(mm_active)
+		{
+			if ((dwCurrentTime - (int)dwLastFrameTime) < (1000 / 300))
+				return;
+		}
+		else
+		{
+			if ((dwCurrentTime - (int)dwLastFrameTime) < (1000 / psFPSLimit))
+				return;
+		}
+
+		dwLastFrameTime = dwCurrentTime;
 	}
 
 #ifdef DEDICATED_SERVER
@@ -451,7 +470,7 @@ void CRenderDevice::Run			()
 		u32 time_local		= TimerAsync	();
 		Timer_MM_Delta		= time_system-time_local;
 	}
-
+	dwFPS = 30;
 	// Start all threads
 //	InitializeCriticalSection	(&mt_csEnter);
 //	InitializeCriticalSection	(&mt_csLeave);
@@ -508,6 +527,14 @@ void CRenderDevice::FrameMove()
 		u32	_old_global	= dwTimeGlobal;
 		dwTimeGlobal	= TimerGlobal.GetElapsed_ms	();	//u32((qTime*u64(1000))/CPU::cycles_per_second);
 		dwTimeDelta		= dwTimeGlobal-_old_global;
+	}
+	// Frame Per Second
+	if (fTimeDelta > EPS_S)
+	{
+		float fps = 1.f / fTimeDelta;
+		float fOne = 0.3f;
+		float fInv = 1.f - fOne;
+		dwFPS = u32(fInv * float(dwFPS) + fOne * fps);
 	}
 
 	// Frame move
