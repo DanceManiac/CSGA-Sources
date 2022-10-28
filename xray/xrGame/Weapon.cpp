@@ -95,10 +95,10 @@ void CWeapon::Hit					(SHit* pHDS)
 
 void CWeapon::UpdateXForm	()
 {
-	if (Device.dwFrame == dwXF_Frame)
-		return;
-
-	dwXF_Frame				= Device.dwFrame;
+	//if (Device.dwFrame == dwXF_Frame)
+	//	return;
+	//
+	//dwXF_Frame				= Device.dwFrame;
 
 	if (!H_Parent())
 		return;
