@@ -1032,7 +1032,7 @@ struct ssaved_callback
 	const u32				callback_type;
 	CBoneInstance			&_bi;
 };
-static void get_matrix( CBoneInstance* P )
+static void __stdcall get_matrix( CBoneInstance* P )
 {
 	VERIFY( _valid(  P->mTransform ) );
 	*((Fmatrix*)P->callback_param()) = P->mTransform;
