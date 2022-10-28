@@ -200,6 +200,7 @@ void CUIActorMenu::Hide()
 	PlaySnd								(eSndClose);
 	SetMenuMode							(mmUndefined);
 	m_ActorStateInfo->Show				(false);
+	clear_highlight_lists				();
 }
 
 void CUIActorMenu::Draw()
