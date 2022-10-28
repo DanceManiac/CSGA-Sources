@@ -37,6 +37,8 @@ void CWeaponMagazinedWGrenade::Load	(LPCSTR section)
 	//// Sounds
 	m_sounds.LoadSound(section,"snd_shoot_grenade", "sndShotG", true, m_eSoundShot);
 	m_sounds.LoadSound(section,"snd_reload_grenade", "sndReloadG", true, m_eSoundReload);
+    m_sounds.LoadSound(section, "snd_change_grenade", "sndChangeGrenade", true, m_eSoundReload);
+
 	m_sounds.LoadSound(section,"snd_switch", "sndSwitchToG", true, m_eSoundReload);
 	m_sounds.LoadSound(section,"snd_switch_from_g", "sndSwitchFromG", true, m_eSoundReload);
 	
@@ -133,16 +135,44 @@ void CWeaponMagazinedWGrenade::switch2_Reload()
 	VERIFY(GetState()==eReload);
 	if(m_bGrenadeMode) 
 	{
-		PlaySound("sndReloadG", get_LastFP2());
+		if (iAmmoElapsed == 0)
+		{
+			PlayHUDMotion("anm_reload_empty_g", false, this, GetState());
+            PlaySound("sndReloadG", get_LastFP2());
+		}
+		else if(IsMisfire())
+		{
+			PlayHUDMotion("anm_reload_jammed_g", false, this, GetState());
+            PlaySound("sndReloadG", get_LastFP2());
+		}
+		else if(bSwitchAmmoType)
+		{
+			PlayHUDMotion("anm_reload_ammochange_g", false, this, GetState());
+            PlaySound("sndChangeGrenade", get_LastFP2());
+		}
+		else if(bSwitchAmmoType && IsMisfire())
+		{
+			PlayHUDMotion("anm_reload_jammed_ammochange_g", false, this, GetState());
+            PlaySound("sndChangeGrenade", get_LastFP2());
+		}
+		else if(bSwitchAmmoType && iAmmoElapsed == 0)
+		{
+			PlayHUDMotion("anm_reload_empty_ammochange_g", false, this, GetState());
+            PlaySound("sndChangeGrenade", get_LastFP2());
+		}
+        else
+		{
+			PlayHUDMotion("anm_reload_g", false, this, GetState());
+            PlaySound("sndReloadG", get_LastFP2());
+		}
 
-		PlayHUDMotion("anm_reload_g", false, this, GetState());
-		SetPending			(true);
+		SetPending(true);
 	}
 	else 
 	     inherited::switch2_Reload();
 }
 
-void CWeaponMagazinedWGrenade::OnShot		()
+void CWeaponMagazinedWGrenade::OnShot()
 {
 	if(m_bGrenadeMode)
 	{
@@ -682,6 +712,10 @@ void CWeaponMagazinedWGrenade::PlayAnimReload()
 			PlayHUDMotion("anm_reload_empty_w_gl", true, this, GetState());
 		else if(IsMisfire() && isHUDAnimationExist("anm_reload_jammed_w_gl"))
 			PlayHUDMotion("anm_reload_jammed_w_gl", true, this, GetState());
+		else if (bSwitchAmmoType)
+			PlayHUDMotion("anm_reload_ammochange_w_gl", true, this, GetState());
+		else if (bSwitchAmmoType && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_reload_empty_ammochange_w_gl", true, this, GetState());
 		else
 			PlayHUDMotion("anm_reload_w_gl", true, this, GetState());
 	}
@@ -828,7 +862,7 @@ void CWeaponMagazinedWGrenade::PlayAnimShoot()
 	if(m_bGrenadeMode)
 	{
 		string_path guns_shoot_anm{};
-		strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (this->IsZoomed() && !this->IsRotatingToZoom()) ? "_aim" : "", "_g");
+		strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (this->IsZoomed() && !this->IsRotatingToZoom()) ? "_aim" : "", IsMisfire() ? "_jammed" : (iAmmoElapsed == 0 ? "_empty" : ""), "_g");
 
 		PlayHUDMotionNew(guns_shoot_anm, false, GetState());
 	}
@@ -839,7 +873,7 @@ void CWeaponMagazinedWGrenade::PlayAnimShoot()
 		if (IsGrenadeLauncherAttached())
 		{
 			string_path guns_shoot_anm{};
-			strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (this->IsZoomed() && !this->IsRotatingToZoom()) ? (this->IsScopeAttached() ? "_aim_scope" : "_aim") : "", this->IsSilencerAttached() ? "_sil" : "", "_w_gl");
+			strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (this->IsZoomed() && !this->IsRotatingToZoom()) ? (this->IsScopeAttached() ? "_aim_scope" : "_aim") : "", IsMisfire() ? "_jammed" : (iAmmoElapsed == 1 ? "_last" : ""), this->IsSilencerAttached() ? "_sil" : "", "_w_gl");
 
 			PlayHUDMotionNew(guns_shoot_anm, false, GetState());
 		}
@@ -859,8 +893,7 @@ void  CWeaponMagazinedWGrenade::PlayAnimModeSwitch()
 		else if(IsMisfire() && isHUDAnimationExist("anm_switch_jammed_g"))
 			PlayHUDMotion("anm_switch_jammed_g" , true, this, eSwitch);
 		else
-			if(isHUDAnimationExist("anm_switch_g"))
-				PlayHUDMotion("anm_switch_g" , true, this, eSwitch);
+			PlayHUDMotion("anm_switch_g" , true, this, eSwitch);
 	}
 	else 
 	{
@@ -869,8 +902,7 @@ void  CWeaponMagazinedWGrenade::PlayAnimModeSwitch()
 		else if(IsMisfire() && isHUDAnimationExist("anm_switch_jammed_w_gl"))
 			PlayHUDMotion("anm_switch_jammed_w_gl" , true, this, eSwitch);
 		else
-			if(isHUDAnimationExist("anm_switch_w_gl"))
-				PlayHUDMotion("anm_switch_w_gl" , true, this, eSwitch);
+			PlayHUDMotion("anm_switch_w_gl" , true, this, eSwitch);
 	}
 }
 

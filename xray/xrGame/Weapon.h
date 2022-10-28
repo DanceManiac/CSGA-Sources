@@ -214,6 +214,7 @@ protected:
 
 	bool m_bUseLowAmmoSnd;
 	int m_u32ACPlaySnd;
+    bool bSwitchAmmoType;
 
 protected:
 

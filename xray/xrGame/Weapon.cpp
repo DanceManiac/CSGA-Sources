@@ -1237,6 +1237,8 @@ bool CWeapon::SwitchAmmoType( u32 flags )
 		return false;
 	}
 
+	bSwitchAmmoType = true;
+
 	u32 l_newType = m_ammoType;
 	bool b1, b2;
 	do 
@@ -1254,6 +1256,7 @@ bool CWeapon::SwitchAmmoType( u32 flags )
 			Reload();
 		}
 	}
+
 	return true;
 }
 

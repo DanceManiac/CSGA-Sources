@@ -98,6 +98,7 @@ void CWeaponMagazined::Load	(LPCSTR section)
 	m_sounds.LoadSound(section, "snd_reload", "sndReload", true, m_eSoundReload);
 	m_sounds.LoadSound(section, "snd_reload_empty", "sndReloadEmpty", true, m_eSoundReload);
 	m_sounds.LoadSound(section, "snd_reload_jammed", "sndReloadJammed", true, m_eSoundReload);
+    m_sounds.LoadSound(section, "snd_changecartridgetype", "sndAmmoChange", true, m_eSoundReload);
 
 	m_sounds.LoadSound(section, "snd_aim_start", "sndAimStart", false, m_eSoundShow);
     m_sounds.LoadSound(section, "snd_aim_end", "sndAimEnd", false, m_eSoundHide);
@@ -690,15 +691,18 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
     case eReload:
         IsMisfire() ? Unmisfire() : ReloadMagazine();
         SwitchState(eIdle);
+        bSwitchAmmoType = false;
         break; // End of reload animation
     case eHiding:
         SwitchState(eHidden);
+        bSwitchAmmoType = false;
         break; // End of Hide
     case eHideDet:
         SwitchState(eIdle);
 		break;
 	case eShowing:
 		SwitchState(eIdle);
+		bSwitchAmmoType = false;
 		break;	// End of Show
 	case eIdle:
 		switch2_Idle();
@@ -778,10 +782,12 @@ void CWeaponMagazined::switch2_Fire()
 
 void CWeaponMagazined::PlayReloadSound()
 {
-	if(iAmmoElapsed == 0)
+    if (iAmmoElapsed == 0 || bSwitchAmmoType && iAmmoElapsed == 0)
 		PlaySound("sndReloadEmpty", get_LastFP());
 	else if(IsMisfire())
 		PlaySound("sndReloadJammed", get_LastFP());
+    else if (bSwitchAmmoType && iAmmoElapsed != 0)
+        PlaySound("sndAmmoChange", get_LastFP());
 	else
 		PlaySound("sndReload", get_LastFP());
 }
@@ -794,6 +800,7 @@ void CWeaponMagazined::switch2_Reload()
 	PlayAnimReload();
 	SetPending(true);
 }
+
 void CWeaponMagazined::switch2_Hiding()
 {
 	OnZoomOut();
@@ -1117,6 +1124,10 @@ void CWeaponMagazined::PlayAnimReload()
 		PlayHUDMotion("anm_reload_empty", true, this, GetState());
 	else if(IsMisfire() && isHUDAnimationExist("anm_reload_jammed"))
 		PlayHUDMotion("anm_reload_jammed", true, this, GetState());
+	else if(bSwitchAmmoType)
+		PlayHUDMotion("anm_reload_ammochange", true, this, GetState());
+	else if(bSwitchAmmoType && iAmmoElapsed == 0)
+		PlayHUDMotion("anm_reload_empty_ammochange", true, this, GetState());
 	else
 		PlayHUDMotion("anm_reload", true, this, GetState());
 }
@@ -1218,7 +1229,7 @@ void CWeaponMagazined::PlayAnimShoot()
 	VERIFY(GetState()==eFire);
 	
     string_path guns_shoot_anm{};
-    strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? (IsScopeAttached() ?  "_aim_scope" : "_aim")  : "", IsMisfire() ? "_jammed" : (iAmmoElapsed == 1 ? "_last" : "") ,IsSilencerAttached() ? "_sil" : "");
+    strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? (IsScopeAttached() ?  "_aim_scope" : "_aim")  : "", IsMisfire() ? "_jammed" : (iAmmoElapsed == 1 ? "_last" : ""), IsSilencerAttached() ? "_sil" : "");
 
     PlayHUDMotionNew(guns_shoot_anm, false, GetState());
 	
