@@ -237,6 +237,7 @@ void  CWeaponMagazinedWGrenade::PerformSwitchGL()
 	m_magazine.swap(m_magazine2);
 
 	iAmmoElapsed = (int)m_magazine.size();
+	iAmmoElapsed2 = (int)m_magazine2.size();
 
 }
 
@@ -250,9 +251,9 @@ bool CWeaponMagazinedWGrenade::Action(s32 cmd, u32 flags)
 		if(flags&CMD_START)
 		{
 			if(iAmmoElapsed)
-				LaunchGrenade		();
+				LaunchGrenade();
 			else
-				Reload				();
+				Reload();
 		}
 		return true;
 	}
@@ -855,7 +856,7 @@ void CWeaponMagazinedWGrenade::PlayAnimShoot()
 	}
 }
 
-void  CWeaponMagazinedWGrenade::PlayAnimModeSwitch()
+void CWeaponMagazinedWGrenade::PlayAnimModeSwitch()
 {
 	if(m_bGrenadeMode)
 	{

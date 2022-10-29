@@ -23,6 +23,7 @@
 #include "game_cl_single.h"
 #include "WeaponBinoculars.h"
 #include "WeaponKnife.h"
+#include "WeaponMagazinedWGrenade.h"
 
 ENGINE_API bool	g_dedicated_server;
 
@@ -322,7 +323,7 @@ void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 void CWeaponMagazined::ReloadMagazine() 
 {
 	m_dwAmmoCurrentCalcFrame = 0;	
-	
+
 	if (!m_bLockType) {
 		m_ammoName = NULL;
 		m_pAmmo = nullptr;
@@ -687,9 +688,16 @@ void CWeaponMagazined::OnEmptyClick()
 
 void CWeaponMagazined::OnAnimationEnd(u32 state)
 {
+	CWeaponMagazinedWGrenade* maggl = smart_cast<CWeaponMagazinedWGrenade*>(m_pInventory->ActiveItem());
+    bool gm = maggl->m_bGrenadeMode;
+
     switch (state) {
     case eReload:
-        IsMisfire() ? Unmisfire() : ReloadMagazine();
+        if (IsMisfire() && !gm)
+            Unmisfire();
+        else
+			ReloadMagazine();
+
         SwitchState(eIdle);
         bSwitchAmmoType = false;
         break; // End of reload animation
@@ -836,12 +844,15 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 	//если оружие чем-то занято, то ничего не делать
 	if(IsPending()) return false;
 	
+	CWeaponMagazinedWGrenade* maggl = smart_cast<CWeaponMagazinedWGrenade*>(m_pInventory->ActiveItem());
+	bool gm = maggl->m_bGrenadeMode;
+
 	switch(cmd) 
 	{
 	case kWPN_RELOAD:
 		{
 			if(flags&CMD_START) 
-				if(iAmmoElapsed < iMagazineSize || IsMisfire()) 
+				if(iAmmoElapsed < iMagazineSize || (IsMisfire() && !gm)) 
 					Reload();
 		} 
 		return true;
