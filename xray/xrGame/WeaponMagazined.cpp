@@ -1065,9 +1065,10 @@ void CWeaponMagazined::ResetSilencerKoeffs()
 void CWeaponMagazined::PlayAnimShow()
 {
 	VERIFY(GetState()==eShowing);
-	if(iAmmoElapsed == 0 && isHUDAnimationExist("anm_show_empty"))
+
+	if(iAmmoElapsed == 0)
 		PlayHUDMotion("anm_show_empty", false, this, GetState());
-	else if(IsMisfire() && isHUDAnimationExist("anm_show_jammed"))
+	else if(IsMisfire())
 		PlayHUDMotion("anm_show_jammed", false, this, GetState());
 	else
 		PlayHUDMotion("anm_show", false, this, GetState());
@@ -1076,9 +1077,10 @@ void CWeaponMagazined::PlayAnimShow()
 void CWeaponMagazined::PlayAnimShowDet()
 {
 	VERIFY(GetState()==eShowingDet);
-	if(iAmmoElapsed == 0 && isHUDAnimationExist("anm_prepare_detector_empty"))
+
+	if(iAmmoElapsed == 0)
 		PlayHUDMotion("anm_prepare_detector_empty", false, this, GetState());
-	else if(IsMisfire() && isHUDAnimationExist("anm_prepare_detector_jammed"))
+	else if(IsMisfire())
 		PlayHUDMotion("anm_prepare_detector_jammed", false, this, GetState());
 	else
 		PlayHUDMotion("anm_prepare_detector", false, this, GetState());
@@ -1087,9 +1089,10 @@ void CWeaponMagazined::PlayAnimShowDet()
 void CWeaponMagazined::PlayAnimShowEndDet()
 {
     VERIFY(GetState() == eShowingEndDet);
-    if (iAmmoElapsed == 0 && isHUDAnimationExist("anm_draw_detector_empty"))
+
+    if (iAmmoElapsed == 0)
         PlayHUDMotion("anm_draw_detector_empty", false, this, GetState());
-    else if (IsMisfire() && isHUDAnimationExist("anm_draw_detector_jammed"))
+    else if (IsMisfire())
         PlayHUDMotion("anm_draw_detector_jammed", false, this, GetState());
     else
         PlayHUDMotion("anm_draw_detector", false, this, GetState());
@@ -1098,9 +1101,10 @@ void CWeaponMagazined::PlayAnimShowEndDet()
 void CWeaponMagazined::PlayAnimHide()
 {
 	VERIFY(GetState()==eHiding);
-	if(iAmmoElapsed == 0 && isHUDAnimationExist("anm_hide_empty"))
+
+	if(iAmmoElapsed == 0)
 		PlayHUDMotion("anm_hide_empty", true, this, GetState());
-	else if(IsMisfire() && isHUDAnimationExist("anm_hide_jammed"))
+	else if(IsMisfire())
 		PlayHUDMotion("anm_hide_jammed", true, this, GetState());
 	else
 		PlayHUDMotion("anm_hide", true, this, GetState());
@@ -1109,9 +1113,10 @@ void CWeaponMagazined::PlayAnimHide()
 void CWeaponMagazined::PlayAnimHideDet()
 {
     VERIFY(GetState()==eHideDet);
-    if (iAmmoElapsed == 0 && isHUDAnimationExist("anm_finish_detector_empty"))
+
+    if (iAmmoElapsed == 0)
         PlayHUDMotion("anm_finish_detector_empty", true, this, GetState());
-    else if (IsMisfire() && isHUDAnimationExist("anm_finish_detector_jammed"))
+    else if (IsMisfire())
         PlayHUDMotion("anm_finish_detector_jammed", true, this, GetState());
 	else
         PlayHUDMotion("anm_finish_detector", true, this, GetState());
@@ -1120,9 +1125,10 @@ void CWeaponMagazined::PlayAnimHideDet()
 void CWeaponMagazined::PlayAnimReload()
 {
 	VERIFY(GetState()==eReload);
-	if(iAmmoElapsed == 0 && isHUDAnimationExist ("anm_reload_empty"))
+
+	if(iAmmoElapsed == 0)
 		PlayHUDMotion("anm_reload_empty", true, this, GetState());
-	else if(IsMisfire() && isHUDAnimationExist("anm_reload_jammed"))
+	else if(IsMisfire())
 		PlayHUDMotion("anm_reload_jammed", true, this, GetState());
 	else if(bSwitchAmmoType)
 		PlayHUDMotion("anm_reload_ammochange", true, this, GetState());
@@ -1136,9 +1142,9 @@ void CWeaponMagazined::PlayAnimAimStart()
 {
     VERIFY(GetState() == eZoomStart);
 
-    if (iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_aim_start_empty"))
+    if (iAmmoElapsed == 0)
         PlayHUDMotion("anm_idle_aim_start_empty", true, this, GetState());
-    else if (IsMisfire() && isHUDAnimationExist("anm_idle_aim_start_jammed"))
+    else if (IsMisfire())
         PlayHUDMotion("anm_idle_aim_start_jammed", true, this, GetState());
     else
         PlayHUDMotion("anm_idle_aim_start", true, this, GetState());
@@ -1148,9 +1154,9 @@ void CWeaponMagazined::PlayAnimAimEnd()
 {
     VERIFY(GetState() == eZoomEnd);
 
-    if (iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_aim_end_empty"))
+    if (iAmmoElapsed == 0)
         PlayHUDMotion("anm_idle_aim_end_empty", true, this, GetState());
-    else if (IsMisfire() && isHUDAnimationExist("anm_idle_aim_end_jammed"))
+    else if (IsMisfire())
         PlayHUDMotion("anm_idle_aim_end_jammed", true, this, GetState());
     else
         PlayHUDMotion("anm_idle_aim_end", true, this, GetState());
@@ -1162,9 +1168,9 @@ void CWeaponMagazined::EmptyMove()
 
     OnEmptyClick(); //звук
 
-    if (IsZoomed() && isHUDAnimationExist("anm_fakeshoot_aim_empty"))
+    if (IsZoomed())
         PlayHUDMotion("anm_fakeshoot_aim_empty", false, this, GetState());
-    else if (isHUDAnimationExist("anm_fakeshoot_empty"))
+    else
         PlayHUDMotion("anm_fakeshoot_empty", false, this, GetState());
 }
 
@@ -1199,9 +1205,9 @@ void CWeaponMagazined::PlayAnimAim()
 		}
 	}
 
-	if (iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_aim_empty"))
+	if (iAmmoElapsed == 0)
 		PlayHUDMotion("anm_idle_aim_empty", true, nullptr, GetState());
-	else if (IsMisfire() && isHUDAnimationExist("anm_idle_aim_jammed"))
+	else if (IsMisfire())
 		PlayHUDMotion("anm_idle_aim_jammed", true, nullptr, GetState());
 	else
 		PlayHUDMotion("anm_idle_aim", true, nullptr, GetState());
@@ -1216,9 +1222,9 @@ void CWeaponMagazined::PlayAnimIdle()
 
     if (IsZoomed())
         PlayAnimAim();
-    else if (iAmmoElapsed == 0 && isHUDAnimationExist("anm_idle_empty"))
+    else if (iAmmoElapsed == 0)
         PlayHUDMotion("anm_idle_empty", true, nullptr, GetState());
-    else if (IsMisfire() && isHUDAnimationExist("anm_idle_jammed") && !TryPlayAnimIdle())
+    else if (IsMisfire())
         PlayHUDMotion("anm_idle_jammed", true, nullptr, GetState());
     else
         PlayHUDMotion("anm_idle", true, nullptr, GetState());
@@ -1237,7 +1243,6 @@ void CWeaponMagazined::PlayAnimShoot()
 	{
 		PlayHUDMotion("anm_shots", false, this, GetState());
 	}
-	
 }
 
 void CWeaponMagazined::OnZoomIn()
