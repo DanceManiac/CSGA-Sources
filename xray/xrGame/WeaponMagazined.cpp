@@ -688,54 +688,54 @@ void CWeaponMagazined::OnEmptyClick()
 
 void CWeaponMagazined::OnAnimationEnd(u32 state)
 {
-	CWeaponMagazinedWGrenade* maggl = smart_cast<CWeaponMagazinedWGrenade*>(m_pInventory->ActiveItem());
-    bool gm = maggl->m_bGrenadeMode;
-
-    switch (state) {
-    case eReload:
-        if (IsMisfire() && !gm)
-            Unmisfire();
-        else
-			ReloadMagazine();
-
-        SwitchState(eIdle);
-        bSwitchAmmoType = false;
-        break; // End of reload animation
-    case eHiding:
-        SwitchState(eHidden);
-        bSwitchAmmoType = false;
-        break; // End of Hide
-    case eHideDet:
-        SwitchState(eIdle);
-		break;
-	case eShowing:
-		SwitchState(eIdle);
-		bSwitchAmmoType = false;
-		break;	// End of Show
-	case eIdle:
-		switch2_Idle();
-		break;  // Keep showing idle
-	case eEmpty:
-		SwitchState(eIdle);
-		break;
-	case eShowingDet:
+    switch (state) 
 	{
-        auto det = smart_cast<CCustomDetector*>(m_pInventory->ItemFromSlot(DETECTOR_SLOT));
-        if (det) {
-			det->SwitchState(CCustomDetector::eShowing);
-			SwitchState(eShowingEndDet);
-			det->TurnDetectorInternal(true);
-		}
-	}break;
-    case eShowingEndDet:
-		SwitchState(eIdle);
-		break;
-	case eZoomStart:
-		SwitchState(eIdle);
-		break;
-	case eZoomEnd:
-		SwitchState(eIdle);
-		break;
+		case eReload:
+		{
+		    if (IsMisfire() && !IsGranadeLauncherMode())
+		        Unmisfire();
+		    else
+				ReloadMagazine();
+
+		    SwitchState(eIdle);
+		    bSwitchAmmoType = false;
+		}break; // End of reload animation
+		case eHiding:
+		    SwitchState(eHidden);
+		    bSwitchAmmoType = false;
+		    break; // End of Hide
+		case eHideDet:
+		    SwitchState(eIdle);
+			break;
+		case eShowing:
+			SwitchState(eIdle);
+			bSwitchAmmoType = false;
+			break;	// End of Show
+		case eIdle:
+			switch2_Idle();
+			break;  // Keep showing idle
+		case eEmpty:
+			SwitchState(eIdle);
+			break;
+		case eShowingDet:
+		{
+		    auto det = smart_cast<CCustomDetector*>(m_pInventory->ItemFromSlot(DETECTOR_SLOT));
+		    if (det) 
+			{
+				det->SwitchState(CCustomDetector::eShowing);
+				SwitchState(eShowingEndDet);
+				det->TurnDetectorInternal(true);
+			}
+		}break;
+		case eShowingEndDet:
+			SwitchState(eIdle);
+			break;
+		case eZoomStart:
+			SwitchState(eIdle);
+			break;
+		case eZoomEnd:
+			SwitchState(eIdle);
+			break;
 	}
 	inherited::OnAnimationEnd(state);
 }
@@ -844,15 +844,12 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 	//если оружие чем-то занято, то ничего не делать
 	if(IsPending()) return false;
 	
-	CWeaponMagazinedWGrenade* maggl = smart_cast<CWeaponMagazinedWGrenade*>(m_pInventory->ActiveItem());
-	bool gm = maggl->m_bGrenadeMode;
-
 	switch(cmd) 
 	{
 	case kWPN_RELOAD:
 		{
 			if(flags&CMD_START) 
-				if(iAmmoElapsed < iMagazineSize || (IsMisfire() && !gm)) 
+				if(iAmmoElapsed < iMagazineSize || (IsMisfire() && !IsGranadeLauncherMode())) 
 					Reload();
 		} 
 		return true;
@@ -1307,6 +1304,12 @@ bool CWeaponMagazined::SwitchMode()
 	PlaySound("sndEmptyClick", get_LastFP());
 
 	return true;
+}
+
+bool CWeaponMagazined::IsGranadeLauncherMode()
+{
+	CWeaponMagazinedWGrenade* maggl = smart_cast<CWeaponMagazinedWGrenade*>(this);
+	return !!(maggl && maggl->m_bGrenadeMode);
 }
  
 void CWeaponMagazined::OnNextFireMode()
