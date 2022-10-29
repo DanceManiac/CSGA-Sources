@@ -637,7 +637,7 @@ void CWeaponMagazinedWGrenade::PlayAnimShow()
 		else {
 			if (IsMisfire())
 				PlayHUDMotion("anm_show_jammed_g", false, this, GetState());
-			else if (iAmmoElapsed == 0)
+			else if (iAmmoElapsed2 == 0)
 				PlayHUDMotion("anm_show_empty_g", false, this, GetState());
 			else
                 PlayHUDMotion("anm_show_g", false, this, GetState());
@@ -706,7 +706,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 			{
 				if(IsMisfire())
 					PlayHUDMotion("anm_idle_aim_jammed_g", true, nullptr, GetState());
-				else if(iAmmoElapsed == 0)
+				else if(iAmmoElapsed2 == 0)
 					PlayHUDMotion("anm_idle_aim_empty_g", true, nullptr, GetState());
 				else
 					PlayHUDMotion("anm_idle_aim_g", true, nullptr, GetState());
@@ -756,7 +756,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 				{
 				case 0:
 					{
-						if(iAmmoElapsed == 0)
+						if(iAmmoElapsed2 == 0)
 							PlayHUDMotion("anm_idle_empty_g", true, nullptr, GetState());
 						else if(IsMisfire())
 							PlayHUDMotion("anm_idle_jammed_g", true, nullptr, GetState());
@@ -766,7 +766,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 					break;
 				case 1:
 					{
-						if(iAmmoElapsed == 0)
+						if(iAmmoElapsed2 == 0)
 							PlayHUDMotion("anm_idle_sprint_empty_g", true, nullptr, GetState());
 						else if(IsMisfire())
 							PlayHUDMotion("anm_idle_sprint_jammed_g", true, nullptr, GetState());
@@ -776,7 +776,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 					break;
 				case 2:
 					{
-						if(iAmmoElapsed == 0)
+						if(iAmmoElapsed2 == 0)
 							PlayHUDMotion("anm_idle_moving_empty_g", true, nullptr, GetState());
 						else if(IsMisfire())
 							PlayHUDMotion("anm_idle_moving_jammed_g", true, nullptr, GetState());
@@ -834,7 +834,7 @@ void CWeaponMagazinedWGrenade::PlayAnimShoot()
 	if(m_bGrenadeMode)
 	{
 		string_path guns_shoot_anm{};
-		strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (this->IsZoomed() && !this->IsRotatingToZoom()) ? "_aim" : "", IsMisfire() ? "_jammed" : (iAmmoElapsed == 0 ? "_empty" : ""), "_g");
+		strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (this->IsZoomed() && !this->IsRotatingToZoom()) ? "_aim" : "", IsMisfire() ? "_jammed" : (iAmmoElapsed2 == 0 ? "_empty" : ""), "_g");
 
 		PlayHUDMotionNew(guns_shoot_anm, false, GetState());
 	}
@@ -860,7 +860,7 @@ void CWeaponMagazinedWGrenade::PlayAnimModeSwitch()
 {
 	if(m_bGrenadeMode)
 	{
-		if(iAmmoElapsed == 0)
+		if(iAmmoElapsed2 == 0)
 			PlayHUDMotion("anm_switch_empty_g" , true, this, eSwitch);
 		else if(IsMisfire())
 			PlayHUDMotion("anm_switch_jammed_g" , true, this, eSwitch);
@@ -884,7 +884,7 @@ void CWeaponMagazinedWGrenade::PlayAnimBore()
 	{
 		if(m_bGrenadeMode)
 		{
-			if(iAmmoElapsed == 0 && isHUDAnimationExist("anm_bore_empty_g"))
+			if(iAmmoElapsed2 == 0 && isHUDAnimationExist("anm_bore_empty_g"))
 				PlayHUDMotion	("anm_bore_empty_g", true, this, GetState());
 			else if(IsMisfire() && isHUDAnimationExist("anm_bore_jammed_g"))
 				PlayHUDMotion	("anm_bore_jammed_g", true, this, GetState());
@@ -912,7 +912,7 @@ void CWeaponMagazinedWGrenade::PlayAnimAimStart()
     if (IsGrenadeLauncherAttached()) {
 
         if (m_bGrenadeMode) {
-            if (iAmmoElapsed == 0)
+            if (iAmmoElapsed2 == 0)
                 PlayHUDMotion("anm_idle_aim_start_empty_g", true, this, GetState());
             else if (IsMisfire())
                 PlayHUDMotion("anm_idle_aim_start_jammed_g", true, this, GetState());
@@ -935,7 +935,7 @@ void CWeaponMagazinedWGrenade::PlayAnimAimEnd()
     if (IsGrenadeLauncherAttached()) {
 
         if (m_bGrenadeMode) {
-            if (iAmmoElapsed == 0)
+            if (iAmmoElapsed2 == 0)
                 PlayHUDMotion("anm_idle_aim_end_empty_g", true, this, GetState());
             else if (IsMisfire())
                 PlayHUDMotion("anm_idle_aim_end_jammed_g", true, this, GetState());
