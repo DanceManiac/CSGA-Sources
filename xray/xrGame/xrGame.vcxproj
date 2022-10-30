@@ -1311,6 +1311,7 @@
     <ClInclude Include="FryupZone.h" />
     <ClInclude Include="fs_registrator.h" />
     <ClInclude Include="GalantineArtifact.h" />
+    <ClInclude Include="GameConstants.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectEvents.h" />
     <ClInclude Include="GamePersistent.h" />
@@ -4705,6 +4706,7 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="GalantineArtifact.cpp" />
+    <ClCompile Include="GameConstants.cpp" />
     <ClCompile Include="GameObject.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug-LLVM|Win32'">pch_script.h</PrecompiledHeaderFile>

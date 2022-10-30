@@ -95,20 +95,20 @@ public:
 	
 	virtual void				OnEvent				(NET_Packet& P, u16 type);
 	
-	virtual bool				Useful				() const;									// !!! Переопределить. (см. в Inventory.cpp)
+	virtual bool				Useful				() const;									// !!! РџРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ. (СЃРј. РІ Inventory.cpp)
 	virtual bool				IsUsingCondition	() const { return m_flags.test(FUsingCondition); }
 	virtual bool				Attach				(PIItem pIItem, bool b_send_event) {return false;}
 	virtual bool				Detach				(PIItem pIItem) {return false;}
-	//при детаче спаунится новая вещь при заданно названии секции
+	//РїСЂРё РґРµС‚Р°С‡Рµ СЃРїР°СѓРЅРёС‚СЃСЏ РЅРѕРІР°СЏ РІРµС‰СЊ РїСЂРё Р·Р°РґР°РЅРЅРѕ РЅР°Р·РІР°РЅРёРё СЃРµРєС†РёРё
 	virtual bool				Detach				(const char* item_section_name, bool b_spawn_item);
 	virtual bool				CanAttach			(PIItem pIItem) {return false;}
 	virtual bool				CanDetach			(LPCSTR item_section_name) {return false;}
 
 	virtual EHandDependence		HandDependence		()	const	{return hd1Hand;};
 	virtual bool				IsSingleHanded		()	const	{return true;};	
-	virtual bool				ActivateItem		();									// !!! Переопределить. (см. в Inventory.cpp)
-	virtual void				DeactivateItem		();								// !!! Переопределить. (см. в Inventory.cpp)
-	virtual bool				Action				(s32 cmd, u32 flags) {return false;}	// true если известная команда, иначе false
+	virtual bool				ActivateItem		();									// !!! РџРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ. (СЃРј. РІ Inventory.cpp)
+	virtual void				DeactivateItem		();								// !!! РџРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ. (СЃРј. РІ Inventory.cpp)
+	virtual bool				Action				(s32 cmd, u32 flags) {return false;}	// true РµСЃР»Рё РёР·РІРµСЃС‚РЅР°СЏ РєРѕРјР°РЅРґР°, РёРЅР°С‡Рµ false
 
 
 	virtual void				OnH_B_Chield		();
@@ -133,8 +133,6 @@ public:
 			BOOL				IsInvalid			() const;
 
 			BOOL				IsQuestItem			()	const	{return m_flags.test(FIsQuestItem);}			
-			u32					Cost				() const	{ return m_cost; }
-	virtual float				Weight				() 			{ return m_weight;}		
 
 public:
 	CInventory*					m_pInventory;
@@ -151,9 +149,11 @@ public:
 	virtual void				OnMoveToBelt		() {};
 	virtual void				OnMoveToRuck		(EItemPlace prev) {};
 					
-			Irect			GetInvGridRect		() const;
+			Irect				GetInvGridRect		() const;
+			int					GetInvGridWidth		() const;
+			int					GetInvGridHeight	() const;
 			const shared_str&	GetIconName			() const		{return m_icon_name;};
-			Frect			GetKillMsgRect		() const;
+			Frect				GetKillMsgRect		() const;
 	//---------------------------------------------------------------------
 	IC		float				GetCondition		() const					{return m_fCondition;}
 	virtual	float				GetConditionToShow	() const					{return GetCondition();}
@@ -176,6 +176,8 @@ public:
 
 	virtual bool 				IsNecessaryItem	    (CInventoryItem* item);
 	virtual bool				IsNecessaryItem	    (const shared_str& item_sect){return false;};
+			u32					Cost				() const	{ return m_cost; }
+	virtual float				Weight				() 			{ return m_weight;}
 protected:	
 	u32							m_slot;
 	u32							m_cost;

@@ -114,6 +114,7 @@ public:
 	virtual void			SetWndPos(const Fvector2& pos)				{m_wndPos.set(pos.x,pos.y);}
 	IC const Fvector2&		GetWndPos()							const	{return m_wndPos;}
 	virtual void			SetWndSize(const Fvector2& size)			{m_wndSize = size;}
+	virtual void			SetWndSize(float x, float y)				{m_wndSize.set(x,y);}
 	IC const Fvector2&		GetWndSize()						const	{return m_wndSize;}
 	virtual void			SetHeight(float height)						{m_wndSize.y = height;}
 	IC		float			GetHeight()							const	{return m_wndSize.y;}

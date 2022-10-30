@@ -7512,6 +7512,9 @@
     <ClInclude Include="embedded_editor\render\editor_render_spawn_element.h">
       <Filter>Embedded editor\render</Filter>
     </ClInclude>
+    <ClInclude Include="GameConstants.h">
+      <Filter>Core\Client\Game Persistent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11215,6 +11218,9 @@
     </ClCompile>
     <ClCompile Include="embedded_editor\render\editor_render_spawn_element.cpp">
       <Filter>Embedded editor\render</Filter>
+    </ClCompile>
+    <ClCompile Include="GameConstants.cpp">
+      <Filter>Core\Client\Game Persistent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
