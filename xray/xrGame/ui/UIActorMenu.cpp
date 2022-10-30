@@ -253,7 +253,7 @@ void CUIActorMenu::Update()
 	m_ItemInfo->Update();
 	m_hint_wnd->Update();
 }
-bool CUIActorMenu::StopAnyMove()  // true = àêò¸ð íå èä¸ò ïðè îòêðûòîì ìåíþ
+bool CUIActorMenu::StopAnyMove()  // true = Ð°ÐºÑ‚Ñ‘Ñ€ Ð½Ðµ Ð¸Ð´Ñ‘Ñ‚ Ð¿Ñ€Ð¸ Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ð¾Ð¼ Ð¼ÐµÐ½ÑŽ
 {
 	switch ( m_currMenuMode )
 	{
@@ -380,7 +380,7 @@ void CUIActorMenu::InfoCurItem( CUICellItem* cell_item )
 	
 	m_ItemInfo->InitItem	( current_item, compare_item );
 	float dx_pos = GetWndRect().left;
-	m_ItemInfo->AlignHintWndPos( Frect().set( 0.0f, 0.0f, 1024.0f - dx_pos, 768.0f ), 10.0f, dx_pos );
+	fit_in_rect(m_ItemInfo, Frect().set( 0.0f, 0.0f, UI_BASE_WIDTH - dx_pos, UI_BASE_HEIGHT ), 10.0f, dx_pos );
 }
 
 bool CUIActorMenu::OnItemStartDrag(CUICellItem* itm)
@@ -393,6 +393,7 @@ bool CUIActorMenu::OnItemSelected(CUICellItem* itm)
 {
 	SetCurrentItem		(itm);
 	InfoCurItem			(NULL);
+	m_item_info_view	= false;
 	return				false;
 }
 
@@ -570,12 +571,16 @@ bool CUIActorMenu::OnItemRButtonClick(CUICellItem* itm)
 	SetCurrentItem( itm );
 	InfoCurItem( NULL );
 	ActivatePropertiesBox();
+	m_item_info_view = false;
 	return false;
 }
 
 bool CUIActorMenu::OnItemFocusReceive(CUICellItem* itm)
 {
 	InfoCurItem( NULL );
+	m_item_info_view = true;
+
+	itm->m_selected = true;
 	set_highlight_item( itm );
 	return true;
 }
@@ -606,7 +611,7 @@ bool CUIActorMenu::OnItemFocusedUpdate(CUICellItem* itm)
 	{
 		return true; //false
 	}
-	if ( CUIDragDropListEx::m_drag_item || m_UIPropertiesBox->IsShown() )
+	if ( CUIDragDropListEx::m_drag_item || m_UIPropertiesBox->IsShown() || !m_item_info_view )
 	{
 		return true;
 	}	

@@ -700,7 +700,7 @@ void CUIMapWnd::ShowHint( bool extra )
 		vis_rect = ActiveMapRect();
 	}
 
-	bool is_visible = m_map_location_hint->AlignHintWndPos( vis_rect );
+	bool is_visible = fit_in_rect(m_map_location_hint, vis_rect );
 	if ( !is_visible )
 	{
 		HideCurHint();
