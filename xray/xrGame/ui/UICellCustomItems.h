@@ -43,6 +43,7 @@ protected:
 	void						CreateIcon					(eAddonType);
 	void						DestroyIcon					(eAddonType);
 	CUIStatic*					GetIcon						(eAddonType);
+	void						RefreshOffset				();
 	void						InitAddon					(CUIStatic* s, LPCSTR section, Fvector2 offset, bool use_heading);
 	bool						is_scope					();
 	bool						is_silencer					();
@@ -51,6 +52,7 @@ public:
 								CUIWeaponCellItem			(CWeapon* itm);
 				virtual			~CUIWeaponCellItem			();
 	virtual		void			Update						();
+	virtual		void			Draw						();
 	virtual		void			SetColor					(u32 color);
 
 				CWeapon*		object						() {return (CWeapon*)m_pData;}
