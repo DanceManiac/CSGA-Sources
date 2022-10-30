@@ -129,6 +129,9 @@ bool CUIWpnParams::Check(CInventoryItem& wpn_section)
 		if (smart_cast<CSilencer*>(&wpn_section) != nullptr)
 			return false;
 
+		if (!wpn_section.m_show_ammo)
+			return false;
+
         return true;		
 	}
 	return false;

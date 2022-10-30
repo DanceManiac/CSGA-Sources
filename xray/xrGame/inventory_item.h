@@ -142,6 +142,7 @@ public:
 	shared_str					m_name;
 	shared_str					m_nameShort;
 	shared_str					m_nameComplex;
+	bool						m_show_ammo;
 
 	EItemPlace					m_eItemCurrPlace;
 

@@ -96,6 +96,8 @@ void CInventoryItem::Load(LPCSTR section)
 	m_name				= CStringTable().translate( pSettings->r_string(section, "inv_name") );
 	m_nameShort			= CStringTable().translate( pSettings->r_string(section, "inv_name_short") );
 
+	m_show_ammo			= READ_IF_EXISTS(pSettings, r_bool, section, "show_ammo", true);
+
 	m_weight			= pSettings->r_float(section, "inv_weight");
 	R_ASSERT			(m_weight>=0.f);
 
