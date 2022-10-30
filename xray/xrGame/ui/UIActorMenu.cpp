@@ -752,7 +752,7 @@ void CUIActorMenu::highlight_ammo_for_weapon( PIItem weapon_item, CUIDragDropLis
 	CWeapon* weapon = smart_cast<CWeapon*>(weapon_item);
 	CWeaponBinoculars* binoc = smart_cast<CWeaponBinoculars*>(weapon_item);
 	CWeaponKnife* knife = smart_cast<CWeaponKnife*>(weapon_item);
-	if ( !weapon )
+	if ( !weapon || binoc || knife)
 	{
 		return;
 	}
