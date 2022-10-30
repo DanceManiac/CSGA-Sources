@@ -686,7 +686,7 @@ void CUIActorMenu::highlight_item_slot(CUICellItem* cell_item)
 	}
 	if(artefact)
 	{
-		if(cell_item->OwnerList() && GetListType(cell_item->OwnerList())==iActorBelt)
+		if(cell_item->OwnerList() && GetListType(cell_item->OwnerList())==iActorBelt || !Actor()->GetOutfit())
 			return;
 
 		Ivector2 cap = m_pInventoryBeltList->CellsCapacity();
