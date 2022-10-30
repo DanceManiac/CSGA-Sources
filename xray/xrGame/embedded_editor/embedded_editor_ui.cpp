@@ -4,7 +4,7 @@
 #include "Level.h"
 #include "UIGameCustom.h"
 #include "embedded_editor_helper.h"
-#include "ui/UIFrameWindow.h"#include "stdafx.h"
+#include "ui/UIFrameWindow.h"
 #include "embedded_editor_ui.h"
 #include "HUDmanager.h"
 #include "Level.h"
@@ -174,11 +174,11 @@ void showWndProp(bool& show)
         Frect r = curWnd->GetWndRect();
         float width = r.width();
         float height = r.height();
-        if (ImGui::InputFloat("Left", &r.left, 1.0f, 10.0f)) {
+        if (ImGui::InputFloat("X", &r.left, 1.0f, 10.0f)) {
             r.right = r.left + width;
             curWnd->SetWndRect(r);
         }
-        if (ImGui::InputFloat("Top", &r.top, 1.0f, 10.0f)) {
+        if (ImGui::InputFloat("Y", &r.top, 1.0f, 10.0f)) {
             r.bottom = r.top + height;
             curWnd->SetWndRect(r);
         }
