@@ -266,7 +266,7 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem, CInventoryItem* pCompareIte
 	}
 	if(UIItemImage)
 	{
-		// Çàãðóæàåì êàðòèíêó
+		// Ð—Ð°Ð³Ñ€ÑƒÐ¶Ð°ÐµÐ¼ ÐºÐ°Ñ€Ñ‚Ð¸Ð½ÐºÑƒ
 		UIItemImage->SetShader				(InventoryUtilities::GetEquipmentIconsShader());
 
 		Irect item_grid_rect				= pInvItem->GetInvGridRect();
@@ -279,7 +279,7 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem, CInventoryItem* pCompareIte
 												0.0f, 
 												float(item_grid_rect.x2*INV_GRID_WIDTH2),	
 												float(item_grid_rect.y2*INV_GRID_HEIGHT2)};
-		if(UI()->is_16_9_mode())
+		if(UI().is_widescreen())
 			v_r.x2 /= 1.2f;
 
 		UIItemImage->GetUIStaticItem().SetRect	(v_r);

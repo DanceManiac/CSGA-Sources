@@ -99,16 +99,16 @@ void CUIDosimeter::Draw()
     Fmatrix LM;
     GetUILocatorMatrix(LM);
 
-    IUIRender::ePointType bk = UI()->m_currentPointType;
+    IUIRender::ePointType bk = UI().m_currentPointType;
 
-    UI()->m_currentPointType = IUIRender::pttLIT;
+    UI().m_currentPointType = IUIRender::pttLIT;
 
     UIRender->CacheSetXformWorld(LM);
     UIRender->CacheSetCullMode(IUIRender::cmNONE);
 
     CUIWindow::Draw();
 
-    UI()->m_currentPointType = bk;
+    UI().m_currentPointType = bk;
 }
 
 void CUIDosimeter::GetUILocatorMatrix(Fmatrix& _m)

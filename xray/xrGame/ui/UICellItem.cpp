@@ -88,7 +88,7 @@ void CUICellItem::Update()
 	{
 		Frect clientArea;
 		m_pParentList->GetClientArea(clientArea);
-		Fvector2 cp			= GetUICursor()->GetCursorPosition();
+		Fvector2 cp			= GetUICursor().GetCursorPosition();
 		if(clientArea.in(cp))
 			GetMessageTarget()->SendMessage(this, DRAG_DROP_ITEM_FOCUSED_UPDATE, NULL);
 	}
@@ -175,7 +175,7 @@ CUIDragItem* CUICellItem::CreateDragItem()
 		t1				= r.width();
 		t2				= r.height();
 
-		Fvector2 cp = GetUICursor()->GetCursorPosition();
+		Fvector2 cp = GetUICursor().GetCursorPosition();
 
 		r.x1			= (cp.x-t2/2.0f);
 		r.y1			= (cp.y-t1/2.0f);
@@ -299,7 +299,7 @@ void CUIDragItem::Init(const ui_shader& sh, const Frect& rect, const Frect& text
 	m_static.TextureOn				();
 	m_static.SetColor				(color_rgba(255,255,255,170));
 	m_static.SetStretchTexture		(true);
-	m_pos_offset.sub				(rect.lt, GetUICursor()->GetCursorPosition());
+	m_pos_offset.sub				(rect.lt, GetUICursor().GetCursorPosition());
 }
 
 bool CUIDragItem::OnMouse(float x, float y, EUIMessages mouse_action)
@@ -325,15 +325,15 @@ void CUIDragItem::OnFrame()
 void CUIDragItem::Draw()
 {
 	Fvector2 tmp;
-	tmp.sub					(GetWndPos(), GetUICursor()->GetCursorPosition());
+	tmp.sub					(GetWndPos(), GetUICursor().GetCursorPosition());
 	tmp.sub					(m_pos_offset);
 	tmp.mul					(-1.0f);
 	MoveWndDelta			(tmp);
-	UI()->PushScissor		(UI()->ScreenRect(),true);
+	UI().PushScissor		(UI().ScreenRect(),true);
 
 	inherited::Draw();
 
-	UI()->PopScissor();
+	UI().PopScissor();
 }
 
 void CUIDragItem::SetBackList(CUIDragDropListEx*l)
@@ -345,6 +345,6 @@ void CUIDragItem::SetBackList(CUIDragDropListEx*l)
 
 Fvector2 CUIDragItem::GetPosition()
 {
-	return Fvector2().add(m_pos_offset, GetUICursor()->GetCursorPosition());
+	return Fvector2().add(m_pos_offset, GetUICursor().GetCursorPosition());
 }
 

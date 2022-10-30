@@ -20,7 +20,7 @@ constexpr float PITCH_OFFSET_N    = 0.0f;   // Насколько сильно �
 constexpr float PITCH_OFFSET_D    = 0.02f;  // Насколько сильно ствол приближается\отдаляется при вертикальных поворотах камеры
 constexpr float PITCH_LOW_LIMIT   = -PI;    // Минимальное значение pitch при использовании совместно с PITCH_OFFSET_N
 constexpr float ORIGIN_OFFSET     = -0.05f; // Фактор влияния инерции на положение ствола (чем меньше, тем масштабней инерция)
-constexpr float ORIGIN_OFFSET_AIM = 0.20f; // (Для прицеливания)
+constexpr float ORIGIN_OFFSET_AIM = 0.20f; 	// (Для прицеливания)
 constexpr float TENDTO_SPEED      = 5.f;    // Скорость нормализации положения ствола
 constexpr float TENDTO_SPEED_AIM  = 3.f;    // (Для прицеливания)
 // --#SM+# End--
@@ -148,7 +148,7 @@ void attachable_hud_item::set_bone_visible(const shared_str& bone_name, BOOL bVi
 void attachable_hud_item::update(bool bForce)
 {
 	if(!bForce && m_upd_firedeps_frame==Device.dwFrame)	return;
-	bool is_16x9 = UI()->is_16_9_mode();
+	bool is_16x9 = UI().is_widescreen();
 	
 	if(!!m_measures.m_prop_flags.test(hud_item_measures::e_16x9_mode_now)!=is_16x9)
 		m_measures.load(m_sect_name, m_model);
@@ -253,7 +253,7 @@ void attachable_hud_item::render_item_ui()
 
 void hud_item_measures::load(const shared_str& sect_name, IKinematics* K)
 {
-	bool is_16x9 = UI()->is_16_9_mode();
+	bool is_16x9 = UI().is_widescreen();
 	string64	_prefix;
 	sprintf_s	(_prefix,"%s",is_16x9?"_16x9":"");
 	string128	val_name;
@@ -351,7 +351,7 @@ u32 attachable_hud_item::anim_play(const shared_str& anm_name_b, BOOL bMixIn, co
 
 	R_ASSERT				(strstr(anm_name_b.c_str(),"anm_")==anm_name_b.c_str());
 	string256				anim_name_r;
-	bool is_16x9			= UI()->is_16_9_mode();
+	bool is_16x9			= UI().is_widescreen();
 	sprintf_s				(anim_name_r,"%s%s",anm_name_b.c_str(),((m_attach_place_idx==1)&&is_16x9)?"_16x9":"");
 
 	player_hud_motion* anm	= m_hand_motions.find_motion(anim_name_r);

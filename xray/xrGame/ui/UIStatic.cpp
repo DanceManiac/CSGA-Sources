@@ -139,14 +139,14 @@ void  CUIStatic::Draw()
 		}else				
 			clip_rect		= m_ClipRect;
 
-		UI()->PushScissor	(clip_rect);
+		UI().PushScissor	(clip_rect);
 	}
 
 	DrawTexture				();	
 	inherited::Draw			();
 	DrawText				();
 
-	if(m_bClipper)	UI()->PopScissor();
+	if(m_bClipper)	UI().PopScissor();
 }
 
 
@@ -552,7 +552,7 @@ void CUIStatic::AdjustHeightToText(){
 void CUIStatic::AdjustWidthToText()
 {
 	float _len		= m_pLines->GetFont()->SizeOf_(m_pLines->GetText());
-	UI()->ClientToScreenScaledWidth(_len);
+	UI().ClientToScreenScaledWidth(_len);
 	SetWidth		(_len);
 }
 
