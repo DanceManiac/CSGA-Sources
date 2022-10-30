@@ -21,6 +21,7 @@
 #include "UIInvUpgradeProperty.h"
 #include "UIOutfitInfo.h"
 #include "../Weapon.h"
+#include "../CustomOutfit.h"
 
 extern const LPCSTR g_inventory_upgrade_xml;
 
