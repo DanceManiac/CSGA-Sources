@@ -663,13 +663,15 @@ void CUIActorMenu::highlight_item_slot(CUICellItem* cell_item)
 	CCustomOutfit* outfit = smart_cast<CCustomOutfit*>(item);
 	CCustomDetector* detector = smart_cast<CCustomDetector*>(item);
 	CArtefact* artefact = smart_cast<CArtefact*>(item);
+	CWeaponBinoculars* binoc = smart_cast<CWeaponBinoculars*>(item);
+	CWeaponKnife* knife = smart_cast<CWeaponKnife*>(item);
 	
 	if(pistol)
 	{
 		m_InvSlot2Highlight->Show(true);
 		return;
 	}
-	if (weapon && !pistol)
+	if (weapon && !pistol && !(knife || binoc))
 	{
 		m_InvSlot3Highlight->Show(true);
 		return;
@@ -1011,10 +1013,12 @@ bool CUIActorMenu::OnKeyboard(int dik, EUIMessages keyboard_action)
 			if (DIK_NUMPAD7 == dik && CurrentIItem() && CurrentIItem()->IsUsingCondition())
 			{
 				CurrentIItem()->ChangeCondition(-0.05f);
+				CurrentItem()->UpdateConditionProgressBar();
 			}
 			else if (DIK_NUMPAD8 == dik && CurrentIItem() && CurrentIItem()->IsUsingCondition())
 			{
 				CurrentIItem()->ChangeCondition(0.05f);
+				CurrentItem()->UpdateConditionProgressBar();
 			}
 		}
 	}

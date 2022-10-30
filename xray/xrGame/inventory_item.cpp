@@ -138,7 +138,7 @@ void  CInventoryItem::ChangeCondition(float fDeltaCondition)
 
 void	CInventoryItem::Hit					(SHit* pHDS)
 {
-	if (IsUsingCondition() == false)
+	if (!IsUsingCondition())
 		return;
 
 	float hit_power = pHDS->damage();
