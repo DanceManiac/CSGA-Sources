@@ -21,7 +21,6 @@
 #include "UIInvUpgradeProperty.h"
 #include "UIOutfitInfo.h"
 #include "../Weapon.h"
-#include "../CustomOutfit.h"
 
 extern const LPCSTR g_inventory_upgrade_xml;
 
@@ -292,9 +291,7 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem, CInventoryItem* pCompareIte
 
 void CUIItemInfo::TryAddConditionInfo( CInventoryItem& pInvItem, CInventoryItem* pCompareItem )
 {
-	CWeapon*		weapon = smart_cast<CWeapon*>( &pInvItem );
-	CCustomOutfit*	outfit = smart_cast<CCustomOutfit*>( &pInvItem );
-	if ( weapon || outfit )
+	if (pInvItem.IsUsingCondition())
 	{
 		UIConditionWnd->SetInfo( pCompareItem, pInvItem );
 		UIDesc->AddWindow( UIConditionWnd, false );
