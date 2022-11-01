@@ -1,16 +1,14 @@
 #pragma once
-
+#include "../Include/xrRender/UIRender.h"
+#include "../Include/xrRender/FactoryPtr.h"
+#include "../xrEngine/IGame_Persistent.h"
+#include "ui_defs.h"
+#include "UICursor.h"
 #define UI_BASE_WIDTH	1024.0f
 #define UI_BASE_HEIGHT	768.0f
 
 struct CFontManager;
 class CUICursor;
-
-#include "../Include/xrRender/UIRender.h"
-#include "../Include/xrRender/FactoryPtr.h"
-
-#include "ui_defs.h"
-
 class CDeviceResetNotifier :public pureDeviceReset
 {
 public:
@@ -46,7 +44,7 @@ public:
 	sPoly2D*	ClipPoly		(sPoly2D& S, sPoly2D& D) const;
 };
 
-class ui_core: public CDeviceResetNotifier
+class ui_core: public CDeviceResetNotifier, public IUiCore
 {
 	C2DFrustum		m_2DFrustum;
 	C2DFrustum		m_2DFrustumPP;
@@ -68,6 +66,7 @@ public:
 					~ui_core						();
 	CFontManager&	Font							()							{return *m_pFontManager;}
 	CUICursor&		GetUICursor						()							{return *m_pUICursor;}
+	virtual	bool	CursorIsActive					(); 
 
 	void			ClientToScreenScaled			(Fvector2& dest, float left, float top);
 	void			ClientToScreenScaled			(Fvector2& src_and_dest);
@@ -83,7 +82,6 @@ public:
 	void			pp_start						();
 	void			pp_stop							();
 	void			RenderFont						();
-
 	virtual void	OnDeviceReset					();
 	static	bool	is_widescreen					();
 	static	float	get_current_kx					();

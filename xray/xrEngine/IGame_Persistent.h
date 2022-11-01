@@ -11,6 +11,7 @@
 
 class IRenderVisual;
 class IMainMenu;
+class IUiCore;
 class ENGINE_API CPS_Instance;
 class ENGINE_API CEnvironment;
 //-----------------------------------------------------------------------------------------------------------
@@ -69,7 +70,7 @@ public:
 	CEnvironment&					Environment()	{return *pEnvironment;};
 #endif
 	IMainMenu*						m_pMainMenu;	
-
+	IUiCore*						m_pUI_core;
 	ShadersExternalData* m_pGShaderConstants; //--#SM+#--
 
 	virtual bool					OnRenderPPUI_query	() { return FALSE; };	// should return true if we want to have second function called
@@ -127,6 +128,13 @@ public:
 	virtual	bool	IsActive						()													=0; 
 	virtual	bool	CanSkipSceneRendering			()													=0; 
 	virtual void	DestroyInternal					(bool bForce)										=0;
+};
+
+class IUiCore
+{
+public:
+	virtual			~IUiCore						()													{};
+	virtual bool	CursorIsActive					()													=0;
 };
 
 extern ENGINE_API	bool g_dedicated_server;

@@ -32,7 +32,7 @@ IGame_Persistent::IGame_Persistent	()
 	Device.seqAppDeactivate.Add		(this);
 
 	m_pMainMenu						= NULL;
-	
+	m_pUI_core						= NULL;
 	m_pGShaderConstants = new ShadersExternalData(); //--#SM+#--
 
 #ifndef INGAME_EDITOR

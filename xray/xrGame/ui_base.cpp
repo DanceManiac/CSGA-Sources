@@ -107,6 +107,10 @@ void ui_core::OnDeviceReset()
 												float(Device.dwHeight)
 												));
 }
+bool ui_core::CursorIsActive()							
+{
+	return m_pUICursor->IsVisible();
+}
 
 void ui_core::ClientToScreenScaled(Fvector2& dest, float left, float top)
 {

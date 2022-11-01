@@ -362,6 +362,8 @@ void CRenderDevice::on_idle		()
 			seqRender.Process						(rp_Render);
 			if (psDeviceFlags.test(rsCameraPos) || psDeviceFlags.test(rsStatistic) || Statistic.errors.size())	
 				Statistic.Show						();
+            if (g_pGamePersistent && g_pGamePersistent->m_pUI_core && !g_pGamePersistent->m_pUI_core->CursorIsActive())
+				SetCursorPos(dwWidth/2,  dwHeight/2);
 			//	TEST!!!
 			//Statistic.RenderTOTAL_Real.End			();
 			//	Present goes here
