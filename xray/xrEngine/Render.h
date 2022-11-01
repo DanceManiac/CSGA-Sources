@@ -273,9 +273,10 @@ public:
 	// Main
 	virtual void					Calculate				()											= 0;
 	virtual void					Render					()											= 0;
-	
-	virtual void BeforeWorldRender() = 0; //--#SM+#-- Ïåðåä ðåíäåðèíãîì ìèðà
-	virtual void AfterWorldRender() = 0; //--#SM+#-- Ïîñëå ðåíäåðèíãà ìèðà (äî UI)
+
+	// [FFT++]
+	virtual void					BeforeWorldRender		() = 0; //--#SM+#-- +SecondVP+ Вызывается перед началом рендера мира и пост-эффектов
+	virtual void					AfterWorldRender		() = 0; //--#SM+#-- +SecondVP+ Вызывается после рендера мира и перед UI
 	
 	virtual void					Screenshot				(ScreenshotMode mode=SM_NORMAL, LPCSTR name = 0) = 0;
 	virtual	void					Screenshot				(ScreenshotMode mode, CMemoryWriter& memory_writer) = 0;

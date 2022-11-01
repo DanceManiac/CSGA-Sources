@@ -240,8 +240,15 @@ void CRender::Render		()
 		RCache.set_ColorWriteEnable					(FALSE);
 		r_dsgraph_render_graph						(0);
 		RCache.set_ColorWriteEnable					( );
-	} else {
+	}
+	else
+	{
 		Target->phase_scene_prepare					();
+	}
+
+	if (currentViewPort == SECONDARY_WEAPON_SCOPE)
+	{
+		Target->phase_cut();
 	}
 
 	//*******
@@ -451,18 +458,18 @@ void CRender::render_forward				()
 	RImplementation.o.distortion				= FALSE;				// disable distorion
 }
 
-// Ïåðåä íà÷àëîì ðåíäåðà ìèðà --#SM+#-- +SecondVP+
+// Перед началом рендера мира --#SM+#-- +SecondVP+
 void CRender::BeforeWorldRender() {}
 
-// Ïîñëå ðåíäåðà ìèðà è ïîñò-ýôôåêòîâ --#SM+#-- +SecondVP+
+// После рендера мира и пост-эффектов --#SM+#-- +SecondVP+
 void CRender::AfterWorldRender()
 {
 	if (Device.m_SecondViewport.IsSVPFrame())
 	{
-		// Äåëàåò êîïèþ áýêáóôåðà (òåêóùåãî ýêðàíà) â ðåíäåð-òàðãåò âòîðîãî âüþïîðòà
+		// Делает копию бэкбуфера (текущего экрана) в рендер-таргет второго вьюпорта
 		IDirect3DSurface9* pBackBuffer = NULL;
-		HW.pDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer); // Ïîëó÷àåì ññûëêó íà áýêáóôåð
+		HW.pDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer); // Получаем ссылку на бэкбуфер
 		D3DXLoadSurfaceFromSurface(Target->rt_secondVP->pRT, 0, 0, pBackBuffer, 0, 0, D3DX_DEFAULT, 0);
-		pBackBuffer->Release(); // Êîððåêòíî î÷èùàåì ññûëêó íà áýêáóôåð (èíà÷å èãðà çàâèñíåò â îïöèÿõ)
+		pBackBuffer->Release(); // Корректно очищаем ссылку на бэкбуфер (иначе игра зависнет в опциях)
 	}
 }

@@ -36,12 +36,14 @@ class ENGINE_API CRenderDevice
 	public:
 	class ENGINE_API CSecondVPParams //--#SM+#-- +SecondVP+
 	{
-		bool isActive; // Ôëàã àêòèâàöèè ðåíäåðà âî âòîðîé âüþïîðò
-		u8 frameDelay;  // Íà êàêîì êàäðå ñ ìîìåíòà ïðîøëîãî ðåíäåðà âî âòîðîé âüþïîðò ìû íà÷í¸ì íîâûé
-						  //(íå ìîæåò áûòü ìåíüøå 2 - êàæäûé âòîðîé êàäð, ÷åì áîëüøå òåì áîëåå íèçêèé FPS âî âòîðîì âüþïîðòå)
+		bool isActive; // Флаг активации рендера во второй вьюпорт
+		u8 frameDelay;  // На каком кадре с момента прошлого рендера во второй вьюпорт мы начнём новый
+		//(не может быть меньше 2 - каждый второй кадр, чем больше тем более низкий FPS во втором вьюпорте)
 
 	public:
-		bool isCamReady; // Ôëàã ãîòîâíîñòè êàìåðû (FOV, ïîçèöèÿ, è ò.ï) ê ðåíäåðó âòîðîãî âüþïîðòà
+		bool isCamReady; // Флаг готовности камеры (FOV, позиция, и т.п) к рендеру второго вьюпорта
+		u32 screenWidth;
+		u32 screenHeight;
 
 		IC bool IsSVPActive() { return isActive; }
 		IC void SetSVPActive(bool bState) { isActive = bState; }
