@@ -263,8 +263,6 @@ void CActor::cam_Lookout	( const Fmatrix &xform, float camera_height )
 }
 #include "CameraFirstEye.h"
 #include "player_hud.h"
-float fixed_y = -1.f;
-float fixed_z = -1.f;
 static void smoothvector(float &fixed, float dynamic, float dt)
 {
 	float target = dynamic;
@@ -297,34 +295,36 @@ void CActor::cam_Update(float dt, float fFOV)
 		if (g_player_hud->m_FpBody && g_player_hud->m_FpBody->dcast_PKinematics())
 		{
 			Fvector result;
-			g_player_hud->m_FpBody->dcast_PKinematics()->LL_GetTransform(g_player_hud->m_FpBody->dcast_PKinematics()->LL_BoneID("bip01_spine2")).transform_tiny(result, Fvector().set(0.2f, 0.1f, 0));
-			float dyn_y, dyn_z = .0f;
-			if (mstate_real&mcCrouch)
+			Fmatrix bone_transform = g_player_hud->m_FpBody->dcast_PKinematics()->LL_GetTransform((u16)m_spine2);
+			if(bone_transform.c.magnitude())
 			{
-				if (isActorAccelerated(mstate_real, IsZoomAimingMode()))
+				bone_transform.transform_tiny(result, Fvector().set(0.2f, 0.1f, 0));
+				float dyn_y, dyn_z = .0f;
+				if (mstate_real&mcCrouch)
 				{
-					dyn_y = .25f;
-					dyn_z = .15f;
+					if (isActorAccelerated(mstate_real, IsZoomAimingMode()))//Normal Crouch
+					{
+						dyn_y = .25f;
+						dyn_z = .15f;
+					}
+					else//Lowly Crouch
+					{
+						dyn_y = .35f;
+						dyn_z = .19f;
+					}
 				}
-				else
+				else// Stand
 				{
-					dyn_y = .35f;
-					dyn_z = .19f;
+					dyn_y = .0f;
+					dyn_z = .1f;
 				}
-			}
-			else
-			{
-				dyn_y = .0f;
-				dyn_z = .1f;
-			}
 
-			smoothvector(fixed_y, dyn_y, dt);
-			smoothvector(fixed_z, dyn_z, dt);
-			smart_cast<CCameraFirstEye*>(cameras[eacFirstEye])->m_cam1_offset.set(0.f, 0.f, result.z + fixed_z);
-			point.y = result.y + fixed_y;
+				smoothvector(fpb_smooth_y, dyn_y, dt);
+				smoothvector(fpb_smooth_z, dyn_z, dt);
+				smart_cast<CCameraFirstEye*>(cameras[eacFirstEye])->m_cam1_offset.set(0.f, 0.f, result.z + fpb_smooth_z);
+				point.y = result.y + fpb_smooth_y;
+			}
 		}
-		else
-			smart_cast<CCameraFirstEye*>(cameras[eacFirstEye])->m_cam1_offset.set(0.f, 0.f, 0.f);
 	}
 
 	// lookout

@@ -1335,6 +1335,7 @@ public:
 };
 
 #include "player_hud.h"
+#include "CameraFirstEye.h"
 class CCC_FPBody : public CCC_Mask {
 public:
 	CCC_FPBody(LPCSTR N, Flags32* V, u32 M) :CCC_Mask(N, V, M) {};
@@ -1343,16 +1344,17 @@ public:
 		CCC_Mask::Execute(args);
 		if (!g_pGameLevel) return;
 		if (!Level().CurrentControlEntity()) return;
-
-		if (psActorFlags.test(AF_FPBODY))
+		if(CActor* pAct = smart_cast<CActor*>(Level().CurrentControlEntity()))
 		{
-			if (CActor* pAct = smart_cast<CActor*>(Level().CurrentControlEntity()))
-				pAct->OnChangeVisual();
-		}
-		else if (g_player_hud->m_FpBody)
-		{
-			Render->model_Delete(g_player_hud->m_FpBody);
-			g_player_hud->m_FpBody = NULL;
+			if (psActorFlags.test(AF_FPBODY))
+				pAct->FPBodyChangeVisual();
+			else if (g_player_hud->m_FpBody)
+			{
+				Render->model_Delete(g_player_hud->m_FpBody);
+				g_player_hud->m_FpBody = NULL;
+				if(CCameraFirstEye* cam_1 = smart_cast<CCameraFirstEye*>(pAct->cam_FirstEye()))
+					cam_1->m_cam1_offset = Fvector().set(0.f, 0.f, 0.f);
+			}
 		}
 	}
 };

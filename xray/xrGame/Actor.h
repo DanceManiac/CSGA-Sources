@@ -434,6 +434,8 @@ protected:
 
     float					m_fCurrentHeight;
     float					m_fTurningSpeed;
+	float					fpb_smooth_y;
+	float					fpb_smooth_z;
 	//////////////////////////////////////////////////////////////////////////
 	// User input/output
 	//////////////////////////////////////////////////////////////////////////
@@ -624,6 +626,7 @@ public:
 
 	virtual void			ChangeVisual			( shared_str NewVisual );
 	virtual void			OnChangeVisual			();
+	void					FPBodyChangeVisual		();
 
 	virtual void			RenderIndicator			(Fvector dpos, float r1, float r2, const ui_shader &IndShader);
 	virtual void			RenderText				(LPCSTR Text, Fvector dpos, float* pdup, u32 color);

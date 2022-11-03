@@ -196,6 +196,8 @@ CActor::CActor() : CEntityAlive()
 	m_block_sprint_counter	= 0;
 	m_fTurningSpeed			= 0.f;
 	m_fCurrentHeight		= -1.f;
+	fpb_smooth_y			= -1.f;
+	fpb_smooth_z			= -1.f;
 }
 
 
