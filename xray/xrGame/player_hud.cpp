@@ -549,7 +549,6 @@ void player_hud::FPBone_Callback(CBoneInstance* B)
 		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_r_thigh")
 		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_l_thigh")
 		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")
-		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_neck")
 		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_spine")
 		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_spine1")
 		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_spine2"))
@@ -557,14 +556,10 @@ void player_hud::FPBone_Callback(CBoneInstance* B)
 
 	if (pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_neck"))
 	{
-		B->mTransform.c.set(pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")).c);
-		B->mTransform.c.y = pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_spine2")).c.y + 0.2f;
-		B->mTransform.k.set(pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")).k);
-		B->mTransform.j.set(pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")).j);
-		B->mTransform.i.set(pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")).i);
 		Fmatrix m;
 		m.scale(0.01f, 0.01f, 0.01f);
 		B->mTransform.mulB_43(m);
+		B->mTransform.c = pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")).c;
 	}
 	if (pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_spine") || pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_spine1") || pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_spine2")	)
 	{

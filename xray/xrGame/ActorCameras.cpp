@@ -313,6 +313,11 @@ void CActor::cam_Update(float dt, float fFOV)
 						dyn_z = .19f;
 					}
 				}
+				else if (mstate_real&mcClimb)// Stand
+				{
+					dyn_y = .0f;
+					dyn_z = .2f;
+				}
 				else// Stand
 				{
 					dyn_y = .0f;
