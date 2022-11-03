@@ -357,8 +357,8 @@ void CWeapon::Load		(LPCSTR section)
 	m_crosshair_inertion			= READ_IF_EXISTS(pSettings, r_float, section, "crosshair_inertion",	5.91f);
 	m_first_bullet_controller.load	(section);
 
-	fireDispersionConditionFactor = pSettings->r_float(section,"fire_dispersion_condition_factor"); 
-	misfireStartCondition			= pSettings->r_float(section, "misfire_start_condition");
+	fireDispersionConditionFactor	= READ_IF_EXISTS(pSettings, r_float, section, "fire_dispersion_condition_factor", 1.0f);
+	misfireStartCondition			= READ_IF_EXISTS(pSettings, r_float, section, "misfire_start_condition", 0.3f);
 	misfireEndCondition				= READ_IF_EXISTS(pSettings, r_float, section, "misfire_end_condition", 0.f);
 	misfireStartProbability			= READ_IF_EXISTS(pSettings, r_float, section, "misfire_start_prob", 0.f);
 	misfireEndProbability			= pSettings->r_float(section, "misfire_end_prob");

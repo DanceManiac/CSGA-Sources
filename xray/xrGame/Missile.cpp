@@ -257,10 +257,10 @@ void CMissile::UpdateCL()
 	Fvector P;
 	Center(P);
 
-		m_sounds.SetPosition("SndShow", P);
-		m_sounds.SetPosition("SndHide", P);
-		m_sounds.SetPosition("SndThrow", m_fake_missile->Position());
-		m_sounds.SetPosition("SndThrowBegin", m_fake_missile->Position());
+	m_sounds.SetPosition("SndShow", P);
+	m_sounds.SetPosition("SndHide", P);
+	m_sounds.SetPosition("SndThrow", P);
+	m_sounds.SetPosition("SndThrowBegin", P);
 
 }
 void CMissile::shedule_Update(u32 dt)
