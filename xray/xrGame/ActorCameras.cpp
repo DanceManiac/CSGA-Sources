@@ -216,7 +216,7 @@ IC void get_cam_oob(  Fvector &bd, Fmatrix	&mat, const Fmatrix &xform, const SRo
 	mat.c.set( bc );
 
 }
-void	CActor::cam_Lookout	( const Fmatrix &xform, float camera_height )
+void CActor::cam_Lookout	( const Fmatrix &xform, float camera_height )
 {
 		if (!fis_zero(r_torso_tgt_roll))
 		{
@@ -231,36 +231,27 @@ void	CActor::cam_Lookout	( const Fmatrix &xform, float camera_height )
 			Fmatrix33			mat;
 			get_cam_oob( bc, bd, mat, xform, r_torso, alpha, radius, c );
 
-			/*
-			xrXRC				xrc			;
-			xrc.box_options		(0)			;
-			xrc.box_query		(Level().ObjectSpace.GetStaticModel(), bc, bd)		;
-			u32 tri_count		= xrc.r_count();
-
-			*/
-			//if (tri_count)		
+			float da		= 0.f;
+			BOOL bIntersect	= FALSE;
+			Fvector	ext		= {w,h,VIEWPORT_NEAR/2};
+			Fvector				pt;
+			calc_gl_point	( pt, xform, radius, alpha );
+			if ( test_point( pt, mat, ext  ) )
 			{
-				float da		= 0.f;
-				BOOL bIntersect	= FALSE;
-				Fvector	ext		= {w,h,VIEWPORT_NEAR/2};
-				Fvector				pt;
-				calc_gl_point	( pt, xform, radius, alpha );
-				if ( test_point( pt, mat, ext  ) )
+				da			= PI/1000.f;
+				if (!fis_zero(r_torso.roll))
+					da		*= r_torso.roll/_abs(r_torso.roll);
+				float angle = 0.f;
+				for (; _abs(angle)<_abs(alpha); angle+=da)
 				{
-					da			= PI/1000.f;
-					if (!fis_zero(r_torso.roll))
-						da		*= r_torso.roll/_abs(r_torso.roll);
-					float angle = 0.f;
-					for (; _abs(angle)<_abs(alpha); angle+=da)
-					{
-						Fvector				pt;
-						calc_gl_point( pt, xform, radius, angle );
-						if (test_point( pt, mat,ext )) 
-							{ bIntersect=TRUE; break; } 
-					}
-					valid_angle	= bIntersect?angle:alpha;
-				} 
-			}
+					Fvector				pt;
+					calc_gl_point( pt, xform, radius, angle );
+					if (test_point( pt, mat,ext )) 
+						{ bIntersect=TRUE; break; } 
+				}
+				valid_angle	= bIntersect?angle:alpha;
+			} 
+
 			r_torso.roll		= valid_angle*2.f;
 			r_torso_tgt_roll	= r_torso.roll;
 		}
@@ -270,6 +261,22 @@ void	CActor::cam_Lookout	( const Fmatrix &xform, float camera_height )
 			r_torso.roll = 0.f;
 		}
 }
+#include "CameraFirstEye.h"
+#include "player_hud.h"
+float fixed_y = -1.f;
+float fixed_z = -1.f;
+static void smoothvector(float &fixed, float dynamic, float dt)
+{
+	float target = dynamic;
+
+	if (fixed < 0.0f)
+	    fixed = target;
+	else if (!fsimilar(fixed, target))
+	{
+	    const float dti = 4.f * dt;
+	    fixed = (fixed * (1.0f - dti)) + (target * dti);
+	}
+}
 void CActor::cam_Update(float dt, float fFOV)
 {
 	if(m_holder)		return;
@@ -277,16 +284,52 @@ void CActor::cam_Update(float dt, float fFOV)
 	if( (mstate_real & mcClimb) && (cam_active!=eacFreeLook) )
 		camUpdateLadder(dt);
 	on_weapon_shot_update();
-	Fvector point		= {0,CameraHeight(),0}; 
-	Fvector dangle		= {0,0,0};
+
+	smoothvector(m_fCurrentHeight, CameraHeight(), dt);
+	Fvector point = { 0, m_fCurrentHeight, 0 }, dangle = { 0, 0, 0 };
 	Fmatrix				xform;
 	xform.setXYZ		(0,r_torso.yaw,0);
 	xform.translate_over(XFORM().c);
 
+	if (cam_active == eacFirstEye)
+	{
+		//FPBody set camera
+		if (g_player_hud->m_FpBody && g_player_hud->m_FpBody->dcast_PKinematics())
+		{
+			Fvector result;
+			g_player_hud->m_FpBody->dcast_PKinematics()->LL_GetTransform(g_player_hud->m_FpBody->dcast_PKinematics()->LL_BoneID("bip01_spine2")).transform_tiny(result, Fvector().set(0.2f, 0.1f, 0));
+			float dyn_y, dyn_z = .0f;
+			if (mstate_real&mcCrouch)
+			{
+				if (isActorAccelerated(mstate_real, IsZoomAimingMode()))
+				{
+					dyn_y = .25f;
+					dyn_z = .15f;
+				}
+				else
+				{
+					dyn_y = .35f;
+					dyn_z = .19f;
+				}
+			}
+			else
+			{
+				dyn_y = .0f;
+				dyn_z = .1f;
+			}
+
+			smoothvector(fixed_y, dyn_y, dt);
+			smoothvector(fixed_z, dyn_z, dt);
+			smart_cast<CCameraFirstEye*>(cameras[eacFirstEye])->m_cam1_offset.set(0.f, 0.f, result.z + fixed_z);
+			point.y = result.y + fixed_y;
+		}
+		else
+			smart_cast<CCameraFirstEye*>(cameras[eacFirstEye])->m_cam1_offset.set(0.f, 0.f, 0.f);
+	}
+
 	// lookout
 	if (this == Level().CurrentControlEntity())
 		cam_Lookout( xform, point.y  );
-
 
 	if (!fis_zero(r_torso.roll))
 	{
@@ -299,23 +342,23 @@ void CActor::cam_Update(float dt, float fFOV)
 	float flCurrentPlayerY	= xform.c.y;
 
 	// Smooth out stair step ups
-	if ((character_physics_support()->movement()->Environment()==peOnGround) && (flCurrentPlayerY-fPrevCamPos>0)){
+	if ((character_physics_support()->movement()->Environment()==peOnGround) && (flCurrentPlayerY-fPrevCamPos>0))
+	{
 		fPrevCamPos			+= dt*1.5f;
 		if (fPrevCamPos > flCurrentPlayerY)
 			fPrevCamPos		= flCurrentPlayerY;
 		if (flCurrentPlayerY-fPrevCamPos>0.2f)
 			fPrevCamPos		= flCurrentPlayerY-0.2f;
 		point.y				+= fPrevCamPos-flCurrentPlayerY;
-	}else{
-		fPrevCamPos			= flCurrentPlayerY;
 	}
+	else
+		fPrevCamPos			= flCurrentPlayerY;
 
 	float _viewport_near			= VIEWPORT_NEAR;
 	// calc point
 	xform.transform_tiny			(point);
 
 	CCameraBase* C					= cam_Active();
-
 	C->Update						(point,dangle);
 	C->f_fov						= fFOV;
 
@@ -324,16 +367,13 @@ void CActor::cam_Update(float dt, float fFOV)
 		cameras[eacFirstEye]->Update	(point,dangle);
 		cameras[eacFirstEye]->f_fov		= fFOV;
 	} 
-	if (Level().CurrentEntity() == this)
+	if (Level().CurrentEntity() == this && !g_player_hud->m_FpBody)
 		collide_camera( *cameras[eacFirstEye], _viewport_near );
 
 	if( psActorFlags.test(AF_PSP) )
-	{
 		Cameras().UpdateFromCamera			(C);
-	}else
-	{
+	else
 		Cameras().UpdateFromCamera			(cameras[eacFirstEye]);
-	}
 
 	fCurAVelocity			= vPrevCamDir.sub(cameras[eacFirstEye]->vDirection).magnitude()/Device.fTimeDelta;
 	vPrevCamDir				= cameras[eacFirstEye]->vDirection;
@@ -349,9 +389,8 @@ void CActor::cam_Update(float dt, float fFOV)
 	if (Level().CurrentEntity() == this)
 	{
 		Level().Cameras().UpdateFromCamera	(C);
-		if(eacFirstEye == cam_active && !Level().Cameras().GetCamEffector(cefDemo)){
+		if(eacFirstEye == cam_active && !Level().Cameras().GetCamEffector(cefDemo))
 			Cameras().ApplyDevice	(_viewport_near);
-		}
 	}
 }
 

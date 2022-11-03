@@ -1334,6 +1334,29 @@ public:
 	virtual void Info(TInfo& I) { strcpy(I, "name,team,squad,group"); }
 };
 
+#include "player_hud.h"
+class CCC_FPBody : public CCC_Mask {
+public:
+	CCC_FPBody(LPCSTR N, Flags32* V, u32 M) :CCC_Mask(N, V, M) {};
+	virtual void Execute(LPCSTR args) 
+	{
+		CCC_Mask::Execute(args);
+		if (!g_pGameLevel) return;
+		if (!Level().CurrentControlEntity()) return;
+
+		if (psActorFlags.test(AF_FPBODY))
+		{
+			if (CActor* pAct = smart_cast<CActor*>(Level().CurrentControlEntity()))
+				pAct->OnChangeVisual();
+		}
+		else if (g_player_hud->m_FpBody)
+		{
+			Render->model_Delete(g_player_hud->m_FpBody);
+			g_player_hud->m_FpBody = NULL;
+		}
+	}
+};
+
 class CCC_SetMoney : public IConsole_Command {
 public:
 	CCC_SetMoney(LPCSTR N) : IConsole_Command(N) { };
@@ -1943,7 +1966,7 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 #ifndef MASTER_GOLD
 	CMD1(CCC_JumpToLevel,		"jump_to_level"		);
 	CMD3(CCC_Mask,				"g_god",			&psActorFlags,	AF_GODMODE	);
-	CMD3(CCC_Mask,				"r__actor_shadow",	&psActorFlags,	AF_ACTOR_SHADOW);
+	CMD3(CCC_FPBody,			"g_fpbody",			&psActorFlags,	AF_FPBODY);
 	CMD3(CCC_Mask,				"g_unlimitedammo",	&psActorFlags,	AF_UNLIMITEDAMMO);
 	CMD1(CCC_TimeFactor,		"time_factor");
 	CMD1(CCC_Spawn,				"g_spawn");		

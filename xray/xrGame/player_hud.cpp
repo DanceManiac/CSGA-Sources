@@ -103,7 +103,11 @@ void player_hud_motion_container::load(IKinematicsAnimated* model, const shared_
 #endif // #ifdef DEBUG
 				}
 			}
-			R_ASSERT2(pm->m_animations.size(),make_string("motion not found [%s]", pm->m_base_name.c_str()).c_str());
+			if (pm->m_animations.empty())
+			{
+				Msg("! motion not found [%s]", pm->m_base_name.c_str());
+				continue;
+			}
 		}
 	}
 }
@@ -355,8 +359,17 @@ u32 attachable_hud_item::anim_play(const shared_str& anm_name_b, BOOL bMixIn, co
 	sprintf_s				(anim_name_r,"%s%s",anm_name_b.c_str(),((m_attach_place_idx==1)&&is_16x9)?"_16x9":"");
 
 	player_hud_motion* anm	= m_hand_motions.find_motion(anim_name_r);
-	R_ASSERT2				(anm, make_string("model [%s] has no motion alias defined [%s]", m_sect_name.c_str(), anim_name_r).c_str());
-	R_ASSERT2				(anm->m_animations.size(), make_string("model [%s] has no motion defined in motion_alias [%s]", pSettings->r_string(m_sect_name, "item_visual"), anim_name_r).c_str());
+
+	if(!anm)
+	{
+		Msg("! model [%s] has no motion alias defined [%s]", m_sect_name.c_str(), anim_name_r);
+		return 0;
+	}
+	if(anm->m_animations.empty())
+	{
+		Msg("! model [%s] has no motion defined in motion_alias [%s]", pSettings->r_string(m_sect_name, "item_visual"), anim_name_r);
+		return 0;
+	}
 	
 	rnd_idx					= (u8)Random.randI(anm->m_animations.size()) ;
 	const motion_descr& M	= anm->m_animations[ rnd_idx ];
@@ -433,6 +446,7 @@ u32 attachable_hud_item::anim_play(const shared_str& anm_name_b, BOOL bMixIn, co
 player_hud::player_hud()
 {
 	m_model					= NULL;
+	m_FpBody				= NULL;
 	m_attached_items[0]		= NULL;
 	m_attached_items[1]		= NULL;
 	m_transform.identity	();
@@ -444,6 +458,12 @@ player_hud::~player_hud()
 	IRenderVisual* v			= m_model->dcast_RenderVisual();
 	::Render->model_Delete		(v);
 	m_model						= NULL;
+
+	if(m_FpBody)
+	{
+		::Render->model_Delete		(m_FpBody);
+		m_FpBody					= NULL;
+	}
 
 	xr_vector<attachable_hud_item*>::iterator it	= m_pool.begin();
 	xr_vector<attachable_hud_item*>::iterator it_e	= m_pool.end();
@@ -516,8 +536,56 @@ void player_hud::render_item_ui()
 		m_attached_items[1]->render_item_ui();
 }
 
+void player_hud::FPBone_Callback(CBoneInstance* B)
+{
+	FPBone_Cell*	pFPBC			= static_cast<FPBone_Cell*>(B->callback_param());
+
+    if (pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_r_toe0") 
+		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_l_toe0")
+		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_r_foot")
+		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_l_foot")
+		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_r_calf")
+		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_l_calf")
+		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_r_thigh")
+		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_l_thigh")
+		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")
+		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_neck")
+		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_spine")
+		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_spine1")
+		|| pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_spine2"))
+		B->mTransform = pFPBC->pAKinematics->LL_GetTransform(pFPBC->bone_id);
+
+	if (pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_neck"))
+	{
+		B->mTransform.c.set(pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")).c);
+		B->mTransform.c.y = pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_spine2")).c.y + 0.2f;
+		B->mTransform.k.set(pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")).k);
+		B->mTransform.j.set(pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")).j);
+		B->mTransform.i.set(pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")).i);
+		Fmatrix m;
+		m.scale(0.01f, 0.01f, 0.01f);
+		B->mTransform.mulB_43(m);
+	}
+	if (pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_spine") || pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_spine1") || pFPBC->bone_id == pFPBC->pAKinematics->LL_BoneID("bip01_spine2")	)
+	{
+		B->mTransform.k.set(pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")).k);
+		B->mTransform.j.set(pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")).j);
+		B->mTransform.i.set(pFPBC->pAKinematics->LL_GetTransform(pFPBC->pAKinematics->LL_BoneID("bip01_pelvis")).i);
+	}
+}
+
 void player_hud::render_hud()
 {
+	//FP LEGS And pahantom light render
+	if (Actor() && Actor()->Visual() && !Actor()->Holder() && Actor()->HUDview() && m_FpBody != NULL)
+	{
+		::Render->set_HUD(FALSE);
+		::Render->set_Transform(&Actor()->XFORM());
+		::Render->add_Visual(m_FpBody);
+	}
+	::Render->set_HUD(TRUE);
+	//FP LEGS And pahantom light render	if(!m_attached_items[0] && !m_attached_items[1])	return;
+
 	if(!m_attached_items[0] && !m_attached_items[1])	return;
 
 	bool b_r0 = (m_attached_items[0] && m_attached_items[0]->need_renderable());

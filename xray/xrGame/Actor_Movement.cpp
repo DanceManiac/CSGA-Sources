@@ -348,12 +348,12 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 
 void CActor::g_Orientate	(u32 mstate_rl, float dt)
 {
-	static float fwd_l_strafe_yaw	= deg2rad(pSettings->r_float(ACTOR_ANIM_SECT,	"fwd_l_strafe_yaw"));
-	static float back_l_strafe_yaw	= deg2rad(pSettings->r_float(ACTOR_ANIM_SECT,	"back_l_strafe_yaw"));
-	static float fwd_r_strafe_yaw	= deg2rad(pSettings->r_float(ACTOR_ANIM_SECT,	"fwd_r_strafe_yaw"));
-	static float back_r_strafe_yaw	= deg2rad(pSettings->r_float(ACTOR_ANIM_SECT,	"back_r_strafe_yaw"));
-	static float l_strafe_yaw		= deg2rad(pSettings->r_float(ACTOR_ANIM_SECT,	"l_strafe_yaw"));
-	static float r_strafe_yaw		= deg2rad(pSettings->r_float(ACTOR_ANIM_SECT,	"r_strafe_yaw"));
+	float fwd_l_strafe_yaw	= deg2rad(pSettings->r_float(ACTOR_ANIM_SECT,	"fwd_l_strafe_yaw"));
+	float back_l_strafe_yaw	= deg2rad(pSettings->r_float(ACTOR_ANIM_SECT,	"back_l_strafe_yaw"));
+	float fwd_r_strafe_yaw	= deg2rad(pSettings->r_float(ACTOR_ANIM_SECT,	"fwd_r_strafe_yaw"));
+	float back_r_strafe_yaw	= deg2rad(pSettings->r_float(ACTOR_ANIM_SECT,	"back_r_strafe_yaw"));
+	float l_strafe_yaw = deg2rad(pSettings->r_float(ACTOR_ANIM_SECT, "l_strafe_yaw"));
+	float r_strafe_yaw = deg2rad(pSettings->r_float(ACTOR_ANIM_SECT, "r_strafe_yaw"));
 
 	if(!g_Alive())return;
 	// visual effect of "fwd+strafe" like motion
@@ -385,7 +385,7 @@ void CActor::g_Orientate	(u32 mstate_rl, float dt)
 	}
 
 	// lerp angle for "effect" and capture torso data from camera
-	angle_lerp		(r_model_yaw_delta,calc_yaw,PI_MUL_4,dt);
+	angle_lerp		(r_model_yaw_delta,calc_yaw,1,dt);
 
 	// build matrix
 	Fmatrix mXFORM;
@@ -404,9 +404,9 @@ void CActor::g_Orientate	(u32 mstate_rl, float dt)
 		if( (mstate_rl&mcLLookout) && (mstate_rl&mcRLookout) )
 			tgt_roll	= 0.0f;
 	}
-	if (!fsimilar(tgt_roll,r_torso_tgt_roll,EPS)){
-		angle_lerp		(r_torso_tgt_roll,tgt_roll,PI_MUL_2,dt);
-		r_torso_tgt_roll= angle_normalize_signed(r_torso_tgt_roll);
+	if (!fsimilar(tgt_roll, r_torso_tgt_roll, EPS)) {
+		r_torso_tgt_roll = angle_inertion_var(r_torso_tgt_roll, tgt_roll, 0.f, m_fCurrentHeight * 9, PI_DIV_2, dt);
+		r_torso_tgt_roll = angle_normalize_signed(r_torso_tgt_roll);
 	}
 }
 bool CActor::g_LadderOrient()
@@ -456,50 +456,56 @@ bool CActor::g_LadderOrient()
 // ****************************** Update actor orientation according to camera orientation
 void CActor::g_cl_Orientate	(u32 mstate_rl, float dt)
 {
-	// capture camera into torso (only for FirstEye & LookAt cameras)
-	if (eacFreeLook!=cam_active)
-	{
-		r_torso.yaw		=	cam_Active()->GetWorldYaw	();
-		r_torso.pitch	=	cam_Active()->GetWorldPitch	();
-	}
-	else
-	{
-		r_torso.yaw		=	cam_FirstEye()->GetWorldYaw	();
-		r_torso.pitch	=	cam_FirstEye()->GetWorldPitch	();
-	}
-
 	unaffected_r_torso.yaw		= r_torso.yaw;
 	unaffected_r_torso.pitch	= r_torso.pitch;
 	unaffected_r_torso.roll		= r_torso.roll;
 
 	CWeaponMagazined *pWM = smart_cast<CWeaponMagazined*>(inventory().GetActiveSlot() != NO_ACTIVE_SLOT ? 
-		inventory().ItemFromSlot(inventory().GetActiveSlot())/*inventory().m_slots[inventory().GetActiveSlot()].m_pIItem*/ : NULL);
-	if (pWM && pWM->GetCurrentFireMode() == 1 && eacFirstEye != cam_active)
+		inventory().ItemFromSlot(inventory().GetActiveSlot()) : NULL);
+	if (pWM && pWM->GetCurrentFireMode() == 1 && cam_active != eacFreeLook)
 	{
 		Fvector dangle = weapon_recoil_last_delta();
 		r_torso.yaw		=	unaffected_r_torso.yaw + dangle.y;
 		r_torso.pitch	=	unaffected_r_torso.pitch + dangle.x;
 	}
-	
-	// если есть движение - выровнять модель по камере
-	if (mstate_rl&mcAnyMove)	{
-		r_model_yaw		= angle_normalize(r_torso.yaw);
-		mstate_real		&=~mcTurn;
-	} else {
-		// if camera rotated more than 45 degrees - align model with it
-		float ty = angle_normalize(r_torso.yaw);
-		if (_abs(r_model_yaw-ty)>PI_DIV_4)	{
-			r_model_yaw_dest = ty;
-			// 
-			mstate_real	|= mcTurn;
+
+    if (cam_active != eacFreeLook)
+	{
+		float model_yaw = angle_normalize(r_model_yaw);
+		// if camera rotated more than 0 degrees - align model with it
+		float diff_turn = angle_difference(r_model_yaw, cam_Active()->GetWorldYaw());
+
+		if (diff_turn >= EPS_L)
+		{
+			if (!(mstate_rl&mcTurn))
+				m_fTurningSpeed = _sin(0.55f * diff_turn) + 6.0f;
+
+			r_model_yaw_dest = angle_normalize(cam_Active()->GetWorldYaw());
+			mstate_real |= mcTurn;
 		}
-		if (_abs(r_model_yaw-r_model_yaw_dest)<EPS_L){
-			mstate_real	&=~mcTurn;
+
+		if (_abs(model_yaw - r_model_yaw_dest) < EPS_L)
+			mstate_real &= ~mcTurn;
+
+		if (mstate_rl&mcTurn)
+		{
+			//FP LEGS
+			if (cam_active == eacFirstEye)
+			{
+				r_model_yaw = r_model_yaw_dest;
+				r_torso.yaw = r_model_yaw;
+			}
+			else
+			{
+				r_model_yaw = angle_inertion(r_model_yaw, r_model_yaw_dest, m_fTurningSpeed, PI_MUL_2, dt);
+				r_torso.yaw = angle_inertion(r_torso.yaw, r_model_yaw, m_fTurningSpeed, PI_MUL_2, dt);
+			}
 		}
-		if (mstate_rl&mcTurn){
-			angle_lerp	(r_model_yaw,r_model_yaw_dest,PI_MUL_2,dt);
-		}
+
+		r_torso.pitch = angle_inertion_var(r_torso.pitch, cam_Active()->GetWorldPitch(), 8.0f, 10.5f, PI_DIV_3, dt);
 	}
+	else
+		mstate_real &= ~mcTurn;
 }
 
 void CActor::g_sv_Orientate(u32 /**mstate_rl/**/, float /**dt/**/)

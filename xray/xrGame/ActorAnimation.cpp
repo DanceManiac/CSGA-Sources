@@ -27,9 +27,9 @@ static const float y_spin0_factor		= 0.0f;
 static const float y_spin1_factor		= 0.4f;
 static const float y_shoulder_factor	= 0.4f;
 static const float y_head_factor		= 0.2f;
-static const float p_spin0_factor		= 0.0f;
-static const float p_spin1_factor		= 0.2f;
-static const float p_shoulder_factor	= 0.7f;
+static const float p_spin0_factor		= 0.2f;
+static const float p_spin1_factor		= 0.4f;
+static const float p_shoulder_factor	= 0.4f;
 static const float p_head_factor		= 0.1f;
 static const float r_spin0_factor		= 0.3f;
 static const float r_spin1_factor		= 0.3f;
@@ -361,8 +361,8 @@ void CActor::g_SetAnimation( u32 mstate_rl )
 	// Legs
 	if		(mstate_rl&mcLanding)	M_legs	= ST->landing[0];
 	else if (mstate_rl&mcLanding2)	M_legs	= ST->landing[1];
-	else if ((mstate_rl&mcTurn)&&
-			!(mstate_rl&mcClimb))	M_legs	= ST->legs_turn;
+	//else if ((mstate_rl&mcTurn)&&
+	//		!(mstate_rl&mcClimb))	M_legs	= ST->legs_turn;
 	else if (mstate_rl&mcFall)		M_legs	= ST->jump_idle;
 	else if (mstate_rl&mcJump)		M_legs	= ST->jump_begin;
 	else if (mstate_rl&mcFwd)		M_legs	= AS->legs_fwd;

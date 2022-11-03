@@ -40,6 +40,7 @@
 #include "actor_statistic_mgr.h"
 #include "characterphysicssupport.h"
 #include "game_cl_base_weapon_usage_statistic.h"
+#include "player_hud.h"
 
 #ifdef DEBUG
 #	include "debug_renderer.h"
@@ -856,6 +857,28 @@ void	CActor::OnChangeVisual()
 		m_current_legs_blend		= NULL;
 		m_current_torso_blend		= NULL;
 		m_current_jump_blend		= NULL;
+		if(V->dcast_RenderVisual() && psActorFlags.test(AF_FPBODY))
+		{
+			if(g_player_hud->m_FpBody == V->dcast_RenderVisual()) return;
+			if (g_player_hud->m_FpBody != NULL)
+			{
+				Render->model_Delete(g_player_hud->m_FpBody); //remove prev model
+				g_player_hud->m_FpBody = NULL;
+			}
+			if (!g_player_hud->m_FpBody)
+				g_player_hud->m_FpBody = Render->model_Duplicate(V->dcast_RenderVisual()); //add new model
+			if(g_player_hud->m_FpBody)
+			if (IKinematics* pKinematics = smart_cast<IKinematics*>(g_player_hud->m_FpBody))
+			{
+				auto FP_BB = pKinematics->LL_Bones()->begin();
+				for (; FP_BB != pKinematics->LL_Bones()->end(); ++FP_BB)
+				{
+					CBoneInstance& BIFP = pKinematics->LL_GetBoneInstance(FP_BB->second);
+					if(!BIFP.callback_param())
+						BIFP.set_callback( bctPhysics, g_player_hud->FPBone_Callback, new player_hud::FPBone_Cell(V->dcast_PKinematics(), FP_BB->second)); // set bones callback
+				}
+			}
+		}
 	}
 };
 

@@ -135,6 +135,22 @@ public:
 	u32				motion_length		(const MotionID& M, const CMotionDef*& md, float speed);
 	u32				motion_length		(const shared_str& anim_name, const shared_str& hud_name, const CMotionDef*& md);
 	void			OnMovementChanged	(ACTOR_DEFS::EMoveCommand cmd)	;
+
+	IRenderVisual*						m_FpBody;
+	static void _stdcall FPBone_Callback(CBoneInstance* B);
+	class FPBone_Cell
+	{
+	public:
+		FPBone_Cell(IKinematics* kin = NULL, u16 bid = BI_NONE)
+		{
+			pAKinematics = kin;
+			bone_id = bid;
+		}
+		virtual ~FPBone_Cell(){};
+		IKinematics* pAKinematics;
+		u16 bone_id;
+	};
+
 private:
 	void			update_inertion		(Fmatrix& trans);
 	void			update_additional	(Fmatrix& trans);

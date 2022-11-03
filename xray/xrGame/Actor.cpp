@@ -95,7 +95,7 @@ CActor::CActor() : CEntityAlive()
 	encyclopedia_registry	= xr_new<CEncyclopediaRegistryWrapper	>();
 	game_news_registry		= xr_new<CGameNewsRegistryWrapper		>();
 	// Cameras
-	cameras[eacFirstEye]	= xr_new<CCameraFirstEye>				(this);
+	cameras[eacFirstEye]	= xr_new<CCameraFirstEye>				(this, CCameraBase::flPositionRigid);
 	cameras[eacFirstEye]->Load("actor_firsteye_cam");
 
 	if(strstr(Core.Params,"-psp"))
@@ -194,6 +194,8 @@ CActor::CActor() : CEntityAlive()
 
 	m_location_manager		= xr_new<CLocationManager>(this);
 	m_block_sprint_counter	= 0;
+	m_fTurningSpeed			= 0.f;
+	m_fCurrentHeight		= -1.f;
 }
 
 
@@ -845,10 +847,10 @@ float CActor::currentFOV()
 		if (pWeapon && pWeapon->IsZoomed())
 		{
 			if (!pWeapon->ZoomTexture())
-				return atan(tan(g_fov * (0.5 * PI / 180)) / pWeapon->GetZoomFactor()) / (0.5 * PI / 180); //Alun: For iron sights, we use camera fov
+				return atan(tan(g_fov * (0.5f * PI / 180.f)) / pWeapon->GetZoomFactor()) / (0.5f * PI / 180.f); //Alun: For iron sights, we use camera fov
 
 			if (!pWeapon->IsRotatingToZoom())
-				return atan(tan(g_scope_fov * (0.5 * PI / 180)) / pWeapon->GetZoomFactor()) / (0.5 * PI / 180); //Alun: This assumes scope has a fake FOV so that no matter camera FOV the scope FOV is exactly the same
+				return atan(tan(g_scope_fov * (0.5f * PI / 180.f)) / pWeapon->GetZoomFactor()) / (0.5f * PI / 180.f); //Alun: This assumes scope has a fake FOV so that no matter camera FOV the scope FOV is exactly the same
 		}
 	}
 	return g_fov;
@@ -1230,9 +1232,7 @@ void CActor::shedule_Update	(u32 DT)
 	
 	//если в режиме HUD, то сама модель актера не рисуется
 	if(!character_physics_support()->IsRemoved())
-	{
-		setVisible				(!HUDview	(), psActorFlags.test(AF_ACTOR_SHADOW));
-	}
+		setVisible				(::Render->get_generation() == IRender_interface::GENERATION_R1 ? !HUDview() : true);
 
 	//что актер видит перед собой
 	collide::rq_result& RQ				= HUD().GetCurrentRayQuery();
@@ -1303,12 +1303,15 @@ void CActor::shedule_Update	(u32 DT)
 #include "debug_renderer.h"
 void CActor::renderable_Render	()
 {
+    if (HUDview() && ::Render->get_generation() != IRender_interface::GENERATION_R1)
+		::Render->set_Invisible			(TRUE);
 	VERIFY(_valid(XFORM()));
 	inherited::renderable_Render			();
-	if (!HUDview() || psActorFlags.test(AF_ACTOR_SHADOW)){
-		CInventoryOwner::renderable_Render	();
-	}
+	CInventoryOwner::renderable_Render	();
+
 	VERIFY(_valid(XFORM()));
+    if (HUDview() && ::Render->get_generation() != IRender_interface::GENERATION_R1)
+		::Render->set_Invisible			(FALSE);
 }
 
 BOOL CActor::renderable_ShadowGenerate	() 

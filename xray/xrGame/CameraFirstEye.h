@@ -22,6 +22,7 @@ public:
 	virtual float	GetWorldYaw		( )	{ return -yaw;	};
 	virtual float	GetWorldPitch	( )	{ return pitch; };
 			void	LookAtPoint		(Fvector p){lookat_point=p;lookat_active=true;}
+	Fvector			m_cam1_offset;
 };
 
 #endif // __CAMERALOOK_H__

@@ -28,7 +28,7 @@ void CRender::render_main	(Fmatrix&	m_ViewProjection, bool _fportals)
 				(
 				lstRenderables,
 				ISpatial_DB::O_ORDERED,
-				STYPE_RENDERABLE + STYPE_LIGHTSOURCE + STYPE_RENDERABLESHADOW,
+				STYPE_RENDERABLE + STYPE_LIGHTSOURCE,
 				ViewBase
 				);
 
@@ -244,11 +244,6 @@ void CRender::Render		()
 	else
 	{
 		Target->phase_scene_prepare					();
-	}
-
-	if (currentViewPort == SECONDARY_WEAPON_SCOPE)
-	{
-		Target->phase_cut();
 	}
 
 	//*******

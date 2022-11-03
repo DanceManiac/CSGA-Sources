@@ -21,6 +21,7 @@ void CCameraFirstEye::Load(LPCSTR section)
 {
 	inherited::Load		(section);
 	style				= csFirstEye;
+	m_cam1_offset.set(0.f, 0.f, 0.f);
 }
 
 void CCameraFirstEye::UpdateLookat()
@@ -85,6 +86,13 @@ void CCameraFirstEye::Update(Fvector& point, Fvector& noise_dangle)
 		parent->XFORM().transform_dir	(vDirection);
 		parent->XFORM().transform_dir	(vNormal);
 	}
+
+	Fmatrix							a_xform;
+	a_xform.setXYZ					(0, -yaw, 0);
+	a_xform.translate_over			(point);
+	Fvector _off					= m_cam1_offset;
+	a_xform.transform_tiny			(_off);
+	vPosition.set					(_off);
 }
 
 void CCameraFirstEye::Move( int cmd, float val, float factor )

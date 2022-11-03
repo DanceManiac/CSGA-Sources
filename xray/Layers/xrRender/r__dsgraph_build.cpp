@@ -133,8 +133,10 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic	(dxRender_Visual *pVisual, Fv
 	// Shadows registering
 #if RENDER==R_R1
 	RI.L_Shadows->add_element	(item);
-#endif
 	if (RI.val_bInvisible)		return;
+#else
+	if (RI.val_bInvisible && !RImplementation.phase==CRender::PHASE_SMAP)		return;
+#endif
 
 	// strict-sorting selection
 	if (sh->flags.bStrictB2F)	{
