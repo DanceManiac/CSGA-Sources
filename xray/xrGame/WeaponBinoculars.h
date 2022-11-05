@@ -22,6 +22,14 @@ public:
 
 	virtual void	OnZoomIn			();
 	virtual void	OnZoomOut			();
+
+	virtual void PlayAnimShow();
+	virtual void PlayAnimHide();
+	virtual void PlayAnimAim();
+	virtual void PlayAnimIdleMoving();
+	virtual void PlayAnimIdleSprint();
+	virtual void PlayAnimIdle();
+
 	virtual	void	ZoomInc				();
 	virtual	void	ZoomDec				();
 	virtual void	net_Destroy			();

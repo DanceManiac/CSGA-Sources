@@ -77,6 +77,44 @@ void CWeaponBinoculars::OnZoomOut		()
 	inherited::OnZoomOut();
 }
 
+void CWeaponBinoculars::PlayAnimShow()
+{
+	PlayHUDMotion("anm_show", false, this, GetState());
+}
+
+void CWeaponBinoculars::PlayAnimHide()
+{
+	PlayHUDMotion("anm_hide", true, this, GetState());
+}
+
+void CWeaponBinoculars::PlayAnimAim()
+{
+	PlayHUDMotion("anm_idle_aim", true, nullptr, GetState());
+}
+
+void CWeaponBinoculars::PlayAnimIdleMoving()
+{
+	PlayHUDMotion("anm_idle_moving", true, nullptr, GetState());
+}
+
+void CWeaponBinoculars::PlayAnimIdleSprint()
+{
+	PlayHUDMotion("anm_idle_sprint", true, nullptr, GetState());
+}
+
+void CWeaponBinoculars::PlayAnimIdle()
+{
+    VERIFY(GetState() == eIdle);
+
+    if (TryPlayAnimIdle())
+        return;
+
+	if(IsZoomed())
+        PlayAnimAim();
+	else
+		PlayHUDMotion("anm_idle", true, nullptr, GetState());
+}
+
 BOOL CWeaponBinoculars::net_Spawn(CSE_Abstract* DC)
 {
 	m_fRTZoomFactor			= m_zoom_params.m_fScopeZoomFactor;
