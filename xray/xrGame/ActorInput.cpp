@@ -224,17 +224,17 @@ void CActor::IR_OnKeyboardHold(int cmd)
 {
     if (hud_adj_mode && pInput->iGetAsyncKeyState(DIK_LSHIFT)) {
         if (pInput->iGetAsyncKeyState(DIK_UP))
-            g_player_hud->tune(Ivector().set(0, -1, 0));//y - высота, ниже
+            g_player_hud->tune(Ivector().set(0, -1, 0));//y - РІС‹СЃРѕС‚Р°, РЅРёР¶Рµ
         if (pInput->iGetAsyncKeyState(DIK_DOWN))
-            g_player_hud->tune(Ivector().set(0, 1, 0));//y - высота, выше
+            g_player_hud->tune(Ivector().set(0, 1, 0));//y - РІС‹СЃРѕС‚Р°, РІС‹С€Рµ
         if (pInput->iGetAsyncKeyState(DIK_LEFT))
-            g_player_hud->tune(Ivector().set(-1, 0, 0));//x - ширина, влево
+            g_player_hud->tune(Ivector().set(-1, 0, 0));//x - С€РёСЂРёРЅР°, РІР»РµРІРѕ
         if (pInput->iGetAsyncKeyState(DIK_RIGHT))
-            g_player_hud->tune(Ivector().set(1, 0, 0));//x - ширина, вправо
+            g_player_hud->tune(Ivector().set(1, 0, 0));//x - С€РёСЂРёРЅР°, РІРїСЂР°РІРѕ
         if (pInput->iGetAsyncKeyState(DIK_PRIOR))
-            g_player_hud->tune(Ivector().set(0, 0, 1));//z - вперёд
+            g_player_hud->tune(Ivector().set(0, 0, 1));//z - РІРїРµСЂС‘Рґ
         if (pInput->iGetAsyncKeyState(DIK_NEXT))
-            g_player_hud->tune(Ivector().set(0, 0, -1));//z - назад
+            g_player_hud->tune(Ivector().set(0, 0, -1));//z - РЅР°Р·Р°Рґ
         return;
     }
 
@@ -402,10 +402,10 @@ void CActor::ActorUse()
 					TryToTalk();
 				}else
 
-				//обыск трупа
+				//РѕР±С‹СЃРє С‚СЂСѓРїР°
 				if(!Level().IR_GetKeyState(DIK_LSHIFT))
 				{
-					//только если находимся в режиме single
+					//С‚РѕР»СЊРєРѕ РµСЃР»Рё РЅР°С…РѕРґРёРјСЃСЏ РІ СЂРµР¶РёРјРµ single
 					CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 					if(pGameSP)
 						pGameSP->StartCarBody(this, m_pPersonWeLookingAt );
@@ -555,18 +555,7 @@ void CActor::set_input_external_handler(CActorInputHandler *handler)
 
 void CActor::SwitchNightVision()
 {
-	xr_vector<CAttachableItem*> const& all = CAttachmentOwner::attached_objects();
-	xr_vector<CAttachableItem*>::const_iterator it = all.begin();
-	xr_vector<CAttachableItem*>::const_iterator it_e = all.end();
-	for ( ; it != it_e; ++it )
-	{
-		CTorch* torch = smart_cast<CTorch*>(*it);
-		if ( torch )
-		{		
-			torch->SwitchNightVision();
-			return;
-		}
-	}
+	SwitchNightVision(!m_bNightVisionOn);
 }
 
 void CActor::SwitchTorch()

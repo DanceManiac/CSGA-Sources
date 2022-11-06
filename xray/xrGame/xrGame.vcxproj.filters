@@ -2584,6 +2584,9 @@
     <Filter Include="Embedded editor\render">
       <UniqueIdentifier>{4dcf3546-414e-4284-b013-52fa2ab1c26d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Client\Objects\items &amp; weapons\Devices\NightVision">
+      <UniqueIdentifier>{068e7734-d347-4910-b7dd-f7aae527ed7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mt_config.h">
@@ -7515,6 +7518,9 @@
     <ClInclude Include="GameConstants.h">
       <Filter>Core\Client\Game Persistent</Filter>
     </ClInclude>
+    <ClInclude Include="NightVision.h">
+      <Filter>Core\Client\Objects\items &amp; weapons\Devices\NightVision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11221,6 +11227,9 @@
     </ClCompile>
     <ClCompile Include="GameConstants.cpp">
       <Filter>Core\Client\Game Persistent</Filter>
+    </ClCompile>
+    <ClCompile Include="NightVision.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons\Devices\NightVision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

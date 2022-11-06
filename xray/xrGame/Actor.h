@@ -45,8 +45,9 @@ struct SSleepEffector;
 class  CSleepEffectorPP;
 class CInventoryBox;
 
-class	CHudItem;
-class   CArtefact;
+class CHudItem;
+class CArtefact;
+class CNightVisionEffector;
 
 struct SActorMotions;
 struct SActorVehicleAnims;
@@ -719,6 +720,11 @@ protected:
 	//step manager
 	virtual bool				is_on_ground					();
 
+	bool						m_bNightVisionOn;
+	bool						m_bNightVisionAllow;
+
+	CNightVisionEffector*		m_night_vision;
+
 private:
 	CActorMemory				*m_memory;
 
@@ -733,6 +739,12 @@ public:
 
 	virtual	BOOL				BonePassBullet					(int boneID);
 	virtual	void				On_B_NotCurrentEntity			();
+
+	void						SwitchNightVision				(bool light_on, bool use_sounds = true, bool send_event = true);
+
+	bool						GetNightVisionStatus			()				{ return m_bNightVisionOn; }
+	void						SetNightVisionAllowed			(bool bAllow)	{ m_bNightVisionAllow = bAllow; }
+	CNightVisionEffector*		GetNightVision					()				{ return m_night_vision; }
 
 private:
 	collide::rq_results			RQR;

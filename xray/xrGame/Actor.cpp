@@ -27,6 +27,7 @@
 #include "game_cl_base_weapon_usage_statistic.h"
 #include "Grenade.h"
 #include "Torch.h"
+#include "NightVision.h"
 #include "../xrEngine/xr_input.h"
 #include "Actor.h"
 #include "ActorAnimation.h"
@@ -198,6 +199,10 @@ CActor::CActor() : CEntityAlive()
 	m_fCurrentHeight		= -1.f;
 	fpb_smooth_y			= -1.f;
 	fpb_smooth_z			= -1.f;
+
+	m_night_vision			= NULL;
+	m_bNightVisionAllow		= true;
+	m_bNightVisionOn		= false;
 }
 
 
@@ -225,6 +230,7 @@ CActor::~CActor()
 
 	xr_delete				(m_anims);
 	xr_delete				(m_vehicle_anims);
+	xr_delete				(m_night_vision);
 }
 
 void CActor::reinit	()
@@ -1692,14 +1698,6 @@ void CActor::UpdateArtefactsOnBeltAndOutfit()
 		conditions().ChangeSatiety		(outfit->m_fSatietyRestoreSpeed   * f_update_time);
 		conditions().ChangeRadiation	(outfit->m_fRadiationRestoreSpeed * f_update_time);
 	}
-	else
-	{
-		CTorch* pTorch = smart_cast<CTorch*>( inventory().ItemFromSlot(TORCH_SLOT) );
-		if ( pTorch && pTorch->GetNightVisionStatus() )
-		{
-			pTorch->SwitchNightVision(false);
-		}
-	}
 }
 
 float	CActor::HitArtefactsOnBelt(float hit_power, ALife::EHitType hit_type)
@@ -2059,4 +2057,67 @@ void CActor::blockAction(EGameActions cmd)
 void CActor::unblockAction(EGameActions cmd)
 {
 	m_blockedActions.reset(cmd);
+}
+
+void CActor::SwitchNightVision(bool vision_on, bool use_sounds, bool send_event)
+{
+	m_bNightVisionOn = vision_on;
+
+	if (!m_night_vision)
+		m_night_vision = xr_new<CNightVisionEffector>(cNameSect());
+
+	bool bIsActiveNow = m_night_vision->IsActive();
+
+	CCustomOutfit* pOutfit = smart_cast<CCustomOutfit*>(inventory().ItemFromSlot(OUTFIT_SLOT));
+	if (pOutfit && pOutfit->m_NightVisionSect.size())
+	{
+		if (m_bNightVisionAllow)
+		{
+			if (m_bNightVisionOn && !bIsActiveNow)
+			{
+				m_night_vision->Start(pOutfit->m_NightVisionSect, this, use_sounds);
+			}
+		}
+		else
+		{
+			m_night_vision->OnDisabled(this, use_sounds);
+			m_bNightVisionOn = false;
+		}
+	}
+	else
+	{
+		CCustomOutfit* pOutfit = smart_cast<CCustomOutfit*>(inventory().ItemFromSlot(OUTFIT_SLOT));
+		if (pOutfit && pOutfit->m_NightVisionSect.size())
+		{
+			if (m_bNightVisionAllow)
+			{
+				if (m_bNightVisionOn && !bIsActiveNow)
+				{
+					m_night_vision->Start(pOutfit->m_NightVisionSect, this, use_sounds);
+				}
+			}
+			else
+			{
+				m_night_vision->OnDisabled(this, use_sounds);
+				m_bNightVisionOn = false;
+			}
+		}
+	}
+
+	if (!m_bNightVisionOn && bIsActiveNow)
+	{
+		m_night_vision->Stop(100000.0f, use_sounds);
+	}
+
+	//Alun: Update flags and send message they were changed
+	if (send_event)
+	{
+		m_trader_flags.set(CSE_ALifeTraderAbstract::eTraderFlagNightVisionActive, m_bNightVisionOn);
+		CGameObject *object = smart_cast<CGameObject*>(this);
+		NET_Packet packet;
+		object->u_EventGen(packet, GE_TRADER_FLAGS, object->ID());
+		packet.w_u32(m_trader_flags.get());
+		object->u_EventSend(packet);
+		//Msg("GE_TRADER_FLAGS event sent %d", m_trader_flags.get());
+	}
 }

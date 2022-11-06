@@ -1531,6 +1531,7 @@
     <ClInclude Include="mt_config.h" />
     <ClInclude Include="Needles.h" />
     <ClInclude Include="NET_Queue.h" />
+    <ClInclude Include="NightVision.h" />
     <ClInclude Include="NoGravityZone.h" />
     <ClInclude Include="ObjectDump.h" />
     <ClInclude Include="objects\devices\Compass.h" />
@@ -5821,6 +5822,7 @@
     <ClCompile Include="MPPlayersBag.cpp" />
     <ClCompile Include="mp_config_sections.cpp" />
     <ClCompile Include="Needles.cpp" />
+    <ClCompile Include="NightVision.cpp" />
     <ClCompile Include="NoGravityZone.cpp" />
     <ClCompile Include="ObjectDump.cpp" />
     <ClCompile Include="objects\devices\Compass.cpp" />

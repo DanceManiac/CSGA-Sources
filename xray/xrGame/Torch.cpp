@@ -48,6 +48,11 @@ CTorch::CTorch(void)
 	m_NightVisionDischargeTime	= 10.f;
 	m_NightVisionChargeTime		= 0.f;*/
 
+	m_torch_offset				= TORCH_OFFSET;
+	m_omni_offset				= OMNI_OFFSET;
+	m_torch_inertion_speed_max	= TORCH_INERTION_SPEED_MAX;
+	m_torch_inertion_speed_min	= TORCH_INERTION_SPEED_MIN;
+
 	m_prev_hp.set				(0,0);
 	m_delta_h					= 0;
 }
@@ -71,105 +76,35 @@ inline bool CTorch::can_use_dynamic_lights	()
 	return					(owner->can_use_dynamic_lights());
 }
 
-void CTorch::Load(LPCSTR section) 
+void CTorch::Load(LPCSTR section)
 {
-	inherited::Load			(section);
-	light_trace_bone		= pSettings->r_string(section,"light_trace_bone");
+	inherited::Load(section);
+	light_trace_bone = pSettings->r_string(section, "light_trace_bone");
+	if (pSettings->line_exist(section, "snd_turn_on"))
+		m_sounds.LoadSound(section, "snd_turn_on", "sndTurnOn", SOUND_TYPE_ITEM_USING);
+	if (pSettings->line_exist(section, "snd_turn_off"))
+		m_sounds.LoadSound(section, "snd_turn_off", "sndTurnOff", SOUND_TYPE_ITEM_USING);
+	m_torch_offset = READ_IF_EXISTS(pSettings, r_fvector3, section, "torch_offset", TORCH_OFFSET);
+	m_omni_offset = READ_IF_EXISTS(pSettings, r_fvector3, section, "omni_offset", OMNI_OFFSET);
+	m_torch_inertion_speed_max = READ_IF_EXISTS(pSettings, r_float, section, "torch_inertion_speed_max", TORCH_INERTION_SPEED_MAX);
+	m_torch_inertion_speed_min = READ_IF_EXISTS(pSettings, r_float, section, "torch_inertion_speed_min", TORCH_INERTION_SPEED_MIN);
+}
 
-
-	m_bNightVisionEnabled = !!pSettings->r_bool(section,"night_vision");
-	if(m_bNightVisionEnabled)
+void CTorch::OnMoveToSlot()
+{
+	CInventoryOwner* owner = smart_cast<CInventoryOwner*>(H_Parent());
+	if (owner && !owner->attached(this))
 	{
-		m_sounds.LoadSound(section,"snd_night_vision_on", "NightVisionOnSnd", false, SOUND_TYPE_ITEM_USING);
-		m_sounds.LoadSound(section,"snd_night_vision_off", "NightVisionOffSnd", false, SOUND_TYPE_ITEM_USING);
-		m_sounds.LoadSound(section,"snd_night_vision_idle", "NightVisionIdleSnd", false, SOUND_TYPE_ITEM_USING);
-		m_sounds.LoadSound(section,"snd_night_vision_broken", "NightVisionBrokenSnd", false, SOUND_TYPE_ITEM_USING);
+		owner->attach(this->cast_inventory_item());
 	}
 }
 
-void CTorch::SwitchNightVision()
+void CTorch::OnMoveToRuck(EItemPlace prev)
 {
-	if (OnClient()) return;
-	SwitchNightVision(!m_bNightVisionOn);	
-}
-
-void CTorch::SwitchNightVision(bool vision_on)
-{
-	if(!m_bNightVisionEnabled) return;
-	
-	if(vision_on /*&& (m_NightVisionChargeTime > m_NightVisionRechargeTimeMin || OnClient())*/)
+	if (prev == eItemPlaceSlot)
 	{
-		//m_NightVisionChargeTime = m_NightVisionDischargeTime*m_NightVisionChargeTime/m_NightVisionRechargeTime;
-		m_bNightVisionOn = true;
+		Switch(false);
 	}
-	else
-	{
-		m_bNightVisionOn = false;
-	}
-
-	CActor *pA = smart_cast<CActor *>(H_Parent());
-
-	if(!pA)					return;
-	bool bPlaySoundFirstPerson = (pA == Level().CurrentViewEntity());
-
-	LPCSTR disabled_names	= pSettings->r_string(cNameSect(),"disabled_maps");
-	LPCSTR curr_map			= *Level().name();
-	u32 cnt					= _GetItemCount(disabled_names);
-	bool b_allow			= true;
-	string512				tmp;
-	for(u32 i=0; i<cnt;++i){
-		_GetItem(disabled_names, i, tmp);
-		if(0==stricmp(tmp, curr_map)){
-			b_allow = false;
-			break;
-		}
-	}
-
-	CCustomOutfit* pCO=pA->GetOutfit();
-	if(pCO&&pCO->m_NightVisionSect.size()&&!b_allow){
-		m_sounds.PlaySound("NightVisionBrokenSnd", pA->Position(), pA, bPlaySoundFirstPerson);
-		return;
-	}
-
-	if(m_bNightVisionOn){
-		CEffectorPP* pp = pA->Cameras().GetPPEffector((EEffectorPPType)effNightvision);
-		if(!pp){
-			if (pCO&&pCO->m_NightVisionSect.size())
-			{
-				AddEffector(pA,effNightvision, pCO->m_NightVisionSect);
-				m_sounds.PlaySound("NightVisionOnSnd", pA->Position(), pA, bPlaySoundFirstPerson);
-				m_sounds.PlaySound("NightVisionIdleSnd", pA->Position(), pA, bPlaySoundFirstPerson, true);
-			}
-		}
-	}else{
- 		CEffectorPP* pp = pA->Cameras().GetPPEffector((EEffectorPPType)effNightvision);
-		if(pp){
-			pp->Stop			(1.0f);
-			m_sounds.PlaySound("NightVisionOffSnd", pA->Position(), pA, bPlaySoundFirstPerson);
-			m_sounds.StopSound("NightVisionIdleSnd");
-		}
-	}
-}
-
-
-void CTorch::UpdateSwitchNightVision   ()
-{
-	if(!m_bNightVisionEnabled) return;
-	if (OnClient()) return;
-
-
-	/*if(m_bNightVisionOn)
-	{
-		m_NightVisionChargeTime			-= Device.fTimeDelta;
-
-		if(m_NightVisionChargeTime<0.f)
-			SwitchNightVision(false);
-	}
-	else
-	{
-		m_NightVisionChargeTime			+= Device.fTimeDelta;
-		clamp(m_NightVisionChargeTime, 0.f, m_NightVisionRechargeTime);
-	}*/
 }
 
 
@@ -244,13 +179,15 @@ BOOL CTorch::net_Spawn(CSE_Abstract* DC)
 	glow_render->set_color	(clr);
 	glow_render->set_radius	(pUserData->r_float					("torch_definition","glow_radius"));
 
-	//âêëþ÷èòü/âûêëþ÷èòü ôîíàðèê
+	light_render->set_type	(IRender_Light::LT(2));
+	light_omni->set_type	(IRender_Light::LT(1));
+	//light_omni->set_type((IRender_Light::LT)(READ_IF_EXISTS(pUserData, r_u8, m_light_section, "omni_type", 1)));
+
+	//Ð²ÐºÐ»ÑŽÑ‡Ð¸Ñ‚ÑŒ/Ð²Ñ‹ÐºÐ»ÑŽÑ‡Ð¸Ñ‚ÑŒ Ñ„Ð¾Ð½Ð°Ñ€Ð¸Ðº
 	Switch					(torch->m_active);
 	VERIFY					(!torch->m_active || (torch->ID_Parent != 0xffff));
-	
-	SwitchNightVision		(false);
 
-	m_delta_h				= PI_DIV_2-atan((range*0.5f)/_abs(TORCH_OFFSET.x));
+	m_delta_h				= PI_DIV_2-atan((range*0.5f)/_abs(m_torch_offset.x));
 
 	return					(TRUE);
 }
@@ -258,7 +195,6 @@ BOOL CTorch::net_Spawn(CSE_Abstract* DC)
 void CTorch::net_Destroy() 
 {
 	Switch					(false);
-	SwitchNightVision		(false);
 
 	inherited::net_Destroy	();
 }
@@ -275,16 +211,11 @@ void CTorch::OnH_B_Independent	(bool just_before_destroy)
 	time2hide						= TIME_2_HIDE;
 
 	Switch						(false);
-	SwitchNightVision			(false);
-
-	m_sounds.StopAllSounds		();
 }
 
 void CTorch::UpdateCL() 
 {
 	inherited::UpdateCL			();
-	
-	UpdateSwitchNightVision		();
 
 	if (!m_switched_on)			return;
 
@@ -309,8 +240,8 @@ void CTorch::UpdateCL()
 
 		if (actor) 
 		{
-			m_prev_hp.x		= angle_inertion_var(m_prev_hp.x,-actor->cam_FirstEye()->yaw,TORCH_INERTION_SPEED_MIN,TORCH_INERTION_SPEED_MAX,TORCH_INERTION_CLAMP,Device.fTimeDelta);
-			m_prev_hp.y		= angle_inertion_var(m_prev_hp.y,-actor->cam_FirstEye()->pitch,TORCH_INERTION_SPEED_MIN,TORCH_INERTION_SPEED_MAX,TORCH_INERTION_CLAMP,Device.fTimeDelta);
+			m_prev_hp.x		= angle_inertion_var(m_prev_hp.x,-actor->cam_FirstEye()->yaw, m_torch_inertion_speed_min, m_torch_inertion_speed_max,TORCH_INERTION_CLAMP,Device.fTimeDelta);
+			m_prev_hp.y		= angle_inertion_var(m_prev_hp.y,-actor->cam_FirstEye()->pitch, m_torch_inertion_speed_min, m_torch_inertion_speed_max,TORCH_INERTION_CLAMP,Device.fTimeDelta);
 
 			Fvector			dir,right,up;	
 			dir.setHP		(m_prev_hp.x+m_delta_h,m_prev_hp.y);
@@ -320,17 +251,17 @@ void CTorch::UpdateCL()
 			if (true)
 			{
 				Fvector offset				= M.c; 
-				offset.mad					(M.i,TORCH_OFFSET.x);
-				offset.mad					(M.j,TORCH_OFFSET.y);
-				offset.mad					(M.k,TORCH_OFFSET.z);
+				offset.mad					(M.i,m_torch_offset.x);
+				offset.mad					(M.j,m_torch_offset.y);
+				offset.mad					(M.k,m_torch_offset.z);
 				light_render->set_position	(offset);
 
 				if(false)
 				{
 					offset						= M.c; 
-					offset.mad					(M.i,OMNI_OFFSET.x);
-					offset.mad					(M.j,OMNI_OFFSET.y);
-					offset.mad					(M.k,OMNI_OFFSET.z);
+					offset.mad					(M.i,m_omni_offset.x);
+					offset.mad					(M.j,m_omni_offset.y);
+					offset.mad					(M.k,m_omni_offset.z);
 					light_omni->set_position	(offset);
 				}
 			}//if (true)
@@ -398,7 +329,7 @@ void CTorch::UpdateCL()
 	if (!lanim)							return;
 
 	int						frame;
-	// âîçâðàùàåò â ôîðìàòå BGR
+	// Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Ð² Ñ„Ð¾Ñ€Ð¼Ð°Ñ‚Ðµ BGR
 	u32 clr					= lanim->CalculateBGR(Device.fTimeGlobal,frame); 
 
 	Fcolor					fclr;
@@ -436,7 +367,6 @@ void CTorch::net_Export			(NET_Packet& P)
 
 	BYTE F = 0;
 	F |= (m_switched_on ? eTorchActive : 0);
-	F |= (m_bNightVisionOn ? eNightVisionActive : 0);
 	const CActor *pA = smart_cast<const CActor *>(H_Parent());
 	if (pA)
 	{
@@ -453,15 +383,8 @@ void CTorch::net_Import			(NET_Packet& P)
 	
 	BYTE F = P.r_u8();
 	bool new_m_switched_on				= !!(F & eTorchActive);
-	bool new_m_bNightVisionOn			= !!(F & eNightVisionActive);
 
 	if (new_m_switched_on != m_switched_on)			Switch						(new_m_switched_on);
-	if (new_m_bNightVisionOn != m_bNightVisionOn)	
-	{
-//		Msg("CTorch::net_Import - NV[%d]", new_m_bNightVisionOn);
-
-		SwitchNightVision			(new_m_bNightVisionOn);
-	}
 }
 
 bool  CTorch::can_be_attached		() const
