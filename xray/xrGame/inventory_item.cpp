@@ -102,6 +102,7 @@ void CInventoryItem::Load(LPCSTR section)
 	R_ASSERT			(m_weight>=0.f);
 
 	m_cost				= pSettings->r_u32(section, "cost");
+	m_base_cost				= pSettings->r_u32(section, "cost");
 	m_slot				= pSettings->r_u32(section,"slot");
 
 	m_Description = CStringTable().translate( pSettings->r_string(section, "description") );

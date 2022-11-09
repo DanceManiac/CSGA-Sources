@@ -28,9 +28,9 @@ public:
 	virtual	void			UseBy						(CEntityAlive* npc);
 	virtual	bool			Empty						()						{return GetPortionsNum()==0;};
 			int				GetPortionsNum				()	const				{return m_iPortionsNum;}
-	IC	u32					GetBasePortionsNum()		const					{return m_iStartPortionsNum; }
+	IC	u32					GetBasePortionsNum			()	const				{return m_iStartPortionsNum; }
 
-	virtual float			Weight						();
+	virtual float			Weight						() const;
 	virtual	u32				Cost						() const;
 protected:	
 	//влияние при поедании вещи на параметры игрока

@@ -54,7 +54,7 @@ void CEatableItem::Load(LPCSTR section)
 	VERIFY						(m_iPortionsNum<10000);
 }
 
-float CEatableItem::Weight()
+float CEatableItem::Weight() const
 {
 	float res = inherited::Weight();
 
@@ -84,7 +84,8 @@ u32 CEatableItem::Cost() const
 BOOL CEatableItem::net_Spawn				(CSE_Abstract* DC)
 {
 	if (!inherited::net_Spawn(DC)) return FALSE;
-
+	/*if (m_iStartPortionsNum < 1)
+		m_iStartPortionsNum = 1;*/ // Глупое, но решение нулевого ценника в секции еды при -1 у значения eat_portions_num -)
 	m_iPortionsNum = m_iStartPortionsNum;
 
 	return TRUE;

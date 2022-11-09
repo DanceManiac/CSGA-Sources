@@ -176,11 +176,13 @@ public:
 
 	virtual bool 				IsNecessaryItem	    (CInventoryItem* item);
 	virtual bool				IsNecessaryItem	    (const shared_str& item_sect){return false;};
-			u32					Cost				() const	{ return m_cost; }
-	virtual float				Weight				() 			{ return m_weight;}
+	virtual u32					Cost				() const	{ return m_cost; }
+	virtual u32					BaseCost			() const	{ return m_base_cost; }
+	virtual float				Weight				() const	{ return m_weight;}
 protected:	
 	u32							m_slot;
 	u32							m_cost;
+	u32							m_base_cost;
 	float						m_weight;
 	float						m_fCondition;
 	shared_str					m_Description;
