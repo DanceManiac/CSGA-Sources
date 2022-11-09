@@ -278,6 +278,9 @@ void CWeaponMagazined::OnMagazineEmpty()
 
 void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 {
+    if(GetState() != eIdle && !bUnloadFromAmmoType)
+        return;
+
 	xr_map<LPCSTR, u16> l_ammo;
 	
 	while(!m_magazine.empty()) 
@@ -316,6 +319,9 @@ void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 		if(l_it->second && !unlimited_ammo()) SpawnAmmo(l_it->second, l_it->first);
 	}
 	
+	if (IsMisfire())
+        bMisfire = false;
+
 	if(GetState() == eIdle)
 		SwitchState(eIdle);//чтобы обновлялся худ после анлода, и проигрывалась анимация anm_idle_empty. Спасибо Валерку.
 }
@@ -366,7 +372,9 @@ void CWeaponMagazined::ReloadMagazine()
 	if(!m_bLockType && !m_magazine.empty() && 
 		(!m_pAmmo || xr_strcmp(m_pAmmo->cNameSect(), 
 					 *m_magazine.back().m_ammoSect)))
+        bUnloadFromAmmoType = true;
 		UnloadMagazine();
+        bUnloadFromAmmoType = false;
 
 	VERIFY((u32)iAmmoElapsed == m_magazine.size());
 
@@ -666,13 +674,11 @@ void CWeaponMagazined::OnShot()
 	PlayAnimShoot();
 	
 	// Shell Drop
-	Fvector vel; 
+	Fvector vel;
 	PHGetLinearVell(vel);
-	if(!IsMisfire())//чтобы шелсы не дропались после клина, у сокга подсмотрел :)
-	{
+	if(!IsMisfire() && !m_bDisableShellParticles)
 		OnShellDrop(get_LastSP(), vel);
-	}
-	
+
 	// Огонь из ствола
 	StartFlameParticles();
 
@@ -692,7 +698,7 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 	{
 		case eReload:
 		{
-		    if (IsMisfire() && !IsGranadeLauncherMode())
+		    if (IsMisfire() && !IsGrenadeLauncherMode())
 		        Unmisfire();
 		    else
 				ReloadMagazine();
@@ -701,16 +707,20 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		    bSwitchAmmoType = false;
 		}break; // End of reload animation
 		case eHiding:
+		{
 		    SwitchState(eHidden);
 		    bSwitchAmmoType = false;
-		    break; // End of Hide
+			bUnloadFromAmmoType = false;
+		} break; // End of Hide
 		case eHideDet:
 		    SwitchState(eIdle);
 			break;
 		case eShowing:
+		{
 			SwitchState(eIdle);
 			bSwitchAmmoType = false;
-			break;	// End of Show
+			bUnloadFromAmmoType = false;
+		} break;	// End of Show
 		case eIdle:
 			switch2_Idle();
 			break;  // Keep showing idle
@@ -849,7 +859,7 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 	case kWPN_RELOAD:
 		{
 			if(flags&CMD_START) 
-				if(iAmmoElapsed < iMagazineSize || (IsMisfire() && !IsGranadeLauncherMode())) 
+				if(iAmmoElapsed < iMagazineSize || (IsMisfire() && !IsGrenadeLauncherMode())) 
 					Reload();
 		} 
 		return true;
@@ -1306,12 +1316,6 @@ bool CWeaponMagazined::SwitchMode()
 	return true;
 }
 
-bool CWeaponMagazined::IsGranadeLauncherMode()
-{
-	CWeaponMagazinedWGrenade* maggl = smart_cast<CWeaponMagazinedWGrenade*>(this);
-	return !!(maggl && maggl->m_bGrenadeMode);
-}
- 
 void CWeaponMagazined::OnNextFireMode()
 {
 	if (!m_bHasDifferentFireModes) return;
@@ -1342,13 +1346,6 @@ void CWeaponMagazined::OnH_A_Chield()
 void CWeaponMagazined::SetQueueSize(int size)  
 {
 	m_iQueueSize = size; 
-};
-
-float CWeaponMagazined::GetWeaponDeterioration()
-{
-	if (!m_bHasDifferentFireModes || m_iPrefferedFireMode == -1 || u32(GetCurrentFireMode()) <= u32(m_iPrefferedFireMode)) 
-		return inherited::GetWeaponDeterioration();
-	return m_iShotNum*conditionDecreasePerShot;
 };
 
 void CWeaponMagazined::save(NET_Packet &output_packet)

@@ -46,11 +46,6 @@ void random_dir(Fvector& tgt_dir, const Fvector& src_dir, float dispersion)
 	tgt_dir.add			(src_dir,T).normalize();
 }
 
-float CWeapon::GetWeaponDeterioration	()
-{
-	return conditionDecreasePerShot;
-};
-
 void CWeapon::FireTrace		(const Fvector& P, const Fvector& D)
 {
 	VERIFY		(m_magazine.size());

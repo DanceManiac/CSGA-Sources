@@ -35,15 +35,15 @@ void CWeaponMagazinedWGrenade::Load	(LPCSTR section)
 	
 	
 	//// Sounds
-	m_sounds.LoadSound(section,"snd_shoot_grenade", "sndShotG", true, m_eSoundShot);
-	m_sounds.LoadSound(section,"snd_reload_grenade", "sndReloadG", true, m_eSoundReload);
+	m_sounds.LoadSound(section, "snd_shoot_grenade", "sndShotG", true, m_eSoundShot);
+	m_sounds.LoadSound(section, "snd_reload_grenade", "sndReloadG", true, m_eSoundReload);
     m_sounds.LoadSound(section, "snd_change_grenade", "sndChangeGrenade", true, m_eSoundReload);
 
-	m_sounds.LoadSound(section,"snd_switch", "sndSwitchToG", true, m_eSoundReload);
-	m_sounds.LoadSound(section,"snd_switch_from_g", "sndSwitchFromG", true, m_eSoundReload);
+	m_sounds.LoadSound(section, "snd_switch", "sndSwitchToG", true, m_eSoundReload);
+	m_sounds.LoadSound(section, "snd_switch_from_g", "sndSwitchFromG", true, m_eSoundReload);
 	
-	m_sounds.LoadSound(section,"snd_switch_scope", "sndSwitchToGScope", true, m_eSoundReload);
-	m_sounds.LoadSound(section,"snd_switch_from_g_scope", "sndSwitchFromGScope", true, m_eSoundReload);
+	m_sounds.LoadSound(section, "snd_switch_scope", "sndSwitchToGScope", true, m_eSoundReload);
+	m_sounds.LoadSound(section, "snd_switch_from_g_scope", "sndSwitchFromGScope", true, m_eSoundReload);
 
 	m_sFlameParticles2 = pSettings->r_string(section, "grenade_flame_particles");
 
@@ -1021,16 +1021,16 @@ bool CWeaponMagazinedWGrenade::IsNecessaryItem	    (const shared_str& item_sect)
 
 u8 CWeaponMagazinedWGrenade::GetCurrentHudOffsetIdx()
 {
-	bool b_aiming		= 	((IsZoomed() && m_zoom_params.m_fZoomRotationFactor<=1.f) ||
-							(!IsZoomed() && m_zoom_params.m_fZoomRotationFactor>0.f));
+	bool b_aiming = ((IsZoomed() && m_zoom_params.m_fZoomRotationFactor<=1.f) || (!IsZoomed() && m_zoom_params.m_fZoomRotationFactor>0.f));
 	
 	if(!b_aiming)
-		return		0;
+		return 0;
+	else if(m_bGrenadeMode)
+		return 2;
+	else if (bAltOffset)
+		return 3;
 	else
-	if(m_bGrenadeMode)
-		return		2;
-	else
-		return		1;
+		return 1;
 }
 
 bool CWeaponMagazinedWGrenade::install_upgrade_ammo_class	( LPCSTR section, bool test )

@@ -24,6 +24,7 @@
 #include "ui/UIWindow.h"
 #include "../xrEngine/LightAnimLibrary.h"
 #include "WeaponBinoculars.h"
+#include "WeaponMagazinedWGrenade.h"
 
 #define WEAPON_REMOVE_TIME		60000
 #define ROTATION_TIME			0.25f
@@ -555,11 +556,19 @@ void CWeapon::Load		(LPCSTR section)
 	
 	LoadBoneNames(section, "def_hide_bones_override_when_gl_attached", m_defGLHiddenBones);//Скрытие костей по дефолту с надетым ПГ, без ПГ кости будут отображены
 
+	LoadBoneNames(section, "collimator_sights_bones", m_colimSightBones);
+
 	m_bUseDynamicZoom = READ_IF_EXISTS(pSettings, r_bool, section, "scope_dynamic_zoom", false);
 
 	m_bUseLowAmmoSnd = READ_IF_EXISTS(pSettings, r_bool, section, "use_lowammo_snd", false);
 
 	m_u32ACPlaySnd = READ_IF_EXISTS(pSettings, r_s32, section, "lowammo_snd_ammo_count", 0);
+
+	m_bUseAltScope = READ_IF_EXISTS(pSettings, r_bool, hud_sect, "alt_scope_enabled", false);
+
+	m_bDisableShellParticles = READ_IF_EXISTS(pSettings, r_bool, hud_sect, "disable_shell_particles", false);
+
+	m_bHideMarkInAlt = READ_IF_EXISTS(pSettings, r_bool, section, "hide_collimator_sights_in_alter_zoom", false);
 
 	////////////////////////////////////////////
 	//--#SM+# Begin--
@@ -1156,7 +1165,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 									if(!binoc)
 										SwitchState(eZoomStart);
 
-
+									bAltOffset = false;
 									OnZoomIn();
 								}
 							}
@@ -1186,7 +1195,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 								if (!binoc)
 									SwitchState(eZoomStart);
 
-
+								bAltOffset = false;
 								OnZoomIn();
 							}
 						}
@@ -1210,9 +1219,78 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 			else 
 				return false;
 
+		case kWPN_ALT_ZOOM:
+			if(m_bUseAltScope && !IsGrenadeLauncherMode())
+			{
+				if(b_toggle_weapon_aim)
+				{
+					if(flags&CMD_START)
+					{
+						if(!IsZoomed())
+						{
+							if(!IsPending())
+							{
+								if(GetState()==eIdle || GetState()==eZoomEnd) {
+									if(!binoc)
+										SwitchState(eZoomStart);
+
+									bAltOffset = true;
+									OnZoomIn();
+								}
+							}
+						}
+						else
+						{
+                            if (GetState()==eIdle || GetState()==eZoomStart) {
+								if(!binoc)
+									SwitchState(eZoomEnd);
+
+								bAltOffset = false;
+								OnZoomOut();
+							}
+                        }
+					}
+				}
+				else
+				{
+					if(flags&CMD_START)
+					{
+						if(!IsZoomed() && !IsPending())
+						{
+							if(GetState()==eIdle || GetState()==eZoomEnd || GetState()==eFire || GetState()==eEmpty) {
+                                if (GetState()==eFire)
+									FireEnd();
+
+								if (!binoc)
+									SwitchState(eZoomStart);
+
+								bAltOffset = true;
+								OnZoomIn();
+							}
+						}
+					}
+					else
+					{
+                        if (IsZoomed() && (GetState()==eIdle || GetState()==eZoomStart || GetState()==eFire || GetState()==eEmpty)) {
+							if (GetState() == eFire)
+                               FireEnd();
+
+                            if (!binoc)
+								SwitchState(eZoomEnd);
+
+						   bAltOffset = false;
+                           OnZoomOut();
+						}
+                    }
+				}
+				return true;
+			}
+			else 
+				return false;
+
 		case kWPN_ZOOM_INC:
 		case kWPN_ZOOM_DEC:
-			if( IsZoomEnabled() && IsZoomed() && (flags&CMD_START) )
+			if(IsZoomEnabled() && IsZoomed() && !bAltOffset && (flags&CMD_START))
 			{
 				if(cmd==kWPN_ZOOM_INC)
 					ZoomInc();
@@ -1525,6 +1603,31 @@ void CWeapon::UpdateHUDAddonsVisibility()
 		}
 	}
 
+	if (IsZoomed())
+	{
+		if(bAltOffset && m_bHideMarkInAlt)
+		{
+			for (const shared_str& bone : m_colimSightBones)
+			{
+				SetBoneVisible(bone, FALSE);
+			}
+		}
+		else
+		{
+			for (const shared_str& bone : m_colimSightBones)
+			{
+				SetBoneVisible(bone, TRUE);
+			}
+		}
+	}
+	else
+	{
+		for (const shared_str& bone : m_colimSightBones)
+		{
+			SetBoneVisible(bone, FALSE);
+		}
+	}
+
 	if (m_sHud_wpn_laser_bone.size() && has_laser)
 	{
 		HudItemData()->set_bone_visible(m_sHud_wpn_laser_bone, IsLaserOn(), TRUE);
@@ -1716,7 +1819,6 @@ void CWeapon::OnZoomIn()
 
     // Отключаем инерцию (Заменено GetInertionFactor())
     // EnableHudInertion(FALSE);
-
 	
 	if(m_zoom_params.m_bZoomDofEnabled && !IsScopeAttached())
 		GamePersistent().SetEffectorDOF	(m_zoom_params.m_ZoomDof);
@@ -1736,7 +1838,7 @@ void CWeapon::OnZoomOut()
 
 CUIWindow* CWeapon::ZoomTexture()
 {
-	if (UseScopeTexture())
+	if (UseScopeTexture() && !bAltOffset)
 		return m_UIScope;
 	else
 		return NULL;
@@ -1944,8 +2046,16 @@ void CWeapon::UpdateHudAdditonal		(Fmatrix& trans)
 		attachable_hud_item*		hi = HudItemData();
 		R_ASSERT					(hi);
 		Fvector						curr_offs, curr_rot;
-		curr_offs					= hi->m_measures.m_hands_offset[0][idx];//pos,aim
-		curr_rot					= hi->m_measures.m_hands_offset[1][idx];//rot,aim
+		if(bAltOffset)
+		{
+			curr_offs = hi->m_measures.m_hands_offset[0][3];//pos,alt-aim
+			curr_rot = hi->m_measures.m_hands_offset[1][3];//rot,alt-aim
+		}
+		else
+		{
+			curr_offs = hi->m_measures.m_hands_offset[0][idx];//pos,aim
+			curr_rot = hi->m_measures.m_hands_offset[1][idx];//rot,aim
+		}
 		curr_offs.mul				(m_zoom_params.m_fZoomRotationFactor);
 		curr_rot.mul				(m_zoom_params.m_fZoomRotationFactor);
 
@@ -2249,9 +2359,11 @@ u8 CWeapon::GetCurrentHudOffsetIdx()
 							(!IsZoomed() && m_zoom_params.m_fZoomRotationFactor>0.f));
 
 	if(!b_aiming)
-		return		0;
+		return 0;
+	else if (bAltOffset)
+		return 3;
 	else
-		return		1;
+		return 1;
 }
 
 void CWeapon::render_hud_mode()
@@ -2320,4 +2432,10 @@ void CWeapon::ZoomDec()
 	clamp					(f,m_zoom_params.m_fScopeZoomFactor,min_zoom_factor);
 	SetZoomFactor			( f );
 
+}
+
+bool CWeapon::IsGrenadeLauncherMode()
+{
+    CWeaponMagazinedWGrenade* maggl = smart_cast<CWeaponMagazinedWGrenade*>(this);
+    return !!(maggl && maggl->m_bGrenadeMode);
 }

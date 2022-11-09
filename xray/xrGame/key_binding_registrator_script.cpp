@@ -54,6 +54,7 @@ void key_binding_registrator::script_register(lua_State *L)
 				value("kFLASHLIGHT",				int(kFLASHLIGHT)),
 				value("kLASER_ON",					int(kLASER_ON)),
 				value("kWPN_ZOOM",					int(kWPN_ZOOM)),
+				value("kWPN_ALT_ZOOM",				int(kWPN_ALT_ZOOM)),
 				value("kWPN_FUNC",					int(kWPN_FUNC)),
 				value("kUSE",						int(kUSE)),
 				value("kDROP",						int(kDROP)),

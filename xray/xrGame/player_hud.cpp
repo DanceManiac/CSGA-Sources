@@ -2,10 +2,10 @@
 #include "player_hud.h"
 #include "HudItem.h"
 #include "ui_base.h"
-#include "actor.h"
+#include "Actor.h"
 #include "physic_item.h"
 #include "static_cast_checked.hpp"
-#include "actoreffector.h"
+#include "ActorEffector.h"
 #include "../xrEngine/IGame_Persistent.h"
 #include "Weapon.h"
 
@@ -310,6 +310,14 @@ void hud_item_measures::load(const shared_str& sect_name, IKinematics* K)
 	m_hands_offset[0][2]		= pSettings->r_fvector3(sect_name, val_name);
 	strconcat					(sizeof(val_name),val_name,"gl_hud_offset_rot",_prefix);
 	m_hands_offset[1][2]		= pSettings->r_fvector3(sect_name, val_name);
+
+	if (pSettings->line_exist(sect_name, "alt_scope_enabled") && pSettings->r_bool(sect_name, "alt_scope_enabled"))
+	{
+		strconcat					(sizeof(val_name),val_name,"alt_aim_hud_offset_pos",_prefix);
+		m_hands_offset[0][3]		= pSettings->r_fvector3(sect_name, val_name);
+		strconcat					(sizeof(val_name),val_name,"alt_aim_hud_offset_rot",_prefix);
+		m_hands_offset[1][3]		= pSettings->r_fvector3(sect_name, val_name);
+	}
 
 	R_ASSERT2(pSettings->line_exist(sect_name,"fire_point")==pSettings->line_exist(sect_name,"fire_bone"),		sect_name.c_str());
 	R_ASSERT2(pSettings->line_exist(sect_name,"fire_point2")==pSettings->line_exist(sect_name,"fire_bone2"),	sect_name.c_str());

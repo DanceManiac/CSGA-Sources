@@ -121,12 +121,12 @@ void CHudItem::OnStateSwitch(u32 S)
 	switch (S)
 	{
 	case eBore:
-		SetPending		(FALSE);
+		SetPending(true);
 
-		PlayAnimBore	();
+		PlayAnimBore();
 		if(HudItemData() && !m_bDisableBore && isHUDAnimationExist("anm_bore"))
 		{
-			Fvector P		= HudItemData()->m_item_transform.c;
+			Fvector P = HudItemData()->m_item_transform.c;
 			m_sounds.PlaySound("sndBore", P, object().H_Root(), !!GetHUDmode(), false, m_started_rnd_anim_idx);
 		}
 

@@ -211,10 +211,19 @@ protected:
 	RStringVec		m_defShownBones;
 	RStringVec		m_defHiddenBones;
 	RStringVec		m_defGLHiddenBones;
+    RStringVec		m_colimSightBones;
 
+public:
 	bool m_bUseLowAmmoSnd;
-	int m_u32ACPlaySnd;
+	int  m_u32ACPlaySnd;
     bool bSwitchAmmoType;
+	bool m_bUseAltScope;
+    bool bAltOffset;
+	bool m_bDisableShellParticles;
+    bool m_bHideMarkInAlt;
+	bool bUnloadFromAmmoType;
+
+	bool IsGrenadeLauncherMode();
 
 protected:
 
@@ -260,7 +269,7 @@ public:
 	IC void					SetZoomFactor		(float f) 		{m_zoom_params.m_fCurrentZoomFactor = f;}
 
 	virtual	float			CurrentZoomFactor	();
-	//показывает, что оружие находится в соостоянии поворота для приближенного прицеливания
+	//показывает, что оружие находится в состоянии поворота для приближенного прицеливания
 			bool			IsRotatingToZoom	() const		{	return (m_zoom_params.m_fZoomRotationFactor<1.f);}
 			bool			IsRotatingFromZoom	() const		{	return (m_zoom_params.m_fZoomRotationFactor>0.f);}
 
@@ -332,7 +341,7 @@ protected:
 
 	//трассирование полета пули
 	virtual	void			FireTrace			(const Fvector& P, const Fvector& D);
-	virtual float			GetWeaponDeterioration	();
+	virtual float           GetWeaponDeterioration() { return conditionDecreasePerShot; };
 
 	virtual void			FireStart			() {CShootingObject::FireStart();}
 	virtual void			FireEnd				();

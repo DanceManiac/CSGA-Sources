@@ -103,7 +103,6 @@ public:
 	IC		int		GetQueueSize			() const	{return m_iQueueSize;};
 	virtual bool	StopedAfterQueueFired	()			{return m_bStopedAfterQueueFired; }
 	virtual void	StopedAfterQueueFired	(bool value){m_bStopedAfterQueueFired = value; }
-	bool			IsGranadeLauncherMode	();
 protected:
 	//максимальный размер очереди, которой можно стрельнуть
 	int				m_iQueueSize;
@@ -170,7 +169,7 @@ protected:
 	virtual void	PlayAnimAim();
 
 	virtual	int		ShotsFired			() { return m_iShotNum; }
-	virtual float	GetWeaponDeterioration	();
+    virtual float GetWeaponDeterioration() { return (m_iShotNum == 1) ? conditionDecreasePerShot : conditionDecreasePerQueueShot; }
 
 	HUD_SOUND_COLLECTION_LAYERED m_layered_sounds;
 
