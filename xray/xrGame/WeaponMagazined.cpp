@@ -278,7 +278,8 @@ void CWeaponMagazined::OnMagazineEmpty()
 
 void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 {
-    if(GetState() != eIdle && !bUnloadFromAmmoType)
+	CWeapon* wpn = smart_cast<CWeapon*>(m_pInventory->ActiveItem());
+    if(wpn && GetState() != eIdle && !bUnloadFromAmmoType)
         return;
 
 	xr_map<LPCSTR, u16> l_ammo;
