@@ -73,13 +73,13 @@ private:
 
 	void xr_stdcall				OnBtnLegend_Push		(CUIWindow*, void*);
 	void xr_stdcall				OnBtnUp_Push			(CUIWindow*, void*);
-	void xr_stdcall				OnBtnZoomMore_Push		(CUIWindow*, void*);
+	void xr_stdcall				OnBtnZoomMore_Push		();
 
 	void xr_stdcall				OnBtnLeft_Push			(CUIWindow*, void*);
 	void xr_stdcall				OnBtnActor_Push			(CUIWindow*, void*);
 	void xr_stdcall				OnBtnRight_Push			(CUIWindow*, void*);
 
-	void xr_stdcall				OnBtnZoomLess_Push		(CUIWindow*, void*);
+	void xr_stdcall				OnBtnZoomLess_Push		();
 	void xr_stdcall				OnBtnDown_Push			(CUIWindow*, void*);
 	void xr_stdcall				OnBtnZoomReset_Push		(CUIWindow*, void*);
 
@@ -127,6 +127,7 @@ public:
 			float				GetZoom					()	{return m_currentZoom;}
 			void				SetZoom					(float value);
 			bool				UpdateZoom				(bool b_zoom_in);
+			void				UpdateZoomBtn			(bool b_zoom_in);
 
 
 			void				ShowHintStr				(CUIWindow* parent, LPCSTR text);

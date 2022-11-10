@@ -25,13 +25,13 @@ void CUIMapWnd::init_xml_nav( CUIXml& xml )
 
 	AddCallback( m_btn_nav[btn_legend]->WindowName(),		BUTTON_DOWN, CUIWndCallback::void_function( this, &CUIMapWnd::OnBtnLegend_Push	) );
 //	AddCallback( m_btn_nav[btn_up]->WindowName(),			BUTTON_DOWN, CUIWndCallback::void_function( this, &CUIMapWnd::OnBtnUp_Push		) );
-	AddCallback( m_btn_nav[btn_zoom_more]->WindowName(),	BUTTON_DOWN, CUIWndCallback::void_function( this, &CUIMapWnd::OnBtnZoomMore_Push) );
+//	AddCallback( m_btn_nav[btn_zoom_more]->WindowName(),	BUTTON_DOWN, CUIWndCallback::void_function( this, &CUIMapWnd::OnBtnZoomMore_Push) );
 
 //	AddCallback( m_btn_nav[btn_left]->WindowName(),			BUTTON_DOWN, CUIWndCallback::void_function( this, &CUIMapWnd::OnBtnLeft_Push	) );
 	AddCallback( m_btn_nav[btn_actor]->WindowName(),		BUTTON_DOWN, CUIWndCallback::void_function( this, &CUIMapWnd::OnBtnActor_Push	) );
 //	AddCallback( m_btn_nav[btn_right]->WindowName(),		BUTTON_DOWN, CUIWndCallback::void_function( this, &CUIMapWnd::OnBtnRight_Push	) );
 
-	AddCallback( m_btn_nav[btn_zoom_less]->WindowName(),	BUTTON_DOWN, CUIWndCallback::void_function( this, &CUIMapWnd::OnBtnZoomLess_Push) );
+//	AddCallback( m_btn_nav[btn_zoom_less]->WindowName(),	BUTTON_DOWN, CUIWndCallback::void_function( this, &CUIMapWnd::OnBtnZoomLess_Push) );
 //	AddCallback( m_btn_nav[btn_down]->WindowName(),			BUTTON_DOWN, CUIWndCallback::void_function( this, &CUIMapWnd::OnBtnDown_Push	) );
 	AddCallback( m_btn_nav[btn_zoom_reset]->WindowName(),	BUTTON_DOWN, CUIWndCallback::void_function( this, &CUIMapWnd::OnBtnZoomReset_Push) );
 
@@ -61,6 +61,14 @@ void CUIMapWnd::UpdateNav()
 	{
 		MoveMap( Fvector2().set( 0.0f, -m_map_move_step ) );
 	}
+	if ( m_btn_nav[btn_zoom_more]->CursorOverWindow() && m_btn_nav[btn_zoom_more]->GetButtonsState() == CUIButton::BUTTON_PUSHED )
+	{
+		ViewZoomIn();
+	}
+	if ( m_btn_nav[btn_zoom_less]->CursorOverWindow() && m_btn_nav[btn_zoom_less]->GetButtonsState() == CUIButton::BUTTON_PUSHED )
+	{
+		ViewZoomOut();
+	}
 }
 
 void CUIMapWnd::OnBtnLegend_Push(CUIWindow*, void*)
@@ -76,7 +84,7 @@ void CUIMapWnd::OnBtnLegend_Push(CUIWindow*, void*)
 //void CUIMapWnd::OnBtnRight_Push(CUIWindow*, void*) { MoveMap( Fvector2().set( -m_map_move_step, 0.0f ) ); }
 //void CUIMapWnd::OnBtnDown_Push( CUIWindow*, void*) { MoveMap( Fvector2().set( 0.0f, -m_map_move_step ) ); }
 
-void CUIMapWnd::OnBtnZoomMore_Push(CUIWindow*, void*)
+void CUIMapWnd::OnBtnZoomMore_Push()
 {
 	ViewZoomIn();
 }
@@ -86,7 +94,7 @@ void CUIMapWnd::OnBtnActor_Push(CUIWindow*, void*)
 	ViewActor();
 }
 
-void CUIMapWnd::OnBtnZoomLess_Push(CUIWindow*, void*)
+void CUIMapWnd::OnBtnZoomLess_Push()
 {
 	ViewZoomOut();
 }

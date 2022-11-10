@@ -511,6 +511,39 @@ bool CUIMapWnd::UpdateZoom( bool b_zoom_in )
 	return true;
 }
 
+void CUIMapWnd::UpdateZoomBtn( bool b_zoom_in )
+{
+	float prev_zoom = GetZoom();
+	float z = 0.0f;
+	if ( b_zoom_in )
+	{	
+		z = GetZoom() * 1.2f;
+		SetZoom( z );
+	}
+	else					
+	{
+		z = GetZoom() / 1.2f;
+		SetZoom( z );
+	}
+
+	
+	if ( !fsimilar( prev_zoom, GetZoom() ) )
+	{
+//		m_tgtCenter.set( 0, 0 );// = cursor_pos;
+		Frect vis_rect					= ActiveMapRect();
+		vis_rect.getcenter				(m_tgtCenter);
+
+		Fvector2						pos;
+		CUIGlobalMap* gm				= GlobalMap();
+		gm->GetAbsolutePos				(pos);
+		m_tgtCenter.sub					(pos);
+		m_tgtCenter.div					(gm->GetCurrentZoom());
+		
+		ResetActionPlanner();
+		HideCurHint();
+	}
+}
+
 void CUIMapWnd::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 {
 //	inherited::SendMessage( pWnd, msg, pData);
@@ -615,13 +648,13 @@ void CUIMapWnd::ResetActionPlanner()
 void CUIMapWnd::ViewZoomIn()
 {
 	if (GlobalMap()->Locked())		return;
-	UpdateZoom( true );
+	UpdateZoomBtn( true );
 }
 
 void CUIMapWnd::ViewZoomOut()
 {
 	if (GlobalMap()->Locked())		return;
-	UpdateZoom( false );
+	UpdateZoomBtn( false );
 }
 
 void CUIMapWnd::ViewActor()
