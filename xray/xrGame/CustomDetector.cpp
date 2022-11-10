@@ -31,7 +31,7 @@ bool CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 				&& !W->IsZoomed();
 	}
 	if (bres)
-		m_lastParentSlot = BOLT_SLOT;//Не трогать блэт!!!!
+		m_lastParentSlot = slot;
 
 	return bres;
 }
@@ -69,21 +69,34 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
     CWeapon* wpn = smart_cast<CWeapon*>(m_pInventory->ActiveItem());
     CWeaponKnife* knf = smart_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
 
-    if (GetState() == eHidden) {
+    if (GetState() == eHidden)
+	{
         PIItem iitem = m_pInventory->ActiveItem();
         CHudItem* itm = (iitem) ? iitem->cast_hud_item() : NULL;
 
-        if (CheckCompatibilityInt(itm) && wpn && !knf && wpn->GetState() == eIdle) {
-            wpn->SwitchState(CWeapon::eShowingDet);
-        } else if (CheckCompatibilityInt(itm) && !wpn || CheckCompatibilityInt(itm) && !wpn && knf) {
-            SwitchState(eShowing);
-            TurnDetectorInternal(true);
+		if (CheckCompatibilityInt(itm))
+		{
+            if (!knf && wpn)
+			{
+				if(wpn->GetState() == CWeapon::eIdle || wpn->GetState() == CWeapon::eEmpty)
+					wpn->SwitchState(CWeapon::eShowingDet);
+				else
+					SwitchState(eShowing);
+					TurnDetectorInternal(true);
+			}
+            else
+            {
+                SwitchState(eShowing);
+                TurnDetectorInternal(true);
+            }
         }
-        else {
+        else
+		{
             m_pInventory->Activate(m_lastParentSlot);
             m_bNeedActivation = true;
         }
-    } else if (GetState() == eIdle)
+    }
+	else if (GetState() == eIdle)
         SwitchState(eHiding);
 }
 
