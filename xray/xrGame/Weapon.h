@@ -221,7 +221,6 @@ public:
     bool bAltOffset;
 	bool m_bDisableShellParticles;
     bool m_bHideMarkInAlt;
-	bool bUnloadFromAmmoType;
 
 	bool IsGrenadeLauncherMode();
 

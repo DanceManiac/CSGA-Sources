@@ -278,10 +278,6 @@ void CWeaponMagazined::OnMagazineEmpty()
 
 void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 {
-	CWeapon* wpn = smart_cast<CWeapon*>(m_pInventory->ActiveItem());
-    if(wpn && GetState() != eIdle && !bUnloadFromAmmoType)
-        return;
-
 	xr_map<LPCSTR, u16> l_ammo;
 	
 	while(!m_magazine.empty()) 
@@ -373,9 +369,7 @@ void CWeaponMagazined::ReloadMagazine()
 	if(!m_bLockType && !m_magazine.empty() && 
 		(!m_pAmmo || xr_strcmp(m_pAmmo->cNameSect(), 
 					 *m_magazine.back().m_ammoSect)))
-        bUnloadFromAmmoType = true;
 		UnloadMagazine();
-        bUnloadFromAmmoType = false;
 
 	VERIFY((u32)iAmmoElapsed == m_magazine.size());
 
@@ -711,7 +705,6 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		{
 		    SwitchState(eHidden);
 		    bSwitchAmmoType = false;
-			bUnloadFromAmmoType = false;
 		} break; // End of Hide
 		case eHideDet:
 		    SwitchState(eIdle);
@@ -720,7 +713,6 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		{
 			SwitchState(eIdle);
 			bSwitchAmmoType = false;
-			bUnloadFromAmmoType = false;
 		} break;	// End of Show
 		case eIdle:
 			switch2_Idle();
