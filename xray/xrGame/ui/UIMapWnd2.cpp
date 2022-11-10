@@ -63,11 +63,11 @@ void CUIMapWnd::UpdateNav()
 	}
 	if ( m_btn_nav[btn_zoom_more]->CursorOverWindow() && m_btn_nav[btn_zoom_more]->GetButtonsState() == CUIButton::BUTTON_PUSHED )
 	{
-		ViewZoomIn();
+		OnBtnZoomMore_Push();
 	}
 	if ( m_btn_nav[btn_zoom_less]->CursorOverWindow() && m_btn_nav[btn_zoom_less]->GetButtonsState() == CUIButton::BUTTON_PUSHED )
 	{
-		ViewZoomOut();
+		OnBtnZoomLess_Push();
 	}
 }
 
