@@ -28,6 +28,8 @@ class CControllerPsyHit : public CControl_ComCustom<> {
 	// internal flag if weapon was hidden
 	bool				m_blocked;
 
+	u32					m_time_last_tube;
+
 public:
 	virtual void	load					(LPCSTR section);
 	virtual	void	reinit					();
@@ -39,6 +41,7 @@ public:
 	virtual void	on_event				(ControlCom::EEventType, ControlCom::IEventData*);
 
 			void	on_death				();
+			bool	tube_ready				() const;
 private:
 
 			void	play_anim				();

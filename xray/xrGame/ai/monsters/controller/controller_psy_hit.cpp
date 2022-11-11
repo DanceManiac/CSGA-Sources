@@ -28,8 +28,18 @@ void CControllerPsyHit::reinit()
 	m_stage[2] = skel->ID_Cycle_Safe("psy_attack_2"); VERIFY(m_stage[2]);
 	m_stage[3] = skel->ID_Cycle_Safe("psy_attack_3"); VERIFY(m_stage[3]);
 	m_current_index		= 0;
-
+	
+	m_time_last_tube	= 0;
 	m_sound_state		= eNone;
+}
+
+bool CControllerPsyHit::tube_ready () const
+{
+	u32 tube_condition_min_delay	=	5000;
+	if ( CController* controller = smart_cast<CController*>(m_object) )
+		tube_condition_min_delay	=	controller->m_tube_condition_min_delay;
+
+	return m_time_last_tube + tube_condition_min_delay < time();
 }
 
 bool CControllerPsyHit::check_start_conditions()
@@ -40,10 +50,16 @@ bool CControllerPsyHit::check_start_conditions()
 	if (Actor()->Cameras().GetCamEffector(eCEControllerPsyHit))	
 									return false;
 
-// 	if (m_object->Position().distance_to(Actor()->Position()) < m_min_tube_dist) 
-// 									return false;
+	if ( !m_object->EnemyMan.see_enemy_now(Actor()) )
+		return						false;
 
-	return true;
+	if ( !tube_ready() )
+		return						false;
+
+ 	if (m_object->Position().distance_to(Actor()->Position()) < m_min_tube_dist) 
+ 		return						false;
+
+	return							true;
 }
 
 void CControllerPsyHit::activate()
@@ -237,9 +253,9 @@ void CControllerPsyHit::death_glide_end()
 	monster->m_sound_tube_hit_left.play_at_pos(Actor(), Fvector().set(-1.f, 0.f, 1.f), sm_2D);
 	monster->m_sound_tube_hit_right.play_at_pos(Actor(), Fvector().set(1.f, 0.f, 1.f), sm_2D);
 
-	//m_object->Hit_Psy		(Actor(), monster->m_tube_damage);
-	m_object->Hit_Wound		(Actor(), monster->m_tube_damage,Fvector().set(0.0f,1.0f,0.0f),0.0f);
-	HUD().SetRenderable(true);
+	m_object->Hit_Psy		(Actor(), monster->m_tube_damage);
+//	m_object->Hit_Wound		(Actor(), monster->m_tube_damage,Fvector().set(0.0f,1.0f,0.0f),0.0f); // Не могу объяснить, почему был урон не по пси-здовоью, 
+	HUD().SetRenderable		(true);																  // а по обычному здороью, что и давало кровотечение
 
 }
 
