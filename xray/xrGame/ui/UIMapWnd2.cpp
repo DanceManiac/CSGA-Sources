@@ -86,7 +86,8 @@ void CUIMapWnd::OnBtnLegend_Push(CUIWindow*, void*)
 
 void CUIMapWnd::OnBtnZoomMore_Push()
 {
-	ViewZoomIn();
+	if (Device.dwFrame % 2)
+		ViewZoomIn();
 }
 
 void CUIMapWnd::OnBtnActor_Push(CUIWindow*, void*)
@@ -96,7 +97,8 @@ void CUIMapWnd::OnBtnActor_Push(CUIWindow*, void*)
 
 void CUIMapWnd::OnBtnZoomLess_Push()
 {
-	ViewZoomOut();
+	if (Device.dwFrame % 2)
+		ViewZoomOut();
 }
 void CUIMapWnd::OnBtnZoomReset_Push(CUIWindow*, void*)
 {
