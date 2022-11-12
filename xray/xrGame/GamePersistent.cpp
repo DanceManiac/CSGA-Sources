@@ -17,6 +17,7 @@
 #include "ActorEffector.h"
 #include "actor.h"
 #include "spectator.h"
+#include "GameConstants.h"
 #include "../xrEngine/xrSASH.h"
 #ifndef MASTER_GOLD
 #	include "custommonster.h"
@@ -131,6 +132,7 @@ void CGamePersistent::OnAppStart()
 	__super::OnAppStart			();
 	m_pUI_core					= xr_new<ui_core>();
 	m_pMainMenu					= xr_new<CMainMenu>();
+	GameConstants::LoadConstants();
 }
 
 
