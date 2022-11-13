@@ -835,7 +835,7 @@ void CUIActorMenu::highlight_weapons_for_ammo( PIItem ammo_item, CUIDragDropList
 		CWeapon* weapon = smart_cast<CWeapon*>(item);
 		CWeaponBinoculars* binoc = smart_cast<CWeaponBinoculars*>(item);
 		CWeaponKnife* knife = smart_cast<CWeaponKnife*>(item);
-		if ( !weapon || !binoc || !knife )
+		if ( !weapon )
 		{
 			continue;
 		}
@@ -844,7 +844,7 @@ void CUIActorMenu::highlight_weapons_for_ammo( PIItem ammo_item, CUIDragDropList
 		xr_vector<shared_str>::iterator ite = weapon->m_ammoTypes.end();
 		for ( ; itb != ite; ++itb )
 		{
-			if ( ammo_name._get() == (*itb)._get() )
+			if ( ammo_name._get() == (*itb)._get() && !(binoc||knife) )
 			{
 				ci->m_select_armament = true;
 				break; // for itb
