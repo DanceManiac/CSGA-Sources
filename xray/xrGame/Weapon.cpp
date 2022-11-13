@@ -1209,7 +1209,6 @@ bool CWeapon::Action(s32 cmd, u32 flags)
                             if (!binoc)
 								SwitchState(eZoomEnd);
 
-
                            OnZoomOut();
 						}
                     }

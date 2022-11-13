@@ -41,6 +41,7 @@ protected:
 	virtual void	switch2_Hiding	();
 	virtual void	switch2_Hidden	();
 	virtual void	switch2_Showing	();
+	virtual void	switch2_LookMisfire();
 	
 	virtual void	OnShot			();	
 	
@@ -156,6 +157,7 @@ protected:
     virtual void	PlayAnimIdleSprint	();
     virtual void	PlayAnimAimStart	();
     virtual void	PlayAnimAimEnd		();
+	virtual void	PlayAnimLookMis		();
 
 private:
 	string64 guns_aim_anm;

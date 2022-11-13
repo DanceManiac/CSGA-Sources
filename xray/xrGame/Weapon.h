@@ -119,6 +119,7 @@ public:
 		eHideDet,
 		eZoomStart,
 		eZoomEnd,
+		eLookMis,
 	};
 	enum EWeaponSubStates{
 		eSubstateReloadBegin		=0,

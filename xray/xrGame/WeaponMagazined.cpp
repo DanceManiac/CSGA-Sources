@@ -184,10 +184,11 @@ void CWeaponMagazined::FireStart()
 	}
 	else
 	{//misfire
-            if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()) && (g_SingleGameDifficulty == egdNovice))
-			HUD().GetUI()->AddInfoMessage("gun_jammed");
+		if(GetState() == eIdle && !IsGrenadeLauncherMode())
+			SwitchState(eLookMis);
 
-		OnEmptyClick();
+        if (!IsGrenadeLauncherMode() && GetState() == eLookMis && smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()) && (g_SingleGameDifficulty == egdNovice))
+			HUD().GetUI()->AddInfoMessage("gun_jammed");
 	}
 }
 
@@ -432,6 +433,10 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
         case eEmpty:
             EmptyMove();
             break;
+        case eLookMis:
+			{
+				switch2_LookMisfire();
+			} break;
         case eReload:
             switch2_Reload();
             break;
@@ -497,6 +502,7 @@ void CWeaponMagazined::UpdateCL()
 			}break;
 		case eMisfire: state_Misfire(dt); break;
 		case eEmpty:
+		case eLookMis: break;
 		case eHidden: break;
 		}
 	}
@@ -614,6 +620,21 @@ void CWeaponMagazined::state_Misfire(float dt)
 	UpdateSounds();
 }
 
+void CWeaponMagazined::switch2_LookMisfire()
+{
+    OnEmptyClick();
+	PlayAnimLookMis();
+    SetPending(true);
+}
+
+void CWeaponMagazined::PlayAnimLookMis()
+{
+	if(IsZoomed())
+        PlayHUDMotion("anm_fakeshoot_aim_jammed", false, this, GetState());
+	else
+		PlayHUDMotion("anm_fakeshoot_jammed", true, this, GetState());
+}
+
 void CWeaponMagazined::SetDefaults()
 {
 	CWeapon::SetDefaults();
@@ -722,6 +743,9 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 			switch2_Idle();
 			break;  // Keep showing idle
 		case eEmpty:
+			SwitchState(eIdle);
+			break;
+		case eLookMis:
 			SwitchState(eIdle);
 			break;
 		case eShowingDet:
