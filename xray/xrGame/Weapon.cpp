@@ -1161,11 +1161,11 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 						{
 							if(!IsPending())
 							{
+								bAltOffset = false;
 								if(GetState()==eIdle || GetState()==eZoomEnd) {
 									if(!binoc)
 										SwitchState(eZoomStart);
 
-									bAltOffset = false;
 									OnZoomIn();
 								}
 							}
@@ -1188,6 +1188,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 					{
 						if(!IsZoomed() && !IsPending())
 						{
+							bAltOffset = false;
 							if(GetState()==eIdle || GetState()==eZoomEnd || GetState()==eFire || GetState()==eEmpty) {
                                 if (GetState()==eFire)
 									FireEnd();
@@ -1195,7 +1196,6 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 								if (!binoc)
 									SwitchState(eZoomStart);
 
-								bAltOffset = false;
 								OnZoomIn();
 							}
 						}
@@ -1230,11 +1230,11 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 						{
 							if(!IsPending())
 							{
+								bAltOffset = true;
 								if(GetState()==eIdle || GetState()==eZoomEnd) {
 									if(!binoc)
 										SwitchState(eZoomStart);
 
-									bAltOffset = true;
 									OnZoomIn();
 								}
 							}
@@ -1245,7 +1245,6 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 								if(!binoc)
 									SwitchState(eZoomEnd);
 
-								bAltOffset = false;
 								OnZoomOut();
 							}
                         }
@@ -1257,6 +1256,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 					{
 						if(!IsZoomed() && !IsPending())
 						{
+							bAltOffset = true;
 							if(GetState()==eIdle || GetState()==eZoomEnd || GetState()==eFire || GetState()==eEmpty) {
                                 if (GetState()==eFire)
 									FireEnd();
@@ -1264,7 +1264,6 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 								if (!binoc)
 									SwitchState(eZoomStart);
 
-								bAltOffset = true;
 								OnZoomIn();
 							}
 						}
@@ -1278,7 +1277,6 @@ bool CWeapon::Action(s32 cmd, u32 flags)
                             if (!binoc)
 								SwitchState(eZoomEnd);
 
-						   bAltOffset = false;
                            OnZoomOut();
 						}
                     }
