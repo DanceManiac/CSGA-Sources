@@ -19,9 +19,12 @@ public:
 	virtual CEatableItem	*cast_eatable_item			()	{return this;}
 
 	virtual void			Load						(LPCSTR section);
+			bool			Empty						()	const	{ return m_iPortionsNum==0; };
 	virtual bool			Useful						() const;
 
-	virtual BOOL			net_Spawn					(CSE_Abstract* DC);
+	virtual BOOL			net_Spawn					(CSE_Abstract* DC);	
+	virtual void			save						(NET_Packet &output_packet);
+	virtual void			load						(IReader &input_packet);
 
 	virtual void			OnH_B_Independent			(bool just_before_destroy);
 	virtual void			OnH_A_Independent			();

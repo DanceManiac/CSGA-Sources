@@ -2,6 +2,7 @@
 #include "UICellCustomItems.h"
 #include "UIInventoryUtilities.h"
 #include "../Weapon.h"
+#include "../eatable_item.h"
 #include "UIDragDropListEx.h"
 
 #define INV_GRID_WIDTHF			50.0f
@@ -59,6 +60,12 @@ bool CUIInventoryCellItem::EqualTo(CUICellItem* itm)
 	{
 		return false;
 	}
+
+	auto eatable = smart_cast<CEatableItem*>(object());
+
+	if (eatable && eatable->GetPortionsNum() != smart_cast<CEatableItem*>(ci->object())->GetPortionsNum())
+		return false;
+
 	return true;
 }
 

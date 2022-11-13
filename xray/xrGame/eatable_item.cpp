@@ -96,7 +96,7 @@ bool CEatableItem::Useful() const
 	if(!inherited::Useful()) return false;
 
 	//проверить не все ли еще съедено
-	if(m_iPortionsNum == 0) return false;
+	if (Empty()) return false;
 
 	return true;
 }
@@ -119,6 +119,16 @@ void CEatableItem::OnH_B_Independent(bool just_before_destroy)
 			m_physic_item->m_ready_to_destroy	= true;
 	}
 	inherited::OnH_B_Independent(just_before_destroy);
+}
+
+void CEatableItem::save				(NET_Packet &packet)
+{
+	inherited::save				(packet);
+}
+
+void CEatableItem::load				(IReader &packet)
+{
+	inherited::load				(packet);
 }
 
 void CEatableItem::UseBy (CEntityAlive* entity_alive)
