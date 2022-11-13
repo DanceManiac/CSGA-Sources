@@ -515,6 +515,8 @@ bool CUIActorMenu::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 	bool b_own_item						= (iitem->parent_id()==m_pActorInvOwner->object_id());
 	
 	bool b_already						= m_pActorInvOwner->inventory().InRuck(iitem);
+	if (m_pCurrentCellItem)
+		m_pCurrentCellItem->Mark(false);
 
 	CUIDragDropListEx*	old_owner		= itm->OwnerList();
 	CUIDragDropListEx*	new_owner		= NULL;

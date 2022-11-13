@@ -391,7 +391,10 @@ bool CUIActorMenu::OnItemStartDrag(CUICellItem* itm)
 
 bool CUIActorMenu::OnItemSelected(CUICellItem* itm)
 {
+	if (m_pCurrentCellItem)
+		m_pCurrentCellItem->Mark(false);
 	SetCurrentItem		(itm);
+	itm->Mark			(true);
 	InfoCurItem			(NULL);
 	m_item_info_view	= false;
 	return				false;
