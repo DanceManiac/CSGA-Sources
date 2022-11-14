@@ -69,6 +69,7 @@ public:
 	virtual void	PlayAnimBore		();
 	virtual void	PlayAnimAimStart	();
     virtual void	PlayAnimAimEnd		();
+	virtual void	PlayAnimLookMis		();
 	
 	virtual void	PlaySoundLowAmmo();
 

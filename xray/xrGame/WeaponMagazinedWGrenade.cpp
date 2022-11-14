@@ -466,6 +466,19 @@ void CWeaponMagazinedWGrenade::OnStateSwitch(u32 S)
 	UpdateGrenadeVisibility(!!iAmmoElapsed || S == eReload);
 }
 
+void CWeaponMagazinedWGrenade::PlayAnimLookMis()
+{
+    if (IsGrenadeLauncherAttached())
+	{
+		if(IsZoomed())
+			PlayHUDMotion("anm_fakeshoot_aim_jammed_w_gl", false, this, GetState());
+		else
+			PlayHUDMotion("anm_fakeshoot_jammed_w_gl", true, this, GetState());
+	}
+	else
+        inherited::PlayAnimLookMis();
+}
+
 void CWeaponMagazinedWGrenade::EmptyMove()
 {
 	if(m_bGrenadeMode)

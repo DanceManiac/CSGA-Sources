@@ -24,6 +24,7 @@
 #include "WeaponBinoculars.h"
 #include "WeaponKnife.h"
 #include "WeaponMagazinedWGrenade.h"
+#include "WeaponBM16.h"
 
 ENGINE_API bool	g_dedicated_server;
 
@@ -107,7 +108,8 @@ void CWeaponMagazined::Load	(LPCSTR section)
 	if (m_bUseLowAmmoSnd)
         m_sounds.LoadSound(section, "snd_lowammo", "sndLowAmmo", false, m_eSoundShot);
 
-
+	if (m_bUseLightMisfire)
+		m_sounds.LoadSound(section, "snd_light_misfire", "sndLightMis", true, m_eSoundShot);
 
 	m_sSndShotCurrent = "sndShot";
 		
@@ -171,7 +173,10 @@ void CWeaponMagazined::FireStart()
 				inherited::FireStart();
 
 				R_ASSERT(H_Parent());
-				SwitchState(eFire);
+				if (m_bUseLightMisfire && CheckForLightMisfire())
+					SwitchState(eUnLightMis);
+				else
+					SwitchState(eFire);
 			}
 		}
 		else 
@@ -317,7 +322,7 @@ void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 		if(l_it->second && !unlimited_ammo()) SpawnAmmo(l_it->second, l_it->first);
 	}
 	
-	if (IsMisfire())
+	if (!IsGrenadeLauncherMode() && IsMisfire())
         bMisfire = false;
 
 	if(GetState() == eIdle)
@@ -437,6 +442,9 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
 			{
 				switch2_LookMisfire();
 			} break;
+        case eUnLightMis: {
+				switch2_LightMisfire();
+			} break;
         case eReload:
             switch2_Reload();
             break;
@@ -501,8 +509,9 @@ void CWeaponMagazined::UpdateCL()
 				state_Fire(dt);
 			}break;
 		case eMisfire: state_Misfire(dt); break;
-		case eEmpty:
+		case eEmpty: break;
 		case eLookMis: break;
+		case eUnLightMis: break;
 		case eHidden: break;
 		}
 	}
@@ -565,8 +574,16 @@ void CWeaponMagazined::state_Fire(float dt)
 		
 		VERIFY(!m_magazine.empty());
 
+		CWeaponBM16* bm = smart_cast<CWeaponBM16*>(m_pInventory->ActiveItem());
+
 		while (!m_magazine.empty() && fShotTimeCounter<0 && (IsWorking() || m_bFireSingleShot) && (m_iQueueSize<0 || m_iShotNum<m_iQueueSize))
 		{
+			if(bm && CheckForMisfire())
+			{
+				StopShooting();
+				return;
+			}
+
 			m_bFireSingleShot = false;
 
             //Alundaio: Use fModeShotTime instead of fOneShotTime if current fire mode is 2-shot burst
@@ -586,7 +603,7 @@ void CWeaponMagazined::state_Fire(float dt)
 			else
 				FireTrace(m_vStartPos, m_vStartDir);
 
-			if(CheckForMisfire())
+			if(!bm && CheckForMisfire())
 			{
 				StopShooting();
 				return;
@@ -625,6 +642,21 @@ void CWeaponMagazined::switch2_LookMisfire()
     OnEmptyClick();
 	PlayAnimLookMis();
     SetPending(true);
+}
+
+void CWeaponMagazined::switch2_LightMisfire()
+{
+    PlaySound("sndLightMis", get_LastFP());
+    PlayAnimLightMis();
+    SetPending(true);
+}
+
+void CWeaponMagazined::PlayAnimLightMis()
+{
+	if(IsZoomed())
+        PlayHUDMotion("anm_shoot_lightmisfire_aim", false, this, GetState());
+	else
+		PlayHUDMotion("anm_shoot_lightmisfire", true, this, GetState());
 }
 
 void CWeaponMagazined::PlayAnimLookMis()
@@ -746,6 +778,9 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 			SwitchState(eIdle);
 			break;
 		case eLookMis:
+			SwitchState(eIdle);
+			break;
+		case eUnLightMis:
 			SwitchState(eIdle);
 			break;
 		case eShowingDet:

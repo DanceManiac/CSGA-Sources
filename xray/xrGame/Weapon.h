@@ -120,6 +120,7 @@ public:
 		eZoomStart,
 		eZoomEnd,
 		eLookMis,
+		eUnLightMis,
 	};
 	enum EWeaponSubStates{
 		eSubstateReloadBegin		=0,
@@ -134,6 +135,7 @@ public:
 
 	BOOL					IsMisfire			() const;
 	BOOL					CheckForMisfire		();
+	BOOL					CheckForLightMisfire();
 
 
 	BOOL					AutoSpawnAmmo		() const		{ return m_bAutoSpawnAmmo; };
@@ -143,7 +145,7 @@ protected:
 	bool					m_bTriStateReload;
 	u8						m_sub_state;
 	// a misfire happens, you'll need to rearm weapon
-	bool					bMisfire;				
+	bool					bMisfire;		
 
 	BOOL					m_bAutoSpawnAmmo;
 
@@ -367,6 +369,7 @@ public:
 	//параметы оружия в зависимоти от его состояния исправности
 	float					GetConditionDispersionFactor	() const;
 	float					GetConditionMisfireProbability	() const;
+	float				    GetConditionLightMisfireProbability	() const;
 	virtual	float			GetConditionToShow				() const;
 
 public:
@@ -376,14 +379,21 @@ public:
 protected:
 	//фактор увеличения дисперсии при максимальной изношености 
 	//(на сколько процентов увеличится дисперсия)
-	float					fireDispersionConditionFactor;
+	float fireDispersionConditionFactor;
 	//вероятность осечки при максимальной изношености
-	float misfireStartCondition;			//изношенность, при которой появляется шанс осечки
-	float misfireEndCondition;				//изношеность при которой шанс осечки становится константным
-	float misfireStartProbability;			//шанс осечки при изношености больше чем misfireStartCondition
-	float misfireEndProbability;			//шанс осечки при изношености больше чем misfireEndCondition
+	float misfireStartCondition;			//изношенность, при которой появляется шанс клина
+	float misfireEndCondition;				//изношеность при которой шанс клина становится константным
+	float misfireStartProbability;			//шанс клина при изношености больше чем misfireStartCondition
+	float misfireEndProbability;			//шанс клина при изношености больше чем misfireEndCondition
 	float conditionDecreasePerQueueShot;	//увеличение изношености при выстреле очередью
 	float conditionDecreasePerShot;			//увеличение изношености при одиночном выстреле
+
+	//осечка
+	bool  m_bUseLightMisfire; //включаем использование осечек
+	float l_misfireStartCondition; //начальное состояние оружия, при котором происходят осечки; независимо от указанного тут значения, при состояниях лучшем, чем misfire_start_condition, осечек не будет
+	float l_misfireEndCondition; //состояние, хуже которого вероятность осечки константа
+	float l_misfireStartProbability; //какая часть всех задержек будет осечками в начальном состоянии
+	float l_misfireEndProbability; //какая часть всех задержек будет осечками на нижнем пороге
 
 public:
 	float GetMisfireStartCondition	() const {return misfireStartCondition;};

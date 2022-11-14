@@ -358,6 +358,7 @@ void CWeapon::Load		(LPCSTR section)
 	m_crosshair_inertion			= READ_IF_EXISTS(pSettings, r_float, section, "crosshair_inertion",	5.91f);
 	m_first_bullet_controller.load	(section);
 
+	//Параметры для обычного клина, когда застревает гильза
 	fireDispersionConditionFactor	= READ_IF_EXISTS(pSettings, r_float, section, "fire_dispersion_condition_factor", 1.0f);
 	misfireStartCondition			= READ_IF_EXISTS(pSettings, r_float, section, "misfire_start_condition", 0.3f);
 	misfireEndCondition				= READ_IF_EXISTS(pSettings, r_float, section, "misfire_end_condition", 0.f);
@@ -365,6 +366,16 @@ void CWeapon::Load		(LPCSTR section)
 	misfireEndProbability			= pSettings->r_float(section, "misfire_end_prob");
 	conditionDecreasePerShot		= pSettings->r_float(section,"condition_shot_dec"); 
 	conditionDecreasePerQueueShot	= READ_IF_EXISTS(pSettings, r_float, section, "condition_queue_shot_dec", conditionDecreasePerShot); 
+
+	//Параметры для осечки, когда затвор выебывается
+	m_bUseLightMisfire = READ_IF_EXISTS(pSettings, r_bool, section, "use_light_misfire", false);
+	if(m_bUseLightMisfire)
+	{
+		l_misfireStartCondition =   pSettings->r_float(section, "light_misfire_start_condition");
+		l_misfireEndCondition =     pSettings->r_float(section, "light_misfire_end_condition");
+		l_misfireStartProbability = pSettings->r_float(section, "light_misfire_start_probability");
+		l_misfireEndProbability =   pSettings->r_float(section, "light_misfire_end_probability");
+	}
 		
 	vLoadedFirePoint	= pSettings->r_fvector3		(section,"fire_point"		);
 	
@@ -1090,7 +1101,7 @@ void CWeapon::renderable_Render		()
 	RenderLight				();	
 
 	//если мы в режиме снайперки, то сам HUD рисовать не надо
-	if(IsZoomed() && !IsRotatingToZoom() && ZoomTexture())
+	if(IsZoomed() && !IsRotatingToZoom() && ZoomTexture() && !bAltOffset)
 		RenderHud		(FALSE);
 	else
 		RenderHud		(TRUE);
@@ -1499,10 +1510,8 @@ float CWeapon::GetConditionMisfireProbability() const
 	return mis;
 }
 
-BOOL CWeapon::CheckForMisfire	()
+BOOL CWeapon::CheckForMisfire()
 {
-	if (OnClient()) return FALSE;
-
 	float rnd = ::Random.randF(0.f,1.f);
 	float mp = GetConditionMisfireProbability();
 	if(rnd < mp)
@@ -1524,6 +1533,41 @@ BOOL CWeapon::IsMisfire() const
 {	
 	return bMisfire;
 }
+
+float CWeapon::GetConditionLightMisfireProbability() const
+{
+	if(GetCondition() > l_misfireStartCondition) 
+		return 0.0f;
+	if(GetCondition() < l_misfireEndCondition) 
+		return l_misfireEndProbability;
+	float l_mis = l_misfireStartProbability + (
+		(l_misfireStartCondition - GetCondition()) *				// condition goes from 1.f to 0.f
+		(l_misfireEndProbability - l_misfireStartProbability) /		// probability goes from 0.f to 1.f
+		((l_misfireStartCondition == l_misfireEndCondition) ?		// !!!say "No" to devision by zero
+			l_misfireStartCondition : 
+			(l_misfireStartCondition - l_misfireEndCondition))
+		);
+	clamp(l_mis, 0.0f, 0.99f);
+	return l_mis;
+}
+
+BOOL CWeapon::CheckForLightMisfire()
+{
+	if(!m_bUseLightMisfire)
+		return FALSE;
+
+    if (l_misfireStartCondition > misfireStartCondition)
+		return FALSE;
+
+	float rnd = ::Random.randF(0.f,1.f);
+	float l_mp = GetConditionLightMisfireProbability();
+
+	if(rnd < l_mp)
+		return TRUE;
+	else
+		return FALSE;
+}
+
 void CWeapon::Reload()
 {
 	OnZoomOut();
