@@ -721,6 +721,7 @@ void CUIMainIngameWnd::UpdatePickUpItem	()
 
 	UIPickUpItemIcon->SetWidth(m_iGridWidth*INV_GRID_WIDTH*scale);
 	UIPickUpItemIcon->SetHeight(m_iGridHeight*INV_GRID_HEIGHT*scale);
+	UIPickUpItemIcon->SetAlignment(waCenter);
 
 	UIPickUpItemIcon->SetColor(color_rgba(255,255,255,192));
 	UIPickUpItemIcon->Show(true);
