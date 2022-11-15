@@ -25,6 +25,7 @@ CUIAnimatedStatic::CUIAnimatedStatic()
 		m_prevTime				(0)
 {
 	m_pos.set(0,0);
+	ClipperOn();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -16,6 +16,7 @@
 CMapSpot::CMapSpot(CMapLocation* ml)
 :m_map_location(ml)
 {
+	ClipperOn			();
 	m_bScale			= false;
 	m_location_level    = 0;
 	m_border_static		= NULL;
@@ -143,6 +144,7 @@ void CMapSpot::mark_focused()
 CMapSpotPointer::CMapSpotPointer(CMapLocation* ml)
 :inherited(ml)
 {
+	ClipperOn();
 }
 
 CMapSpotPointer::~CMapSpotPointer()

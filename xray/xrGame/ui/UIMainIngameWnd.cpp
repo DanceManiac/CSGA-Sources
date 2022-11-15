@@ -114,8 +114,10 @@ void CUIMainIngameWnd::Init()
 	UIWeaponIcon.SetShader		(GetEquipmentIconsShader());
 	UIWeaponIcon_rect			= UIWeaponIcon.GetWndRect();
 */	//---------------------------------------------------------
+
 	UIPickUpItemIcon			= UIHelper::CreateStatic		(uiXml, "pick_up_item", this);
 	UIPickUpItemIcon->SetShader	(GetEquipmentIconsShader());
+	UIPickUpItemIcon->ClipperOn	();
 
 	m_iPickUpItemIconWidth		= UIPickUpItemIcon->GetWidth();
 	m_iPickUpItemIconHeight		= UIPickUpItemIcon->GetHeight();
