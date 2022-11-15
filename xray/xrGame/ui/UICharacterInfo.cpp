@@ -113,7 +113,7 @@ void CUICharacterInfo::Init_IconInfoItem( CUIXml& xml_doc, LPCSTR item_str, UIIt
 		CUIStatic*	pItem = m_icons[type] = xr_new<CUIStatic>();
 		CUIXmlInit::InitStatic( xml_doc, item_str, 0, pItem );
 		
-		pItem->ClipperOn();
+//.		pItem->ClipperOn();
 		pItem->Show( true );
 		pItem->Enable( true );
 		AttachChild( pItem );

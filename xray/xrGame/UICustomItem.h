@@ -38,6 +38,7 @@ public:
 	IC void			SetRect					(float x1, float y1, float x2, float y2){iVisRect.set(x1,y1,x2,y2); uFlags.set(flValidRect,TRUE); }
 	IC void			SetRect					(const Frect& r){iVisRect.set(r); uFlags.set(flValidRect, TRUE); }
 	  void			SetOriginalRect			(float x, float y, float width, float height);
+	void			SetTextureRect			(const Frect& r)									{ iOriginalRect = r; uFlags.set(flValidOriginalRect,TRUE);}
 
 	IC Frect		GetRect					() {return iVisRect;}
 	   Frect		GetOriginalRect			() const;

@@ -76,7 +76,6 @@ void CUICustomMap::Init_internal(const shared_str& name, CInifile& pLtx, const s
 	CUIStatic::InitTextureEx(m_texture.c_str(), m_shader_name.c_str());
 	
 	SetStretchTexture		(true);
-	ClipperOn				();
 }
 
 void rotation_(float x, float y, const float angle, float& x_, float& y_)
