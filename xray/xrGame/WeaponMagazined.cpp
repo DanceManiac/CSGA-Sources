@@ -173,7 +173,7 @@ void CWeaponMagazined::FireStart()
 				inherited::FireStart();
 
 				R_ASSERT(H_Parent());
-				if (m_bUseLightMisfire && CheckForLightMisfire())
+				if (m_bUseLightMisfire && !IsGrenadeLauncherMode() && CheckForLightMisfire())
 					SwitchState(eUnLightMis);
 				else
 					SwitchState(eFire);
@@ -191,15 +191,12 @@ void CWeaponMagazined::FireStart()
 	{//misfire
 		if(GetState() == eIdle && !IsGrenadeLauncherMode())
 			SwitchState(eLookMis);
-
-        if (!IsGrenadeLauncherMode() && GetState() == eLookMis && smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()) && (g_SingleGameDifficulty == egdNovice))
-			HUD().GetUI()->AddInfoMessage("gun_jammed");
 	}
 }
 
 void CWeaponMagazined::MsgGunEmpty()
 {
-	if(smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity()==H_Parent()) && (g_SingleGameDifficulty == egdNovice))
+	if(smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity()==H_Parent()))
 		HUD().GetUI()->AddInfoMessage("gun_empty");
 }
 
@@ -431,10 +428,7 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
         case eFire:
             switch2_Fire();
             break;
-        case eMisfire:
-            if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()) && (g_SingleGameDifficulty == egdNovice))
-                HUD().GetUI()->AddInfoMessage("gun_jammed");
-            break;
+        case eMisfire: break;
         case eEmpty:
             EmptyMove();
             break;
@@ -642,6 +636,9 @@ void CWeaponMagazined::switch2_LookMisfire()
     OnEmptyClick();
 	PlayAnimLookMis();
     SetPending(true);
+
+	if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
+		HUD().GetUI()->AddInfoMessage("gun_jammed");
 }
 
 void CWeaponMagazined::switch2_LightMisfire()
@@ -649,6 +646,9 @@ void CWeaponMagazined::switch2_LightMisfire()
     PlaySound("sndLightMis", get_LastFP());
     PlayAnimLightMis();
     SetPending(true);
+
+	if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
+		HUD().GetUI()->AddInfoMessage("gun_misfire");
 }
 
 void CWeaponMagazined::PlayAnimLightMis()
