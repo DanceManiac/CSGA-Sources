@@ -135,37 +135,12 @@ void CWeaponMagazinedWGrenade::switch2_Reload()
 	VERIFY(GetState()==eReload);
 	if(m_bGrenadeMode) 
 	{
-		if (iAmmoElapsed == 0)
-		{
-			PlayHUDMotion("anm_reload_empty_g", false, this, GetState());
-            PlaySound("sndReloadG", get_LastFP2());
-		}
-		else if(IsMisfire())
-		{
-			PlayHUDMotion("anm_reload_jammed_g", false, this, GetState());
-            PlaySound("sndReloadG", get_LastFP2());
-		}
-		else if(bSwitchAmmoType)
-		{
-			PlayHUDMotion("anm_reload_ammochange_g", false, this, GetState());
-            PlaySound("sndChangeGrenade", get_LastFP2());
-		}
-		else if(bSwitchAmmoType && IsMisfire())
-		{
-			PlayHUDMotion("anm_reload_jammed_ammochange_g", false, this, GetState());
-            PlaySound("sndChangeGrenade", get_LastFP2());
-		}
-		else if(bSwitchAmmoType && iAmmoElapsed == 0)
-		{
-			PlayHUDMotion("anm_reload_empty_ammochange_g", false, this, GetState());
-            PlaySound("sndChangeGrenade", get_LastFP2());
-		}
+		if(iAmmoElapsed == 0)
+			PlaySound("sndReloadG", get_LastFP2());
         else
-		{
-			PlayHUDMotion("anm_reload_g", false, this, GetState());
-            PlaySound("sndReloadG", get_LastFP2());
-		}
+			PlaySound("sndChangeGrenade", get_LastFP2());
 
+		PlayAnimReload();
 		SetPending(true);
 	}
 	else 
@@ -694,16 +669,52 @@ void CWeaponMagazinedWGrenade::PlayAnimReload()
 
 	if(IsGrenadeLauncherAttached())
 	{
-		if(iAmmoElapsed == 0 && !IsMisfire())
-			PlayHUDMotion("anm_reload_empty_w_gl", true, this, GetState());
-		else if(IsMisfire())
-			PlayHUDMotion("anm_reload_jammed_w_gl", true, this, GetState());
-		else if (bSwitchAmmoType)
-			PlayHUDMotion("anm_reload_ammochange_w_gl", true, this, GetState());
-		else if (bSwitchAmmoType && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_reload_empty_ammochange_w_gl", true, this, GetState());
+		if(m_bGrenadeMode)
+		{
+			if(bSwitchAmmoType)
+			{
+				if (iAmmoElapsed == 0)
+				{
+					if(iAmmoElapsed2 == 0 && !IsMisfire())
+						PlayHUDMotion("anm_reload_empty_g", true, this, GetState());
+					else if(IsMisfire())
+						PlayHUDMotion("anm_reload_jammed_g", true, this, GetState());
+					else
+						PlayHUDMotion("anm_reload_g", true, this, GetState());
+				}
+				else
+				{
+					if(iAmmoElapsed2 == 0 && !IsMisfire())
+						PlayHUDMotion("anm_reload_empty_ammochange_g", true, this, GetState());
+					else if(IsMisfire())
+						PlayHUDMotion("anm_reload_jammed_ammochange_g", true, this, GetState());
+					else
+						PlayHUDMotion("anm_reload_ammochange_g", true, this, GetState());
+				}
+			}
+			else
+			{
+				if(iAmmoElapsed2 == 0 && !IsMisfire())
+					PlayHUDMotion("anm_reload_empty_g", true, this, GetState());
+				else if(IsMisfire())
+					PlayHUDMotion("anm_reload_jammed_g", true, this, GetState());
+				else
+					PlayHUDMotion("anm_reload_g", true, this, GetState());
+			}
+		}
 		else
-			PlayHUDMotion("anm_reload_w_gl", true, this, GetState());
+		{
+			if(iAmmoElapsed == 0 && !IsMisfire())
+				PlayHUDMotion("anm_reload_empty_w_gl", true, this, GetState());
+			else if(IsMisfire())
+				PlayHUDMotion("anm_reload_jammed_w_gl", true, this, GetState());
+			else if (bSwitchAmmoType)
+				PlayHUDMotion("anm_reload_ammochange_w_gl", true, this, GetState());
+			else if (bSwitchAmmoType && iAmmoElapsed == 0)
+				PlayHUDMotion("anm_reload_empty_ammochange_w_gl", true, this, GetState());
+			else
+				PlayHUDMotion("anm_reload_w_gl", true, this, GetState());
+		}
 	}
 	else
 		inherited::PlayAnimReload();
