@@ -363,8 +363,8 @@ void CWeapon::Load		(LPCSTR section)
 	misfireStartCondition			= READ_IF_EXISTS(pSettings, r_float, section, "misfire_start_condition", 0.3f);
 	misfireEndCondition				= READ_IF_EXISTS(pSettings, r_float, section, "misfire_end_condition", 0.f);
 	misfireStartProbability			= READ_IF_EXISTS(pSettings, r_float, section, "misfire_start_prob", 0.f);
-	misfireEndProbability			= pSettings->r_float(section, "misfire_end_prob");
-	conditionDecreasePerShot		= pSettings->r_float(section,"condition_shot_dec"); 
+	misfireEndProbability			= READ_IF_EXISTS(pSettings, r_float, section, "misfire_end_prob", 0.f);//pSettings->r_float(section, "misfire_end_prob");
+	conditionDecreasePerShot		= READ_IF_EXISTS(pSettings, r_float, section, "condition_shot_dec", 0.f);//pSettings->r_float(section,"condition_shot_dec"); 
 	conditionDecreasePerQueueShot	= READ_IF_EXISTS(pSettings, r_float, section, "condition_queue_shot_dec", conditionDecreasePerShot); 
 
 	//Параметры для осечки, когда затвор выебывается
