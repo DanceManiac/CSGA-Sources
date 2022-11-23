@@ -49,6 +49,15 @@ xr_token							qmsaa_token							[ ]={
 	{ 0,							0												}
 };
 
+u32			screenshot_type				=	0;			//	=	0;
+xr_token							stype							[ ]={
+	{ "jpg",					0												},
+	{ "bmp",							1												},
+	{ "tga",							2												},
+	{ "png",							3												},
+	{ 0,							0												}
+};
+
 u32			ps_r3_msaa_atest		=	0;			//	=	0;
 xr_token							qmsaa__atest_token					[ ]={
 	{ "st_opt_off",					0												},
@@ -764,6 +773,7 @@ void		xrRender_initconsole	()
 
 	//CMD3(CCC_Mask,		"r3_msaa",						&ps_r2_ls_flags,			R3FLAG_MSAA);
 	CMD3(CCC_Token,		"r3_msaa",						&ps_r3_msaa,				qmsaa_token);
+	CMD3(CCC_Token,		"screenshot_type",					&screenshot_type, stype);
 	//CMD3(CCC_Mask,		"r3_msaa_hybrid",				&ps_r2_ls_flags,			R3FLAG_MSAA_HYBRID);
 	//CMD3(CCC_Mask,		"r3_msaa_opt",					&ps_r2_ls_flags,			R3FLAG_MSAA_OPT);
 	CMD3(CCC_Mask,		"r3_gbuffer_opt",				&ps_r2_ls_flags,			R3FLAG_GBUFFER_OPT);

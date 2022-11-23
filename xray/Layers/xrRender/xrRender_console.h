@@ -15,6 +15,9 @@ extern ECORE_API	xr_token	qsun_quality_token[];
 extern ECORE_API	u32			ps_r3_msaa;	//	=	0;
 extern ECORE_API	xr_token	qmsaa_token[];
 
+extern ECORE_API	u32			screenshot_type;	//	=	0;
+extern ECORE_API	xr_token	stype[];
+
 extern ECORE_API	u32			ps_r3_msaa_atest; //=	0;
 extern ECORE_API	xr_token	qmsaa__atest_token[];
 
