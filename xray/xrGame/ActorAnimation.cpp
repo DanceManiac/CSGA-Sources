@@ -350,12 +350,12 @@ void CActor::g_SetAnimation( u32 mstate_rl )
 		else
 			moving_idx				= STorsoWpn::eWalk;
 	}
-	// анимации
+	// Р°РЅРёРјР°С†РёРё
 	MotionID 						M_legs;
 	MotionID 						M_torso;
 	MotionID 						M_head;
 
-	//если мы просто стоим на месте
+	//РµСЃР»Рё РјС‹ РїСЂРѕСЃС‚Рѕ СЃС‚РѕРёРј РЅР° РјРµСЃС‚Рµ
 	bool is_standing = false;
 
 	// Legs
@@ -470,6 +470,8 @@ void CActor::g_SetAnimation( u32 mstate_rl )
 							case CWeapon::eShowing:	M_torso	= TW->draw;					break;
 							case CWeapon::eHiding:	M_torso	= TW->holster;				break;
 							default				 :  M_torso	= TW->moving[moving_idx];	break;
+							if (!M_torso)
+								M_torso = ST->m_torso[4].moving[moving_idx]; //Alundaio: Fix torso animations for binoc
 							}
 						}
 					}
@@ -514,6 +516,8 @@ void CActor::g_SetAnimation( u32 mstate_rl )
 				}
 			}
 		}
+		else if (!m_bAnimTorsoPlayed)
+			M_torso = ST->m_torso[4].moving[moving_idx]; //Alundaio: Fix torso animations for no weapon
 	}
 
 	if (!M_legs)
@@ -531,7 +535,7 @@ void CActor::g_SetAnimation( u32 mstate_rl )
 		else						M_torso = ST->m_torso_idle;
 	}
 	
-	// есть анимация для всего - запустим / иначе запустим анимацию по частям
+	// РµСЃС‚СЊ Р°РЅРёРјР°С†РёСЏ РґР»СЏ РІСЃРµРіРѕ - Р·Р°РїСѓСЃС‚РёРј / РёРЅР°С‡Рµ Р·Р°РїСѓСЃС‚РёРј Р°РЅРёРјР°С†РёСЋ РїРѕ С‡Р°СЃС‚СЏРј
 	if (m_current_torso!=M_torso){
 		if (m_bAnimTorsoPlayed)		m_current_torso_blend = smart_cast<IKinematicsAnimated*>	(Visual())->PlayCycle(M_torso,TRUE,AnimTorsoPlayCallBack,this);
 		else						/**/m_current_torso_blend = /**/smart_cast<IKinematicsAnimated*>	(Visual())->PlayCycle(M_torso);
