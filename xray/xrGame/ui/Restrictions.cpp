@@ -30,8 +30,6 @@ u32 get_rank(const shared_str &section)
 			break;
 		}
 	}
-	if(res != -1)
-		Msg("cannot find rank for %s", section.c_str());
 	return		res;
 }
 
