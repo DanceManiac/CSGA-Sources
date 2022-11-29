@@ -71,7 +71,8 @@ void CUIActorMenu::SendEvent_Item2Slot(PIItem pItem, u16 recipient)
 	CGameObject::u_EventGen			(P, GEG_PLAYER_ITEM2SLOT, pItem->object().H_Parent()->ID());
 	P.w_u16							(pItem->object().ID());
 	CGameObject::u_EventSend		(P);
-
+	
+	clear_highlight_lists			();
 	PlaySnd							(eItemToSlot);
 };
 
@@ -84,7 +85,8 @@ void CUIActorMenu::SendEvent_Item2Belt(PIItem pItem, u16 recipient)
 	CGameObject::u_EventGen			(P, GEG_PLAYER_ITEM2BELT, pItem->object().H_Parent()->ID());
 	P.w_u16							(pItem->object().ID());
 	CGameObject::u_EventSend		(P);
-
+	
+	clear_highlight_lists			();
 	PlaySnd							(eItemToBelt);
 };
 
@@ -98,6 +100,7 @@ void CUIActorMenu::SendEvent_Item2Ruck(PIItem pItem, u16 recipient)
 	P.w_u16							(pItem->object().ID());
 	CGameObject::u_EventSend		(P);
 
+	clear_highlight_lists			();
 	PlaySnd							(eItemToRuck);
 };
 
@@ -630,11 +633,7 @@ bool CUIActorMenu::TryUseItem( CUICellItem* cell_itm )
 	CAntirad*		pAntirad		= smart_cast<CAntirad*>		(item);
 	CEatableItem*	pEatableItem	= smart_cast<CEatableItem*>	(item);
 
-	if ( !(pMedkit || pAntirad || pEatableItem || pBottleItem) )
-	{
-		return false;
-	}
-	if ( !item->Useful() )
+	if ( !(pMedkit || pAntirad || pEatableItem || pBottleItem) || !item->Useful())
 	{
 		return false;
 	}
