@@ -150,19 +150,23 @@ void CRender::ScreenshotImpl	(ScreenshotMode mode, LPCSTR name, CMemoryWriter* m
 					format = D3DX10_IFF_BMP;
 					ext = ".bmp";
 				}
-				else if (screenshot_type == 2) {
-					format = D3DX10_IFF_BMP;
-					ext = ".tga";
-				}
 				else if (screenshot_type == 3) {
 					format = D3DX10_IFF_PNG;
 					ext = ".png";
 				}
 				string64			t_stemp;
 				string_path			buf;
-				sprintf_s			(buf,sizeof(buf),"ss_%s_%s_(%s)%s",Core.UserName,timestamp(t_stemp),(g_pGameLevel)?g_pGameLevel->name().c_str():"mainmenu",ext);
 				ID3DBlob			*saved	= 0;
-				CHK_DX				(D3DX10SaveTextureToMemory( pSrcTexture, format, &saved, 0));
+				if (screenshot_type == 2)
+				{
+					xr_sprintf			(buf,sizeof(buf),"ssq_%s_%s_(%s).wmp",Core.UserName,timestamp(t_stemp),(g_pGameLevel)?g_pGameLevel->name().c_str():"mainmenu");
+					CHK_DX				(D3DX10SaveTextureToMemory( pSrcTexture, D3DX10_IFF_WMP, &saved, 0));
+				}
+				else
+				{
+					sprintf_s			(buf,sizeof(buf),"ss_%s_%s_(%s)%s",Core.UserName,timestamp(t_stemp),(g_pGameLevel)?g_pGameLevel->name().c_str():"mainmenu",ext);
+					CHK_DX				(D3DX10SaveTextureToMemory( pSrcTexture, format, &saved, 0));
+				}
 				IWriter*		fs	= FS.w_open	("$screenshots$",buf); R_ASSERT(fs);
 				fs->w				(saved->GetBufferPointer(),(u32)saved->GetBufferSize());
 				FS.w_close			(fs);
