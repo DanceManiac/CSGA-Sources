@@ -1514,17 +1514,8 @@ void CActor::SetPhPosition(const Fmatrix &transform)
 
 void CActor::ForceTransform(const Fmatrix& m)
 {
-	if( !g_Alive() )
-				return;
-	VERIFY(_valid(m));
-	XFORM().set( m );
-	Fvector xyz;
-	m.getHPB(xyz);
-	cam_Active()->Set(-xyz.x, -xyz.y, -xyz.z);
-	if( character_physics_support()->movement()->CharacterExist() )
-			character_physics_support()->movement()->EnableCharacter();
-	character_physics_support()->set_movement_position( m.c );
-	character_physics_support()->movement()->SetVelocity( 0, 0, 0 );
+
+	character_physics_support()->ForceTransform( m );
 	const float block_damage_time_seconds = 2.f;
 	if(!IsGameTypeSingle())
 		character_physics_support()->movement()->BlockDamageSet( u64( block_damage_time_seconds/fixed_step ) );

@@ -407,7 +407,7 @@ void CDemoRecord::IR_OnKeyboardPress	(int dik)
 
 #ifndef MASTER_GOLD
 	if (dik == DIK_RETURN)
-	{	
+	{
 		if (g_pGameLevel->CurrentEntity())
 		{
 			g_pGameLevel->CurrentEntity()->ForceTransform(m_Camera);

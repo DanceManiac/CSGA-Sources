@@ -712,6 +712,18 @@ void CCharacterPhysicsSupport::set_movement_position( const Fvector &pos)
 	
 	movement()->SetPosition( m_EntityAlife.Position() );
 }
+void CCharacterPhysicsSupport::ForceTransform( const Fmatrix &m )
+{
+	if( !m_EntityAlife.g_Alive() )
+				return;
+	VERIFY(_valid(m));
+	m_EntityAlife.XFORM().set( m );
+	if( movement()->CharacterExist() )
+			movement()->EnableCharacter();
+	set_movement_position( m.c );
+	movement()->SetVelocity( 0, 0, 0 );
+
+}
 
 void reset_root_bone_start_pose( CPhysicsShell& shell )
 {

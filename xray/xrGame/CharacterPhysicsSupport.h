@@ -122,6 +122,7 @@ IC		CIKLimbsController				*ik_controller					( )	{ return m_ik_controller; }
 		bool							IsSpecificDamager				( )																{return !!m_flags.test(fl_specific_bonce_demager)	; }
 		float							BonceDamageFactor				( ){ return m_BonceDamageFactor; }
 		void							set_movement_position			( const Fvector &pos);
+		void							ForceTransform					( const Fmatrix &m);
 		void							set_use_hit_anims				( bool v ){ m_flags.set( fl_use_hit_anims, (BOOL)v );}
 //////////////////base hierarchi methods///////////////////////////////////////////////////
 		void							CreateCharacterSafe				( );
