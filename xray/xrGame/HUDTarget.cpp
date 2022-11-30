@@ -184,7 +184,7 @@ void CHUDTarget::Render()
 	u32 C_ON_ENEMY		D3DCOLOR_RGBA(hud_info_r_e, hud_info_g_e, hud_info_b_e, hud_info_a_e);
 	u32 C_ON_NEUTRAL	D3DCOLOR_RGBA(hud_info_r_n, hud_info_g_n, hud_info_b_n, hud_info_a_n);
 	u32 C_ON_FRIEND		D3DCOLOR_RGBA(hud_info_r_f, hud_info_g_f, hud_info_b_f, hud_info_a_f);
-	CGameFont* F		= HUD().Font().pFontGraffiti19Russian;
+	CGameFont* F		= HUD().Font().GetFont("ui_font_graffiti19_russian");
 	F->SetAligment		(CGameFont::alCenter);
 	F->OutSetI			(0.f + hud_info_x, 0.05f + hud_info_y);
 

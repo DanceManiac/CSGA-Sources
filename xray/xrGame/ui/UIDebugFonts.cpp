@@ -43,29 +43,32 @@ bool CUIDebugFonts::OnKeyboard(int dik, EUIMessages keyboard_action){
 }
 #include "../string_table.h"
 
-void CUIDebugFonts::FillUpList(){
-	CFontManager::FONTS_VEC& v = UI().Font().m_all_fonts;
-	CFontManager::FONTS_VEC_IT it	= v.begin();
-	CFontManager::FONTS_VEC_IT it_e = v.end();
+void CUIDebugFonts::FillUpList()
+{
 	Fvector2 pos, sz;
-	pos.set			(0,0);
-	sz.set			(UI_BASE_WIDTH,UI_BASE_HEIGHT);
-	string256		str;
-	for(;it!=it_e;++it){
-		CGameFont* F			= *(*it);
-		CUIStatic* pItem		= xr_new<CUIStatic>();
-		pItem->SetWndPos		(pos);
-		pItem->SetWndSize		(sz);
-		sprintf_s					(str, "%s:%s", *F->m_font_name, *CStringTable().translate("Test_Font_String"));
-		pItem->SetFont			(F);
-		pItem->SetText			(str);
-		pItem->SetTextComplexMode(false);
-		pItem->SetVTextAlignment(valCenter);
-		pItem->SetTextAlignment	(CGameFont::alCenter);
-		pItem->AdjustHeightToText();
-		pos.y					+= pItem->GetHeight()+20.0f;
-		pItem->SetAutoDelete	(true);
-		AttachChild				(pItem);
-	}
+	pos.set(0.0f, 0.0f);
+	sz.set(UI_BASE_WIDTH, UI_BASE_HEIGHT);
+	string256 str;
+	for (auto ppFont : UI().Font().FontVect)
+	{
+		if (!ppFont.first)
+			continue;
 
+		xr_sprintf(str, "%s:%s", (ppFont.first)->m_font_name.c_str(), CStringTable().translate("Test_Font_String").c_str());
+
+		CUIStatic* pItem = xr_new<CUIStatic>();
+		pItem->SetWndPos			(pos);
+		pItem->SetWndSize			(sz);
+		pItem->SetFont				(ppFont.first);
+		pItem->SetText				(str);
+		pItem->SetTextComplexMode	(false);
+		pItem->SetVTextAlignment	(valCenter);
+		pItem->SetTextAlignment		(CGameFont::alCenter);
+		pItem->AdjustHeightToText	();
+		pItem->SetAutoDelete		(true);
+
+		pos.y += pItem->GetHeight() + 20.0f;
+
+		AttachChild(pItem);
+	}
 }
