@@ -215,6 +215,8 @@ protected:
 	RStringVec		m_defHiddenBones;
 	RStringVec		m_defGLHiddenBones;
     RStringVec		m_colimSightBones;
+	RStringVec		m_upgShowBones;
+	RStringVec		m_upgHideBones;
 
 public:
 	bool m_bUseLowAmmoSnd;
@@ -509,6 +511,8 @@ private:
 			bool			install_upgrade_disp		( LPCSTR section, bool test );
 			bool			install_upgrade_hit			( LPCSTR section, bool test );
 			bool			install_upgrade_addon		( LPCSTR section, bool test );
+			bool			install_upgrade_show_bones  ( LPCSTR section, bool test );
+			bool			install_upgrade_hide_bones  ( LPCSTR section, bool test );
 protected:
 	virtual bool			install_upgrade_impl		( LPCSTR section, bool test );
 

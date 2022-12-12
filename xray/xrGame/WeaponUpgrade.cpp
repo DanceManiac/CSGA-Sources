@@ -26,10 +26,12 @@ bool CWeapon::install_upgrade_impl( LPCSTR section, bool test )
 	//inherited::install_upgrade( section );
 	bool result = CInventoryItemObject::install_upgrade_impl( section, test );
 	
-	result |= install_upgrade_ammo_class( section, test );
-	result |= install_upgrade_disp      ( section, test );
-	result |= install_upgrade_hit       ( section, test );
-	result |= install_upgrade_addon     ( section, test );
+	result |= install_upgrade_ammo_class ( section, test );
+	result |= install_upgrade_disp       ( section, test );
+	result |= install_upgrade_hit        ( section, test );
+	result |= install_upgrade_addon      ( section, test );
+	result |= install_upgrade_show_bones ( section, test );
+	result |= install_upgrade_hide_bones ( section, test );
 	return result;
 }
 
@@ -246,6 +248,58 @@ bool CWeapon::install_upgrade_addon( LPCSTR section, bool test )
 	}
 	result |= result2;
 	InitAddons();
+
+	return result;
+}
+
+bool CWeapon::install_upgrade_show_bones( LPCSTR section, bool test )
+{
+	LPCSTR str;
+
+	bool result = process_if_exists( section, "fire_dispersion_condition_factor", &CInifile::r_float, fireDispersionConditionFactor, test );
+
+	bool result2 = process_if_exists_set( section, "show_bones", &CInifile::r_string, str, test );
+
+	if (result2 && !test)
+	{
+		int ShowCount = _GetItemCount(str);
+		for (int i = 0; i < ShowCount; ++i)
+		{
+			string128 bone_name;
+			_GetItem(str, i, bone_name);
+			m_upgShowBones.push_back(bone_name);
+		}
+	}
+
+	result |= result2;
+	UpdateHUDAddonsVisibility();
+	UpdateAddonsVisibility();
+
+	return result;
+}
+
+bool CWeapon::install_upgrade_hide_bones( LPCSTR section, bool test )
+{
+	LPCSTR str;
+
+	bool result = process_if_exists( section, "fire_dispersion_condition_factor", &CInifile::r_float, fireDispersionConditionFactor, test );
+
+	bool result2 = process_if_exists_set( section, "hide_bones", &CInifile::r_string, str, test );
+
+	if (result2 && !test)
+	{
+		int HideCount = _GetItemCount(str);
+		for (int i = 0; i < HideCount; ++i)
+		{
+			string128 bone_name;
+			_GetItem(str, i, bone_name);
+			m_upgHideBones.push_back(bone_name);
+		}
+	}
+
+	result |= result2;
+	UpdateHUDAddonsVisibility();
+	UpdateAddonsVisibility();
 
 	return result;
 }
