@@ -565,7 +565,9 @@ void CWeapon::Load		(LPCSTR section)
 	
 	LoadBoneNames(section, "def_hide_bones", m_defHiddenBones);//Скрытие костей по дефолту
 	
-	LoadBoneNames(section, "def_hide_bones_override_when_gl_attached", m_defGLHiddenBones);//Скрытие костей по дефолту с надетым ПГ, без ПГ кости будут отображены
+	LoadBoneNames(section, "def_hide_bones_override_when_gl_attached", m_defGLHiddenBones);//Скрытие костей по дефолту с надетым ПГ
+
+	LoadBoneNames(section, "hide_bones_override_when_silencer_attached", m_defSilHiddenBones);//Скрытие костей по дефолту с надетым глушителем
 
 	LoadBoneNames(section, "collimator_sights_bones", m_colimSightBones);
 
@@ -1637,8 +1639,17 @@ void CWeapon::UpdateHUDAddonsVisibility()
 		SetBoneVisible(bone, TRUE);
 	}
 
-	if (IsGrenadeLauncherAttached()) {
+	if (IsGrenadeLauncherAttached())
+	{
 		for (const shared_str& bone : m_defGLHiddenBones)
+		{
+			SetBoneVisible(bone, FALSE);
+		}
+	}
+
+	if (IsSilencerAttached())
+	{
+		for (const shared_str& bone : m_defSilHiddenBones)
 		{
 			SetBoneVisible(bone, FALSE);
 		}
@@ -1749,8 +1760,19 @@ void CWeapon::UpdateAddonsVisibility()
 			pWeaponVisual->LL_SetBoneVisible(bone_id, TRUE, TRUE);
 	}
 
-	if (IsGrenadeLauncherAttached()) {
+	if (IsGrenadeLauncherAttached())
+	{
 		for (const auto& boneName : m_defGLHiddenBones)
+		{
+			bone_id = pWeaponVisual->LL_BoneID(boneName);
+			if (bone_id != BI_NONE && pWeaponVisual->LL_GetBoneVisible(bone_id))
+				pWeaponVisual->LL_SetBoneVisible(bone_id, FALSE, TRUE);
+		}
+	}
+
+	if (IsSilencerAttached())
+	{
+		for (const auto& boneName : m_defSilHiddenBones)
 		{
 			bone_id = pWeaponVisual->LL_BoneID(boneName);
 			if (bone_id != BI_NONE && pWeaponVisual->LL_GetBoneVisible(bone_id))

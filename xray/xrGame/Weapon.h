@@ -214,6 +214,7 @@ protected:
 	RStringVec		m_defShownBones;
 	RStringVec		m_defHiddenBones;
 	RStringVec		m_defGLHiddenBones;
+    RStringVec		m_defSilHiddenBones;
     RStringVec		m_colimSightBones;
 	RStringVec		m_upgShowBones;
 	RStringVec		m_upgHideBones;
