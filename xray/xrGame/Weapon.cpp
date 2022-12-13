@@ -1237,6 +1237,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 						bAltOffset = false;
 					else
 						bAltOffset = true;
+					return true;
 				}
 			}
 			else
@@ -1244,7 +1245,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 				return false;
 		case kWPN_ZOOM_INC:
 		case kWPN_ZOOM_DEC:
-			if(IsZoomEnabled() && IsZoomed() && !bAltOffset && (flags&CMD_START))
+			if(IsZoomEnabled() && IsZoomed() && (flags&CMD_START))
 			{
 				if(cmd==kWPN_ZOOM_INC)
 					ZoomInc();
@@ -2470,8 +2471,15 @@ void CWeapon::UpdateSecondVP()
 
 void CWeapon::ZoomInc()
 {
-	if(!IsScopeAttached())					return;
-	if(!m_bUseDynamicZoom)	return;
+	if(!IsScopeAttached())
+		return;
+
+	if (!bAltOffset)
+		return;
+
+	if(!m_bUseDynamicZoom)
+		return;
+
 	float delta,min_zoom_factor;
 	GetZoomData(m_zoom_params.m_fScopeZoomFactor, delta, min_zoom_factor);
 
@@ -2482,8 +2490,15 @@ void CWeapon::ZoomInc()
 
 void CWeapon::ZoomDec()
 {
-	if(!IsScopeAttached())					return;
-	if(!m_bUseDynamicZoom)	return;
+	if(!IsScopeAttached())
+		return;
+
+	if (!bAltOffset)
+		return;
+
+	if(!m_bUseDynamicZoom)
+		return;
+
 	float delta,min_zoom_factor;
 	GetZoomData(m_zoom_params.m_fScopeZoomFactor,delta,min_zoom_factor);
 
