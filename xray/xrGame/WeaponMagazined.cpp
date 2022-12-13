@@ -444,7 +444,6 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
             break;
         case eShowing:
             switch2_Showing();
-            bAltOffset = false;
             break;
         case eShowingDet: {
             PlayAnimShowDet();
@@ -456,7 +455,6 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
         }break;
         case eHiding:
 		{
-            bAltOffset = false;
             if (old_state != eHiding)
                 switch2_Hiding();
         }
@@ -800,7 +798,6 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 			SwitchState(eIdle);
 			break;
 		case eZoomEnd:
-			bAltOffset = false;
 			SwitchState(eIdle);
 			break;
 	}

@@ -1174,7 +1174,6 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 						{
 							if(!IsPending())
 							{
-								bAltOffset = false;
 								if(GetState()==eIdle || GetState()==eZoomEnd) {
 									if(!binoc)
 										SwitchState(eZoomStart);
@@ -1201,7 +1200,6 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 					{
 						if(!IsZoomed() && !IsPending())
 						{
-							bAltOffset = false;
 							if(GetState()==eIdle || GetState()==eZoomEnd || GetState()==eFire || GetState()==eEmpty) {
                                 if (GetState()==eFire)
 									FireEnd();
@@ -1230,74 +1228,20 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 			}
 			else 
 				return false;
-
 		case kWPN_ALT_ZOOM:
 			if(m_bUseAltScope && !IsGrenadeLauncherMode())
 			{
-				if(b_toggle_weapon_aim)
+				if(flags&CMD_START)
 				{
-					if(flags&CMD_START)
-					{
-						if(!IsZoomed())
-						{
-							if(!IsPending())
-							{
-								bAltOffset = true;
-								if(GetState()==eIdle || GetState()==eZoomEnd) {
-									if(!binoc)
-										SwitchState(eZoomStart);
-
-									OnZoomIn();
-								}
-							}
-						}
-						else
-						{
-                            if (GetState()==eIdle || GetState()==eZoomStart) {
-								if(!binoc)
-									SwitchState(eZoomEnd);
-
-								OnZoomOut();
-							}
-                        }
-					}
-				}
-				else
-				{
-					if(flags&CMD_START)
-					{
-						if(!IsZoomed() && !IsPending())
-						{
-							bAltOffset = true;
-							if(GetState()==eIdle || GetState()==eZoomEnd || GetState()==eFire || GetState()==eEmpty) {
-                                if (GetState()==eFire)
-									FireEnd();
-
-								if (!binoc)
-									SwitchState(eZoomStart);
-
-								OnZoomIn();
-							}
-						}
-					}
+					if(bAltOffset)
+						bAltOffset = false;
 					else
-					{
-                        if (IsZoomed() && (GetState()==eIdle || GetState()==eZoomStart || GetState()==eFire || GetState()==eEmpty)) {
-							if (GetState() == eFire)
-                               FireEnd();
-
-                            if (!binoc)
-								SwitchState(eZoomEnd);
-
-                           OnZoomOut();
-						}
-                    }
+						bAltOffset = true;
 				}
-				return true;
 			}
-			else 
+			else
+				bAltOffset = false;
 				return false;
-
 		case kWPN_ZOOM_INC:
 		case kWPN_ZOOM_DEC:
 			if(IsZoomEnabled() && IsZoomed() && !bAltOffset && (flags&CMD_START))
