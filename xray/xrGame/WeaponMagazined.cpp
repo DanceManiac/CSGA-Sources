@@ -100,11 +100,12 @@ void CWeaponMagazined::Load	(LPCSTR section)
 	m_sounds.LoadSound(section, "snd_reload", "sndReload", true, m_eSoundReload);
 	m_sounds.LoadSound(section, "snd_reload_empty", "sndReloadEmpty", true, m_eSoundReload);
 	m_sounds.LoadSound(section, "snd_reload_jammed", "sndReloadJammed", true, m_eSoundReload);
+	m_sounds.LoadSound(section, "snd_reload_jammed_last", "sndReloadJammedLast", true, m_eSoundReload);
     m_sounds.LoadSound(section, "snd_changecartridgetype", "sndAmmoChange", true, m_eSoundReload);
 
 	m_sounds.LoadSound(section, "snd_aim_start", "sndAimStart", false, m_eSoundShow);
     m_sounds.LoadSound(section, "snd_aim_end", "sndAimEnd", false, m_eSoundHide);
-	
+
 	if (m_bUseLowAmmoSnd)
         m_sounds.LoadSound(section, "snd_lowammo", "sndLowAmmo", false, m_eSoundShot);
 
@@ -856,6 +857,8 @@ void CWeaponMagazined::PlayReloadSound()
 {
     if (!IsMisfire() && iAmmoElapsed == 0 || bSwitchAmmoType && iAmmoElapsed == 0 && !IsMisfire())
 		PlaySound("sndReloadEmpty", get_LastFP());
+    else if (IsMisfire() && iAmmoElapsed == 0)
+        PlaySound("sndReloadJammedLast", get_LastFP());
 	else if(IsMisfire())
 		PlaySound("sndReloadJammed", get_LastFP());
     else if (bSwitchAmmoType && iAmmoElapsed != 0)
