@@ -45,13 +45,11 @@ void CWeaponMagazinedWGrenade::Load	(LPCSTR section)
 	m_sounds.LoadSound(section, "snd_switch_scope", "sndSwitchToGScope", true, m_eSoundReload);
 	m_sounds.LoadSound(section, "snd_switch_from_g_scope", "sndSwitchFromGScope", true, m_eSoundReload);
 
-	m_sFlameParticles2 = pSettings->r_string(section, "grenade_flame_particles");
+	if (m_eGrenadeLauncherStatus != ALife::eAddonDisabled)
+		m_sFlameParticles2 = pSettings->r_string(section, "grenade_flame_particles");
 
-	
 	if(m_eGrenadeLauncherStatus == ALife::eAddonPermanent)
-	{
 		CRocketLauncher::m_fLaunchSpeed = pSettings->r_float(section, "grenade_vel");
-	}
 
 	// load ammo classes SECOND (grenade_class)
 	m_ammoTypes2.clear	(); 
