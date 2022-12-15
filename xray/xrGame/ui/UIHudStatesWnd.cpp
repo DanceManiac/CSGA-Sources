@@ -255,8 +255,8 @@ void CUIHudStatesWnd::UpdateActiveItemInfo( CActor* actor )
 		
 		// hack ^ begin
 
-		CGameFont* pFont32 = UI().Font().GetFont("ui_font_graff_32");
-		CGameFont* pFont22 = UI().Font().GetFont("ui_font_graffiti22_russian");
+		CGameFont* pFont32 = UI().Font().pFontGraffiti32Russian;
+		CGameFont* pFont22 = UI().Font().pFontGraffiti22Russian;
 		CGameFont* pFont   = pFont32;
 
 		if ( UI().is_widescreen() )

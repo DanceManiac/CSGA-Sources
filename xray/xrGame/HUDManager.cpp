@@ -17,10 +17,25 @@ CFontManager::CFontManager()
 {
 	Device.seqDeviceReset.Add(this,REG_PRIORITY_HIGH);
 
-	pFontMedium = nullptr;
-	pFontDI = nullptr;
+	m_all_fonts.push_back(&pFontMedium				);// used cpp
+	m_all_fonts.push_back(&pFontDI					);// used cpp
+	m_all_fonts.push_back(&pFontArial14				);// used xml
+	m_all_fonts.push_back(&pFontGraffiti19Russian	);
+	m_all_fonts.push_back(&pFontGraffiti22Russian	);
+	m_all_fonts.push_back(&pFontLetterica16Russian	);
+	m_all_fonts.push_back(&pFontLetterica18Russian	);
+	m_all_fonts.push_back(&pFontGraffiti32Russian	);
+	m_all_fonts.push_back(&pFontGraffiti50Russian	);
+	m_all_fonts.push_back(&pFontLetterica25			);
+	m_all_fonts.push_back(&pFontStat				);
+
+	FONTS_VEC_IT it		= m_all_fonts.begin();
+	FONTS_VEC_IT it_e	= m_all_fonts.end();
+	for(;it!=it_e;++it)
+		(**it) = NULL;
 
 	InitializeFonts();
+
 }
 
 void CFontManager::InitializeFonts()
@@ -28,6 +43,16 @@ void CFontManager::InitializeFonts()
 
 	InitializeFont(pFontMedium				,"hud_font_medium"				);
 	InitializeFont(pFontDI					,"hud_font_di",					CGameFont::fsGradient|CGameFont::fsDeviceIndependent);
+	InitializeFont(pFontArial14				,"ui_font_arial_14"				);
+	InitializeFont(pFontGraffiti19Russian	,"ui_font_graffiti19_russian"	);
+	InitializeFont(pFontGraffiti22Russian	,"ui_font_graffiti22_russian"	);
+	InitializeFont(pFontLetterica16Russian	,"ui_font_letterica16_russian"	);
+	InitializeFont(pFontLetterica18Russian	,"ui_font_letterica18_russian"	);
+	InitializeFont(pFontGraffiti32Russian	,"ui_font_graff_32"				);
+	InitializeFont(pFontGraffiti50Russian	,"ui_font_graff_50"				);
+	InitializeFont(pFontLetterica25			,"ui_font_letter_25"			);
+	InitializeFont(pFontStat				,"stat_font",					CGameFont::fsDeviceIndependent);
+
 }
 
 LPCSTR CFontManager::GetFontTexName (LPCSTR section)
@@ -64,50 +89,40 @@ void CFontManager::InitializeFont(CGameFont*& F, LPCSTR section, u32 flags)
 	LPCSTR font_tex_name = GetFontTexName(section);
 	R_ASSERT(font_tex_name);
 
-	LPCSTR sh_name = pSettings->r_string(section, "shader");
-	if (!F)
-		F = xr_new<CGameFont>(sh_name, font_tex_name, flags);
+	if(!F)
+		F = xr_new<CGameFont> ("font", font_tex_name, flags);
 	else
-		F->Initialize(sh_name, font_tex_name);
+		F->Initialize("font",font_tex_name);
 
 #ifdef DEBUG
 	F->m_font_name = section;
 #endif
+	if (pSettings->line_exist(section,"size")){
+		float sz = pSettings->r_float(section,"size");
+		if (flags&CGameFont::fsDeviceIndependent)	F->SetHeightI(sz);
+		else										F->SetHeight(sz);
+	}
+	if (pSettings->line_exist(section,"interval"))
+	F->SetInterval(pSettings->r_fvector2(section,"interval"));
+
 }
 
 CFontManager::~CFontManager()
 {
 	Device.seqDeviceReset.Remove(this);
-	//for (auto FontPair: FontVect)
-	//	xr_delete(FontPair.first);
-#pragma todo("puknul znatno")
-	FontVect.clear();
+	FONTS_VEC_IT it		= m_all_fonts.begin();
+	FONTS_VEC_IT it_e	= m_all_fonts.end();
+	for(;it!=it_e;++it)
+		xr_delete(**it);
 }
 
 void CFontManager::Render()
 {
-	for (auto FontPair: FontVect)
-		FontPair.first->OnRender();
+	FONTS_VEC_IT it		= m_all_fonts.begin();
+	FONTS_VEC_IT it_e	= m_all_fonts.end();
+	for(;it!=it_e;++it)
+		(**it)->OnRender			();
 }
-
-CGameFont* CFontManager::GetFont(const char* name)
-{
-	for (auto FontPair: FontVect)
-	{
-		shared_str SharedFont = std::move(FontPair.second);
-		if (SharedFont.equal(name))
-		{
-			return FontPair.first;
-		}
-	}
-
-	CGameFont* NewFont = nullptr;
-	InitializeFont(NewFont, name);
-	FontVect.emplace(NewFont, name);
-
-	return NewFont;
-}
-
 void CFontManager::OnDeviceReset()
 {
 	InitializeFonts();
@@ -246,7 +261,7 @@ void  CHUDManager::RenderUI()
 
 
 	if( Device.Paused() && bShowPauseString){
-		CGameFont* pFont	= Font().GetFont("ui_font_graff_50");
+		CGameFont* pFont	= Font().pFontGraffiti50Russian;
 		pFont->SetColor		(0x80FF0000	);
 		LPCSTR _str			= CStringTable().translate("st_game_paused").c_str();
 		

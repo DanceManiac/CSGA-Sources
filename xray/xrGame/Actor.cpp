@@ -1376,28 +1376,28 @@ void CActor::OnHUDDraw	(CCustomHUD*)
 	if (Level().CurrentControlEntity() == this && g_ShowAnimationInfo)
 	{
 		string128 buf;
-		HUD().Font().GetFont("stat_font")->SetColor	(0xffffffff);
-		HUD().Font().GetFont("stat_font")->OutSet		(170,530);
-		HUD().Font().GetFont("stat_font")->OutNext	("Position:      [%3.2f, %3.2f, %3.2f]",VPUSH(Position()));
-		HUD().Font().GetFont("stat_font")->OutNext	("Velocity:      [%3.2f, %3.2f, %3.2f]",VPUSH(m_PhysicMovementControl->GetVelocity()));
-		HUD().Font().GetFont("stat_font")->OutNext	("Vel Magnitude: [%3.2f]",m_PhysicMovementControl->GetVelocityMagnitude());
-		HUD().Font().GetFont("stat_font")->OutNext	("Vel Actual:    [%3.2f]",m_PhysicMovementControl->GetVelocityActual());
+		HUD().Font().pFontStat->SetColor	(0xffffffff);
+		HUD().Font().pFontStat->OutSet		(170,530);
+		HUD().Font().pFontStat->OutNext	("Position:      [%3.2f, %3.2f, %3.2f]",VPUSH(Position()));
+		HUD().Font().pFontStat->OutNext	("Velocity:      [%3.2f, %3.2f, %3.2f]",VPUSH(m_PhysicMovementControl->GetVelocity()));
+		HUD().Font().pFontStat->OutNext	("Vel Magnitude: [%3.2f]",m_PhysicMovementControl->GetVelocityMagnitude());
+		HUD().Font().pFontStat->OutNext	("Vel Actual:    [%3.2f]",m_PhysicMovementControl->GetVelocityActual());
 		switch (m_PhysicMovementControl->Environment())
 		{
 		case CPHMovementControl::peOnGround:	strcpy_s(buf,"ground");			break;
 		case CPHMovementControl::peInAir:		strcpy_s(buf,"air");				break;
 		case CPHMovementControl::peAtWall:		strcpy_s(buf,"wall");				break;
 		}
-		HUD().Font().GetFont("stat_font")->OutNext	(buf);
+		HUD().Font().pFontStat->OutNext	(buf);
 
 		if (IReceived != 0)
 		{
 			float Size = 0;
-			Size = HUD().Font().GetFont("stat_font")->GetSize();
-			HUD().Font().GetFont("stat_font")->SetSize(Size*2);
-			HUD().Font().GetFont("stat_font")->SetColor	(0xffff0000);
-			HUD().Font().GetFont("stat_font")->OutNext ("Input :		[%3.2f]", ICoincidenced/IReceived * 100.0f);
-			HUD().Font().GetFont("stat_font")->SetSize(Size);
+			Size = HUD().Font().pFontStat->GetSize();
+			HUD().Font().pFontStat->SetSize(Size*2);
+			HUD().Font().pFontStat->SetColor	(0xffff0000);
+			HUD().Font().pFontStat->OutNext ("Input :		[%3.2f]", ICoincidenced/IReceived * 100.0f);
+			HUD().Font().pFontStat->SetSize(Size);
 		};
 	};
 #endif
@@ -1474,7 +1474,7 @@ void CActor::RenderText				(LPCSTR Text, Fvector dpos, float* pdup, u32 color)
 	Device.mFullTransform.transform(v0r,v0);
 	Device.mFullTransform.transform(v1r,v1);
 	float size = v1r.distance_to(v0r);
-	CGameFont* pFont = HUD().Font().GetFont("ui_font_arial_14");
+	CGameFont* pFont = HUD().Font().pFontArial14;
 	if (!pFont) return;
 //	float OldFontSize = pFont->GetHeight	();	
 	float delta_up = 0.0f;

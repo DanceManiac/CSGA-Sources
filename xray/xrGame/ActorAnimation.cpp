@@ -570,8 +570,8 @@ void CActor::g_SetAnimation( u32 mstate_rl )
 
 #ifdef _DEBUG
 	if(bDebug){
-		HUD().Font().GetFont("stat_font")->OutSetI	(0,0);
-		HUD().Font().GetFont("stat_font")->OutNext("[%s]",mov_state[moving_idx]);
+		HUD().Font().pFontStat->OutSetI	(0,0);
+		HUD().Font().pFontStat->OutNext("[%s]",mov_state[moving_idx]);
 	}
 #endif
 
@@ -592,7 +592,7 @@ void CActor::g_SetAnimation( u32 mstate_rl )
 		if (mstate_rl&mcLLookout)	strcat(buf,"LLookout ");
 		if (mstate_rl&mcRLookout)	strcat(buf,"RLookout ");
 		if (m_bJumpKeyPressed)		strcat(buf,"+Jumping ");
-		HUD().Font().GetFont("stat_font")->OutNext	("MSTATE:     [%s]",buf);
+		HUD().Font().pFontStat->OutNext	("MSTATE:     [%s]",buf);
 /*
 		switch (m_PhysicMovementControl->Environment())
 		{
@@ -600,10 +600,10 @@ void CActor::g_SetAnimation( u32 mstate_rl )
 		case CPHMovementControl::peInAir:		strcpy_s(buf,"air");				break;
 		case CPHMovementControl::peAtWall:		strcpy_s(buf,"wall");				break;
 		}
-		HUD().Font().GetFont("stat_font")->OutNext	(buf);
-		HUD().Font().GetFont("stat_font")->OutNext	("Accel     [%3.2f, %3.2f, %3.2f]",VPUSH(NET_SavedAccel));
-		HUD().Font().GetFont("stat_font")->OutNext	("V         [%3.2f, %3.2f, %3.2f]",VPUSH(m_PhysicMovementControl->GetVelocity()));
-		HUD().Font().GetFont("stat_font")->OutNext	("vertex ID   %d",ai_location().level_vertex_id());
+		HUD().Font().pFontStat->OutNext	(buf);
+		HUD().Font().pFontStat->OutNext	("Accel     [%3.2f, %3.2f, %3.2f]",VPUSH(NET_SavedAccel));
+		HUD().Font().pFontStat->OutNext	("V         [%3.2f, %3.2f, %3.2f]",VPUSH(m_PhysicMovementControl->GetVelocity()));
+		HUD().Font().pFontStat->OutNext	("vertex ID   %d",ai_location().level_vertex_id());
 		
 		Game().m_WeaponUsageStatistic.Draw();
 		*/

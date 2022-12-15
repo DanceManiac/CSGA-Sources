@@ -726,7 +726,7 @@ void CLevel::OnFrame	()
 	m_ph_commander_scripts->update		();
 //	autosave_manager().update			();
 
-	//Ð¿Ñ€Ð¾ÑÑ‡Ð¸Ñ‚Ð°Ñ‚ÑŒ Ð¿Ð¾Ð»ÐµÑ‚ Ð¿ÑƒÐ»ÑŒ
+	//ïðîñ÷èòàòü ïîëåò ïóëü
 	Statistic.TEST0.Begin		();
 	BulletManager().CommitRenderSet		();
 	Statistic.TEST0.End			();
@@ -785,12 +785,12 @@ void CLevel::OnRender()
 		return;
 
 	Game().OnRender();
-	//Ð¾Ñ‚Ñ€Ð¸ÑÐ¾Ð²Ð°Ñ‚ÑŒ Ñ‚Ñ€Ð°ÑÑÑ‹ Ð¿ÑƒÐ»ÑŒ
+	//îòðèñîâàòü òðàññû ïóëü
 	//Statistic.TEST1.Begin();
 	BulletManager().Render();
 	//Statistic.TEST1.End();
 	::Render->AfterWorldRender(); //--#SM+#-- +SecondVP+
-	//Ð¾Ñ‚Ñ€Ð¸ÑÐ¾Ð²Ð°Ñ‚ÑŒ Ð¸Ð½Ñ‚ÐµÑ€Ñ„ÐµÐ¹c Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
+	//îòðèñîâàòü èíòåðôåéc ïîëüçîâàòåëÿ
 	HUD().RenderUI();
 
 #ifdef DEBUG
@@ -859,14 +859,14 @@ void CLevel::OnRender()
 		ObjectSpace.dbgRender	();
 
 		//---------------------------------------------------------------------
-		HUD().Font().GetFont("stat_font")->OutSet		(170,630);
-		HUD().Font().GetFont("stat_font")->SetHeight	(16.0f);
-		HUD().Font().GetFont("stat_font")->SetColor	(0xffff0000);
+		HUD().Font().pFontStat->OutSet		(170,630);
+		HUD().Font().pFontStat->SetHeight	(16.0f);
+		HUD().Font().pFontStat->SetColor	(0xffff0000);
 
-		if(Server)HUD().Font().GetFont("stat_font")->OutNext	("Client Objects:      [%d]",Server->GetEntitiesNum());
-		HUD().Font().GetFont("stat_font")->OutNext	("Server Objects:      [%d]",Objects.o_count());
-		HUD().Font().GetFont("stat_font")->OutNext	("Interpolation Steps: [%d]", Level().GetInterpolationSteps());
-		HUD().Font().GetFont("stat_font")->SetHeight	(8.0f);
+		if(Server)HUD().Font().pFontStat->OutNext	("Client Objects:      [%d]",Server->GetEntitiesNum());
+		HUD().Font().pFontStat->OutNext	("Server Objects:      [%d]",Objects.o_count());
+		HUD().Font().pFontStat->OutNext	("Interpolation Steps: [%d]", Level().GetInterpolationSteps());
+		HUD().Font().pFontStat->SetHeight	(8.0f);
 		//---------------------------------------------------------------------
 	}
 #endif

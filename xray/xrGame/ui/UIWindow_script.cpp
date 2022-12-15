@@ -16,16 +16,28 @@ CFontManager& mngr(){
 
 // hud font
 CGameFont* GetFontSmall()
-{return mngr().GetFont("stat_font");}
+{return mngr().pFontStat;}
 
 CGameFont* GetFontMedium()
-{
-	return mngr().pFontMedium;
-}
+{return mngr().pFontMedium;}
 CGameFont* GetFontDI()
-{
-	return mngr().pFontDI;
-}
+{return mngr().pFontDI;}
+//רנטפעû הכÿ טםעונפויסא
+CGameFont* GetFontGraffiti19Russian()
+{return mngr().pFontGraffiti19Russian;}
+CGameFont* GetFontGraffiti22Russian()
+{return mngr().pFontGraffiti22Russian;}
+CGameFont* GetFontLetterica16Russian()
+{return mngr().pFontLetterica16Russian;}
+CGameFont* GetFontLetterica18Russian()
+{return mngr().pFontLetterica18Russian;}
+CGameFont* GetFontGraffiti32Russian()
+{return mngr().pFontGraffiti32Russian;}
+CGameFont* GetFontGraffiti50Russian()
+{return mngr().pFontGraffiti50Russian;}
+CGameFont* GetFontLetterica25()
+{return mngr().pFontLetterica25;}
+
 
 int GetARGB(u16 a, u16 r, u16 g, u16 b)
 {return color_argb(a,r,g,b);}
@@ -46,18 +58,6 @@ TEX_INFO	get_texture_info(LPCSTR name, LPCSTR def_name)
 	return CUITextureMaster::FindItem(name, def_name);
 }
 
-#define GenFontFuncToLua(name) CGameFont* name() { return UI().Font().GetFont(#name); }
-
-GenFontFuncToLua(ui_font_arial_14			)
-GenFontFuncToLua(ui_font_arial_21			)
-GenFontFuncToLua(ui_font_graffiti19_russian	)
-GenFontFuncToLua(ui_font_graffiti22_russian	)
-GenFontFuncToLua(ui_font_graff_32	)
-GenFontFuncToLua(ui_font_graff_50	)
-GenFontFuncToLua(ui_font_letterica16_russian)
-GenFontFuncToLua(ui_font_letterica18_russian)
-GenFontFuncToLua(ui_font_letterica25_russian)
-
 using namespace luabind;
 
 #pragma optimize("s",on)
@@ -65,19 +65,17 @@ void CUIWindow::script_register(lua_State *L)
 {
 	module(L)
 	[
-		def("GetARGB",			&GetARGB),
-			def("GetFontSmall",		&GetFontSmall),
-			def("GetFontMedium",	&GetFontMedium),
-			def("GetFontDI",		&GetFontDI),
-			def("GetFontArial14",				&ui_font_arial_14			),
-			def("GetFontArial21",				&ui_font_arial_21			),
-			def("GetFontGraffiti19Russian",		&ui_font_graffiti19_russian	),
-			def("GetFontGraffiti22Russian",		&ui_font_graffiti22_russian	),
-			def("GetFontGraffiti32Russian",		&ui_font_graff_32	),
-			def("GetFontGraffiti50Russian",		&ui_font_graff_50	),
-			def("GetFontLetterica16Russian",	&ui_font_letterica16_russian),
-			def("GetFontLetterica18Russian",	&ui_font_letterica18_russian),
-			def("GetFontLetterica25",			&ui_font_letterica25_russian),
+		def("GetARGB",					&GetARGB),
+		def("GetFontSmall",				&GetFontSmall),
+		def("GetFontMedium",			&GetFontMedium),
+		def("GetFontDI",				&GetFontDI),
+		def("GetFontGraffiti19Russian",	&GetFontGraffiti19Russian),
+		def("GetFontGraffiti22Russian",	&GetFontGraffiti22Russian),
+		def("GetFontLetterica16Russian",&GetFontLetterica16Russian),
+		def("GetFontLetterica18Russian",&GetFontLetterica18Russian),
+		def("GetFontGraffiti32Russian",	&GetFontGraffiti32Russian),
+		def("GetFontGraffiti50Russian",	&GetFontGraffiti50Russian),
+		def("GetFontLetterica25",		&GetFontLetterica25),
 
 		class_<TEX_INFO>("TEX_INFO")
 		.def("get_file_name",	 			&TEX_INFO::get_file_name)

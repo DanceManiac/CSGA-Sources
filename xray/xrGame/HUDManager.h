@@ -19,15 +19,21 @@ struct CFontManager :public pureDeviceReset			{
 	CGameFont*				pFontMedium;
 	CGameFont*				pFontDI;
 
-	xr_map<CGameFont*, const char*> FontVect;
+	CGameFont*				pFontArial14;
+	CGameFont*				pFontGraffiti19Russian;
+	CGameFont*				pFontGraffiti22Russian;
+	CGameFont*				pFontLetterica16Russian;
+	CGameFont*				pFontLetterica18Russian;
+	CGameFont*				pFontGraffiti32Russian;
+	CGameFont*				pFontGraffiti50Russian;
+	CGameFont*				pFontLetterica25;
+	CGameFont*				pFontStat;
 
 	void					InitializeFonts			();
 	void					InitializeFont			(CGameFont*& F, LPCSTR section, u32 flags = 0);
 	LPCSTR					GetFontTexName			(LPCSTR section);				
 
 	virtual void			OnDeviceReset			();
-	public:
-	CGameFont*				GetFont					(const char* name);
 };
 
 class CHUDManager :
