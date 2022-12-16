@@ -50,6 +50,8 @@ CWeapon::CWeapon(): m_fLR_MovingFactor(0.f), m_strafe_offset{}
 	m_ammoType				= 0;
 	m_ammoName				= NULL;
 
+	bAltOffset				= false;
+
 	eHandDependence			= hdNone;
 
 	m_zoom_params.m_fCurrentZoomFactor			= g_fov;
@@ -762,6 +764,7 @@ void CWeapon::save(NET_Packet &output_packet)
 	save_data		(iAmmoElapsed,					output_packet);
 	save_data		(m_flagsAddOnState, 			output_packet);
 	save_data		(m_ammoType,					output_packet);
+	save_data		(bAltOffset,					output_packet);
 	save_data		(m_zoom_params.m_bIsZoomModeNow,output_packet);
 }
 
@@ -772,6 +775,7 @@ void CWeapon::load(IReader &input_packet)
 	load_data		(m_flagsAddOnState,				input_packet);
 	UpdateAddonsVisibility			();
 	load_data		(m_ammoType,					input_packet);
+	load_data		(bAltOffset,					input_packet);
 	load_data		(m_zoom_params.m_bIsZoomModeNow,input_packet);
 
 	if (m_zoom_params.m_bIsZoomModeNow)	
@@ -1233,15 +1237,14 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 			{
 				if(flags&CMD_START)
 				{
-					if(bAltOffset)
-						bAltOffset = false;
-					else
-						bAltOffset = true;
+					bAltOffset = !bAltOffset;
+					InitAddons();
 					return true;
 				}
+				else
+					return false;
 			}
 			else
-				bAltOffset = false;
 				return false;
 		case kWPN_ZOOM_INC:
 		case kWPN_ZOOM_DEC:
@@ -2474,7 +2477,7 @@ void CWeapon::ZoomInc()
 	if(!IsScopeAttached())
 		return;
 
-	if (!bAltOffset)
+	if (bAltOffset)
 		return;
 
 	if(!m_bUseDynamicZoom)
@@ -2493,7 +2496,7 @@ void CWeapon::ZoomDec()
 	if(!IsScopeAttached())
 		return;
 
-	if (!bAltOffset)
+	if (bAltOffset)
 		return;
 
 	if(!m_bUseDynamicZoom)
