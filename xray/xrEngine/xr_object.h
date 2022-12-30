@@ -14,6 +14,7 @@ class	ENGINE_API	IRender_ObjectSpecific;
 class	ENGINE_API	CCustomHUD;
 class	NET_Packet	;
 class	CSE_Abstract;
+class	CInventoryItem;
 
 //-----------------------------------------------------------------------------------------------------------
 #define CROW_RADIUS	(30.f)
@@ -201,6 +202,7 @@ virtual	const IObjectPhysicsCollision	*physics_collision	()					{ return  0; }
 
 public:
 	virtual bool						register_schedule	() const {return true;}
+	virtual CInventoryItem*				cast_inventory_item ()		 { return NULL; }
 };
 
 #pragma pack(pop)

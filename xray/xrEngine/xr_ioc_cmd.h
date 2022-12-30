@@ -143,7 +143,7 @@ public		:
 
 	void	Execute	(LPCSTR args) override
 	{
-		xr_token* tok = tokens;
+		xr_token* tok = GetToken();
 		while (tok->name) {
 			if (stricmp(tok->name,args)==0) {
 				*value=tok->id;
