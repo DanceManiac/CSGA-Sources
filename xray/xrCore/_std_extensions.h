@@ -192,6 +192,11 @@ inline int __cdecl xr_sprintf	( char (&destination)[count], LPCSTR format_string
 	va_start					( args, format_string);
 	return						vsnprintf_s( destination, count, count - 1, format_string, args );
 }
+
+inline errno_t xr_strcat		( LPSTR destination, size_t const buffer_size, LPCSTR source )
+{
+	return						strcat_s( destination, buffer_size, source );
+}
 #ifdef BREAK_AT_STRCMP
 XRCORE_API	int					xr_strcmp				( const char* S1, const char* S2 );
 #else
@@ -199,11 +204,29 @@ IC int							xr_strcmp				( const char* S1, const char* S2 )
 {	return (int)strcmp(S1,S2);  }
 #endif
 
+template <int count>
+inline errno_t xr_strcat	( char (&destination)[count], LPCSTR source )
+{
+	return						xr_strcat( destination, count, source );
+}
 XRCORE_API	char*				timestamp				(string64& dest);
 
 extern XRCORE_API u32			crc32					(const void* P, u32 len);
 extern XRCORE_API u32			crc32					(const void* P, u32 len, u32 starting_crc);
 extern XRCORE_API u32			path_crc32				(const char* path, u32 len); // ignores '/' and '\'
+
+template <typename StrType, typename StrType2, typename... Args>
+inline char* xr_strconcat(StrType& dest, const StrType2& arg1, const Args&... args)
+{
+	static_assert(std::is_array_v<StrType>);
+	static_assert(std::is_same_v<std::remove_extent_t<StrType>, char>);
+
+	strcpy_s(dest, arg1);
+
+	(strcat_s(dest, args), ...);
+
+	return &dest[0];
+}
 
 #endif // _STD_EXT_internal
 
