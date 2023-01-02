@@ -6,8 +6,6 @@
 
 STRING_TABLE_DATA* CStringTable::pData = NULL;
 BOOL CStringTable::m_bWriteErrorsToLog = FALSE;
-u32 CStringTable::LanguageID = std::numeric_limits<u32>::max();
-xr_vector<xr_token> CStringTable::languagesToken;
 
 CStringTable::CStringTable	()
 {
@@ -27,28 +25,27 @@ void CStringTable::rescan()
 
 void CStringTable::Init		()
 {
-	LanguagesNum = 0;
 	if(NULL != pData) return;
+    
 	pData				= xr_new<STRING_TABLE_DATA>();
-
-	//РёРјСЏ СЏР·С‹РєР°, РµСЃР»Рё РЅРµ Р·Р°РґР°РЅРѕ (NULL), С‚Рѕ РїРµСЂРІС‹Р№ <text> РІ <string> РІ XML
+	
+	//имя языка, если не задано (NULL), то первый <text> в <string> в XML
 	pData->m_sLanguage	= pSettings->r_string("string_table", "language");
 
-    FillLanguageToken	();
-    SetLanguage			();
+
 //---
 	FS_FileSet fset;
 	string_path			files_mask;
-	xr_sprintf				(files_mask, "text\\%s\\*.xml",pData->m_sLanguage.c_str());
+	sprintf				(files_mask, "text\\%s\\*.xml",pData->m_sLanguage.c_str());
 	FS.file_list		(fset, "$game_config$", FS_ListFiles, files_mask);
 	FS_FileSetIt fit	= fset.begin();
 	FS_FileSetIt fit_e	= fset.end();
 
 	for( ;fit!=fit_e; ++fit)
 	{
-		string_path		fn, ext;
-		_splitpath		((*fit).name.c_str(), 0, 0, fn, ext);
-		xr_strcat			(fn, ext);
+    	string_path		fn, ext;
+        _splitpath		((*fit).name.c_str(), 0, 0, fn, ext);
+		strcat			(fn, ext);
 
 		Load			(fn);
 	}
@@ -56,83 +53,6 @@ void CStringTable::Init		()
 	Msg("StringTable: loaded %d files", fset.size());
 #endif // #ifdef DEBUG
 //---
-	ReparseKeyBindings();
-}
-
-xr_token* CStringTable::GetLanguagesToken() const { return languagesToken.data(); }
-
-
-void CStringTable::FillLanguageToken()
-{
-	languagesToken.clear();
-
-	string_path path;
-	FS.update_path(path, _game_config_, "text\\");
-	auto languages = FS.file_list_open(path, FS_ListFolders | FS_RootOnly);
-
-	const bool localizationPresent = languages != nullptr;
-
-	// We must warn about lack of localization
-	// However we can work without it
-	VERIFY(localizationPresent);
-	if (localizationPresent)
-	{
-		int i = 0;
-		for (const auto& language : *languages)
-		{
-			const auto pos = strchr(language, '\\');
-			*pos = '\0'; // we don't need that backslash in the end
-
-			// Skip map_desc folder
-			if (0 == xr_strcmp(language, "map_desc"))
-				continue;
-
-			bool shouldSkip = false;
-
-			// Open current language folder
-			string_path folder;
-			strconcat(sizeof(folder), folder, path, language, "\\");
-			auto files = FS.file_list_open(folder, FS_ListFiles | FS_RootOnly);
-
-			// Skip folder with "_old" postfix
-			if (strstr(folder, "_old"))
-				continue;
-
-			// Skip empty folder
-			if (!files || files->empty())
-				shouldSkip = true;
-
-			// Don't forget to close opened folder
-			FS.file_list_close(files);
-
-			if (shouldSkip)
-				continue;
-
-			// Finally, we can add language
-			languagesToken.emplace_back(xr_strdup(language), i++); // It's important to have postfix increment!
-		}
-		FS.file_list_close(languages);
-	}
-	LanguagesNum = languagesToken.size();
-
-	languagesToken.emplace_back(nullptr, -1);
-}
-
-void CStringTable::SetLanguage()
-{
-	if (LanguageID != std::numeric_limits<u32>::max())
-		pData->m_sLanguage = languagesToken.at(LanguageID).name;
-	else
-	{
-		pData->m_sLanguage = pSettings->r_string("string_table", "language");
-		auto it = std::find_if(languagesToken.begin(), languagesToken.end(), [](const xr_token& token) {
-			return token.name && token.name == pData->m_sLanguage;
-		});
-
-		R_ASSERT3(it != languagesToken.end(), "Check localization.ltx! Current language: ", pData->m_sLanguage.c_str());
-		if (it != languagesToken.end())
-			LanguageID = (*it).id;
-	}
 }
 
 void CStringTable::Load	(LPCSTR xml_file_full)
@@ -143,7 +63,7 @@ void CStringTable::Load	(LPCSTR xml_file_full)
 
 	uiXml.Load					(CONFIG_PATH, _s, xml_file_full);
 
-	//РѕР±С‰РёР№ СЃРїРёСЃРѕРє РІСЃРµС… Р·Р°РїРёСЃРµР№ С‚Р°Р±Р»РёС†С‹ РІ С„Р°Р№Р»Рµ
+	//общий список всех записей таблицы в файле
 	int string_num = uiXml.GetNodesNum		(uiXml.GetRoot(), "string");
 
 	for(int i=0; i<string_num; ++i)
@@ -156,6 +76,8 @@ void CStringTable::Load	(LPCSTR xml_file_full)
 
 		if(m_bWriteErrorsToLog && string_text)
 			Msg("[string table] '%s' no translation in '%s'", string_name, pData->m_sLanguage.c_str() );
+		
+		VERIFY3						(string_text, "string table entry does not has a text", string_name);
 		
 		STRING_VALUE str_val		= ParseLine(string_text, string_name, true);
 		
@@ -175,21 +97,9 @@ void CStringTable::ReparseKeyBindings()
 	}
 }
 
-void CStringTable::ReloadLanguage()
-{
-	if (0 == xr_strcmp(languagesToken.at(LanguageID).name, pData->m_sLanguage.c_str()))
-		return;
-
-	Destroy();
-	Init();
-}
-
 
 STRING_VALUE CStringTable::ParseLine(LPCSTR str, LPCSTR skey, bool bFirst)
 {
-	if (!str)
-		return "";
-
 //	LPCSTR str = "1 $$action_left$$ 2 $$action_right$$ 3 $$action_left$$ 4";
 	xr_string			res;
 	int k = 0;
@@ -212,7 +122,7 @@ STRING_VALUE CStringTable::ParseLine(LPCSTR str, LPCSTR skey, bool bFirst)
 
 		int len				= (int)(e-b-LEN);
 
-		strncpy_s				(srcbuff,b+LEN, len);
+		strncpy				(srcbuff,b+LEN, len);
 		srcbuff[len]		= 0;
 		GetActionAllBinding	(srcbuff, buff, sizeof(buff) );
 		res.append			(buff, xr_strlen(buff) );
@@ -237,8 +147,13 @@ STRING_VALUE CStringTable::translate (const STRING_ID& str_id) const
 {
 	VERIFY					(pData);
 
-	if(pData->m_StringTable.find(str_id)!=pData->m_StringTable.end())
-		return  pData->m_StringTable[str_id];
-	else
+	STRING_VALUE res =  pData->m_StringTable[str_id];
+
+	if(!res)
+	{
+		if(m_bWriteErrorsToLog && *str_id != NULL && xr_strlen(*str_id)>0)
+			Msg("[string table] '%s' has no entry", *str_id);
 		return str_id;
+	}
+	return					pData->m_StringTable[str_id];
 }

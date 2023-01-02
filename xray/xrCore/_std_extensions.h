@@ -64,8 +64,6 @@ IC int sprintf_s(char* dest, size_t sizeOfBuffer, const char* format, ...)
 // token type definition
 struct XRCORE_API xr_token
 {
-	xr_token(): name(nullptr), id(-1) {}
-	xr_token(const pcstr _name, const int _id) : name(_name), id(_id) {}
 	LPCSTR	name;
 	int 	id;
 };

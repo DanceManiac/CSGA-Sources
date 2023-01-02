@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
-// string_table.h:		Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ð° ÑÑ‚Ñ€Ð¾Ðº Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÐ¼Ñ‹Ñ… Ð² Ð¸Ð³Ñ€Ðµ
+// string_table.h:		òàáëèöà ñòðîê èñïîëüçóåìûõ â èãðå
 //////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -22,25 +22,17 @@ class CStringTable
 {
 public:
 								CStringTable			();
-			void				Init					();
 
 	static void					Destroy					();
 	
 	STRING_VALUE				translate				(const STRING_ID& str_id)		const;
-	STRING_VALUE				ReturnLanguage			() 	{return (translate(pData->m_sLanguage));}
 			void				rescan					();
-			void				ReloadLanguage			();
 
 	static	BOOL				m_bWriteErrorsToLog;
-	int							LanguagesNum;
-    xr_token*					GetLanguagesToken		() const;
-    static	u32					LanguageID;
 	static	void				ReparseKeyBindings		();
 private:
+			void				Init					();
 			void				Load					(LPCSTR xml_file);
-			void				FillLanguageToken		();
-			void				SetLanguage				();
 	static STRING_VALUE			ParseLine				(LPCSTR str, LPCSTR key, bool bFirst);
 	static STRING_TABLE_DATA*	pData;
-    static xr_vector<xr_token>	languagesToken;
 };

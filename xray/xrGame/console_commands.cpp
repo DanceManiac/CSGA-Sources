@@ -22,7 +22,6 @@
 #include "script_engine.h"
 #include "script_engine_space.h"
 #include "script_process.h"
-#include "string_table.h"
 #include "xrServer_Objects.h"
 #include "ui/UIMainIngameWnd.h"
 #include "PhysicsGamePars.h"
@@ -408,44 +407,6 @@ public:
 			  g_pGameLevel->Cameras().AddCamEffector(xr_new<CDemoPlay> (fn, 1.0f, loops));
 		  }
 	  }
-};
-class CCC_GameLanguage : public CCC_Token
-{
-public:
-    CCC_GameLanguage(pcstr N) : CCC_Token(N, (u32*)&CStringTable::LanguageID, nullptr) {}
-
-    void Execute(pcstr args) override
-    {
-        CCC_Token::Execute(args);
-        CStringTable().ReloadLanguage();
-
-        if (!g_pGameLevel)
-            return;
-
-        for (u16 id = 0; id < 0xffff; id++)
-        {
-            CObject* gameObj = Level().Objects.net_Find(id);
-            if (gameObj)
-            {
-                if (CInventoryItem* invItem = gameObj->cast_inventory_item())
-                    invItem->ReloadNames();
-            }
-        }
-    }
-
-    xr_token* GetToken() noexcept override
-    {
-        tokens = CStringTable().GetLanguagesToken();
-        if(!tokens) // Prevent failure without usage Nifty counters
-        {
-            Msg("GetToken: token missing");
-			CStringTable().Destroy();
-			CStringTable().Init();
-
-            tokens = CStringTable().GetLanguagesToken();
-        }
-        return CCC_Token::GetToken();
-    }
 };
 
 class CCC_UI_Reload : public IConsole_Command
@@ -2021,7 +1982,6 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 
 	CMD3(CCC_Mask,		"g_autopickup",			&psActorFlags,	AF_AUTOPICKUP);
 	CMD3(CCC_Mask,		"g_dynamic_music",		&psActorFlags,	AF_DYNAMIC_MUSIC);
-	CMD1(CCC_GameLanguage, "g_language");
 
 
 #ifdef DEBUG
