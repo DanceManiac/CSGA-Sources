@@ -153,10 +153,12 @@ void CLevel::IR_OnKeyboardPress	(int key)
 		return;
 		break;
 
-	case kCONSOLE:
-		Console->Show				();
+	case kCONSOLE: {
+		if(Device.Paused())
+			return;
+		Console->Show();
 		return;
-		break;
+    }break;
 
 	case kQUIT: {
 		if(b_ui_exist && HUD().GetUI()->MainInputReceiver() )
