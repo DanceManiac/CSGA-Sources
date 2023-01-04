@@ -227,6 +227,7 @@ public:
     bool bAltOffset;
 	bool m_bDisableShellParticles;
     bool m_bHideMarkInAlt;
+	bool m_bJamNotShot; //осечка без выстрела (выстрел не будет произведен, но из-за попытки стрельбы оружие заклинит)
 
 	bool IsGrenadeLauncherMode();
 

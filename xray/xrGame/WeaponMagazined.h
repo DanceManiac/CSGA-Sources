@@ -45,6 +45,7 @@ protected:
 	virtual void	switch2_LightMisfire();
 	
 	virtual void	OnShot			();	
+	virtual void	OnShotJammed	();
 	
 	virtual void	OnEmptyClick	();
 	virtual	void	EmptyMove();

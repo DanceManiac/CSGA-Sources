@@ -585,6 +585,8 @@ void CWeapon::Load		(LPCSTR section)
 
 	m_bHideMarkInAlt = READ_IF_EXISTS(pSettings, r_bool, section, "hide_collimator_sights_in_alter_zoom", false);
 
+	m_bJamNotShot = READ_IF_EXISTS(pSettings, r_bool, hud_sect, "no_jam_fire", false);
+
 	////////////////////////////////////////////
 	//--#SM+# Begin--
 	string16 _prefix = { "" };
@@ -1520,7 +1522,7 @@ BOOL CWeapon::CheckForLightMisfire()
 
 void CWeapon::Reload()
 {
-	OnZoomOut();
+	//OnZoomOut();
 }
 
 

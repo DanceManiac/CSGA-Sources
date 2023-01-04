@@ -112,6 +112,9 @@ void CWeaponMagazined::Load	(LPCSTR section)
 	if (m_bUseLightMisfire)
 		m_sounds.LoadSound(section, "snd_light_misfire", "sndLightMis", true, m_eSoundShot);
 
+	if (m_bJamNotShot)
+		m_sounds.LoadSound(section, "snd_jam", "sndJam", false, m_eSoundShot);
+
 	m_sSndShotCurrent = "sndShot";
 		
 	//звуки и партиклы глушителя, еслит такой есть
@@ -198,7 +201,7 @@ void CWeaponMagazined::FireStart()
 void CWeaponMagazined::MsgGunEmpty()
 {
 	if(smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity()==H_Parent()))
-		HUD().GetUI()->AddInfoMessage("gun_empty");
+        HUD().GetUI()->AddInfoMessage("gun_empty");
 }
 
 void CWeaponMagazined::FireEnd() 
@@ -567,13 +570,11 @@ void CWeaponMagazined::state_Fire(float dt)
 		
 		VERIFY(!m_magazine.empty());
 
-		CWeaponBM16* bm = smart_cast<CWeaponBM16*>(m_pInventory->ActiveItem());
-
 		while (!m_magazine.empty() && fShotTimeCounter<0 && (IsWorking() || m_bFireSingleShot) && (m_iQueueSize<0 || m_iShotNum<m_iQueueSize))
 		{
-			if(bm && CheckForMisfire())
+			if(m_bJamNotShot && CheckForMisfire())
 			{
-				StopShooting();
+				OnShotJammed();
 				return;
 			}
 
@@ -596,7 +597,7 @@ void CWeaponMagazined::state_Fire(float dt)
 			else
 				FireTrace(m_vStartPos, m_vStartDir);
 
-			if(!bm && CheckForMisfire())
+			if (!m_bJamNotShot && CheckForMisfire())
 			{
 				StopShooting();
 				return;
@@ -736,6 +737,15 @@ void CWeaponMagazined::OnShot()
 	//дым из ствола
 	ForceUpdateFireParticles();
 	StartSmokeParticles(get_LastFP(), vel);
+}
+
+void CWeaponMagazined::OnShotJammed()
+{
+    // Sound
+    PlaySound("sndJam", get_LastFP());
+
+    // Animation
+    PlayAnimShoot();
 }
 
 void CWeaponMagazined::OnEmptyClick()
@@ -915,7 +925,7 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 	{
 	case kWPN_RELOAD:
 		{
-			if(flags&CMD_START) 
+			if(flags&CMD_START && !IsZoomed()) 
 				if(iAmmoElapsed < iMagazineSize || (IsMisfire() && !IsGrenadeLauncherMode())) 
 					Reload();
 		} 
@@ -1265,7 +1275,7 @@ const char* CWeaponMagazined::GetAnimAimName()
 				return guns_aim_anm;
 			}
 			else
-				return strconcat(sizeof(guns_aim_anm), guns_aim_anm, "anm_idle_aim_moving", (state & mcFwd) ? "_forward" : ((state & mcBack) ? "_back" : ""), (state & mcLStrafe) ? "_left" : ((state & mcRStrafe) ? "_right" : ""), IsMisfire() ? "_jammed" : (!IsMisfire() && iAmmoElapsed == 0 ? "_empty" : ""));
+				return xr_strconcat(guns_aim_anm, "anm_idle_aim_moving", (state & mcFwd) ? "_forward" : ((state & mcBack) ? "_back" : ""), (state & mcLStrafe) ? "_left" : ((state & mcRStrafe) ? "_right" : ""), IsMisfire() ? "_jammed" : (!IsMisfire() && iAmmoElapsed == 0 ? "_empty" : ""));
 		}
 	}
 	return nullptr;
@@ -1312,7 +1322,7 @@ void CWeaponMagazined::PlayAnimShoot()
 	VERIFY(GetState()==eFire);
 	
     string_path guns_shoot_anm{};
-    strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? (IsScopeAttached() ?  "_aim_scope" : "_aim")  : "", IsMisfire() ? "_jammed" : ( !IsMisfire() && iAmmoElapsed == 1 ? "_last" : ""), IsSilencerAttached() ? "_sil" : "");
+    xr_strconcat(guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? (IsScopeAttached() ?  "_aim_scope" : "_aim")  : "", IsMisfire() ? "_jammed" : ( !IsMisfire() && iAmmoElapsed == 1 ? "_last" : ""), IsSilencerAttached() ? "_sil" : "");
 
     PlayHUDMotionNew(guns_shoot_anm, false, GetState());
 }
