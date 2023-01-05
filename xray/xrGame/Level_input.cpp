@@ -154,7 +154,7 @@ void CLevel::IR_OnKeyboardPress	(int key)
 		break;
 
 	case kCONSOLE: {
-		if(Device.Paused())
+		if(Device.Paused() && !IsDebuggerPresent())
 			return;
 		Console->Show();
 		return;
