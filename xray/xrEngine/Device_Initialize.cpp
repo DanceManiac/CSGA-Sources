@@ -6,6 +6,7 @@
 #	include "../include/editor/ide.hpp"
 #	include "engine_impl.hpp"
 #endif // #ifdef INGAME_EDITOR
+#include "../xrGameSpy/xrGameSpy_MainDefs.h"
 
 extern LRESULT CALLBACK WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
@@ -38,7 +39,7 @@ void CRenderDevice::initialize_editor	()
 
 PROTECT_API void CRenderDevice::Initialize			()
 {
-	Msg("Initializing Engine %s %s...", CI_VERSION, __DATE__);
+	Msg("Initializing Engine %s %s...", GAME_VERSION, __DATE__);
 	TimerGlobal.Start			();
 	TimerMM.Start				();
 
