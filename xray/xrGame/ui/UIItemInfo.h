@@ -1,3 +1,6 @@
+// UIItemInfo.h:  окошко, для отображения информации о вещи
+// 
+//////////////////////////////////////////////////////////////////////
 #pragma once
 #include "uiwindow.h"
 
@@ -12,6 +15,7 @@ class CUIArtefactParams;
 class CUIFrameWindow;
 class UIInvUpgPropertiesWnd;
 class CUIOutfitInfo;
+class CUI3dStatic;
 
 extern const char * const 		fieldsCaptionColor;
 
@@ -61,4 +65,8 @@ public:
 
 	Fvector2			UIItemImageSize; 
 	CUIStatic*			UIItemImage;
+	//для изображения предмета крупным планом
+	CUI3dStatic*		UI3dStatic;
+protected:
+	float y_rotate_angle;
 };

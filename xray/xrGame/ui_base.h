@@ -67,6 +67,9 @@ public:
 	CFontManager&	Font							()							{return *m_pFontManager;}
 	CUICursor&		GetUICursor						()							{return *m_pUICursor;}
 	virtual	bool	CursorIsActive					(); 
+	
+	IC float		GetScaleX						()							{return float(Device.dwWidth)/float(UI_BASE_WIDTH);   }
+	IC float		GetScaleY						()							{return float(Device.dwHeight)/float(UI_BASE_HEIGHT); }
 
 	void			ClientToScreenScaled			(Fvector2& dest, float left, float top);
 	void			ClientToScreenScaled			(Fvector2& src_and_dest);

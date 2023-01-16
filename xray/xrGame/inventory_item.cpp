@@ -127,7 +127,8 @@ void CInventoryItem::Load(LPCSTR section)
 		m_fControlInertionFactor	= pSettings->r_float(section,"control_inertion_factor");
 	}
 	m_icon_name					= READ_IF_EXISTS(pSettings, r_string,section,"icon_name",		NULL);
-
+	m_FV3Angle					= READ_IF_EXISTS(pSettings, r_fvector3, section, "render_rot", Fvector3().set(0.f, 0.f, 0.f));
+	m_fRenderScale				= READ_IF_EXISTS(pSettings, r_float, section, "render_scale", 1.f);
 }
 
 void  CInventoryItem::ChangeCondition(float fDeltaCondition)

@@ -179,6 +179,8 @@ public:
 	virtual u32					Cost				() const	{ return m_cost; }
 	virtual u32					BaseCost			() const	{ return m_base_cost; }
 	virtual float				Weight				() const	{ return m_weight;}
+	virtual Fvector3			RenderRot			() const	{ return m_FV3Angle;}
+	virtual float				RenderScale			() const	{ return m_fRenderScale;}
 protected:	
 	u32							m_slot;
 	u32							m_cost;
@@ -186,6 +188,8 @@ protected:
 	float						m_weight;
 	float						m_fCondition;
 	shared_str					m_Description;
+	Fvector3					m_FV3Angle;
+	float						m_fRenderScale;
 protected:
 
 	ALife::_TIME_ID				m_dwItemRemoveTime;

@@ -2341,12 +2341,6 @@
     <Filter Include="UI\Common\PDA\logs\News">
       <UniqueIdentifier>{a02dd205-4cb0-46c7-be8a-1426f9d41051}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\Common\ItemInfo">
-      <UniqueIdentifier>{5255ba38-878c-4636-96f2-8ce8c710c43b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI\Common\ItemInfo\CharacterInfo">
-      <UniqueIdentifier>{053d83a0-791e-44fe-8871-f4c6be2651b2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="UI\Common\TALK">
       <UniqueIdentifier>{8c06044e-4e58-47b1-bcb2-fac2998434bc}</UniqueIdentifier>
     </Filter>
@@ -2586,6 +2580,12 @@
     </Filter>
     <Filter Include="Core\Client\Objects\items &amp; weapons\Devices\NightVision">
       <UniqueIdentifier>{068e7734-d347-4910-b7dd-f7aae527ed7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Common\ItemInfo">
+      <UniqueIdentifier>{5255ba38-878c-4636-96f2-8ce8c710c43b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Common\ItemInfo\CharacterInfo">
+      <UniqueIdentifier>{053d83a0-791e-44fe-8871-f4c6be2651b2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -7521,6 +7521,9 @@
     <ClInclude Include="NightVision.h">
       <Filter>Core\Client\Objects\items &amp; weapons\Devices\NightVision</Filter>
     </ClInclude>
+    <ClInclude Include="ui\UI3dStatic.h">
+      <Filter>UI\UIWindows\Static</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11230,6 +11233,9 @@
     </ClCompile>
     <ClCompile Include="NightVision.cpp">
       <Filter>Core\Client\Objects\items &amp; weapons\Devices\NightVision</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\UI3dStatic.cpp">
+      <Filter>UI\UIWindows\Static</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

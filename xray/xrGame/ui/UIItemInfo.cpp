@@ -20,6 +20,7 @@
 #include "UIArtefactParams.h"
 #include "UIInvUpgradeProperty.h"
 #include "UIOutfitInfo.h"
+#include "UI3dStatic.h"
 #include "../Weapon.h"
 #include "../CustomOutfit.h"
 
@@ -44,8 +45,10 @@ CUIItemInfo::CUIItemInfo()
 	UIName						= NULL;
 	UIBackground				= NULL;
 	m_pInvItem					= NULL;
+	UI3dStatic					= NULL;
 	m_b_FitToHeight				= false;
 	m_complex_desc				= false;
+	y_rotate_angle				= 0;
 }
 
 CUIItemInfo::~CUIItemInfo()
@@ -144,6 +147,15 @@ void CUIItemInfo::InitItemInfo(LPCSTR xml_name)
 		UIItemImage->TextureOff			();
 		UIItemImage->ClipperOn			();
 		UIItemImageSize.set				(UIItemImage->GetWidth(),UIItemImage->GetHeight());
+	}
+
+	if (uiXml.NavigateToNode("static_3d", 0))
+	{	
+		UI3dStatic					= xr_new<CUI3dStatic>();
+		AttachChild					(UI3dStatic);	
+		UI3dStatic->SetAutoDelete	(true);
+		xml_init.InitWindow			(uiXml, "static_3d", 0, UI3dStatic);
+		UI3dStatic->Enable(true);
 	}
 	
 	if ( uiXml.NavigateToNode( "outfit_info", 0 ) )
@@ -288,6 +300,12 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem, CInventoryItem* pCompareIte
 		UIItemImage->SetWidth					( v_r.width()  );
 		UIItemImage->SetHeight					( v_r.height() );
 	}
+	if (UI3dStatic)
+	{
+		UI3dStatic->SetGameObject(pInvItem->cast_game_object());
+	}
+	else
+		UI3dStatic->SetGameObject(NULL);
 }
 
 void CUIItemInfo::TryAddConditionInfo( CInventoryItem& pInvItem, CInventoryItem* pCompareItem )
@@ -337,8 +355,25 @@ void CUIItemInfo::TryAddUpgradeInfo( CInventoryItem& pInvItem )
 	}
 }
 
+float render_rot_x;
+float render_rot_y;
+float render_rot_z;
+
+#define ROTATION_SPEED -1.0f
 void CUIItemInfo::Draw()
 {
-	if(m_pInvItem)
+	if (m_pInvItem)
+	{
+			y_rotate_angle += ROTATION_SPEED -1.0f * (float)Device.dwTimeDelta / 1000.f;
+		if (y_rotate_angle > 2 * PI) y_rotate_angle = 0;
+		if (UI3dStatic)
+			UI3dStatic->SetRotate(deg2rad(render_rot_y / 1.5f), deg2rad(render_rot_x / 1.5f/*+ y_rotate_angle*/), deg2rad(render_rot_z/1.5f));
+//			UI3dStatic->SetRotate(m_pInvItem->RenderRot().x, m_pInvItem->RenderRot().y, m_pInvItem->RenderRot().z);
+
+/*		y_rotate_angle += ROTATION_SPEED * (float)Device.dwTimeDelta / 1000.f;
+		if (y_rotate_angle > 2 * PI) y_rotate_angle = 0;
+		if (UI3dStatic)
+			UI3dStatic->SetRotate(0, y_rotate_angle, 0);*/
 		inherited::Draw();
+	}
 }

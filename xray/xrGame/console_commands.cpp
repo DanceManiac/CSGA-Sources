@@ -95,6 +95,9 @@ extern	BOOL	b_toggle_weapon_aim;
 extern float	g_smart_cover_factor;
 extern int		g_upgrades_log;
 extern float	g_smart_cover_animation_speed_factor;
+extern float	render_rot_x;
+extern float	render_rot_y;
+extern float	render_rot_z;
 
 ENGINE_API extern float	g_console_sensitive;
 
@@ -2170,6 +2173,9 @@ extern BOOL dbg_moving_bones_snd_player;
 	CMD1(CCC_InvDropAllItems, "inv_drop_all_items");
 
 	CMD4(CCC_Float,		"con_sensitive",			&g_console_sensitive,	0.01f, 1.0f );
+	CMD4(CCC_Float,		"render_rot_x",			&render_rot_x,	-180.f, 180.0f );
+	CMD4(CCC_Float,		"render_rot_y",			&render_rot_y,	-180.f, 180.0f );
+	CMD4(CCC_Float,		"render_rot_z",			&render_rot_z,	-180.f, 180.0f );
 	CMD4(CCC_Integer,	"wpn_aim_toggle",			&b_toggle_weapon_aim, 0, 1);
 //	CMD4(CCC_Integer,	"hud_old_style",			&g_old_style_ui_hud, 0, 1);
 
