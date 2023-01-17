@@ -37,9 +37,7 @@ void CUI3dStatic::FromScreenToItem(int x_screen, int y_screen, float& x_item, fl
         int halfwidth  = Device.dwWidth/2;
         int halfheight = Device.dwHeight/2;
 
-//	    float size_y = VIEWPORT_NEAR * tanf( deg2rad(60.f) * 0.5f);				// строка от 2004
-//	    float size_y = VIEWPORT_NEAR * tanf( deg2rad( Device.fFOV ) * 0.5f);	// stcop вариант
-	    float size_y = VIEWPORT_NEAR * tanf( deg2rad(35.f) * 0.5f);				// проверяем
+	    float size_y = VIEWPORT_NEAR * tanf( deg2rad(1.f) * 0.5f);
         float size_x = size_y / (Device.fASPECT);
 
         float r_pt      = float(x-halfwidth) * size_x / (float) halfwidth;
@@ -56,20 +54,10 @@ void  CUI3dStatic::Draw()
 	if(m_pCurrentItem)
 	{
 		Frect rect;
-		GetAbsoluteRect(rect);
+		this->GetWndRect(rect);
 		// Apply scale
-		float rscale = m_pCurrentItem->cast_inventory_item()->RenderScale() * 2;
-		rect.top	= static_cast<int>(rect.top * rscale);		// top это Y-позиция, Left это X-позиция
-		rect.left = static_cast<int>(rect.left);
-		if (rscale<3)
-		{rect.bottom = static_cast<int>(rect.bottom * rscale);	// эти два параметра влияют на позицию на экране(глубина), будем считывать
-		rect.right = static_cast<int>(rect.right * rscale);}		// тоже из секции предмета по аналогии со скейлом
-																// но позже, сейчас это не особо важно
-		else
-		{
-			rect.bottom = static_cast<int>(rect.bottom * rscale /1.5f);
-			rect.right = static_cast<int>(rect.right * rscale/1.5f);
-		}
+		float rscale = m_pCurrentItem->cast_inventory_item()->RenderScale()*128;
+		
 		Fmatrix translate_matrix;
 		Fmatrix scale_matrix;
 		
@@ -89,12 +77,14 @@ void  CUI3dStatic::Draw()
 
 		matrix.mulA_44(translate_matrix);
 
+
 		rx_m.identity();
-		rx_m.rotateX(m_x_angle);	// stcop вариант предлагает не использовать позиции поворота
+		rx_m.rotateX(m_x_angle);
 		ry_m.identity();
-		ry_m.rotateY(m_y_angle);	// из секции предмета,
+		ry_m.rotateY(m_y_angle);
 		rz_m.identity();
-		rz_m.rotateZ(m_z_angle);	// а использует 0,11,0 для xyz соответственно
+		rz_m.rotateZ(m_z_angle);
+
 
 		matrix.mulA_44(rx_m);
 		matrix.mulA_44(ry_m);
@@ -112,7 +102,7 @@ void  CUI3dStatic::Draw()
 
 		float radius = m_pCurrentItem->Visual()->getVisData().sphere.R;
 
-		float scale = normal_size/(radius*2);
+		float scale = normal_size/(radius*2) * rscale;
 
 		scale_matrix.identity();
 		scale_matrix.scale( scale, scale,scale);
@@ -124,11 +114,9 @@ void  CUI3dStatic::Draw()
 
 		
 		///////////////////////////////	
-	
-		FromScreenToItem(rect.left + iFloor(GetWidth()/2 * GetScaleX()),	// stcop вариант по сути то же самое,
-						 rect.top + iFloor(GetHeight()/2 * GetScaleY()),	// но что-то другое
-	//	FromScreenToItem(rect.left + iFloor(GetWidth()/2 * UI().GetScaleX()),
-	//					 rect.top + iFloor(GetHeight()/2 * UI().GetScaleY()),
+		
+		FromScreenToItem(rect.left + iFloor(GetWidth()/2 * UI().GetScaleX()),
+						 rect.top + iFloor(GetHeight()/2 * UI().GetScaleY()), 
 						 right_item_offset, up_item_offset);
 
 		translate_matrix.identity();
@@ -157,5 +145,4 @@ void  CUI3dStatic::Draw()
 void CUI3dStatic::SetGameObject(CGameObject* pItem)
 {
 	m_pCurrentItem = pItem;
-	Enable(true);
 }
