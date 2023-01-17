@@ -304,8 +304,6 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem, CInventoryItem* pCompareIte
 	{
 		UI3dStatic->SetGameObject(pInvItem->cast_game_object());
 	}
-	else
-		UI3dStatic->SetGameObject(NULL);
 }
 
 void CUIItemInfo::TryAddConditionInfo( CInventoryItem& pInvItem, CInventoryItem* pCompareItem )
@@ -367,8 +365,10 @@ void CUIItemInfo::Draw()
 			y_rotate_angle += ROTATION_SPEED -1.0f * (float)Device.dwTimeDelta / 1000.f;
 		if (y_rotate_angle > 2 * PI) y_rotate_angle = 0;
 		if (UI3dStatic)
-			UI3dStatic->SetRotate(deg2rad(render_rot_y / 1.5f), deg2rad(render_rot_x / 1.5f/*+ y_rotate_angle*/), deg2rad(render_rot_z/1.5f));
-//			UI3dStatic->SetRotate(m_pInvItem->RenderRot().x, m_pInvItem->RenderRot().y, m_pInvItem->RenderRot().z);
+			if((m_pInvItem->RenderRot().x == m_pInvItem->RenderRot().y == m_pInvItem->RenderRot().z) == 0)
+				UI3dStatic->SetRotate(deg2rad(render_rot_x / 1.5f), deg2rad(render_rot_y / 1.5f/*+ y_rotate_angle*/), deg2rad(render_rot_z/1.5f));
+			else
+				UI3dStatic->SetRotate(deg2rad(m_pInvItem->RenderRot().x / 1.5f), deg2rad(m_pInvItem->RenderRot().y / 1.5f), deg2rad(m_pInvItem->RenderRot().z / 1.5f));
 
 /*		y_rotate_angle += ROTATION_SPEED * (float)Device.dwTimeDelta / 1000.f;
 		if (y_rotate_angle > 2 * PI) y_rotate_angle = 0;
