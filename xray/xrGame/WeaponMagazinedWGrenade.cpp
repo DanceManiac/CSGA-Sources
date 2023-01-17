@@ -219,14 +219,14 @@ bool CWeaponMagazinedWGrenade::Action(s32 cmd, u32 flags)
 	if(m_bGrenadeMode && cmd==kWPN_FIRE)
 	{
 		if(IsPending())		
-			return				false;
+			return false;
 
 		if(flags&CMD_START)
 		{
 			if(iAmmoElapsed)
 				LaunchGrenade();
-			else
-				Reload();
+			else if (GetState() == eIdle)
+				SwitchState(eEmpty);
 		}
 		return true;
 	}
@@ -479,11 +479,6 @@ void CWeaponMagazinedWGrenade::OnAnimationEnd(u32 state)
 	case eSwitch:
 		{
 			SwitchState(eIdle);
-		}break;
-	case eFire:
-		{
-			if(m_bGrenadeMode)
-				Reload();
 		}break;
 	}
 	inherited::OnAnimationEnd(state);
