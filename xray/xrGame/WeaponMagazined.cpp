@@ -185,7 +185,8 @@ void CWeaponMagazined::FireStart()
 		}
 		else 
 		{
-			if(GetState()!=eReload && GetState()!=eZoomStart && GetState()!=eZoomEnd) {
+			if(GetState() == eIdle)
+			{
 				MsgGunEmpty();//сообщение о том, что магазин пуст
 				SwitchState(eEmpty);
 			}
