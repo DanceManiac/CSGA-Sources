@@ -454,19 +454,22 @@ void CWeaponMagazinedWGrenade::PlayAnimLookMis()
 
 void CWeaponMagazinedWGrenade::EmptyMove()
 {
-	if(m_bGrenadeMode)
+    if (IsGrenadeLauncherAttached())
 	{
-		if(IsZoomed())
-			PlayHUDMotion("anm_fakeshoot_aim_empty_g", false, this, GetState());
+		if(m_bGrenadeMode)
+		{
+			if(IsZoomed())
+				PlayHUDMotion("anm_fakeshoot_aim_empty_g", false, this, GetState());
+			else
+				PlayHUDMotion("anm_fakeshoot_empty_g", false, this, GetState());
+		}
 		else
-			PlayHUDMotion("anm_fakeshoot_empty_g", false, this, GetState());
-	}
-	else if (IsGrenadeLauncherAttached() && !m_bGrenadeMode)
-	{
-		if(IsZoomed())
-			PlayHUDMotion("anm_fakeshoot_aim_empty_w_gl", false, this, GetState());
-		else
-			PlayHUDMotion("anm_fakeshoot_empty_w_gl", false, this, GetState());
+		{
+			if(IsZoomed())
+				PlayHUDMotion("anm_fakeshoot_aim_empty_w_gl", false, this, GetState());
+			else
+				PlayHUDMotion("anm_fakeshoot_empty_w_gl", false, this, GetState());
+		}
 	}
 	else
 		inherited::EmptyMove();
