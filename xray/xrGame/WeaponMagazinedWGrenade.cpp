@@ -459,9 +459,23 @@ void CWeaponMagazinedWGrenade::EmptyMove()
 		if(m_bGrenadeMode)
 		{
 			if(IsZoomed())
-				PlayHUDMotion("anm_fakeshoot_aim_empty_g", false, this, GetState());
+			{
+				if(iAmmoElapsed2 == 0 && !IsMisfire())
+					PlayHUDMotion("anm_fakeshoot_aim_empty_g", false, this, GetState());
+				else if (IsMisfire())
+					PlayHUDMotion("anm_fakeshoot_aim_jammed_g", false, this, GetState());
+				else
+					PlayHUDMotion("anm_fakeshoot_aim_g", false, this, GetState());
+			}
 			else
-				PlayHUDMotion("anm_fakeshoot_empty_g", false, this, GetState());
+			{
+				if(iAmmoElapsed2 == 0 && !IsMisfire())
+					PlayHUDMotion("anm_fakeshoot_empty_g", false, this, GetState());
+				else if (IsMisfire())
+					PlayHUDMotion("anm_fakeshoot_jammed_g", false, this, GetState());
+				else
+					PlayHUDMotion("anm_fakeshoot_g", false, this, GetState());
+			}
 		}
 		else
 		{
