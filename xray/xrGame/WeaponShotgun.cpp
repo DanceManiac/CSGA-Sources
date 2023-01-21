@@ -14,17 +14,16 @@ CWeaponShotgun::CWeaponShotgun()
 }
 
 CWeaponShotgun::~CWeaponShotgun()
-{
-}
+{}
 
 void CWeaponShotgun::net_Destroy()
 {
 	inherited::net_Destroy();
 }
 
-void CWeaponShotgun::Load	(LPCSTR section)
+void CWeaponShotgun::Load(LPCSTR section)
 {
-	inherited::Load		(section);
+	inherited::Load(section);
 
 	if(pSettings->line_exist(section, "tri_state_reload")){
 		m_bTriStateReload = !!pSettings->r_bool(section, "tri_state_reload");
@@ -39,47 +38,57 @@ void CWeaponShotgun::Load	(LPCSTR section)
 
 }
 
-void CWeaponShotgun::switch2_Fire	()
+void CWeaponShotgun::switch2_Fire()
 {
-	inherited::switch2_Fire	();
+	inherited::switch2_Fire();
 	bWorking = false;
 }
 
-
-bool CWeaponShotgun::Action			(s32 cmd, u32 flags) 
+bool CWeaponShotgun::Action(s32 cmd, u32 flags) 
 {
 	if(inherited::Action(cmd, flags)) return true;
 
-	if(	m_bTriStateReload && GetState()==eReload &&
-		cmd==kWPN_FIRE && flags&CMD_START &&
-		m_sub_state==eSubstateReloadInProcess		)//остановить перезагрузку
+	if(	m_bTriStateReload && GetState()==eReload && cmd==kWPN_FIRE && flags&CMD_START && m_sub_state == eSubstateReloadInProcess)//РѕСЃС‚Р°РЅРѕРІРёС‚СЊ РїРµСЂРµР·Р°СЂСЏРґРєСѓ
 	{
 		AddCartridge(1);
 		m_sub_state = eSubstateReloadEnd;
 		return true;
 	}
+
 	return false;
+}
+
+bool CWeaponShotgun::SwitchAmmoType(u32 flags)
+{
+	if(IsTriStateReload() && iAmmoElapsed == iMagazineSize)
+		return false;
+
+	return inherited::SwitchAmmoType(flags);
 }
 
 void CWeaponShotgun::OnAnimationEnd(u32 state) 
 {
-	if(!m_bTriStateReload || state != eReload)
+	if(!m_bTriStateReload || state != eReload || IsMisfire())
 		return inherited::OnAnimationEnd(state);
 
-	switch(m_sub_state){
-		case eSubstateReloadBegin:{
+	switch(m_sub_state)
+	{
+		case eSubstateReloadBegin:
+		{
 			m_sub_state = eSubstateReloadInProcess;
 			SwitchState(eReload);
 		}break;
 
-		case eSubstateReloadInProcess:{
-			if( 0 != AddCartridge(1) ){
+		case eSubstateReloadInProcess:
+		{
+			if(0 != AddCartridge(1))
 				m_sub_state = eSubstateReloadEnd;
-			}
+
 			SwitchState(eReload);
 		}break;
 
-		case eSubstateReloadEnd:{
+		case eSubstateReloadEnd:
+		{
 			m_sub_state = eSubstateReloadBegin;
 			SwitchState(eIdle);
 		}break;
@@ -89,70 +98,75 @@ void CWeaponShotgun::OnAnimationEnd(u32 state)
 
 void CWeaponShotgun::Reload() 
 {
-	if(m_bTriStateReload){
+	if(m_bTriStateReload)
 		TriStateReload();
-	}else
+	else
 		inherited::Reload();
 }
 
 void CWeaponShotgun::TriStateReload()
 {
-	if( !HaveCartridgeInInventory(1) )return;
-	CWeapon::Reload		();
-	m_sub_state			= eSubstateReloadBegin;
-	SwitchState			(eReload);
+	if(!HaveCartridgeInInventory(1))
+		return;
+	CWeapon::Reload();
+	m_sub_state	= eSubstateReloadBegin;
+	SwitchState(eReload);
 }
 
-void CWeaponShotgun::OnStateSwitch	(u32 S)
+void CWeaponShotgun::OnStateSwitch(u32 S)
 {
-	if(!m_bTriStateReload || S != eReload){
+	if(!m_bTriStateReload || S != eReload || IsMisfire())
+	{
 		inherited::OnStateSwitch(S);
 		return;
 	}
 
 	CWeapon::OnStateSwitch(S);
 
-	if( m_magazine.size() == (u32)iMagazineSize || !HaveCartridgeInInventory(1) ){
-			switch2_EndReload		();
-			m_sub_state = eSubstateReloadEnd;
-			return;
+	if(m_magazine.size() == (u32)iMagazineSize || !HaveCartridgeInInventory(1))
+	{
+		switch2_EndReload();
+		m_sub_state = eSubstateReloadEnd;
+		return;
 	};
 
 	switch (m_sub_state)
 	{
 	case eSubstateReloadBegin:
-		if( HaveCartridgeInInventory(1) )
-			switch2_StartReload	();
-		break;
+	{
+		if(HaveCartridgeInInventory(1))
+			switch2_StartReload();
+	}break;
 	case eSubstateReloadInProcess:
-			if( HaveCartridgeInInventory(1) )
-				switch2_AddCartgidge	();
-		break;
+	{
+		if(HaveCartridgeInInventory(1))
+			switch2_AddCartgidge();
+	}break;
 	case eSubstateReloadEnd:
-			switch2_EndReload		();
-		break;
+		switch2_EndReload();
+	break;
 	};
 }
 
 void CWeaponShotgun::switch2_StartReload()
 {
-	PlaySound			("sndOpen",get_LastFP());
-	PlayAnimOpenWeapon	();
-	SetPending			(TRUE);
+	PlaySound("sndOpen",get_LastFP());
+	PlayAnimOpenWeapon();
+	SetPending(TRUE);
 }
 
-void CWeaponShotgun::switch2_AddCartgidge	()
+void CWeaponShotgun::switch2_AddCartgidge()
 {
-	PlaySound	("sndAddCartridge",get_LastFP());
+	PlaySound("sndAddCartridge",get_LastFP());
 	PlayAnimAddOneCartridgeWeapon();
-	SetPending			(TRUE);
+	SetPending(TRUE);
 }
 
-void CWeaponShotgun::switch2_EndReload	()
+void CWeaponShotgun::switch2_EndReload()
 {
-	SetPending			(FALSE);
-	PlaySound			("sndClose",get_LastFP());
-	PlayAnimCloseWeapon	();
+	SetPending(FALSE);
+	PlaySound("sndClose",get_LastFP());
+	PlayAnimCloseWeapon();
 }
 
 void CWeaponShotgun::PlayAnimOpenWeapon()
@@ -172,20 +186,20 @@ void CWeaponShotgun::PlayAnimCloseWeapon()
 	PlayHUDMotion("anm_close",FALSE,this,GetState());
 }
 
-bool CWeaponShotgun::HaveCartridgeInInventory		(u8 cnt)
+bool CWeaponShotgun::HaveCartridgeInInventory(u8 cnt)
 {
 	if (unlimited_ammo()) return true;
 	m_pAmmo = NULL;
 	if(m_pInventory) 
 	{
-		//попытаться найти в инвентаре патроны текущего типа 
+		//РїРѕРїС‹С‚Р°С‚СЊСЃСЏ РЅР°Р№С‚Рё РІ РёРЅРІРµРЅС‚Р°СЂРµ РїР°С‚СЂРѕРЅС‹ С‚РµРєСѓС‰РµРіРѕ С‚РёРїР° 
 		m_pAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[m_ammoType]));
 		
 		if(!m_pAmmo )
 		{
 			for(u32 i = 0; i < m_ammoTypes.size(); ++i) 
 			{
-				//проверить патроны всех подходящих типов
+				//РїСЂРѕРІРµСЂРёС‚СЊ РїР°С‚СЂРѕРЅС‹ РІСЃРµС… РїРѕРґС…РѕРґСЏС‰РёС… С‚РёРїРѕРІ
 				m_pAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[i]));
 				if(m_pAmmo) 
 				{ 
@@ -198,7 +212,7 @@ bool CWeaponShotgun::HaveCartridgeInInventory		(u8 cnt)
 	return (m_pAmmo!=NULL)&&(m_pAmmo->m_boxCurr>=cnt) ;
 }
 
-u8 CWeaponShotgun::AddCartridge		(u8 cnt)
+u8 CWeaponShotgun::AddCartridge(u8 cnt)
 {
 	if(IsMisfire())	bMisfire = false;
 
@@ -208,7 +222,7 @@ u8 CWeaponShotgun::AddCartridge		(u8 cnt)
 
 	}
 
-	if( !HaveCartridgeInInventory(1) )
+	if(!HaveCartridgeInInventory(1))
 		return 0;
 
 	VERIFY((u32)iAmmoElapsed == m_magazine.size());
@@ -233,14 +247,14 @@ u8 CWeaponShotgun::AddCartridge		(u8 cnt)
 
 	VERIFY((u32)iAmmoElapsed == m_magazine.size());
 
-	//выкинуть коробку патронов, если она пустая
+	//РІС‹РєРёРЅСѓС‚СЊ РєРѕСЂРѕР±РєСѓ РїР°С‚СЂРѕРЅРѕРІ, РµСЃР»Рё РѕРЅР° РїСѓСЃС‚Р°СЏ
 	if(m_pAmmo && !m_pAmmo->m_boxCurr && OnServer()) 
 		m_pAmmo->SetDropManual(TRUE);
 
 	return cnt;
 }
 
-void	CWeaponShotgun::net_Export	(NET_Packet& P)
+void CWeaponShotgun::net_Export(NET_Packet& P)
 {
 	inherited::net_Export(P);	
 	P.w_u8(u8(m_magazine.size()));	
@@ -251,7 +265,7 @@ void	CWeaponShotgun::net_Export	(NET_Packet& P)
 	}
 }
 
-void	CWeaponShotgun::net_Import	(NET_Packet& P)
+void CWeaponShotgun::net_Import(NET_Packet& P)
 {
 	inherited::net_Import(P);	
 	u8 AmmoCount = P.r_u8();

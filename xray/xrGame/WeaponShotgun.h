@@ -28,6 +28,8 @@ public:
 
 	virtual bool	Action(s32 cmd, u32 flags);
 
+	virtual bool SwitchAmmoType(u32 flags);
+
 protected:
 	virtual void	OnAnimationEnd		(u32 state);
 	void			TriStateReload		();
