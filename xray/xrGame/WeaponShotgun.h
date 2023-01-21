@@ -28,7 +28,12 @@ public:
 
 	virtual bool	Action(s32 cmd, u32 flags);
 
-	virtual bool SwitchAmmoType(u32 flags);
+	virtual bool	SwitchAmmoType(u32 flags);
+
+	bool			m_bAddCartridgeOpen; //говорим, что open содержит в себе добавление в магазин патрона
+	bool			m_bEmptyPreloadMode; //после анимы anm_open_empty надо играть add_cartridge_preloaded или close_preloaded (т.к. в anm_open_empty загоняется патрон в патронник)
+	bool			bPreloadAnimAdapter; //нужен чтобы после anm_open_empty была анимка add_cartridge_preloaded или close_preloaded
+	bool			bStopReload;// флаг того что мы пытаемся остановить перезарядку
 
 protected:
 	virtual void	OnAnimationEnd		(u32 state);
