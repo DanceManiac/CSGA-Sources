@@ -50,6 +50,7 @@ void CEatableItem::Load(LPCSTR section)
 	clamp						(m_fWoundsHealPerc, 0.f, 1.f);
 	
 	m_iStartPortionsNum			= pSettings->r_s32	(section, "eat_portions_num");
+	if (m_iStartPortionsNum < 0) m_iStartPortionsNum = 1;
 	m_fMaxPowerUpInfluence		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_max_power",0.0f);
 	VERIFY						(m_iPortionsNum<10000);
 }
