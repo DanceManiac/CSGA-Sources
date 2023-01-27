@@ -252,31 +252,39 @@ void player_hud::tune(Ivector _values)
 				Msg("hands_position%s				= %f,%f,%f",(is_16x9)?"_16x9":"", pos_.x, pos_.y, pos_.z);
 				Msg("hands_orientation%s			= %f,%f,%f",(is_16x9)?"_16x9":"", rot_.x, rot_.y, rot_.z);
 				Log("-----------");
-			}else
-			if(idx==1)
+			}
+			else if(idx==1)
 			{
 				Msg("[%s]", m_attached_items[hud_adj_item_idx]->m_sect_name.c_str());
 				Msg("aim_hud_offset_pos%s				= %f,%f,%f",(is_16x9)?"_16x9":"",  pos_.x, pos_.y, pos_.z);
 				Msg("aim_hud_offset_rot%s				= %f,%f,%f",(is_16x9)?"_16x9":"",  rot_.x, rot_.y, rot_.z);
 				Log("-----------");
-			}else
-			if(idx==2)
+			}
+			else if(idx==2)
 			{
 				Msg("[%s]", m_attached_items[hud_adj_item_idx]->m_sect_name.c_str());
 				Msg("gl_hud_offset_pos%s				= %f,%f,%f",(is_16x9)?"_16x9":"",  pos_.x, pos_.y, pos_.z);
 				Msg("gl_hud_offset_rot%s				= %f,%f,%f",(is_16x9)?"_16x9":"",  rot_.x, rot_.y, rot_.z);
 				Log("-----------");
 			}
+			else if(idx==3)
+			{
+				Msg("[%s]", m_attached_items[hud_adj_item_idx]->m_sect_name.c_str());
+				Msg("alt_aim_hud_offset_pos%s				= %f,%f,%f",(is_16x9)?"_16x9":"",  pos_.x, pos_.y, pos_.z);
+				Msg("alt_aim_hud_offset_rot%s				= %f,%f,%f",(is_16x9)?"_16x9":"",  rot_.x, rot_.y, rot_.z);
+				Log("-----------");
+			}
 		}
-	}else
-	if(hud_adj_mode==8 || hud_adj_mode==9)
+	}
+	else if(hud_adj_mode==8 || hud_adj_mode==9)
 	{
 		if(hud_adj_mode==8 && (values.z) )
 			_delta_pos	+= (values.z>0)?0.001f:-0.001f;
 		
 		if(hud_adj_mode==9 && (values.z) )
 			 _delta_rot += (values.z>0)?0.1f:-0.1f;
-	}else
+	}
+	else
 	{
 		attachable_hud_item* hi = m_attached_items[hud_adj_item_idx];
 		if(!hi)	return;
