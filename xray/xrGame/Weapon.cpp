@@ -2072,15 +2072,31 @@ bool CWeapon::ready_to_kill	() const
 	);
 }
 
+u8 CWeapon::GetCurrentHudOffsetIdx()
+{
+    CActor* pActor = smart_cast<CActor*>(H_Parent());
+    if (!pActor)
+        return 0;
 
-void CWeapon::UpdateHudAdditonal		(Fmatrix& trans)
+    bool b_aiming = ((IsZoomed() && m_zoom_params.m_fZoomRotationFactor <= 1.f) || (!IsZoomed() && m_zoom_params.m_fZoomRotationFactor > 0.f));
+
+    if (!b_aiming)
+        return 0;
+    else if (bAltOffset)
+        return 3;
+    else
+        return 1;
+}
+
+void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 {
     auto pActor = smart_cast<const CActor*>(H_Parent());
-	if(!pActor)		return;
+	if(!pActor)
+		return;
 
 	u8 idx = GetCurrentHudOffsetIdx();
 
-	if((IsZoomed() && m_zoom_params.m_fZoomRotationFactor<=1.f) ||(!IsZoomed() && m_zoom_params.m_fZoomRotationFactor>0.f))
+	if((IsZoomed() && m_zoom_params.m_fZoomRotationFactor<=1.f) || (!IsZoomed() && m_zoom_params.m_fZoomRotationFactor>0.f))
 	{
 		attachable_hud_item*		hi = HudItemData();
 		R_ASSERT					(hi);
@@ -2413,22 +2429,6 @@ void CWeapon::OnStateSwitch	(u32 S)
 void CWeapon::OnAnimationEnd(u32 state) 
 {
 	inherited::OnAnimationEnd(state);
-}
-
-u8 CWeapon::GetCurrentHudOffsetIdx()
-{
-	CActor* pActor	= smart_cast<CActor*>(H_Parent());
-	if(!pActor)		return 0;
-	
-	bool b_aiming		= 	((IsZoomed() && m_zoom_params.m_fZoomRotationFactor<=1.f) ||
-							(!IsZoomed() && m_zoom_params.m_fZoomRotationFactor>0.f));
-
-	if(!b_aiming)
-		return 0;
-	else if (bAltOffset)
-		return 3;
-	else
-		return 1;
 }
 
 void CWeapon::render_hud_mode()
