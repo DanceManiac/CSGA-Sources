@@ -1105,6 +1105,9 @@ void CWeaponMagazined::InitAddons()
 		m_sSmokeParticlesCurrent = m_sSilencerSmokeParticles;
 		m_sSndShotCurrent = "sndSilencerShot";
 
+		if (m_bUseSilHud && IsSilencerAttached())
+			hud_sect = pSettings->r_string(cNameSect(), "hud_silencer");
+
 		//подсветка от выстрела
 		LoadLights(*cNameSect(), "silencer_");
 		ApplySilencerKoeffs();
@@ -1114,6 +1117,9 @@ void CWeaponMagazined::InitAddons()
 		m_sFlameParticlesCurrent = m_sFlameParticles;
 		m_sSmokeParticlesCurrent = m_sSmokeParticles;
 		m_sSndShotCurrent = "sndShot";
+
+		if (m_bUseSilHud && !IsSilencerAttached())
+			hud_sect = pSettings->r_string(cNameSect(), "hud");
 
 		//подсветка от выстрела
 		LoadLights(*cNameSect(), "");

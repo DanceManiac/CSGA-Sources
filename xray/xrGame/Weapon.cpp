@@ -589,6 +589,8 @@ void CWeapon::Load		(LPCSTR section)
 
 	m_bRestGL_and_Sil = READ_IF_EXISTS(pSettings, r_bool, section, "restricted_gl_and_sil", false);
 
+	m_bUseSilHud = READ_IF_EXISTS(pSettings, r_bool, section, "use_sil_hud", false);
+
 	////////////////////////////////////////////
 	//--#SM+# Begin--
 	string16 _prefix = { "" };
