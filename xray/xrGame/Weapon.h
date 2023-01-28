@@ -228,6 +228,7 @@ public:
 	bool m_bDisableShellParticles;
     bool m_bHideMarkInAlt;
 	bool m_bJamNotShot; //осечка без выстрела (выстрел не будет произведен, но из-за попытки стрельбы оружие заклинит)
+    bool m_bRestGL_and_Sil; //запрет на одновременное использование ПГ и глушителя
 
 	bool IsGrenadeLauncherMode();
 

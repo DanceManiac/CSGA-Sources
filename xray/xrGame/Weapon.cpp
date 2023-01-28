@@ -587,6 +587,8 @@ void CWeapon::Load		(LPCSTR section)
 
 	m_bJamNotShot = READ_IF_EXISTS(pSettings, r_bool, hud_sect, "no_jam_fire", false);
 
+	m_bRestGL_and_Sil = READ_IF_EXISTS(pSettings, r_bool, section, "restricted_gl_and_sil", false);
+
 	////////////////////////////////////////////
 	//--#SM+# Begin--
 	string16 _prefix = { "" };

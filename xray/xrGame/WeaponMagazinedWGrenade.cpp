@@ -299,7 +299,9 @@ void CWeaponMagazinedWGrenade::OnEvent(NET_Packet& P, u16 type)
 
 void  CWeaponMagazinedWGrenade::LaunchGrenade()
 {
-	if(!getRocketCount())	return;
+	if(!getRocketCount())
+		return;
+
 	R_ASSERT				(m_bGrenadeMode);
 	{
 		Fvector						p1, d; 
@@ -539,14 +541,14 @@ bool CWeaponMagazinedWGrenade::Attach(PIItem pIItem, bool b_send_event)
 {
 	CGrenadeLauncher* pGrenadeLauncher = smart_cast<CGrenadeLauncher*>(pIItem);
 	
-	if(pGrenadeLauncher &&
-	   ALife::eAddonAttachable == m_eGrenadeLauncherStatus &&
-	   0 == (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
-	   !xr_strcmp(*m_sGrenadeLauncherName, pIItem->object().cNameSect()))
+	if(pGrenadeLauncher && ALife::eAddonAttachable == m_eGrenadeLauncherStatus && 0 == (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) && !xr_strcmp(*m_sGrenadeLauncherName, pIItem->object().cNameSect()))
 	{
 		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher;
 
 		CRocketLauncher::m_fLaunchSpeed = pGrenadeLauncher->GetGrenadeVel();
+
+		if (m_bRestGL_and_Sil && IsSilencerAttached())
+			Detach(GetSilencerName().c_str(), true);
 
  		//уничтожить подствольник из инвентаря
 		if(b_send_event)
