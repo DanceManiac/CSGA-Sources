@@ -16,6 +16,25 @@ CWeaponShotgun::CWeaponShotgun()
 CWeaponShotgun::~CWeaponShotgun()
 {}
 
+BOOL CWeaponShotgun::net_Spawn(CSE_Abstract* DC)
+{
+	BOOL r = inherited::net_Spawn(DC);
+
+	CSE_ALifeItemWeaponShotGun* _dc = smart_cast<CSE_ALifeItemWeaponShotGun*>(DC);
+	xr_vector<u8> ammo_ids = _dc->m_AmmoIDs;
+
+	for (u32 i = 0; i < ammo_ids.size(); i++)
+	{
+		u8 LocalAmmoType = ammo_ids[i];
+		if (i >= m_magazine.size()) continue;
+		CCartridge& l_cartridge = *(m_magazine.begin() + i);
+		if (LocalAmmoType == l_cartridge.m_LocalAmmoType) continue;
+		l_cartridge.Load(*m_ammoTypes[LocalAmmoType], LocalAmmoType);
+	}
+
+	return r;
+}
+
 void CWeaponShotgun::net_Destroy()
 {
 	inherited::net_Destroy();
