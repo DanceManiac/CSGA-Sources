@@ -1059,10 +1059,10 @@ u8 CWeaponMagazinedWGrenade::GetCurrentHudOffsetIdx()
 	
 	if(!b_aiming)
 		return 0;
+	else if (!m_bGrenadeMode && bAltOffset)
+		return 3;
 	else if(m_bGrenadeMode)
 		return 2;
-	else if (bAltOffset)
-		return 3;
 	else
 		return 1;
 }
