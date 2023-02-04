@@ -115,6 +115,9 @@ public:
 
 	virtual void				PlayAnimIdleMoving	();
 	virtual void				PlayAnimIdleSprint	();
+	virtual void				PlayAnimIdleMovingSlow	();
+	virtual void				PlayAnimIdleMovingCrouchSlow	();
+	virtual void				PlayAnimIdleMovingCrouch	();
 
 	virtual void				UpdateCL			();
 	virtual void				renderable_Render	();

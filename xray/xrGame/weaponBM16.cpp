@@ -159,7 +159,7 @@ void CWeaponBM16::PlayAnimReload()
 	}
 }
 
-void  CWeaponBM16::PlayAnimIdleMoving()
+void CWeaponBM16::PlayAnimIdleMoving()
 {
 	switch( m_magazine.size() )
 	{
@@ -184,7 +184,7 @@ void  CWeaponBM16::PlayAnimIdleMoving()
 	}
 }
 
-void  CWeaponBM16::PlayAnimIdleSprint()
+void CWeaponBM16::PlayAnimIdleSprint()
 {
 	switch( m_magazine.size() )
 	{
@@ -205,6 +205,81 @@ void  CWeaponBM16::PlayAnimIdleSprint()
 			PlayHUDMotion("anm_idle_sprint_jammed_2",TRUE,this,GetState());
 		else
 			PlayHUDMotion("anm_idle_sprint_2",TRUE,this,GetState());
+		break;
+	}
+}
+
+void CWeaponBM16::PlayAnimIdleMovingCrouch()
+{
+	switch(m_magazine.size())
+	{
+	case 0:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_moving_crouch_jammed_0",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_moving_crouch_0",TRUE,this,GetState());
+		break;
+	case 1:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_moving_crouch_jammed_1",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_moving_crouch_1",TRUE,this,GetState());
+		break;
+	case 2:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_moving_crouch_jammed_2",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_moving_crouch_2",TRUE,this,GetState());
+		break;
+	}
+}
+
+void CWeaponBM16::PlayAnimIdleMovingCrouchSlow()
+{
+	switch(m_magazine.size())
+	{
+	case 0:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_moving_crouch_slow_jammed_0",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_moving_crouch_slow_0",TRUE,this,GetState());
+		break;
+	case 1:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_moving_crouch_slow_jammed_1",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_moving_crouch_slow_1",TRUE,this,GetState());
+		break;
+	case 2:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_moving_crouch_slow_jammed_2",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_moving_crouch_slow_2",TRUE,this,GetState());
+		break;
+	}
+}
+
+void CWeaponBM16::PlayAnimIdleMovingSlow()
+{
+	switch(m_magazine.size())
+	{
+	case 0:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_moving_slow_jammed_0",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_moving_slow_0",TRUE,this,GetState());
+		break;
+	case 1:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_moving_slow_jammed_1",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_moving_slow_1",TRUE,this,GetState());
+		break;
+	case 2:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_moving_slow_jammed_2",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_moving_slow_2",TRUE,this,GetState());
 		break;
 	}
 }

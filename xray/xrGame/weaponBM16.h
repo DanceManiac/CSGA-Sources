@@ -23,6 +23,9 @@ protected:
 	virtual void	PlayAnimIdleSprint				();
 	virtual void	PlayAnimShow					();
 	virtual void	PlayAnimHide					();
+	virtual void	PlayAnimIdleMovingSlow			();
+	virtual void	PlayAnimIdleMovingCrouchSlow	();
+	virtual void	PlayAnimIdleMovingCrouch		();
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 add_to_type_list(CWeaponBM16)

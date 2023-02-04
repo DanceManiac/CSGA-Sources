@@ -45,13 +45,13 @@ void CHudItem::Load(LPCSTR section)
 
 	m_bDisableBore = !!READ_IF_EXISTS(pSettings, r_bool, hud_sect, "disable_bore", false);//параметр из ганса, случайно нашёл способ реализации, чтобы не васянить, нужно добавить условие !m_bDisableBore в функции, которая вызывает eBore, по умолчанию false
 
-	if(!m_bDisableBore && isHUDAnimationExist("anm_bore"))
+	if(!m_bDisableBore)
 		m_sounds.LoadSound(section,"snd_bore","sndBore", true);
 }
 
 void CHudItem::PlaySound(LPCSTR alias, const Fvector& position)
 {
-	m_sounds.PlaySound	(alias, position, object().H_Root(), !!GetHUDmode());
+	m_sounds.PlaySound(alias, position, object().H_Root(), !!GetHUDmode());
 }
 
 void CHudItem::renderable_Render()
@@ -120,17 +120,17 @@ void CHudItem::OnStateSwitch(u32 S)
 
 	switch (S)
 	{
-	case eBore:
-		SetPending(true);
-
-		PlayAnimBore();
-		if(HudItemData() && !m_bDisableBore && isHUDAnimationExist("anm_bore"))
+		case eBore:
 		{
-			Fvector P = HudItemData()->m_item_transform.c;
-			m_sounds.PlaySound("sndBore", P, object().H_Root(), !!GetHUDmode(), false, m_started_rnd_anim_idx);
-		}
+			SetPending(true);
+			PlayAnimBore();
+			if(HudItemData() && !m_bDisableBore)
+			{
+				Fvector P = HudItemData()->m_item_transform.c;
+				m_sounds.PlaySound("sndBore", P, object().H_Root(), !!GetHUDmode(), false, m_started_rnd_anim_idx);
+			}
 
-		break;
+		}break;
 	}
 }
 
@@ -138,10 +138,9 @@ void CHudItem::OnAnimationEnd(u32 state)
 {
 	switch(state)
 	{
-	case eBore:
-		{
+		case eBore:
 			SwitchState	(eIdle);
-		} break;
+		break;
 	}
 }
 
@@ -183,8 +182,7 @@ void CHudItem::SendHiddenItem()
 }
 
 void CHudItem::UpdateHudAdditonal		(Fmatrix& hud_trans)
-{
-}
+{}
 
 void CHudItem::UpdateCL()
 {
@@ -370,7 +368,8 @@ BOOL CHudItem::GetHUDmode()
 
 void CHudItem::PlayAnimIdle()
 {
-	if (TryPlayAnimIdle()) return;
+	if (TryPlayAnimIdle())
+		return;
 
 	PlayHUDMotion("anm_idle", true, nullptr, GetState());
 }
@@ -379,20 +378,35 @@ bool CHudItem::TryPlayAnimIdle()
 {
 	if(MovingAnimAllowedNow())
 	{
-		CActor* pActor = smart_cast<CActor*>(object().H_Parent());
+        auto pActor = smart_cast<CActor*>(object().H_Parent());
 		if(pActor)
 		{
-			CEntity::SEntityState st;
-			pActor->g_State(st);
-			if(st.bSprint)
-			{
-				PlayAnimIdleSprint();
-				return true;
-			}else
-			if(!st.bCrouch && pActor->AnyMove())
-			{
-				PlayAnimIdleMoving();
-				return true;
+            u32 state = pActor->get_state();
+            if (state & mcSprint)
+            {
+                PlayAnimIdleSprint();
+                return true;
+            }
+            else if ((state & mcAnyMove))
+            {
+                if (!(state & mcCrouch))
+                {
+                    if (state & mcAccel)
+                        PlayAnimIdleMovingSlow();
+                    else
+                        PlayAnimIdleMoving();
+                    return true;
+                }
+                else if (state & mcAccel)
+                {
+                    PlayAnimIdleMovingCrouchSlow();
+                    return true;
+                }
+                else
+                {
+                    PlayAnimIdleMovingCrouch();
+                    return true;
+				}
 			}
 		}
 	}
@@ -401,24 +415,36 @@ bool CHudItem::TryPlayAnimIdle()
 
 void CHudItem::PlayAnimIdleMoving()
 {
-	PlayHUDMotion("anm_idle_moving", TRUE, NULL, GetState());
+	PlayHUDMotion("anm_idle_moving", true, nullptr, GetState());
 }
 
 void CHudItem::PlayAnimIdleSprint()
 {
-	PlayHUDMotion("anm_idle_sprint", TRUE, NULL,GetState());
+	PlayHUDMotion("anm_idle_sprint", true, nullptr, GetState());
+}
+
+void CHudItem::PlayAnimIdleMovingCrouch()
+{
+	PlayHUDMotion("anm_idle_moving_crouch", true, nullptr, GetState());
+}
+
+void CHudItem::PlayAnimIdleMovingCrouchSlow()
+{
+	PlayHUDMotion("anm_idle_moving_crouch_slow", true, nullptr, GetState());
+}
+
+void CHudItem::PlayAnimIdleMovingSlow()
+{
+	PlayHUDMotion("anm_idle_moving_slow", true, nullptr, GetState());
 }
 
 void CHudItem::OnMovementChanged(ACTOR_DEFS::EMoveCommand cmd)
 {
-	if(GetState()==eIdle)
-	{
-		if( (cmd == ACTOR_DEFS::mcSprint) || (cmd == ACTOR_DEFS::mcAnyMove)  )
-		{
-			PlayAnimIdle						();
-			ResetSubStateTime					();
-		}
-	}
+    if (GetState() == eIdle && !m_bStopAtEndAnimIsRunning)
+    {
+        PlayAnimIdle();
+        ResetSubStateTime();
+    }
 }
 
 attachable_hud_item* CHudItem::HudItemData()

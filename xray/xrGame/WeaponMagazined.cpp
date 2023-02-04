@@ -1307,6 +1307,56 @@ void CWeaponMagazined::PlayAnimAimStart()
 	}
 }
 
+void CWeaponMagazined::PlayAnimIdleMoving()
+{
+    if (!IsMisfire() && iAmmoElapsed == 0)
+		PlayHUDMotion("anm_idle_moving_empty", true, nullptr, GetState());
+	else if(IsMisfire())
+		PlayHUDMotion("anm_idle_moving_jammed", true, nullptr, GetState());
+	else
+		PlayHUDMotion("anm_idle_moving", true, nullptr, GetState());
+}
+
+void CWeaponMagazined::PlayAnimIdleSprint()
+{
+    if (!IsMisfire() && iAmmoElapsed == 0)
+		PlayHUDMotion("anm_idle_sprint_empty", true, nullptr, GetState());
+	else if(IsMisfire())
+		PlayHUDMotion("anm_idle_sprint_jammed", true, nullptr, GetState());
+	else
+		PlayHUDMotion("anm_idle_sprint", true, nullptr, GetState());
+}
+
+void CWeaponMagazined::PlayAnimIdleMovingCrouch()
+{
+    if (!IsMisfire() && iAmmoElapsed == 0)
+		PlayHUDMotion("anm_idle_moving_crouch_empty", true, nullptr, GetState());
+	else if (IsMisfire())
+		PlayHUDMotion("anm_idle_moving_crouch_jammed", true, nullptr, GetState());
+	else
+		PlayHUDMotion("anm_idle_moving_crouch", true, nullptr, GetState());
+}
+
+void CWeaponMagazined::PlayAnimIdleMovingCrouchSlow()
+{
+    if (!IsMisfire() && iAmmoElapsed == 0)
+		PlayHUDMotion("anm_idle_moving_crouch_slow_empty", true, nullptr, GetState());
+    else if (IsMisfire())
+		PlayHUDMotion("anm_idle_moving_crouch_slow_jammed", true, nullptr, GetState());
+	else
+		PlayHUDMotion("anm_idle_moving_crouch_slow", true, nullptr, GetState());
+}
+
+void CWeaponMagazined::PlayAnimIdleMovingSlow()
+{
+    if (!IsMisfire() && iAmmoElapsed == 0)
+		PlayHUDMotion("anm_idle_moving_slow_empty", true, nullptr, GetState());
+    else if (IsMisfire())
+		PlayHUDMotion("anm_idle_moving_slow_jammed", true, nullptr, GetState());
+	else
+		PlayHUDMotion("anm_idle_moving_slow", true, nullptr, GetState());
+}
+
 void CWeaponMagazined::PlayAnimAimEnd()
 {
     VERIFY(GetState() == eZoomEnd);
@@ -1677,24 +1727,4 @@ bool CWeaponMagazined::install_upgrade_impl(LPCSTR section, bool test)
 	}
 
 	return result;
-}
-
-void CWeaponMagazined::PlayAnimIdleMoving()
-{
-    if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_idle_moving_empty", true, nullptr, GetState());
-	else if(IsMisfire())
-		PlayHUDMotion("anm_idle_moving_jammed", true, nullptr, GetState());
-	else
-		PlayHUDMotion("anm_idle_moving", true, nullptr, GetState());
-}
-
-void CWeaponMagazined::PlayAnimIdleSprint()
-{
-    if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_idle_sprint_empty", true, nullptr, GetState());
-	else if(IsMisfire())
-		PlayHUDMotion("anm_idle_sprint_jammed", true, nullptr, GetState());
-	else
-		PlayHUDMotion("anm_idle_sprint", true, nullptr, GetState());
 }

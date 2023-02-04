@@ -73,6 +73,9 @@ public:
 	virtual void	PlayAnimIdleMoving	();
 	virtual void	PlayAnimIdleSprint	();
 	virtual void	PlayAnimAim			();
+	virtual void	PlayAnimIdleMovingSlow	();
+	virtual void	PlayAnimIdleMovingCrouchSlow	();
+	virtual void	PlayAnimIdleMovingCrouch	();
 	
 	virtual void	PlaySoundLowAmmo();
 

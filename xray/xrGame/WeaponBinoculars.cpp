@@ -102,6 +102,21 @@ void CWeaponBinoculars::PlayAnimIdleSprint()
 	PlayHUDMotion("anm_idle_sprint", true, nullptr, GetState());
 }
 
+void CWeaponBinoculars::PlayAnimIdleMovingCrouch()
+{
+	PlayHUDMotion("anm_idle_moving_crouch", true, nullptr, GetState());
+}
+
+void CWeaponBinoculars::PlayAnimIdleMovingCrouchSlow()
+{
+	PlayHUDMotion("anm_idle_moving_crouch_slow", true, nullptr, GetState());
+}
+
+void CWeaponBinoculars::PlayAnimIdleMovingSlow()
+{
+	PlayHUDMotion("anm_idle_moving_slow", true, nullptr, GetState());
+}
+
 void CWeaponBinoculars::PlayAnimIdle()
 {
     VERIFY(GetState() == eIdle);

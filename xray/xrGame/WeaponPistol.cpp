@@ -5,45 +5,39 @@
 
 CWeaponPistol::CWeaponPistol()
 {
-	SetPending			(FALSE);
+	SetPending(false);
 }
 
 CWeaponPistol::~CWeaponPistol(void)
-{
-}
+{}
 
 void CWeaponPistol::net_Destroy()
 {
 	inherited::net_Destroy();
 }
 
-
-void CWeaponPistol::Load	(LPCSTR section)
+void CWeaponPistol::Load(LPCSTR section)
 {
-	inherited::Load		(section);
-
+	inherited::Load(section);
 }
 
-void CWeaponPistol::OnH_B_Chield		()
+void CWeaponPistol::OnH_B_Chield()
 {
-	inherited::OnH_B_Chield		();
+	inherited::OnH_B_Chield();
 }
 
-void CWeaponPistol::PlayAnimShow	()
+void CWeaponPistol::PlayAnimShow()
 {
-	VERIFY(GetState()==eShowing);
+	VERIFY(GetState() == eShowing);
 
 	inherited::PlayAnimShow();
 }
 
 void CWeaponPistol::PlayAnimBore()
 {
-	if(iAmmoElapsed==0 && isHUDAnimationExist("anm_bore_empty"))
-		PlayHUDMotion	("anm_bore_empty", TRUE, this, GetState());
-	else if(IsMisfire() && isHUDAnimationExist("anm_bore_jammed"))
-		PlayHUDMotion	("anm_bore_jammed", TRUE, this, GetState());
-	else
-		inherited::PlayAnimBore();
+    VERIFY(GetState() == eBore);
+
+	inherited::PlayAnimBore();
 }
 
 void CWeaponPistol::PlayAnimIdleSprint()
@@ -56,14 +50,14 @@ void CWeaponPistol::PlayAnimIdleMoving()
 	inherited::PlayAnimIdleMoving();
 }
 
-
 void CWeaponPistol::PlayAnimIdle()
 {
-	if (TryPlayAnimIdle()) return;
+	if (TryPlayAnimIdle())
+		return;
 
-	VERIFY(GetState()==eIdle);
+	VERIFY(GetState() == eIdle);
 
-	inherited::PlayAnimIdle		();
+	inherited::PlayAnimIdle();
 }
 
 void CWeaponPistol::PlayAnimAim()
@@ -73,11 +67,25 @@ void CWeaponPistol::PlayAnimAim()
 
 void CWeaponPistol::PlayAnimReload()
 {	
-	VERIFY(GetState()==eReload);
+	VERIFY(GetState() == eReload);
 
 	inherited::PlayAnimReload();
 }
 
+void CWeaponPistol::PlayAnimIdleMovingCrouch()
+{
+	inherited::PlayAnimIdleMovingCrouch();
+}
+
+void CWeaponPistol::PlayAnimIdleMovingCrouchSlow()
+{
+	inherited::PlayAnimIdleMovingCrouchSlow();
+}
+
+void CWeaponPistol::PlayAnimIdleMovingSlow()
+{
+	inherited::PlayAnimIdleMovingSlow();
+}
 
 void CWeaponPistol::PlayAnimHide()
 {
@@ -88,21 +96,9 @@ void CWeaponPistol::PlayAnimHide()
 
 void CWeaponPistol::PlayAnimShoot()
 {
-	VERIFY(GetState()==eFire);
+	VERIFY(GetState() == eFire);
 	
-    string_path guns_shoot_anm{};
-    strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (this->IsZoomed() && !this->IsRotatingToZoom()) ? (iAmmoElapsed == 1 ? "_aim_last"  : "_aim") : (IsMisfire() ? "_jammed" : (iAmmoElapsed == 1 ? "_last" : "" )), this->IsSilencerAttached() ? "_sil" : "");
-
-    PlayHUDMotionNew(guns_shoot_anm, FALSE, GetState());
-	
-	if(isHUDAnimationExist("anm_shots"))//мои любимые заглушки
-	{
-		PlayHUDMotion("anm_shots", FALSE, this, GetState());
-	}
-	if(isHUDAnimationExist("anm_shots_l"))
-	{
-		PlayHUDMotion("anm_shots_l", FALSE, this, GetState());
-	}
+	inherited::PlayAnimShoot();
 }
 
 void CWeaponPistol::switch2_Reload()

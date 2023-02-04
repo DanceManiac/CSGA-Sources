@@ -161,6 +161,9 @@ protected:
     virtual void	PlayAnimAimEnd		();
 	virtual void	PlayAnimLookMis		();
 	virtual void	PlayAnimLightMis	();
+	virtual void	PlayAnimIdleMovingSlow();
+	virtual void	PlayAnimIdleMovingCrouchSlow();
+	virtual void	PlayAnimIdleMovingCrouch();
 
 private:
 	string64 guns_aim_anm;
