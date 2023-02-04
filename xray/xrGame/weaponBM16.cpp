@@ -8,52 +8,75 @@ CWeaponBM16::~CWeaponBM16()
 void CWeaponBM16::Load	(LPCSTR section)
 {
 	inherited::Load		(section);
-	m_sounds.LoadSound	(section, "snd_reload_1", "sndReload1", true, m_eSoundReload);
+
+	m_sounds.LoadSound(section, "snd_changecartridgetype_only", "sndChangeCartridgeFull", true, m_eSoundReload);
+	m_sounds.LoadSound(section, "snd_changecartridgetype_one", "sndChangeCartridgeOne", true, m_eSoundReload);
 }
 
 void CWeaponBM16::PlayReloadSound()
 {
-	switch( m_magazine.size() )
+	switch(m_magazine.size())
 	{
-	case 2:
-		if(IsMisfire())
-			PlaySound	("sndReloadJammed",get_LastFP());
-	case 1:
-		if(IsMisfire())
-			PlaySound	("sndReloadJammedLast",get_LastFP());
-		else
-			PlaySound	("sndReload1",get_LastFP());
+		case 0:
+			PlaySound("sndReloadEmpty", get_LastFP());
 		break;
-	case 0:
-		PlaySound	("sndReload",get_LastFP());
-		break;
+		case 1:
+		{
+			if(IsMisfire())
+				PlaySound("sndReloadJammed", get_LastFP());
+			else if (bSwitchAmmoType)
+				PlaySound("sndChangeCartridgeOne", get_LastFP());
+			else
+				PlaySound("sndReload", get_LastFP());
+		}break;
+		case 2:
+		{
+			if(IsMisfire())
+				PlaySound("sndReloadJammed", get_LastFP());
+			else
+				PlaySound("sndChangeCartridgeFull", get_LastFP());
+		}break;
 	}
 }
 
 void CWeaponBM16::PlayAnimShoot()
 {
-	switch( m_magazine.size() )
+	switch(m_magazine.size())
 	{
-	case 1:
-		if(IsMisfire())
-			PlayHUDMotion("anm_shoot_jammed_1",FALSE,this,GetState());
-		else if(IsZoomed())
-			PlayHUDMotion("anm_shoot_aim_1",FALSE,this,GetState());
-		else if(IsZoomed() && IsMisfire())
-			PlayHUDMotion("anm_shoot_aim_jammed_1",FALSE,this,GetState());
-		else
-			PlayHUDMotion("anm_shoot_1",FALSE,this,GetState());
-		break;
-	case 2:
-		if(IsMisfire())
-			PlayHUDMotion("anm_shoot_jammed_2",FALSE,this,GetState());
-		else if(IsZoomed())
-			PlayHUDMotion("anm_shoot_aim_2",FALSE,this,GetState());
-		else if(IsZoomed() && IsMisfire())
-			PlayHUDMotion("anm_shoot_aim_jammed_2",FALSE,this,GetState());
-		else
-			PlayHUDMotion("anm_shoot_2",FALSE,this,GetState());
-		break;
+		case 1:
+		{
+			if (IsZoomed())
+			{
+				if(IsMisfire())
+					PlayHUDMotion("anm_shoot_aim_jammed_1", false, this, GetState());
+				else
+					PlayHUDMotion("anm_shoot_aim_1", false, this, GetState());
+			}
+			else
+			{
+				if(IsMisfire())
+					PlayHUDMotion("anm_shoot_jammed_1", false, this, GetState());
+				else
+					PlayHUDMotion("anm_shoot_1", false, this, GetState());
+			}
+		}break;
+		case 2:
+		{
+			if (IsZoomed())
+			{
+				if(IsMisfire())
+					PlayHUDMotion("anm_shoot_aim_jammed_2", false, this, GetState());
+				else
+					PlayHUDMotion("anm_shoot_aim_2", false, this, GetState());
+			}
+			else
+			{
+				if(IsMisfire())
+					PlayHUDMotion("anm_shoot_jammed_2", false, this, GetState());
+				else
+					PlayHUDMotion("anm_shoot_2", false, this, GetState());
+			}
+		}break;
 	}
 }
 
@@ -112,16 +135,27 @@ void CWeaponBM16::PlayAnimReload()
 	bool b_both = HaveCartridgeInInventory(2);
 
 	VERIFY(GetState()==eReload);
-	if(m_magazine.size()==1 || !b_both)
+
+	if(m_magazine.size() == 1 || !b_both)
+	{
 		if(IsMisfire())
-			PlayHUDMotion("anm_reload_jammed_1",TRUE,this,GetState());
+			PlayHUDMotion("anm_reload_jammed_1", true, this, GetState());
+		else if (bSwitchAmmoType)
+			PlayHUDMotion("anm_reload_ammochange_1", true, this, GetState());
 		else
-			PlayHUDMotion("anm_reload_1",TRUE,this,GetState());
+			PlayHUDMotion("anm_reload_1", true, this, GetState());
+	}
+	else if (m_magazine.size() == 0 && bSwitchAmmoType)
+		PlayHUDMotion("anm_reload_0", true, this, GetState());
 	else
+	{
 		if(IsMisfire())
-			PlayHUDMotion("anm_reload_jammed_2",TRUE,this,GetState());
+			PlayHUDMotion("anm_reload_jammed_2", true, this, GetState());
+		else if (bSwitchAmmoType)
+			PlayHUDMotion("anm_reload_ammochange_2", true, this, GetState());
 		else
-			PlayHUDMotion("anm_reload_2",TRUE,this,GetState());
+			PlayHUDMotion("anm_reload_2", true, this, GetState());
+	}
 }
 
 void  CWeaponBM16::PlayAnimIdleMoving()
