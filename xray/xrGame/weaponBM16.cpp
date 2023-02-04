@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "weaponBM16.h"
+#include "Actor.h"
 
 CWeaponBM16::~CWeaponBM16()
 {
@@ -208,12 +209,43 @@ void  CWeaponBM16::PlayAnimIdleSprint()
 	}
 }
 
+const char* CWeaponBM16::GetAnimAimName()
+{
+	auto pActor = smart_cast<const CActor*>(H_Parent());
+    u32 state = pActor->get_state();
+	if (pActor)
+	{
+        if (state & mcAnyMove)
+		{
+			if (IsScopeAttached())
+			{
+                strcpy_s(guns_aim_anm_bm, "anm_idle_aim_scope_moving");
+				return guns_aim_anm_bm;
+			}
+			else
+				return xr_strconcat(guns_aim_anm_bm, "anm_idle_aim_moving", (state & mcFwd) ? "_forward" : ((state & mcBack) ? "_back" : ""), (state & mcLStrafe) ? "_left" : ((state & mcRStrafe) ? "_right" : ""), IsMisfire() ? "_jammed" : "", m_magazine.size() == 2 ? "_2" : m_magazine.size() == 1 ? "_1" : m_magazine.size() == 0 ? "_0" : "");
+		}
+	}
+	return nullptr;
+}
+
 void CWeaponBM16::PlayAnimIdle()
 {
-	if(TryPlayAnimIdle())	return;
+	if(TryPlayAnimIdle())
+		return;
 
 	if(IsZoomed())
 	{
+
+		if (const char* guns_aim_anm_bm = GetAnimAimName())
+		{
+            if (isHUDAnimationExist(guns_aim_anm_bm))
+			{
+				PlayHUDMotionNew(guns_aim_anm_bm, true, GetState());
+				return;
+			}
+		}
+
 		switch (m_magazine.size())
 		{
 		case 0:

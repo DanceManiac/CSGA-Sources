@@ -11,7 +11,10 @@ public:
 	virtual			~CWeaponBM16					();
 	virtual void	Load							(LPCSTR section);
 
+private:
+	string64 guns_aim_anm_bm;
 protected:
+	const char*		GetAnimAimName					();
 	virtual void	PlayAnimShoot					();
 	virtual void	PlayAnimReload					();
 	virtual void	PlayReloadSound					();
