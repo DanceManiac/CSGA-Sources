@@ -732,6 +732,26 @@ void CWeaponMagazinedWGrenade::PlayAnimReload()
 		inherited::PlayAnimReload();
 }
 
+const char* CWeaponMagazinedWGrenade::GetAnimAimName()
+{
+	auto pActor = smart_cast<const CActor*>(H_Parent());
+    u32 state = pActor->get_state();
+	if (pActor)
+	{
+        if (state & mcAnyMove)
+		{
+			if (IsScopeAttached())
+			{
+                strcpy_s(guns_aim_anm_full, "anm_idle_aim_scope_moving");
+				return guns_aim_anm_full;
+			}
+			else
+                return xr_strconcat(guns_aim_anm_full, "anm_idle_aim_moving", (state & mcFwd) ? "_forward" : ((state & mcBack) ? "_back" : ""), (state & mcLStrafe) ? "_left" : ((state & mcRStrafe) ? "_right" : ""), IsMisfire() ? "_jammed" : !IsMisfire() && m_bGrenadeMode && iAmmoElapsed2 == 0 ? "_empty" : !IsMisfire() && !m_bGrenadeMode && iAmmoElapsed == 0 ? "_empty" : "", m_bGrenadeMode ? "_g" : "_w_gl");
+		}
+	}
+	return nullptr;
+}
+
 void CWeaponMagazinedWGrenade::PlayAnimIdle()
 {
 	if(IsGrenadeLauncherAttached())
@@ -757,10 +777,8 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 					PlayHUDMotion("anm_idle_aim_w_gl", true, nullptr, GetState());
 			}
 
-			if (const char* guns_aim_anm = GetAnimAimName())
+			if (const char* guns_aim_anm_full = GetAnimAimName())
 			{
-				string64 guns_aim_anm_full;
-				strconcat(sizeof(guns_aim_anm_full), guns_aim_anm_full, guns_aim_anm, m_bGrenadeMode ? "_g" : "_w_gl");
 				if (isHUDAnimationExist(guns_aim_anm_full))
 				{
 					PlayHUDMotionNew(guns_aim_anm_full, true, GetState());
