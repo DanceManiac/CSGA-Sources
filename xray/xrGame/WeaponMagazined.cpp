@@ -662,10 +662,35 @@ void CWeaponMagazined::PlayAnimLightMis()
 
 void CWeaponMagazined::PlayAnimLookMis()
 {
-	if(IsZoomed())
-        PlayHUDMotion("anm_fakeshoot_aim_jammed", false, this, GetState());
+    auto bm = smart_cast<CWeaponBM16*>(this);
+
+	if (!bm)
+	{
+		if(IsZoomed())
+			PlayHUDMotion("anm_fakeshoot_aim_jammed", false, this, GetState());
+		else
+			PlayHUDMotion("anm_fakeshoot_jammed", true, this, GetState());
+	}
 	else
-		PlayHUDMotion("anm_fakeshoot_jammed", true, this, GetState());
+	{
+		switch(m_magazine.size())
+		{
+            case 1:
+			{
+				if(IsZoomed())
+					PlayHUDMotion("anm_fakeshoot_aim_jammed_1", false, this, GetState());
+				else
+					PlayHUDMotion("anm_fakeshoot_jammed_1", false, this, GetState());
+			}break;
+            case 2:
+			{
+				if(IsZoomed())
+					PlayHUDMotion("anm_fakeshoot_aim_jammed_2", false, this, GetState());
+				else
+					PlayHUDMotion("anm_fakeshoot_jammed_2", false, this, GetState());
+			}break;
+		}
+	}
 }
 
 void CWeaponMagazined::SetDefaults()
@@ -1242,24 +1267,88 @@ void CWeaponMagazined::PlayAnimAimStart()
 {
     VERIFY(GetState() == eZoomStart);
 
-    if (!IsMisfire() && iAmmoElapsed == 0)
-        PlayHUDMotion("anm_idle_aim_start_empty", true, this, GetState());
-    else if (IsMisfire())
-        PlayHUDMotion("anm_idle_aim_start_jammed", true, this, GetState());
-    else
-        PlayHUDMotion("anm_idle_aim_start", true, this, GetState());
+	auto bm = smart_cast<CWeaponBM16*>(this);
+
+	if(!bm)
+	{
+		if (!IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_idle_aim_start_empty", true, this, GetState());
+		else if (IsMisfire())
+			PlayHUDMotion("anm_idle_aim_start_jammed", true, this, GetState());
+		else
+			PlayHUDMotion("anm_idle_aim_start", true, this, GetState());
+	}
+	else
+	{
+		switch (m_magazine.size())
+		{
+            case 0:
+			{
+				if(IsMisfire())
+					PlayHUDMotion("anm_idle_aim_start_jammed_0", true, this, GetState());
+				else
+					PlayHUDMotion("anm_idle_aim_start_0", true, this, GetState());
+			}break;
+            case 1:
+			{
+				if(IsMisfire())
+					PlayHUDMotion("anm_idle_aim_start_jammed_1", true, this, GetState());
+				else
+					PlayHUDMotion("anm_idle_aim_start_1", true, this, GetState());
+			}break;
+            case 2:
+			{
+				if(IsMisfire())
+					PlayHUDMotion("anm_idle_aim_start_jammed_2", true, this, GetState());
+				else
+					PlayHUDMotion("anm_idle_aim_start_2", true, this, GetState());
+			}break;
+		}
+	}
 }
 
 void CWeaponMagazined::PlayAnimAimEnd()
 {
     VERIFY(GetState() == eZoomEnd);
 
-    if (!IsMisfire() && iAmmoElapsed == 0)
-        PlayHUDMotion("anm_idle_aim_end_empty", true, this, GetState());
-    else if (IsMisfire())
-        PlayHUDMotion("anm_idle_aim_end_jammed", true, this, GetState());
-    else
-        PlayHUDMotion("anm_idle_aim_end", true, this, GetState());
+	auto bm = smart_cast<CWeaponBM16*>(this);
+
+	if(!bm)
+	{
+		if (!IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_idle_aim_end_empty", true, this, GetState());
+		else if (IsMisfire())
+			PlayHUDMotion("anm_idle_aim_end_jammed", true, this, GetState());
+		else
+			PlayHUDMotion("anm_idle_aim_end", true, this, GetState());
+	}
+	else
+	{
+		switch (m_magazine.size())
+		{
+            case 0:
+			{
+				if(IsMisfire())
+					PlayHUDMotion("anm_idle_aim_end_jammed_0", true, this, GetState());
+				else
+					PlayHUDMotion("anm_idle_aim_end_0", true, this, GetState());
+			}break;
+            case 1:
+			{
+				if(IsMisfire())
+					PlayHUDMotion("anm_idle_aim_end_jammed_1", true, this, GetState());
+				else
+					PlayHUDMotion("anm_idle_aim_end_1", true, this, GetState());
+			}break;
+            case 2:
+			{
+				if(IsMisfire())
+					PlayHUDMotion("anm_idle_aim_end_jammed_2", true, this, GetState());
+				else
+					PlayHUDMotion("anm_idle_aim_end_2", true, this, GetState());
+			}break;
+		}
+	}
 }
 
 void CWeaponMagazined::EmptyMove()
