@@ -1,27 +1,15 @@
 #pragma once
 
-#include "WeaponMagazined.h"
+#include "weaponmagazinedwgrenade.h"
 #include "script_export_space.h"
-#include "Weapon.h"
-#include "HudSound.h"
-#include "ai_sounds.h"
 
 class CWeaponGroza :
-public CWeaponMagazined
+	public CWeaponMagazinedWGrenade
 {
-	typedef CWeaponMagazined inherited;
+	typedef CWeaponMagazinedWGrenade inherited;
 public:
 				CWeaponGroza();
 	virtual		~CWeaponGroza();
-
-	virtual void	Load			(LPCSTR section);
-	virtual void	PlayAnimShow		();
-	virtual void	PlayAnimHide		();
-	virtual void	PlayAnimReload		();
-	virtual void	PlayAnimIdle		();
-	virtual void	PlayAnimAim			();
-	virtual void	PlayAnimIdleMoving	();
-	virtual void	PlayAnimIdleSprint	();
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
