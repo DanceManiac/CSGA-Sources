@@ -1469,6 +1469,16 @@ void CWeaponMagazined::PlayAnimIdle()
         PlayHUDMotion("anm_idle", true, nullptr, GetState());
 }
 
+void CWeaponMagazined::PlayAnimBore()
+{
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		PlayHUDMotion("anm_bore_empty", true, nullptr, GetState());
+	else if (IsMisfire())
+		PlayHUDMotion("anm_bore_jammed", true, nullptr, GetState());
+	else
+		PlayHUDMotion("anm_bore", true, nullptr, GetState());
+}
+
 void CWeaponMagazined::PlayAnimShoot()
 {
 	VERIFY(GetState()==eFire);

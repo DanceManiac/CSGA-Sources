@@ -32,6 +32,7 @@ public:
 	virtual void PlayAnimIdleMovingCrouchSlow	();
 	virtual void PlayAnimIdleMovingCrouch		();
 	virtual void PlayAnimIdle					();
+	virtual void PlayAnimBore					();
 
 	virtual	void	ZoomInc				();
 	virtual	void	ZoomDec				();

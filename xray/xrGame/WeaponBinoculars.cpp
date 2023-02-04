@@ -117,6 +117,11 @@ void CWeaponBinoculars::PlayAnimIdleMovingSlow()
 	PlayHUDMotion("anm_idle_moving_slow", true, nullptr, GetState());
 }
 
+void CWeaponBinoculars::PlayAnimBore()
+{
+	PlayHUDMotion("anm_bore", true, nullptr, GetState());
+}
+
 void CWeaponBinoculars::PlayAnimIdle()
 {
     VERIFY(GetState() == eIdle);

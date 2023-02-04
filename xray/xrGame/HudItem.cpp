@@ -17,13 +17,12 @@ CHudItem::CHudItem()
 	RenderHud					(TRUE);
 	EnableHudInertion			(TRUE);
 	AllowHudInertion			(TRUE);
-//	m_hud_item_shared_data		= NULL;
 	m_bStopAtEndAnimIsRunning	= false;
 	m_current_motion_def		= NULL;
 	m_started_rnd_anim_idx		= u8(-1);
 }
 
-DLL_Pure *CHudItem::_construct	()
+DLL_Pure *CHudItem::_construct()
 {
 	m_object			= smart_cast<CPhysicItem*>(this);
 	VERIFY				(m_object);
@@ -35,15 +34,14 @@ DLL_Pure *CHudItem::_construct	()
 }
 
 CHudItem::~CHudItem()
-{
-}
+{}
 
 void CHudItem::Load(LPCSTR section)
 {
 	hud_sect = pSettings->r_string(section,"hud");
 	m_animation_slot = pSettings->r_u32(section,"animation_slot");
 
-	m_bDisableBore = !!READ_IF_EXISTS(pSettings, r_bool, hud_sect, "disable_bore", false);//параметр из ганса, случайно нашёл способ реализации, чтобы не васянить, нужно добавить условие !m_bDisableBore в функции, которая вызывает eBore, по умолчанию false
+	m_bDisableBore = !!READ_IF_EXISTS(pSettings, r_bool, hud_sect, "disable_bore", false);//отключает eBore состояние у оружия
 
 	if(!m_bDisableBore)
 		m_sounds.LoadSound(section,"snd_bore","sndBore", true);

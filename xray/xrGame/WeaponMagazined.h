@@ -161,6 +161,7 @@ protected:
     virtual void	PlayAnimAimEnd		();
 	virtual void	PlayAnimLookMis		();
 	virtual void	PlayAnimLightMis	();
+	virtual void	PlayAnimBore		();
 	virtual void	PlayAnimIdleMovingSlow();
 	virtual void	PlayAnimIdleMovingCrouchSlow();
 	virtual void	PlayAnimIdleMovingCrouch();
