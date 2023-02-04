@@ -1271,13 +1271,13 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 bool CWeapon::SwitchAmmoType( u32 flags ) 
 {
 	if ( IsPending() || OnClient() )
-	{
 		return false;
-	}
+
 	if ( !(flags & CMD_START) )
-	{
 		return false;
-	}
+
+	if(IsZoomed())
+		return false;
 
 	bSwitchAmmoType = true;
 
