@@ -951,7 +951,7 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 	{
 	case kWPN_RELOAD:
 		{
-			if(flags&CMD_START && !IsZoomed()) 
+			if(flags&CMD_START && !IsZoomed() && GetState() == eIdle) 
 				if(iAmmoElapsed < iMagazineSize || (IsMisfire() && !IsGrenadeLauncherMode())) 
 					Reload();
 		} 
