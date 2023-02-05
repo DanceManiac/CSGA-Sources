@@ -69,6 +69,8 @@ void CWeaponShotgun::Load(LPCSTR section)
 			m_sounds.LoadSound(section, "snd_add_cartridge_preloaded", "sndAddCartridgePreloaded", false, m_eSoundOpen);
 			m_sounds.LoadSound(section, "snd_close_weapon_preloaded", "sndClosePreloaded", false, m_eSoundClose);
 		}
+
+		m_sounds.LoadSound(section, "snd_breechblock", "sndPump", false, m_eSoundReload);
 	};
 
 }
@@ -77,6 +79,16 @@ void CWeaponShotgun::switch2_Fire()
 {
 	inherited::switch2_Fire();
 	bWorking = false;
+}
+
+void CWeaponShotgun::OnShot()
+{
+	inherited::OnShot();
+
+	if (!IsMisfire())
+		PlaySound("sndPump", get_LastFP());
+	else
+		PlaySound("sndJam", get_LastFP());
 }
 
 bool CWeaponShotgun::Action(s32 cmd, u32 flags) 
@@ -113,7 +125,7 @@ void CWeaponShotgun::OnAnimationEnd(u32 state)
 	{
 		case eSubstateReloadBegin:
 		{
-			if (bStopReload)
+			if (bStopReload || iAmmoElapsed == iMagazineSize)
 			{
 				m_sub_state = eSubstateReloadEnd;
 				SwitchState(eReload);
@@ -124,7 +136,6 @@ void CWeaponShotgun::OnAnimationEnd(u32 state)
 				SwitchState(eReload);
 			}
 		}break;
-
 		case eSubstateReloadInProcess:
 		{
 			if(0 != AddCartridge(1) || bStopReload)
@@ -132,7 +143,6 @@ void CWeaponShotgun::OnAnimationEnd(u32 state)
 
 			SwitchState(eReload);
 		}break;
-
 		case eSubstateReloadEnd:
 		{
 			bStopReload = false;
@@ -156,7 +166,6 @@ void CWeaponShotgun::TriStateReload()
 	if(!HaveCartridgeInInventory(1))
 		return;
 
-	CWeapon::Reload();
 	m_sub_state	= eSubstateReloadBegin;
 	SwitchState(eReload);
 }
@@ -187,7 +196,7 @@ void CWeaponShotgun::OnStateSwitch(u32 S)
 		if(HaveCartridgeInInventory(1))
 		{
 			switch2_StartReload();
-			if(iAmmoElapsed == 0)
+			if(iAmmoElapsed == 0 && m_bAddCartridgeOpen || !bPreloadAnimAdapter)
 				AddCartridge(1);
 		}
 	}break;

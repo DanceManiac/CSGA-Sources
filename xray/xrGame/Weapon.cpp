@@ -1525,9 +1525,7 @@ BOOL CWeapon::CheckForLightMisfire()
 }
 
 void CWeapon::Reload()
-{
-	//OnZoomOut();
-}
+{}
 
 
 bool CWeapon::IsGrenadeLauncherAttached() const
