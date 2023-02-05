@@ -287,9 +287,9 @@ void CWeaponBM16::PlayAnimIdleMovingSlow()
 const char* CWeaponBM16::GetAnimAimName()
 {
 	auto pActor = smart_cast<const CActor*>(H_Parent());
-    u32 state = pActor->get_state();
 	if (pActor)
 	{
+        u32 state = pActor->get_state();
         if (state & mcAnyMove)
 		{
 			if (IsScopeAttached())

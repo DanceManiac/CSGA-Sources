@@ -397,9 +397,7 @@ void  CWeaponMagazinedWGrenade::LaunchGrenade()
 void CWeaponMagazinedWGrenade::FireEnd() 
 {
 	if(m_bGrenadeMode)
-	{
 		CWeapon::FireEnd();
-	}
 	else
 		inherited::FireEnd();
 }
@@ -430,7 +428,8 @@ void CWeaponMagazinedWGrenade::OnStateSwitch(u32 S)
 	{
 	case eSwitch:
 		{
-			if( !SwitchMode() ){
+			if(!SwitchMode())
+			{
 				SwitchState(eIdle);
 				return;
 			}
@@ -735,9 +734,9 @@ void CWeaponMagazinedWGrenade::PlayAnimReload()
 const char* CWeaponMagazinedWGrenade::GetAnimAimName()
 {
 	auto pActor = smart_cast<const CActor*>(H_Parent());
-    u32 state = pActor->get_state();
 	if (pActor)
 	{
+		u32 state = pActor->get_state();
         if (state & mcAnyMove)
 		{
 			if (IsScopeAttached())
