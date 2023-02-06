@@ -45,6 +45,7 @@ public:
 	virtual void	OnActiveItem		();
 	virtual void	OnHiddenItem		();
 	virtual void	OnStateSwitch		(u32 S);
+	virtual void	SetHideDetStateInWeapon();
 	virtual void	OnAnimationEnd		(u32 state);
 	virtual	void	UpdateXForm			();
 
