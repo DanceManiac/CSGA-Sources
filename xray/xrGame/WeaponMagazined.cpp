@@ -429,7 +429,7 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
             PlaySound("sndAimEnd", get_LastSP());
             PlayAnimAimEnd();
             SetPending(false);
-        }
+        }break;
         case eFire:
             switch2_Fire();
             break;
