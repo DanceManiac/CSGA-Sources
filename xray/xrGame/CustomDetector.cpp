@@ -74,19 +74,24 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
 
 		if (CheckCompatibilityInt(itm))
 		{
-            if (!knf && wpn)
+			if (wpn)
 			{
-				if(wpn->GetState() == CWeapon::eIdle || wpn->GetState() == CWeapon::eEmpty)
-					wpn->SwitchState(CWeapon::eShowingDet);
-				else
+                if (knf)
+				{
 					SwitchState(eShowing);
 					TurnDetectorInternal(true);
+				}
+				else
+				{
+					if(wpn->GetState() == CWeapon::eIdle || wpn->GetState() == CWeapon::eEmpty)
+						wpn->SwitchState(CWeapon::eShowingDet);
+				}
 			}
-            else
-            {
-                SwitchState(eShowing);
-                TurnDetectorInternal(true);
-            }
+			else
+			{
+				SwitchState(eShowing);
+				TurnDetectorInternal(true);
+			}
         }
     }
 	else if (GetState() == eIdle)
