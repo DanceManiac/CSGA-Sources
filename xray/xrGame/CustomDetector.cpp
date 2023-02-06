@@ -17,7 +17,8 @@ bool CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 	u32 slot						= iitm.GetSlot();
 	bool bres = (slot==PISTOL_SLOT || slot==KNIFE_SLOT || slot==BOLT_SLOT);
 
-	if(itm->GetState()!=CHUDState::eShowing)
+	CWeaponKnife* WK = smart_cast<CWeaponKnife*>(itm);
+	if(!WK && itm->GetState()!=CHUDState::eShowing)
 		bres = bres && !itm->IsPending();
 
 	if(bres)
