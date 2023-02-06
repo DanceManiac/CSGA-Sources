@@ -31,8 +31,6 @@ bool CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 				&& (W->GetState() != CWeapon::eSwitch)
 				&& !W->IsZoomed();
 	}
-	if (bres)
-		m_lastParentSlot = slot;
 
 	return bres;
 }
@@ -64,7 +62,6 @@ void CCustomDetector::ShowDetector(bool bFastMode)
 
 void CCustomDetector::ToggleDetector(bool bFastMode)
 {
-    m_bNeedActivation = false;
     m_bFastAnimMode = bFastMode;
 
     CWeapon* wpn = smart_cast<CWeapon*>(m_pInventory->ActiveItem());
@@ -91,14 +88,11 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
                 TurnDetectorInternal(true);
             }
         }
-        else
-		{
-            m_pInventory->Activate(m_lastParentSlot);
-            m_bNeedActivation = true;
-        }
     }
 	else if (GetState() == eIdle)
         SwitchState(eHiding);
+
+	m_bNeedActivation = false;
 }
 
 void CCustomDetector::OnStateSwitch(u32 S)
