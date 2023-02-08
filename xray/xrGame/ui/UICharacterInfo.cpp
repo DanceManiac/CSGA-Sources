@@ -319,9 +319,13 @@ void CUICharacterInfo::Update()
 		if ( m_icons[eIcon] )
 		{
 			CSE_ALifeCreatureAbstract*		pCreature = smart_cast<CSE_ALifeCreatureAbstract*>(T);
-			if ( pCreature && !pCreature->g_Alive() )
+			if (pCreature)
 			{
-				m_icons[eIcon]->SetColor	(color_argb(255,255,160,160));
+				if (!pCreature->g_Alive())
+
+					m_icons[eIcon]->SetColor(color_argb(255, 255, 160, 160));
+				else
+					m_icons[eIcon]->SetColor(color_argb(255, 255, 255, 255));
 			}
 		}
 	}
