@@ -70,7 +70,8 @@ void CWeaponShotgun::Load(LPCSTR section)
 			m_sounds.LoadSound(section, "snd_close_weapon_preloaded", "sndClosePreloaded", false, m_eSoundClose);
 		}
 
-		m_sounds.LoadSound(section, "snd_breechblock", "sndPump", false, m_eSoundReload);
+		if (pSettings->line_exist(section, "snd_breechblock"))
+			m_sounds.LoadSound(section, "snd_breechblock", "sndPump", false, m_eSoundReload);
 	};
 
 }
@@ -85,10 +86,13 @@ void CWeaponShotgun::OnShot()
 {
 	inherited::OnShot();
 
-	if (!IsMisfire())
-		PlaySound("sndPump", get_LastFP());
-	else
-		PlaySound("sndJam", get_LastFP());
+	if (m_bTriStateReload && pSettings->line_exist(cNameSect(), "snd_breechblock"))
+	{
+		if (!IsMisfire())
+			PlaySound("sndPump", get_LastFP());
+		else
+			PlaySound("sndJam", get_LastFP());
+	}
 }
 
 bool CWeaponShotgun::Action(s32 cmd, u32 flags) 
