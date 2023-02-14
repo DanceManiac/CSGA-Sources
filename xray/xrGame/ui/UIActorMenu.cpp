@@ -1002,6 +1002,13 @@ bool CUIActorMenu::OnKeyboard(int dik, EUIMessages keyboard_action)
 		if ( WINDOW_KEY_PRESSED == keyboard_action )
 		{
 			OnPressUserKey();
+			if (m_currMenuMode == mmInventory)
+			{
+				if (Actor()->mstate_wishful & mcSprint)
+					Actor()->mstate_wishful &= ~mcSprint;
+				else
+					Actor()->mstate_wishful |= mcSprint;
+			}
 		}
 		return true;
 	}	
