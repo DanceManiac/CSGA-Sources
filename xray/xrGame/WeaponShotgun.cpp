@@ -86,7 +86,7 @@ void CWeaponShotgun::OnShot()
 {
 	inherited::OnShot();
 
-	if (m_bTriStateReload && pSettings->line_exist(cNameSect(), "snd_breechblock"))
+	if (m_bTriStateReload)
 	{
 		if (!IsMisfire())
 			PlaySound("sndPump", get_LastFP());
