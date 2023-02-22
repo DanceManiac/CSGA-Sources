@@ -11,10 +11,10 @@
 #include "debug_renderer.h"
 #include "xr_level_controller.h"
 
-bool hud_adj_active		= false; //Включение/выключение
-u32 hud_adj_mode		= 7; //Режим
-u32 hud_adj_item_idx	= 0; //Итем
-u32 hud_adj_offset		= 0; //Тип вращения
+bool hud_adj_active		= false; //Р’РєР»СЋС‡РµРЅРёРµ/РІС‹РєР»СЋС‡РµРЅРёРµ
+u32 hud_adj_mode		= 7; //Р РµР¶РёРј
+u32 hud_adj_item_idx	= 0; //РС‚РµРј
+u32 hud_adj_offset		= 0; //РўРёРї РІСЂР°С‰РµРЅРёСЏ
 
 float _delta_pos			= 0.0005f;
 float _delta_rot			= 0.05f;
@@ -342,5 +342,5 @@ void hud_draw_adjust_mode()
 
 void hud_adjust_mode_keyb(int dik)
 {
-	//Эта функция мёртвая т.к. всё управление перенесено в ActorInput.cpp
+	//Р­С‚Р° С„СѓРЅРєС†РёСЏ РјС‘СЂС‚РІР°СЏ С‚.Рє. РІСЃС‘ СѓРїСЂР°РІР»РµРЅРёРµ РїРµСЂРµРЅРµСЃРµРЅРѕ РІ ActorInput.cpp
 }
