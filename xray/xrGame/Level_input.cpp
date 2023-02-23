@@ -28,6 +28,7 @@
 #endif
 #include "GameObjectEvents.h"
 #include "embedded_editor/embedded_editor_main.h"
+#include "player_hud.h"
 
 #ifdef DEBUG
 extern void try_change_current_entity();
@@ -36,6 +37,7 @@ extern void restore_actor();
 
 bool g_bDisableAllInput = false;
 extern	float	g_fTimeFactor;
+extern bool hud_adj_active;
 
 #define CURRENT_ENTITY()	(game?((GameID() == eGameIDSingle) ? CurrentEntity() : CurrentControlEntity()):NULL)
 
@@ -238,6 +240,9 @@ void CLevel::IR_OnKeyboardPress	(int key)
 	}
 	case DIK_NUMPAD5: 
 		{
+            if (hud_adj_active)
+                return;
+
 			if (GameID()!=eGameIDSingle) 
 			{
 				Msg("For this game type Demo Record is disabled.");

@@ -86,6 +86,7 @@ _action  actions[]		= {
 	{ "adjust_mode_6",		kADJ_SET_6M				,_both},
 	{ "adjust_offset",		kADJ_CHOOSE_OFFSET		,_both},
 	{ "adjust_item",		kADJ_CHOOSE_ITEM		,_both},
+	{ "adjust_crosshair",	kADJ_CROSSHAIR			,_both},
 	{ "adjust_up",			kADJ_UP					,_both},
 	{ "adjust_down",		kADJ_DOWN				,_both},
 	{ "adjust_left",		kADJ_LEFT				,_both},

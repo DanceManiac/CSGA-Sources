@@ -2356,9 +2356,13 @@ u32 CWeapon::Cost() const
 	return res;
 }
 
+extern bool hud_adj_crosshair;
+extern u32 hud_adj_mode;
+extern bool hud_adj_active;
+
 bool CWeapon::show_crosshair()
 {
-	return !IsPending() && ( !IsZoomed() || !ZoomHideCrosshair() );
+	return (!IsPending() && ( !IsZoomed() || !ZoomHideCrosshair())) || (hud_adj_active && hud_adj_crosshair);
 }
 
 bool CWeapon::show_indicators()
@@ -2384,9 +2388,6 @@ BOOL CWeapon::ParentIsActor	()
 	CEntityAlive* EA=smart_cast<CEntityAlive*>(O);
 	return EA->cast_actor()!=0;
 }
-
-extern u32 hud_adj_mode;
-extern bool hud_adj_active;
 
 void CWeapon::debug_draw_firedeps()
 {

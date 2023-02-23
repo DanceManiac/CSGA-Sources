@@ -73,6 +73,7 @@ void key_binding_registrator::script_register(lua_State *L)
 				value("kADJ_SET_6M",				int(kADJ_SET_6M)),
 				value("kADJ_CHOOSE_OFFSET",			int(kADJ_CHOOSE_OFFSET)),
 				value("kADJ_CHOOSE_ITEM",			int(kADJ_CHOOSE_ITEM)),
+				value("kADJ_CROSSHAIR",				int(kADJ_CROSSHAIR)),
 				value("kADJ_UP",					int(kADJ_UP)),
 				value("kADJ_DOWN",					int(kADJ_DOWN)),
 				value("kADJ_LEFT",					int(kADJ_LEFT)),
