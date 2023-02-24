@@ -33,7 +33,6 @@
 bool g_bAutoClearCrouch = true;
 extern u32 hud_adj_mode;
 extern bool hud_adj_active;
-extern bool hud_adj_crosshair;
 extern u32 hud_adj_item_idx;
 extern u32 hud_adj_offset;
 
@@ -203,13 +202,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			else
 				hud_adj_item_idx = 0;
 		}break;
-	case kADJ_CROSSHAIR:
-	{
-		if(!hud_adj_active)
-			return;
-
-		hud_adj_crosshair = !hud_adj_crosshair;
-	}break;
 	case kADJ_CHOOSE_OFFSET:
 		{
 			if(!hud_adj_active)
