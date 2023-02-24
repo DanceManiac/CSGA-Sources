@@ -9,23 +9,29 @@
 #include "../xrEngine/CameraManager.h"
 #include "../xrEngine/FDemoRecord.h"
 #include "debug_renderer.h"
-#include "xr_level_controller.h"
 
-bool hud_adj_active		= false; //Включение/выключение
-u32 hud_adj_mode		= 7; //Режим
-u32 hud_adj_item_idx	= 0; //Итем
-u32 hud_adj_offset		= 0; //Тип вращения
+u32 hud_adj_mode		= 0;
+u32 hud_adj_item_idx	= 0;
+// "press SHIFT+NUM 0-return 1-hud_pos 2-hud_rot 3-itm_pos 4-itm_rot 5-fire_point 6-fire_2_point 7-shell_point";
 
 float _delta_pos			= 0.0005f;
 float _delta_rot			= 0.05f;
+
+bool is_attachable_item_tuning_mode()
+{
+	return	pInput->iGetAsyncKeyState(DIK_LSHIFT)	||
+			pInput->iGetAsyncKeyState(DIK_Z)		||
+			pInput->iGetAsyncKeyState(DIK_X)		||
+			pInput->iGetAsyncKeyState(DIK_C);
+}
 
 void tune_remap(const Ivector& in_values, Ivector& out_values)
 {
 	if( pInput->iGetAsyncKeyState(DIK_LSHIFT) )
 	{
 		out_values = in_values;
-	}
-	else if( pInput->iGetAsyncKeyState(DIK_Z) )
+	}else
+	if( pInput->iGetAsyncKeyState(DIK_Z) )
 	{ //strict by X
 		out_values.x = in_values.y;
 		out_values.y = 0;
@@ -101,13 +107,15 @@ void calc_cam_diff_rot(Fmatrix item_transform, Fvector diff, Fvector& res)
 void attachable_hud_item::tune(Ivector values)
 {
 #ifndef MASTER_GOLD
+	if(!is_attachable_item_tuning_mode() )
+		return;
 
 	Fvector					diff;
 	diff.set				(0,0,0);
 
-	if(hud_adj_mode == 2)
+	if(hud_adj_mode==3 || hud_adj_mode==4)
 	{
-		if (hud_adj_offset == 0)
+		if(hud_adj_mode==3)
 		{
 			if(values.x)	diff.x = (values.x>0)?_delta_pos:-_delta_pos;
 			if(values.y)	diff.y = (values.y>0)?_delta_pos:-_delta_pos;
@@ -118,8 +126,8 @@ void attachable_hud_item::tune(Ivector values)
 			m_parent->calc_transform		(m_attach_place_idx, Fidentity, ancor_m);
 			calc_cam_diff_pos				(ancor_m, diff, d);
 			m_measures.m_item_attach[0].add	(d);
-		}
-		else if (hud_adj_offset == 1)
+		}else
+		if(hud_adj_mode==4)
 		{
 			if(values.x)	diff.x = (values.x>0)?_delta_rot:-_delta_rot;
 			if(values.y)	diff.y = (values.y>0)?_delta_rot:-_delta_rot;
@@ -142,21 +150,21 @@ void attachable_hud_item::tune(Ivector values)
 		}
 	}
 
-	if(hud_adj_mode == 3 || hud_adj_mode == 4 || hud_adj_mode == 5)
+	if(hud_adj_mode==5||hud_adj_mode==6||hud_adj_mode==7)
 	{
 		if(values.x)	diff.x = (values.x>0)?_delta_pos:-_delta_pos;
 		if(values.y)	diff.y = (values.y>0)?_delta_pos:-_delta_pos;
 		if(values.z)	diff.z = (values.z>0)?_delta_pos:-_delta_pos;
 
-		if(hud_adj_mode == 3)
+		if(hud_adj_mode==5)
 		{
 			m_measures.m_fire_point_offset.add(diff);
 		}
-		if(hud_adj_mode == 4)
+		if(hud_adj_mode==6)
 		{
 			m_measures.m_fire_point2_offset.add(diff);
 		}
-		if(hud_adj_mode == 5)
+		if(hud_adj_mode==7)
 		{
 			m_measures.m_shell_point_offset.add(diff);
 		}
@@ -175,29 +183,27 @@ void attachable_hud_item::tune(Ivector values)
 void attachable_hud_item::debug_draw_firedeps()
 {
 #ifdef DEBUG
-
-	if (!hud_adj_active)
-        return;
-
 	bool bForce = (hud_adj_mode==3||hud_adj_mode==4);
-    if (hud_adj_mode == 3 || hud_adj_mode == 4 || hud_adj_mode == 5 || bForce)
+
+	if(hud_adj_mode==5||hud_adj_mode==6||hud_adj_mode==7 ||bForce)
 	{
 		CDebugRenderer			&render = Level().debug_renderer();
 
 		firedeps			fd;
 		setup_firedeps		(fd);
 		
-		if(hud_adj_mode == 3 || bForce)
+		if(hud_adj_mode==5||bForce)
 			render.draw_aabb(fd.vLastFP,0.005f,0.005f,0.005f,D3DCOLOR_XRGB(255,0,0));
 
-		if(hud_adj_mode == 4)
+		if(hud_adj_mode==6)
 			render.draw_aabb(fd.vLastFP2,0.005f,0.005f,0.005f,D3DCOLOR_XRGB(0,0,255));
 
-		if(hud_adj_mode == 5)
+		if(hud_adj_mode==7)
 			render.draw_aabb(fd.vLastSP,0.005f,0.005f,0.005f,D3DCOLOR_XRGB(0,255,0));
 	}
 #endif // DEBUG
 }
+
 
 void player_hud::tune(Ivector _values)
 {
@@ -207,7 +213,7 @@ void player_hud::tune(Ivector _values)
 
 	bool is_16x9		= UI().is_widescreen();
 
-	if(hud_adj_mode == 1)
+	if(hud_adj_mode==1 || hud_adj_mode==2)
 	{
 		Fvector			diff;
 		diff.set		(0,0,0);
@@ -221,7 +227,7 @@ void player_hud::tune(Ivector _values)
 		Fvector& pos_	=(idx!=0)?m_attached_items[hud_adj_item_idx]->hands_offset_pos():m_attached_items[hud_adj_item_idx]->hands_attach_pos();
 		Fvector& rot_	=(idx!=0)?m_attached_items[hud_adj_item_idx]->hands_offset_rot():m_attached_items[hud_adj_item_idx]->hands_attach_rot();
 
-		if(hud_adj_offset == 0)
+		if(hud_adj_mode==1)
 		{
 			if(values.x)	diff.x = (values.x<0)?_delta_pos:-_delta_pos;
 			if(values.y)	diff.y = (values.y>0)?_delta_pos:-_delta_pos;
@@ -230,7 +236,7 @@ void player_hud::tune(Ivector _values)
 			pos_.add		(diff);
 		}
 
-		if (hud_adj_offset == 1)
+		if(hud_adj_mode==2)
 		{
 			if(values.x)	diff.x = (values.x>0)?_curr_dr:-_curr_dr;
 			if(values.y)	diff.y = (values.y>0)?_curr_dr:-_curr_dr;
@@ -270,12 +276,12 @@ void player_hud::tune(Ivector _values)
 			}
 		}
 	}
-	else if(hud_adj_mode == 6)
+	else if(hud_adj_mode==8 || hud_adj_mode==9)
 	{
-		if(hud_adj_offset == 0 && (values.z))
+		if(hud_adj_mode==8 && (values.z) )
 			_delta_pos	+= (values.z>0)?0.001f:-0.001f;
 		
-		if (hud_adj_offset == 1 && (values.z))
+		if(hud_adj_mode==9 && (values.z) )
 			 _delta_rot += (values.z>0)?0.1f:-0.1f;
 	}
 	else
@@ -287,60 +293,89 @@ void player_hud::tune(Ivector _values)
 #endif // #ifndef MASTER_GOLD
 }
 
-LPCSTR _text()
-{
-	if (hud_adj_mode == 1)
-	{
-		if (hud_adj_offset == 0)
-			return "adjusting HUD POSITION";
-        else
-			return "adjusting HUD ROTATION";
-	}
-	else if (hud_adj_mode == 2)
-	{
-		if (hud_adj_offset == 0)
-			return "adjusting ITEM POSITION";
-        else
-			return "adjusting ITEM ROTATION";
-	}
-	else if (hud_adj_mode == 3)
-		return "adjusting FIRE POINT";
-	else if (hud_adj_mode == 4)
-		return "adjusting FIRE 2 POINT";
-	else if (hud_adj_mode == 5)
-		return "adjusting SHELL POINT";
-	else if (hud_adj_mode == 6)
-	{
-		if (hud_adj_offset == 0)
-			return "adjusting pos STEP";
-        else
-			return "adjusting rot STEP";
-	}
-	else if (hud_adj_mode == 7)
-		return "Choose as an adjust mode";
-	else
-		return NULL;
-}
-
 void hud_draw_adjust_mode()
 {
-    if (!hud_adj_active)
+	if(!hud_adj_mode)
 		return;
 
-	if(_text())
-	{
-		CGameFont* F		= UI().Font().pFontDI;
-		F->SetAligment		(CGameFont::alCenter);
-		F->OutSetI			(0.f,-0.8f);
-		F->SetColor			(0xffffffff);
-		F->OutNext			(_text());
-		F->OutNext			("for item [%d]", hud_adj_item_idx);
-		F->OutNext			("delta values dP=%f dR=%f", _delta_pos, _delta_rot);
-		F->OutNext			("[Z]-x axis [X]-y axis [C]-z axis");
-	}
+	LPCSTR _text = NULL;
+	if(pInput->iGetAsyncKeyState(DIK_LSHIFT) && hud_adj_mode)
+		_text = "press SHIFT+NUM 0-return 1-hud_pos 2-hud_rot 3-itm_pos 4-itm_rot 5-fire_point 6-fire_2_point 7-shell_point 8-pos_step 9-rot_step";
+
+	switch (hud_adj_mode)
+		{
+		case 1:
+			_text = "adjusting HUD POSITION";
+			break;
+		case 2:
+			_text = "adjusting HUD ROTATION";
+			break;
+		case 3:
+			_text = "adjusting ITEM POSITION";
+			break;
+		case 4:
+			_text = "adjusting ITEM ROTATION";
+			break;
+		case 5:
+			_text = "adjusting FIRE POINT";
+			break;
+		case 6:
+			_text = "adjusting FIRE 2 POINT";
+			break;
+		case 7:
+			_text = "adjusting SHELL POINT";
+			break;
+		case 8:
+			_text = "adjusting pos STEP";
+			break;
+		case 9:
+			_text = "adjusting rot STEP";
+			break;
+
+		};
+		if(_text)
+		{
+			CGameFont* F		= UI().Font().pFontDI;
+			F->SetAligment		(CGameFont::alCenter);
+			F->OutSetI			(0.f,-0.8f);
+			F->SetColor			(0xffffffff);
+			F->OutNext			(_text);
+			F->OutNext			("for item [%d]", hud_adj_item_idx);
+			F->OutNext			("delta values dP=%f dR=%f", _delta_pos, _delta_rot);
+			F->OutNext			("[Z]-x axis [X]-y axis [C]-z axis");
+		}
 }
 
 void hud_adjust_mode_keyb(int dik)
 {
-	//Эта функция мёртвая т.к. всё управление перенесено в ActorInput.cpp
+	if(pInput->iGetAsyncKeyState(DIK_LSHIFT))
+	{
+		if(dik==DIK_NUMPAD0)
+			hud_adj_mode = 0;
+		if(dik==DIK_NUMPAD1)
+			hud_adj_mode = 1;
+		if(dik==DIK_NUMPAD2)
+			hud_adj_mode = 2;
+		if(dik==DIK_NUMPAD3)
+			hud_adj_mode = 3;
+		if(dik==DIK_NUMPAD4)
+			hud_adj_mode = 4;
+		if(dik==DIK_NUMPAD5)
+			hud_adj_mode = 5;
+		if(dik==DIK_NUMPAD6)
+			hud_adj_mode = 6;
+		if(dik==DIK_NUMPAD7)
+			hud_adj_mode = 7;
+		if(dik==DIK_NUMPAD8)
+			hud_adj_mode = 8;
+		if(dik==DIK_NUMPAD9)
+			hud_adj_mode = 9;
+	}
+	if(pInput->iGetAsyncKeyState(DIK_LCONTROL))
+	{
+		if(dik==DIK_NUMPAD0)
+			hud_adj_item_idx = 0;
+		if(dik==DIK_NUMPAD1)
+			hud_adj_item_idx = 1;
+	}
 }

@@ -32,12 +32,16 @@
 
 bool g_bAutoClearCrouch = true;
 extern u32 hud_adj_mode;
-extern bool hud_adj_active;
-extern u32 hud_adj_item_idx;
-extern u32 hud_adj_offset;
 
 void CActor::IR_OnKeyboardPress(int cmd)
 {
+    if (hud_adj_mode && pInput->iGetAsyncKeyState(DIK_LSHIFT)) {
+        if (pInput->iGetAsyncKeyState(DIK_RETURN) || pInput->iGetAsyncKeyState(DIK_BACKSPACE)
+            || pInput->iGetAsyncKeyState(DIK_DELETE))
+            g_player_hud->tune(Ivector().set(0, 0, 0));
+
+        return;
+    }
 
 	if (m_blockedActions.test(cmd)) return;
 	if (Remote())		return;
@@ -164,54 +168,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			if (auto wpn = smart_cast<CWeapon*>(inventory().ActiveItem()))
 				wpn->SwitchLaser(!wpn->IsLaserOn());
 		}break;
-	case kSTART_ADJUST:
-		{
-			hud_adj_active = !hud_adj_active;
-		}break;
-	case kADJ_SET_1M:
-		{
-			hud_adj_mode = 1;
-		}break;
-	case kADJ_SET_2M:
-		{
-			hud_adj_mode = 2;
-		}break;
-	case kADJ_SET_3M:
-		{
-			hud_adj_mode = 3;
-		}break;
-	case kADJ_SET_4M:
-		{
-			hud_adj_mode = 4;
-		}break;
-	case kADJ_SET_5M:
-		{
-			hud_adj_mode = 5;
-		}break;
-	case kADJ_SET_6M:
-		{
-			hud_adj_mode = 6;
-		}break;
-	case kADJ_CHOOSE_ITEM:
-		{
-			if(!hud_adj_active)
-				return;
-
-			if(hud_adj_item_idx == 0)
-				hud_adj_item_idx = 1;
-			else
-				hud_adj_item_idx = 0;
-		}break;
-	case kADJ_CHOOSE_OFFSET:
-		{
-			if(!hud_adj_active)
-				return;
-
-			if(hud_adj_offset == 0)
-				hud_adj_offset = 1;
-			else
-				hud_adj_offset = 0;
-		}break;
 	}
 }
 
@@ -219,7 +175,7 @@ void CActor::IR_OnMouseWheel(int direction)
 {
 	if(hud_adj_mode)
 	{
-		g_player_hud->tune(Ivector().set(0,0,direction));
+		//g_player_hud->tune	(Ivector().set(0,0,direction));
 		return;
 	}
 
@@ -234,8 +190,7 @@ void CActor::IR_OnMouseWheel(int direction)
 
 void CActor::IR_OnKeyboardRelease(int cmd)
 {
-    if (hud_adj_active)
-		return;
+    if (hud_adj_mode && pInput->iGetAsyncKeyState(DIK_LSHIFT)) return;
 	if (m_blockedActions.test(cmd)) return;
 	if (Remote())	return;
 	if (m_input_external_handler && !m_input_external_handler->authorized(cmd))	return;
@@ -267,19 +222,18 @@ void CActor::IR_OnKeyboardRelease(int cmd)
 
 void CActor::IR_OnKeyboardHold(int cmd)
 {
-    if (hud_adj_active && hud_adj_mode != 7)
-	{
-        if (cmd == kADJ_DOWN)
+    if (hud_adj_mode && pInput->iGetAsyncKeyState(DIK_LSHIFT)) {
+        if (pInput->iGetAsyncKeyState(DIK_UP))
             g_player_hud->tune(Ivector().set(0, -1, 0));//y - высота, ниже
-        if (cmd == kADJ_UP)
+        if (pInput->iGetAsyncKeyState(DIK_DOWN))
             g_player_hud->tune(Ivector().set(0, 1, 0));//y - высота, выше
-        if (cmd == kADJ_LEFT)
+        if (pInput->iGetAsyncKeyState(DIK_LEFT))
             g_player_hud->tune(Ivector().set(-1, 0, 0));//x - ширина, влево
-        if (cmd == kADJ_RIGHT)
+        if (pInput->iGetAsyncKeyState(DIK_RIGHT))
             g_player_hud->tune(Ivector().set(1, 0, 0));//x - ширина, вправо
-        if (cmd == kADJ_FORWARD)
+        if (pInput->iGetAsyncKeyState(DIK_PRIOR))
             g_player_hud->tune(Ivector().set(0, 0, 1));//z - вперёд
-        if (cmd == kADJ_BACK)
+        if (pInput->iGetAsyncKeyState(DIK_NEXT))
             g_player_hud->tune(Ivector().set(0, 0, -1));//z - назад
         return;
     }
@@ -323,9 +277,9 @@ void CActor::IR_OnKeyboardHold(int cmd)
 
 void CActor::IR_OnMouseMove(int dx, int dy)
 {
-    if (hud_adj_active)
+	if(hud_adj_mode)
 	{
-		g_player_hud->tune	(Ivector().set(dx,dy,0));
+		//g_player_hud->tune	(Ivector().set(dx,dy,0));
 		return;
 	}
 
