@@ -175,7 +175,7 @@ void CActor::IR_OnMouseWheel(int direction)
 {
 	if(hud_adj_mode)
 	{
-		//g_player_hud->tune	(Ivector().set(0,0,direction));
+		g_player_hud->tune	(Ivector().set(0,0,direction));
 		return;
 	}
 
@@ -279,7 +279,7 @@ void CActor::IR_OnMouseMove(int dx, int dy)
 {
 	if(hud_adj_mode)
 	{
-		//g_player_hud->tune	(Ivector().set(dx,dy,0));
+		g_player_hud->tune	(Ivector().set(dx,dy,0));
 		return;
 	}
 
