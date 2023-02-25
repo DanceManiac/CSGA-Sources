@@ -72,7 +72,27 @@ void IGame_Persistent::OnAppStart	()
 {
 #ifndef _EDITOR
 	Environment().load				();
-#endif    
+#endif
+	if (strstr(Core.Params, "-ui_prefetch"))
+	{
+		Msg("* Start prefetching UI textures");
+
+		Device.m_pRender->RenderPrefetchUITextures();
+	}
+}
+
+void IGame_Persistent::ReportUITxrsForPrefetching()
+{
+	if (m_SuggestedForPrefetchingUI.size() > 0)
+	{
+		Msg("- These UI textures are suggested to be prefetched since they caused stutterings when some UI window was loading");
+		Msg("- Add this list to prefetch_ui_textures.ltx (wisely)");
+
+		for (u32 i = 0; i < m_SuggestedForPrefetchingUI.size(); i++)
+		{
+			Msg("%s", m_SuggestedForPrefetchingUI[i].c_str());
+		}
+	}
 }
 
 void IGame_Persistent::OnAppEnd		()
@@ -82,6 +102,8 @@ void IGame_Persistent::OnAppEnd		()
 #endif    
 	OnGameEnd						();
 
+	if (strstr(Core.Params, "-ui_prefetch"))
+		ReportUITxrsForPrefetching();
 #ifndef _EDITOR
 	DEL_INSTANCE					(g_hud);
 #endif    

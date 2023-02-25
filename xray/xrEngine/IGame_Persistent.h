@@ -82,7 +82,9 @@ public:
 	virtual	void					OnAppActivate		();
 	virtual void					OnAppDeactivate		();
 	virtual void					OnFrame				();
-
+	
+	void							ReportUITxrsForPrefetching(); //Prints the list of UI textures, which caused stutterings during game
+	xr_vector<shared_str>			m_SuggestedForPrefetchingUI;
 	// вызывается только когда изменяется тип игры
 	virtual	void					OnGameStart			(); 
 	virtual void					OnGameEnd			();

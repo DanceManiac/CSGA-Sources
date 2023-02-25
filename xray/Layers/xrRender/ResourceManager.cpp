@@ -435,3 +435,164 @@ BOOL	CResourceManager::_GetDetailTexture(LPCSTR Name,LPCSTR& T, R_constant_setup
 		return FALSE;
 	}
 }*/
+
+Shader* CResourceManager::_cpp_Create(bool MakeCopyable, LPCSTR s_shader, LPCSTR s_textures, LPCSTR s_constants, LPCSTR s_matrices)
+{
+	//	TODO: DX10: When all shaders are ready switch to common path
+	IBlender* pBlender = _GetBlender(s_shader ? s_shader : "null");
+
+	if (!pBlender)
+		return NULL;
+
+	return	_cpp_Create(MakeCopyable, pBlender, s_shader, s_textures, s_constants, s_matrices);
+}
+
+void CResourceManager::RMPrefetchUITextures()
+{
+	v_shaders.clear();
+
+	CTimer time; time.Start();
+	CInifile::Sect& sect = pSettings->r_section("prefetch_ui_textures");
+
+	for (CInifile::SectCIt I = sect.Data.begin(); I != sect.Data.end(); I++)
+	{
+		const CInifile::Item& item = *I;
+		LPCSTR string = item.first.c_str();
+
+		if (string && string[0])
+		{
+			string128 texturename;
+			string128 shadername;
+
+			_GetItem(string, 0, texturename);
+			_GetItem(string, 1, shadername);
+
+			LPCSTR temptexturename = texturename;
+			LPCSTR tempshadername = shadername;
+
+			Msg("* Prefetching %s, %s", temptexturename, tempshadername);
+
+			Shader* temp = _cpp_Create(true, tempshadername, temptexturename);
+			v_shaders.push_back(temp);
+		}
+	}
+
+	Msg("* RMPrefetchUITextures %fms", time.GetElapsed_sec()*1000.f);
+}
+
+Shader* CResourceManager::_cpp_Create(bool MakeCopyable, IBlender* B, LPCSTR s_shader, LPCSTR s_textures, LPCSTR s_constants, LPCSTR s_matrices)
+{
+	CTimer time; time.Start();
+
+	CBlender_Compile C;
+	Shader S;
+
+	// Access to template
+	C.BT = B;
+	C.bEditor = FALSE;
+	C.bDetail = FALSE;
+
+	// Parse names
+	_ParseList(C.L_textures, s_textures);
+	_ParseList(C.L_constants, s_constants);
+	_ParseList(C.L_matrices, s_matrices);
+
+	// Compile element	(LOD0 - HQ)
+	{
+		C.iElement = 0;
+		C.bDetail = m_textures_description.GetDetailTexture(C.L_textures[0], C.detail_texture, C.detail_scaler);
+
+		ShaderElement		E;
+		C._cpp_Compile(&E);
+
+		S.E[0] = _CreateElement(E);
+	}
+
+	// Compile element	(LOD1)
+	{
+		C.iElement = 1;
+		C.bDetail = m_textures_description.GetDetailTexture(C.L_textures[0], C.detail_texture, C.detail_scaler);
+
+		ShaderElement		E;
+		C._cpp_Compile(&E);
+
+		S.E[1] = _CreateElement(E);
+	}
+
+	// Compile element
+	{
+		C.iElement = 2;
+		C.bDetail = FALSE;
+
+		ShaderElement		E;
+		C._cpp_Compile(&E);
+
+		S.E[2] = _CreateElement(E);
+	}
+
+	// Compile element
+	{
+		C.iElement = 3;
+		C.bDetail = FALSE;
+
+		ShaderElement		E;
+
+		C._cpp_Compile(&E);
+		S.E[3] = _CreateElement(E);
+	}
+
+	// Compile element
+	{
+		C.iElement = 4;
+		C.bDetail = TRUE;	//.$$$ HACK :)
+
+		ShaderElement		E;
+		C._cpp_Compile(&E);
+
+		S.E[4] = _CreateElement(E);
+	}
+
+	// Compile element
+	{
+		C.iElement = 5;
+		C.bDetail = FALSE;
+
+		ShaderElement		E;
+		C._cpp_Compile(&E);
+
+		S.E[5] = _CreateElement(E);
+	}
+
+	Shader* N = NULL;
+
+	// Search equal in shaders array
+	for (u32 it = 0; it < v_shaders.size(); it++)
+	{
+		if (S.equal(v_shaders[it]))
+		{
+			//if (v_shaders[it]->co)
+			//{
+			//	N = xr_new <Shader>(*v_shaders[it]); // if the shader is used as template, return its copy
+			//}
+			//else
+			//	
+			N = v_shaders[it]; // return direct instance from shader pool
+		}
+	}
+
+	if (!N)
+	{
+		// Create _new_ entry
+		N = xr_new <Shader>(S);
+#ifdef DEBUG
+		N->DebugName = s_shader;
+#endif
+		N->dwFlags |= xr_resource_flagged::RF_REGISTERED;
+		v_shaders.push_back(N);
+	}
+
+	if (strstr(Core.Params, "-ui_prefetch") && time.GetElapsed_sec() * 1000.f > 5.0)
+		Msg("# Loading of %s made a %fms stutter", s_textures, time.GetElapsed_sec() * 1000.f);
+
+	return N;
+}

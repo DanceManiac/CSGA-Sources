@@ -129,6 +129,11 @@ void dxRenderDeviceRender::SetupStates()
 #endif	//	USE_DX10
 }
 
+void dxRenderDeviceRender::RenderPrefetchUITextures()
+{
+	Resources->RMPrefetchUITextures();
+}
+
 void dxRenderDeviceRender::OnDeviceCreate(LPCSTR shName)
 {
 	// Signal everyone - device created

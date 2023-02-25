@@ -200,6 +200,9 @@ public:
 	void			DeferredUpload			();
 //.	void			DeferredUnload			();
 	void			Evict					();
+	void			RMPrefetchUITextures	();
+	Shader*			_cpp_Create				(bool MakeCopyable, LPCSTR s_shader, LPCSTR s_textures = 0, LPCSTR s_constants = 0, LPCSTR s_matrices = 0);
+	Shader*			_cpp_Create				(bool MakeCopyable, IBlender* B, LPCSTR s_shader = 0, LPCSTR s_textures = 0, LPCSTR s_constants = 0, LPCSTR s_matrices = 0);
 	void			StoreNecessaryTextures	();
 	void			DestroyNecessaryTextures();
 	void			Dump					(bool bBrief);
