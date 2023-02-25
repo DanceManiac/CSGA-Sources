@@ -126,7 +126,7 @@ bool CUIWpnParams::Check(CInventoryItem& wpn_section)
 	LPCSTR wpn_sect = wpn_section.object().cNameSect().c_str();
 	if (pSettings->line_exist(wpn_sect, "fire_dispersion_base"))
 	{
-		if (smart_cast<CSilencer*>(&wpn_section) != nullptr)
+		if (smart_cast<CSilencer*>(&wpn_section))
 			return false;
 
 		if (!wpn_section.m_show_ammo)
