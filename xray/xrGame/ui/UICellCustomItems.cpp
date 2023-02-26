@@ -192,6 +192,7 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 	m_addons[eSilencer]		= NULL;
 	m_addons[eScope]		= NULL;
 	m_addons[eLauncher]		= NULL;
+	m_addons[eHandler]		= NULL;
 
 	if(itm->SilencerAttachable())
 		m_addon_offset[eSilencer].set(object()->GetSilencerX(), object()->GetSilencerY());
@@ -201,6 +202,9 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 
 	if(itm->GrenadeLauncherAttachable())
 		m_addon_offset[eLauncher].set(object()->GetGrenadeLauncherX(), object()->GetGrenadeLauncherY());
+
+	if(itm->HandlerAttachable())
+		m_addon_offset[eHandler].set(object()->GetHandlerX(), object()->GetHandlerY());
 }
 
 #include "../xrServerEntities/object_broker.h"
@@ -221,6 +225,11 @@ bool CUIWeaponCellItem::is_silencer()
 bool CUIWeaponCellItem::is_launcher()
 {
 	return object()->GrenadeLauncherAttachable()&&object()->IsGrenadeLauncherAttached();
+}
+
+bool CUIWeaponCellItem::is_handler()
+{
+	return object()->HandlerAttachable()&&object()->IsHandlerAttached();
 }
 
 void CUIWeaponCellItem::CreateIcon(eAddonType t)
@@ -256,6 +265,9 @@ void CUIWeaponCellItem::RefreshOffset()
 
 	if(object()->GrenadeLauncherAttachable())
 		m_addon_offset[eLauncher].set(object()->GetGrenadeLauncherX(), object()->GetGrenadeLauncherY());
+
+	if(object()->HandlerAttachable())
+		m_addon_offset[eHandler].set(object()->GetHandlerX(), object()->GetHandlerY());
 }
 
 void CUIWeaponCellItem::Draw()
@@ -324,6 +336,24 @@ void CUIWeaponCellItem::Update()
 				DestroyIcon(eLauncher);
 		}
 	}
+
+	if (object()->HandlerAttachable())
+	{
+		if (object()->IsHandlerAttached())
+		{
+			if (!GetIcon(eHandler) || bForceReInitAddons)
+			{
+				CreateIcon	(eHandler);
+				RefreshOffset();
+				InitAddon	(GetIcon(eHandler), *object()->GetHandlerName(), m_addon_offset[eHandler], Heading());
+			}
+		}
+		else
+		{
+			if (m_addons[eHandler])
+				DestroyIcon(eHandler);
+		}
+	}
 }
 
 void CUIWeaponCellItem::SetColor( u32 color )
@@ -341,6 +371,10 @@ void CUIWeaponCellItem::SetColor( u32 color )
 	{
 		m_addons[eLauncher]->SetColor( color );
 	}
+	if ( m_addons[eHandler] )
+	{
+		m_addons[eHandler]->SetColor( color );
+	}
 }
 
 void CUIWeaponCellItem::OnAfterChild(CUIDragDropListEx* parent_list)
@@ -353,6 +387,9 @@ void CUIWeaponCellItem::OnAfterChild(CUIDragDropListEx* parent_list)
 
 	if(is_launcher() && GetIcon(eLauncher))
 		InitAddon	(GetIcon(eLauncher), *object()->GetGrenadeLauncherName(),m_addon_offset[eLauncher], parent_list->GetVerticalPlacement());
+
+	if(is_handler() && GetIcon(eHandler))
+		InitAddon	(GetIcon(eHandler), *object()->GetHandlerName(),m_addon_offset[eHandler], parent_list->GetVerticalPlacement());
 }
 
 void CUIWeaponCellItem::InitAddon(CUIStatic* s, LPCSTR section, Fvector2 addon_offset, bool b_rotate)
@@ -441,6 +478,16 @@ CUIDragItem* CUIWeaponCellItem::CreateDragItem()
 		s->SetColor		(i->wnd()->GetColor());
 		i->wnd			()->AttachChild	(s);
 	}
+
+	if(GetIcon(eHandler))
+	{
+		s				= xr_new<CUIStatic>(); s->SetAutoDelete(true);
+		s->SetShader	(InventoryUtilities::GetEquipmentIconsShader());
+		InitAddon		(s, *object()->GetHandlerName(),m_addon_offset[eHandler], false);
+		s->SetColor		(i->wnd()->GetColor());
+		i->wnd			()->AttachChild	(s);
+	}
+
 	return				i;
 }
 

@@ -217,6 +217,10 @@ void CInventoryItem::pre_install_upgrade()
 		{
 			weapon->Detach( weapon->GetGrenadeLauncherName().c_str(), true );
 		}
+		if ( weapon->HandlerAttachable() && weapon->IsHandlerAttached() )
+		{
+			weapon->Detach( weapon->GetHandlerName().c_str(), true );
+		}
 	}
 
 

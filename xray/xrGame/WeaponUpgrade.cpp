@@ -247,6 +247,20 @@ bool CWeapon::install_upgrade_addon( LPCSTR section, bool test )
 		}
 	}
 	result |= result2;
+
+	temp_int = (int)m_eHandlerStatus;
+	result2 = process_if_exists_set( section, "handler_status", &CInifile::r_s32, temp_int, test );
+	if ( result2 && !test )
+	{
+		m_eHandlerStatus = (ALife::EWeaponAddonStatus)temp_int;
+		if ( m_eHandlerStatus == ALife::eAddonAttachable || m_eHandlerStatus == ALife::eAddonPermanent )
+		{
+			m_sHandlerName	= pSettings->r_string( section, "handler_name" );
+			m_iHandlerX		= pSettings->r_s32( section, "handler_x" );
+			m_iHandlerY		= pSettings->r_s32( section, "handler_y" );
+		}
+	}
+	result |= result2;
 	InitAddons();
 
 	return result;

@@ -68,6 +68,7 @@ public:
 		at_scope				=0x1,
 		at_glauncher			=0x2,
 		at_silencer				=0x4,
+		at_handler				=0x5,
 	};
 	enum _buy_flags{
 		bf_check_money			= (1<<0),
@@ -165,6 +166,7 @@ private:
 	CUI3tButtonEx* 		m_btn_rifle_silencer;
 	CUI3tButtonEx* 		m_btn_rifle_scope;
 	CUI3tButtonEx* 		m_btn_rifle_glauncher;
+	CUI3tButtonEx* 		m_btn_rifle_handler;
 	CUI3tButtonEx* 		m_btn_rifle_ammo2;
 	CUIItemInfo*		m_item_info;
 	CUIStatic*			m_static_item_rank;
@@ -210,6 +212,7 @@ private:
 	void	xr_stdcall	OnBtnRifleAmmoClicked		(CUIWindow* w, void* d);
 	void	xr_stdcall	OnBtnRifleSilencerClicked	(CUIWindow* w, void* d);
 	void	xr_stdcall	OnBtnRifleScopeClicked		(CUIWindow* w, void* d);
+	void	xr_stdcall	OnBtnRifleHandlerClicked	(CUIWindow* w, void* d);
 	void	xr_stdcall	OnBtnRifleGLClicked			(CUIWindow* w, void* d);
 	void	xr_stdcall	OnBtnRifleAmmo2Clicked		(CUIWindow* w, void* d);
 	

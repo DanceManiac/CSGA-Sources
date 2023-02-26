@@ -1408,6 +1408,7 @@
     <ClInclude Include="HudSound.h" />
     <ClInclude Include="HUDTarget.h" />
     <ClInclude Include="hud_item_object.h" />
+	<ClInclude Include="Handler.h" />
     <ClInclude Include="IColisiondamageInfo.h" />
     <ClInclude Include="id_generator.h" />
     <ClInclude Include="IKFoot.h" />
@@ -5249,6 +5250,7 @@
     <ClCompile Include="HudSound.cpp" />
     <ClCompile Include="HUDTarget.cpp" />
     <ClCompile Include="hud_item_object.cpp" />
+	<ClCompile Include="Handler.cpp" />
     <ClCompile Include="IKFoot.cpp" />
     <ClCompile Include="IKLimbsController.cpp" />
     <ClCompile Include="Ik\aint.cxx" />

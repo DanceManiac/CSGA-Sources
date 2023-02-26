@@ -363,6 +363,24 @@ void game_cl_Deathmatch::CheckItem			(PIItem pItem, PRESET_ITEMS* pPresetItems, 
 				}
 			}
 		};
+
+		if (pWeapon->HandlerAttachable())
+		{
+			pCurBuyMenu->GetWeaponIndexByName(*pWeapon->GetHandlerName(), SlotID, ItemID);
+			if (SlotID != 0xff && ItemID != 0xff)
+			{
+				if (pWeapon->IsHandlerAttached())
+				{
+					if ((DesiredAddons & CSE_ALifeItemWeapon::eWeaponAddonHandler) || !OnlyPreset)
+						pCurBuyMenu->AddonToSlot(CSE_ALifeItemWeapon::eWeaponAddonHandler, pWeapon->GetSlot(), true);
+				}
+				else
+				{
+					if (DesiredAddons & CSE_ALifeItemWeapon::eWeaponAddonHandler)						
+						pCurBuyMenu->AddonToSlot(CSE_ALifeItemWeapon::eWeaponAddonHandler, pWeapon->GetSlot(), false);
+				}
+			}
+		};
 	};
 };
 

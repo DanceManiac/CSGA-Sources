@@ -9,6 +9,7 @@
 #include "../InventoryBox.h"
 #include "../Scope.h"
 #include "../Silencer.h"
+#include "../Handler.h"
 #include "../Weapon.h"
 #include "../WeaponPistol.h"
 #include "../WeaponBinoculars.h"
@@ -898,6 +899,14 @@ bool CUIActorMenu::highlight_addons_for_weapon( PIItem weapon_item, CUICellItem*
 		ci->m_select_armament = true;
 		return true;
 	}
+
+	CHandler* pHandler = smart_cast<CHandler*>(item);
+	if ( pHandler && weapon_item->CanAttach(pHandler) )
+	{
+		ci->m_select_armament = true;
+		return true;
+	}
+
 	return false;
 }
 
@@ -909,8 +918,9 @@ void CUIActorMenu::highlight_weapons_for_addon( PIItem addon_item, CUIDragDropLi
 	CScope*				pScope				= smart_cast<CScope*>			(addon_item);
 	CSilencer*			pSilencer			= smart_cast<CSilencer*>		(addon_item);
 	CGrenadeLauncher*	pGrenadeLauncher	= smart_cast<CGrenadeLauncher*>	(addon_item);
+	CHandler*			pHandler			= smart_cast<CHandler*>			(addon_item);
 
-	if ( !pScope && !pSilencer && !pGrenadeLauncher )
+	if ( !pScope && !pSilencer && !pGrenadeLauncher && !pHandler )
 	{
 		return;
 	}
@@ -941,6 +951,11 @@ void CUIActorMenu::highlight_weapons_for_addon( PIItem addon_item, CUIDragDropLi
 			continue;
 		}
 		if ( pGrenadeLauncher && weapon->CanAttach(pGrenadeLauncher) )
+		{
+			ci->m_select_armament = true;
+			continue;
+		}
+		if ( pHandler && weapon->CanAttach(pHandler) )
 		{
 			ci->m_select_armament = true;
 			continue;

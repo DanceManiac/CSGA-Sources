@@ -6006,6 +6006,9 @@
     <ClInclude Include="hud_item_object.h">
       <Filter>Core\Client\Objects\items &amp; weapons\HudItem</Filter>
     </ClInclude>
+    <ClInclude Include="Handler.h">
+      <Filter>Core\Client\Objects\items &amp; weapons\Weapons\Custom Weapon\Addons\Handler</Filter>
+    </ClInclude>
     <ClInclude Include="HudItem.h">
       <Filter>Core\Client\Objects\items &amp; weapons\HudItem</Filter>
     </ClInclude>
@@ -9661,6 +9664,9 @@
     </ClCompile>
     <ClCompile Include="hud_item_object.cpp">
       <Filter>Core\Client\Objects\items &amp; weapons\HudItem</Filter>
+    </ClCompile>
+    <ClCompile Include="Handler.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons\Weapons\Custom Weapon\Addons\Handler</Filter>
     </ClCompile>
     <ClCompile Include="HudItem.cpp">
       <Filter>Core\Client\Objects\items &amp; weapons\HudItem</Filter>

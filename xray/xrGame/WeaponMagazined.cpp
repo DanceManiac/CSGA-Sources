@@ -7,6 +7,7 @@
 #include "Scope.h"
 #include "Silencer.h"
 #include "GrenadeLauncher.h"
+#include  "Handler.h"
 #include "Inventory.h"
 #include "xrserver_objects_alife_items.h"
 #include "ActorEffector.h"
@@ -981,12 +982,15 @@ bool CWeaponMagazined::CanAttach(PIItem pIItem)
 	CScope*	pScope = smart_cast<CScope*>(pIItem);
 	CSilencer* pSilencer = smart_cast<CSilencer*>(pIItem);
 	CGrenadeLauncher* pGrenadeLauncher = smart_cast<CGrenadeLauncher*>(pIItem);
+	CHandler* pHandler = smart_cast<CHandler*>(pIItem);
 
 	if(pScope && m_eScopeStatus == ALife::eAddonAttachable && (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonScope) == 0 && (m_sScopeName == pIItem->object().cNameSect()) )
        return true;
 	else if(pSilencer && m_eSilencerStatus == ALife::eAddonAttachable && (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonSilencer) == 0 && (m_sSilencerName == pIItem->object().cNameSect()) )
        return true;
 	else if (pGrenadeLauncher && m_eGrenadeLauncherStatus == ALife::eAddonAttachable && (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) == 0 && (m_sGrenadeLauncherName  == pIItem->object().cNameSect()) )
+		return true;
+	else if (pHandler && m_eHandlerStatus == ALife::eAddonAttachable && (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonHandler) == 0 && (m_sHandlerName  == pIItem->object().cNameSect()))
 		return true;
 	else
 		return inherited::CanAttach(pIItem);
@@ -1000,6 +1004,8 @@ bool CWeaponMagazined::CanDetach(const char* item_section_name)
        return true;
 	else if(m_eGrenadeLauncherStatus == ALife::eAddonAttachable && 0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) && (m_sGrenadeLauncherName == item_section_name))
        return true;
+	else if (m_eHandlerStatus == ALife::eAddonAttachable && 0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonHandler) && (m_sHandlerName == item_section_name))
+		return true;
 	else
 		return inherited::CanDetach(item_section_name);
 }
@@ -1011,6 +1017,7 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 	CScope*	pScope = smart_cast<CScope*>(pIItem);
 	CSilencer* pSilencer = smart_cast<CSilencer*>(pIItem);
 	CGrenadeLauncher* pGrenadeLauncher = smart_cast<CGrenadeLauncher*>(pIItem);
+	CHandler* pHandler = smart_cast<CHandler*>(pIItem);
 	
 	if(pScope && m_eScopeStatus == ALife::eAddonAttachable && (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonScope) == 0 && (m_sScopeName == pIItem->object().cNameSect()))
 	{
@@ -1030,7 +1037,18 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
         if (m_bRestGL_and_Sil && IsSilencerAttached())
 			Detach(GetSilencerName().c_str(), true);
 
+        if (IsHandlerAttached())
+			Detach(GetHandlerName().c_str(), true);
+
 		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher;
+		result = true;
+	}
+	else if (pHandler && m_eHandlerStatus == ALife::eAddonAttachable && (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonHandler) == 0 && (m_sHandlerName == pIItem->object().cNameSect()))
+	{
+        if (IsGrenadeLauncherAttached())
+			Detach(GetGrenadeLauncherName().c_str(), true);
+
+		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonHandler;
 		result = true;
 	}
 
@@ -1073,6 +1091,14 @@ bool CWeaponMagazined::Detach(const char* item_section_name, bool b_spawn_item)
 	else if(m_eGrenadeLauncherStatus == ALife::eAddonAttachable && 0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) && (m_sGrenadeLauncherName == item_section_name))
 	{
 		m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher;
+
+		UpdateAddonsVisibility();
+		InitAddons();
+		return CInventoryItemObject::Detach(item_section_name, b_spawn_item);
+	}
+	else if(m_eHandlerStatus == ALife::eAddonAttachable && 0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonHandler) && (m_sHandlerName == item_section_name))
+	{
+		m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonHandler;
 
 		UpdateAddonsVisibility();
 		InitAddons();
@@ -1189,12 +1215,24 @@ void CWeaponMagazined::PlayAnimShow()
 {
 	VERIFY(GetState()==eShowing);
 
-	if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_show_empty", false, this, GetState());
-	else if(IsMisfire())
-		PlayHUDMotion("anm_show_jammed", false, this, GetState());
+	if (!IsHandlerAttached())
+	{
+		if (!IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_show_empty", false, this, GetState());
+		else if(IsMisfire())
+			PlayHUDMotion("anm_show_jammed", false, this, GetState());
+		else
+			PlayHUDMotion("anm_show", false, this, GetState());
+	}
 	else
-		PlayHUDMotion("anm_show", false, this, GetState());
+	{
+		if (!IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_show_empty_handler", false, this, GetState());
+		else if(IsMisfire())
+			PlayHUDMotion("anm_show_jammed_handler", false, this, GetState());
+		else
+			PlayHUDMotion("anm_show_handler", false, this, GetState());
+	}
 }
 
 void CWeaponMagazined::PlayAnimShowDet()
@@ -1225,12 +1263,24 @@ void CWeaponMagazined::PlayAnimHide()
 {
 	VERIFY(GetState()==eHiding);
 
-	if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_hide_empty", true, this, GetState());
-	else if(IsMisfire())
-		PlayHUDMotion("anm_hide_jammed", true, this, GetState());
+	if (!IsHandlerAttached())
+	{
+		if (!IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_hide_empty", true, this, GetState());
+		else if(IsMisfire())
+			PlayHUDMotion("anm_hide_jammed", true, this, GetState());
+		else
+			PlayHUDMotion("anm_hide", true, this, GetState());
+	}
 	else
-		PlayHUDMotion("anm_hide", true, this, GetState());
+	{
+		if (!IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_hide_empty_handler", true, this, GetState());
+		else if(IsMisfire())
+			PlayHUDMotion("anm_hide_jammed_handler", true, this, GetState());
+		else
+			PlayHUDMotion("anm_hide_handler", true, this, GetState());
+	}
 }
 
 void CWeaponMagazined::PlayAnimHideDet()
@@ -1249,18 +1299,36 @@ void CWeaponMagazined::PlayAnimReload()
 {
 	VERIFY(GetState()==eReload);
 
-	if(!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_reload_empty", true, this, GetState());
-	else if(IsMisfire() && iAmmoElapsed != 0)
-		PlayHUDMotion("anm_reload_jammed", true, this, GetState());
-	else if(IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_reload_jammed_last", true, this, GetState());
-	else if(bSwitchAmmoType)
-		PlayHUDMotion("anm_reload_ammochange", true, this, GetState());
-	else if(bSwitchAmmoType && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_reload_empty_ammochange", true, this, GetState());
+	if (!IsHandlerAttached())
+	{
+		if(!IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_reload_empty", true, this, GetState());
+		else if(IsMisfire() && iAmmoElapsed != 0)
+			PlayHUDMotion("anm_reload_jammed", true, this, GetState());
+		else if(IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_reload_jammed_last", true, this, GetState());
+		else if(bSwitchAmmoType)
+			PlayHUDMotion("anm_reload_ammochange", true, this, GetState());
+		else if(bSwitchAmmoType && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_reload_empty_ammochange", true, this, GetState());
+		else
+			PlayHUDMotion("anm_reload", true, this, GetState());
+	}
 	else
-		PlayHUDMotion("anm_reload", true, this, GetState());
+	{
+		if(!IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_reload_empty_handler", true, this, GetState());
+		else if(IsMisfire() && iAmmoElapsed != 0)
+			PlayHUDMotion("anm_reload_jammed_handler", true, this, GetState());
+		else if(IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_reload_jammed_last_handler", true, this, GetState());
+		else if(bSwitchAmmoType)
+			PlayHUDMotion("anm_reload_ammochange_handler", true, this, GetState());
+		else if(bSwitchAmmoType && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_reload_empty_ammochange_handler", true, this, GetState());
+		else
+			PlayHUDMotion("anm_reload_handler", true, this, GetState());
+	}
 }
 
 void CWeaponMagazined::PlayAnimAimStart()
@@ -1444,12 +1512,24 @@ void CWeaponMagazined::PlayAnimAim()
 		}
 	}
 
-	if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_idle_aim_empty", true, nullptr, GetState());
-	else if (IsMisfire())
-		PlayHUDMotion("anm_idle_aim_jammed", true, nullptr, GetState());
+	if (!IsHandlerAttached())
+	{
+		if (!IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_idle_aim_empty", true, nullptr, GetState());
+		else if (IsMisfire())
+			PlayHUDMotion("anm_idle_aim_jammed", true, nullptr, GetState());
+		else
+			PlayHUDMotion("anm_idle_aim", true, nullptr, GetState());
+	}
 	else
-		PlayHUDMotion("anm_idle_aim", true, nullptr, GetState());
+	{
+		if (!IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_idle_aim_empty_handler", true, nullptr, GetState());
+		else if (IsMisfire())
+			PlayHUDMotion("anm_idle_aim_jammed_handler", true, nullptr, GetState());
+		else
+			PlayHUDMotion("anm_idle_aim_handler", true, nullptr, GetState());
+	}
 }
 
 void CWeaponMagazined::PlayAnimIdle()
@@ -1459,14 +1539,28 @@ void CWeaponMagazined::PlayAnimIdle()
     if (TryPlayAnimIdle())
         return;
 
-    if (IsZoomed())
-        PlayAnimAim();
-    else if (!IsMisfire() && iAmmoElapsed == 0)
-        PlayHUDMotion("anm_idle_empty", true, nullptr, GetState());
-    else if (IsMisfire())
-        PlayHUDMotion("anm_idle_jammed", true, nullptr, GetState());
-    else
-        PlayHUDMotion("anm_idle", true, nullptr, GetState());
+	if (!IsHandlerAttached())
+	{
+		if (IsZoomed())
+			PlayAnimAim();
+		else if (!IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_idle_empty", true, nullptr, GetState());
+		else if (IsMisfire())
+			PlayHUDMotion("anm_idle_jammed", true, nullptr, GetState());
+		else
+			PlayHUDMotion("anm_idle", true, nullptr, GetState());
+	}
+	else
+	{
+		if (IsZoomed())
+			PlayAnimAim();
+		else if (!IsMisfire() && iAmmoElapsed == 0)
+			PlayHUDMotion("anm_idle_empty_handler", true, nullptr, GetState());
+		else if (IsMisfire())
+			PlayHUDMotion("anm_idle_jammed_handler", true, nullptr, GetState());
+		else
+			PlayHUDMotion("anm_idle_handler", true, nullptr, GetState());
+	}
 }
 
 void CWeaponMagazined::PlayAnimBore()
@@ -1484,7 +1578,7 @@ void CWeaponMagazined::PlayAnimShoot()
 	VERIFY(GetState()==eFire);
 	
     string_path guns_shoot_anm{};
-    xr_strconcat(guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? (IsScopeAttached() ?  "_aim_scope" : "_aim")  : "", IsMisfire() ? "_jammed" : ( !IsMisfire() && iAmmoElapsed == 1 ? "_last" : ""), IsSilencerAttached() ? "_sil" : "");
+        xr_strconcat(guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? (IsScopeAttached() ? "_aim_scope" : "_aim") : "", IsMisfire() ? "_jammed" : (!IsMisfire() && iAmmoElapsed == 1 ? "_last" : ""), IsSilencerAttached() ? "_sil" : "", IsHandlerAttached() ? "_handler" : "");
 
     PlayHUDMotionNew(guns_shoot_anm, false, GetState());
 }

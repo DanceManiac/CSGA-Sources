@@ -965,6 +965,17 @@ int CScriptGameObject::Weapon_Silencer_Status()
 	return (int)weapon->get_SilencerStatus();
 }
 
+int CScriptGameObject::Weapon_Handler_Status()
+{
+	CWeapon* weapon = smart_cast<CWeapon*>( &object() );
+	if (!weapon)
+	{
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,"CWeapon : cannot access class member Weapon_Handler_Status!");
+		return(false);
+	}
+	return (int)weapon->get_HandlerStatus();
+}
+
 bool CScriptGameObject::Weapon_IsGrenadeLauncherAttached()
 {
 	CWeapon*	weapon = smart_cast<CWeapon*>( &object() );
@@ -996,6 +1007,17 @@ bool CScriptGameObject::Weapon_IsSilencerAttached()
 		return								(false);
 	}
 	return weapon->IsSilencerAttached();
+}
+
+bool CScriptGameObject::Weapon_IsHandlerAttached()
+{
+	CWeapon* weapon = smart_cast<CWeapon*>( &object() );
+	if (!weapon)
+	{
+		ai().script_engine().script_log		(ScriptStorage::eLuaMessageTypeError,"CWeapon : cannot access class member Weapon_IsHandlerAttached!");
+		return (false);
+	}
+	return weapon->IsHandlerAttached();
 }
 
 void  CScriptGameObject::AllowSprint(bool b)

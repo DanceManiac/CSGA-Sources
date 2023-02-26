@@ -36,6 +36,7 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 			bool bScope							= false;
 			bool bSilencer						= false;
 			bool bLauncher						= false;
+			bool bHandler						= false;
 
 			
 			j					= 1;
@@ -49,6 +50,7 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 				bScope				= (NULL!=strstr(V,"scope"));
 				bSilencer			= (NULL!=strstr(V,"silencer"));
 				bLauncher			= (NULL!=strstr(V,"launcher"));
+				bHandler			= (NULL!=strstr(V,"handler"));
 				//probability
 				if(NULL!=strstr(V,"prob="))
 					p				= (float)atof(strstr(V,"prob=")+5);
@@ -61,13 +63,16 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 					CSE_Abstract* E = alife().spawn_item	(N,o_Position,m_tNodeID,m_tGraphID,ID);
 					//подсоединить аддоны к оружию, если включены соответствующие флажки
 					CSE_ALifeItemWeapon* W =  smart_cast<CSE_ALifeItemWeapon*>(E);
-					if (W) {
+					if (W)
+					{
 						if (W->m_scope_status == ALife::eAddonAttachable)
 							W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonScope, bScope);
 						if (W->m_silencer_status == ALife::eAddonAttachable)
 							W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonSilencer, bSilencer);
 						if (W->m_grenade_launcher_status == ALife::eAddonAttachable)
 							W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher, bLauncher);
+						if (W->m_handler_status == ALife::eAddonAttachable)
+							W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonHandler, bHandler);
 					}
 					CSE_ALifeInventoryItem* IItem = smart_cast<CSE_ALifeInventoryItem*>(E);
 					if(IItem)

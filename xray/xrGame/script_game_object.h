@@ -347,10 +347,12 @@ public:
 			bool				Weapon_IsGrenadeLauncherAttached();
 			bool				Weapon_IsScopeAttached			();
 			bool				Weapon_IsSilencerAttached		();
+			bool				Weapon_IsHandlerAttached		();
 
 			int					Weapon_GrenadeLauncher_Status	();
 			int					Weapon_Scope_Status				();
 			int					Weapon_Silencer_Status			();
+			int					Weapon_Handler_Status			();
 
 			LPCSTR				ProfileName			();
 			LPCSTR				CharacterName		();

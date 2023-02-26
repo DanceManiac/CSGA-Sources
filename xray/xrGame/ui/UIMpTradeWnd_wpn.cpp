@@ -140,6 +140,33 @@ void CUIMpTradeWnd::OnBtnRifleScopeClicked(CUIWindow* w, void* d)
 	}
 }
 
+void CUIMpTradeWnd::OnBtnRifleHandlerClicked(CUIWindow* w, void* d)
+{
+	CheckDragItemToDestroy				();
+	CUIDragDropListEx*	res			= m_list[e_rifle];
+	CUICellItem* ci					= (res->ItemsCount())?res->GetItemIdx(0):NULL;
+	if(!ci)	
+		return;
+
+	SBuyItemInfo* pitem				= FindItem(ci);
+	if(IsAddonAttached(pitem, at_handler))
+	{//detach
+		SellItemAddons				(pitem,at_handler);
+	}else
+	if(CanAttachAddon(pitem, at_handler))
+	{//attach
+		shared_str addon_name		= GetAddonNameSect(pitem,at_handler);
+
+		if ( NULL==m_store_hierarchy->FindItem(addon_name) )
+			return;
+						
+		SBuyItemInfo* addon_item	= CreateItem(addon_name, SBuyItemInfo::e_undefined, false);
+		bool b_res_addon			= TryToBuyItem(addon_item, bf_normal, pitem );
+		if(!b_res_addon)
+			DestroyItem				(addon_item);
+	}
+}
+
 void CUIMpTradeWnd::OnBtnRifleGLClicked(CUIWindow* w, void* d)
 {
 	CheckDragItemToDestroy				();
@@ -292,6 +319,10 @@ bool CUIMpTradeWnd::IsAddonAttached(SBuyItemInfo* itm, item_addon_type at)
 		{
 			b_res = ( w->GrenadeLauncherAttachable() && w->IsGrenadeLauncherAttached() );
 		}break;
+	case at_handler:
+		{
+			b_res = ( w->HandlerAttachable() && w->IsHandlerAttached() );
+		}break;
 	};
 	return			b_res;
 }
@@ -321,6 +352,10 @@ bool CUIMpTradeWnd::CanAttachAddon(SBuyItemInfo* itm, item_addon_type at)
 	case at_glauncher:
 		{
 			b_res = ( w->GrenadeLauncherAttachable() && !w->IsGrenadeLauncherAttached() );
+		}break;
+	case at_handler:
+		{
+			b_res = ( w->HandlerAttachable() && !w->IsHandlerAttached() );
 		}break;
 	};
 	return b_res;
@@ -365,6 +400,10 @@ shared_str CUIMpTradeWnd::GetAddonNameSect(SBuyItemInfo* itm, item_addon_type at
 		{
 			return w->GetGrenadeLauncherName();
 		}break;
+	case at_handler:
+		{
+			return w->GetHandlerName();
+		}break;
 	};
 	return NULL;
 }
@@ -387,15 +426,15 @@ CUIMpTradeWnd::item_addon_type CUIMpTradeWnd::GetItemType(const shared_str& name
 {
 	const shared_str& group = g_mp_restrictions.GetItemGroup(name_sect);
 	if(group=="scp")
-		return		at_scope;
+		return at_scope;
+	else if(group=="sil")
+		return at_silencer;
+	else if(group=="gl")
+		return at_glauncher;
+	else if(group=="hand")
+		return at_handler;
 	else
-	if(group=="sil")
-		return		at_silencer;
-	else
-	if(group=="gl")
-		return		at_glauncher;
-	else
-		return		at_not_addon;
+		return at_not_addon;
 }
 
 u8 GetItemAddonsState_ext(SBuyItemInfo* item)

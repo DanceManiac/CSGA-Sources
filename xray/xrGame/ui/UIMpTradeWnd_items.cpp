@@ -425,6 +425,7 @@ void CUIMpTradeWnd::DestroyItem(SBuyItemInfo* item)
 	R_ASSERT			(!IsAddonAttached(item,at_scope));
 	R_ASSERT			(!IsAddonAttached(item,at_glauncher));
 	R_ASSERT			(!IsAddonAttached(item,at_silencer));
+	R_ASSERT			(!IsAddonAttached(item,at_handler));
 
 	m_all_items.erase	(it);
 	delete_data			(item);
@@ -615,6 +616,8 @@ void CUIMpTradeWnd::StorePreset(ETradePreset idx, bool bSilent, bool check_allow
 
 		if(addon_state&at_silencer)
 			_one.addon_names[2]			= GetAddonNameSect(iinfo, at_silencer);
+		if(addon_state&at_handler)
+			_one.addon_names[3]			= GetAddonNameSect(iinfo, at_handler);
 	}
 
 	std::sort						(v.begin(), v.end(), preset_sorter(m_item_mngr));
@@ -651,9 +654,9 @@ void CUIMpTradeWnd::ApplyPreset(ETradePreset idx)
 			{
 				if(_one.addon_state)
 				{
-					for(u32 i=0; i<3; ++i)
+					for(u32 i=0; i<4; ++i)
 					{
-						item_addon_type at		= (i==0)?at_scope : ((i==1)?at_glauncher : at_silencer);
+						item_addon_type at = (i == 0) ? at_scope : ((i == 1) ? at_glauncher : (i == 2) ? at_silencer : at_handler);
 						
 						if(!(_one.addon_state&at) )	
 							continue;
@@ -713,6 +716,13 @@ void CUIMpTradeWnd::CleanUserItems()
 				if(IsAddonAttached(iinfo, at_glauncher) )
 				{
 					SBuyItemInfo* detached_addon	= DetachAddon(iinfo, at_glauncher);
+					detached_addon->SetState		(SBuyItemInfo::e_undefined);
+					detached_addon->SetState		(SBuyItemInfo::e_shop);
+					detached_addon->m_cell_item->SetOwnerList(NULL);
+				}
+				if(IsAddonAttached(iinfo, at_handler) )
+				{
+					SBuyItemInfo* detached_addon	= DetachAddon(iinfo, at_handler);
 					detached_addon->SetState		(SBuyItemInfo::e_undefined);
 					detached_addon->SetState		(SBuyItemInfo::e_shop);
 					detached_addon->m_cell_item->SetOwnerList(NULL);
@@ -881,6 +891,8 @@ void CUIMpTradeWnd::DumpPreset(ETradePreset idx)
 			Msg("	[%s]",_one.addon_names[1].c_str());
 		if(_one.addon_names[2].c_str())
 			Msg("	[%s]",_one.addon_names[2].c_str());
+		if(_one.addon_names[3].c_str())
+			Msg("	[%s]",_one.addon_names[3].c_str());
 	}
 #endif // #ifndef MASTER_GOLD
 }

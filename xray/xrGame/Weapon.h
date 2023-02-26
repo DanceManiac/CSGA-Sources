@@ -153,14 +153,17 @@ public:
 			bool IsGrenadeLauncherAttached	() const;
 			bool IsScopeAttached			() const;
 			bool IsSilencerAttached			() const;
+			bool IsHandlerAttached			() const;
 
 	virtual bool GrenadeLauncherAttachable();
 	virtual bool ScopeAttachable();
 	virtual bool SilencerAttachable();
+	virtual bool HandlerAttachable();
 			
 	ALife::EWeaponAddonStatus	get_GrenadeLauncherStatus	() const { return m_eGrenadeLauncherStatus; }
 	ALife::EWeaponAddonStatus	get_ScopeStatus				() const { return m_eScopeStatus; }
 	ALife::EWeaponAddonStatus	get_SilencerStatus			() const { return m_eSilencerStatus; }
+	ALife::EWeaponAddonStatus	get_HandlerStatus			() const { return m_eHandlerStatus; }
 
 	virtual bool UseScopeTexture() {return true;};
 
@@ -177,10 +180,13 @@ public:
 	int	GetSilencerY() {return m_iSilencerY;}
 	int	GetGrenadeLauncherX() {return m_iGrenadeLauncherX;}
 	int	GetGrenadeLauncherY() {return m_iGrenadeLauncherY;}
+	int GetHandlerX() { return m_iHandlerX; }
+	int GetHandlerY() { return m_iHandlerY; }
 
 	const shared_str& GetGrenadeLauncherName	()		const {return m_sGrenadeLauncherName;}
 	const shared_str& GetScopeName				()		const {return m_sScopeName;}
 	const shared_str& GetSilencerName			()		const {return m_sSilencerName;}
+	const shared_str& GetHandlerName			()		const {return m_sHandlerName;}
 
 	IC void	ForceUpdateAmmo						()		{ m_dwAmmoCurrentCalcFrame = 0; }
 
@@ -194,11 +200,13 @@ protected:
 	ALife::EWeaponAddonStatus	m_eScopeStatus;
 	ALife::EWeaponAddonStatus	m_eSilencerStatus;
 	ALife::EWeaponAddonStatus	m_eGrenadeLauncherStatus;
+	ALife::EWeaponAddonStatus	m_eHandlerStatus;
 
 	//названия секций подключаемых аддонов
 	shared_str		m_sScopeName;
 	shared_str		m_sSilencerName;
 	shared_str		m_sGrenadeLauncherName;
+	shared_str		m_sHandlerName;
 
 	shared_str m_sWpn_laser_bone;
 	shared_str m_sHud_wpn_laser_bone;
@@ -206,10 +214,13 @@ protected:
 	shared_str m_sWpn_flashlight_bone;
 	shared_str m_sHud_wpn_flashlight_bone;
 
+	shared_str m_sHandler_bone;
+
 	//смещение иконов апгрейдов в инвентаре
 	int	m_iScopeX, m_iScopeY;
 	int	m_iSilencerX, m_iSilencerY;
 	int	m_iGrenadeLauncherX, m_iGrenadeLauncherY;
+	int m_iHandlerX, m_iHandlerY;
 	
 	RStringVec		m_defShownBones;
 	RStringVec		m_defHiddenBones;

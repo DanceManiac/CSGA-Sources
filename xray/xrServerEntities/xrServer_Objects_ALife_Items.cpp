@@ -498,6 +498,7 @@ CSE_ALifeItemWeapon::CSE_ALifeItemWeapon	(LPCSTR caSection) : CSE_ALifeItem(caSe
 	m_scope_status				=	(EWeaponAddonStatus)pSettings->r_s32(s_name,"scope_status");
 	m_silencer_status			=	(EWeaponAddonStatus)pSettings->r_s32(s_name,"silencer_status");
 	m_grenade_launcher_status	=	(EWeaponAddonStatus)pSettings->r_s32(s_name,"grenade_launcher_status");
+	m_handler_status			=	(EWeaponAddonStatus)pSettings->r_s32(s_name,"handler_status");
 	m_ef_main_weapon_type		= READ_IF_EXISTS(pSettings,r_u32,caSection,"ef_main_weapon_type",u32(-1));
 	m_ef_weapon_type			= READ_IF_EXISTS(pSettings,r_u32,caSection,"ef_weapon_type",u32(-1));
 }
@@ -641,6 +642,9 @@ void CSE_ALifeItemWeapon::FillProps			(LPCSTR pref, PropItemVec& items)
 
 	if (m_grenade_launcher_status == ALife::eAddonAttachable)
         PHelper().CreateFlag8	(items,PrepareKey(pref,*s_name,"Addons\\Podstvolnik"),&m_addon_flags,eWeaponAddonGrenadeLauncher);
+
+	if (m_handler_status == ALife::eAddonAttachable)
+        PHelper().CreateFlag8	(items,PrepareKey(pref,*s_name,"Addons\\Handler"),&m_addon_flags,eWeaponAddonHandler);
 }
 #endif // #ifndef XRGAME_EXPORTS
 

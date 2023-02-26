@@ -216,6 +216,8 @@ void CWeapon::ForceUpdateFireParticles()
 	}
 }
 
+shared_str wpn_handler = "wpn_handler";
+
 void CWeapon::Load		(LPCSTR section)
 {
 	inherited::Load					(section);
@@ -405,6 +407,7 @@ void CWeapon::Load		(LPCSTR section)
 	m_eScopeStatus			 = (ALife::EWeaponAddonStatus)pSettings->r_s32(section,"scope_status");
 	m_eSilencerStatus		 = (ALife::EWeaponAddonStatus)pSettings->r_s32(section,"silencer_status");
 	m_eGrenadeLauncherStatus = (ALife::EWeaponAddonStatus)pSettings->r_s32(section,"grenade_launcher_status");
+	m_eHandlerStatus		 = (ALife::EWeaponAddonStatus)pSettings->r_s32(section,"handler_status");
 
 	m_zoom_params.m_bZoomEnabled		= !!pSettings->r_bool(section,"zoom_enabled");
 	m_zoom_params.m_fZoomRotateTime		= pSettings->r_float(section,"zoom_rotate_time");
@@ -431,6 +434,18 @@ void CWeapon::Load		(LPCSTR section)
 		m_iGrenadeLauncherX = pSettings->r_s32(section,"grenade_launcher_x");
 		m_iGrenadeLauncherY = pSettings->r_s32(section,"grenade_launcher_y");
 	}
+
+	if ( m_eHandlerStatus == ALife::eAddonAttachable )
+	{
+		m_sHandlerName = pSettings->r_string(section,"handler_name");
+		m_iHandlerX = pSettings->r_s32(section,"handler_x");
+		m_iHandlerY = pSettings->r_s32(section,"handler_y");
+	}
+
+	if (pSettings->line_exist(section, "handler_bone"))
+            m_sHandler_bone = pSettings->r_string(section, "handler_bone");
+        else
+            m_sHandler_bone = wpn_handler;
 
 	InitAddons();
 	if(pSettings->line_exist(section,"weapon_remove_time"))
@@ -1550,6 +1565,13 @@ bool CWeapon::IsSilencerAttached() const
 			ALife::eAddonPermanent == m_eSilencerStatus;
 }
 
+bool CWeapon::IsHandlerAttached() const
+{
+	return (ALife::eAddonAttachable == m_eHandlerStatus &&
+			0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonHandler)) || 
+			ALife::eAddonPermanent == m_eHandlerStatus;
+}
+
 bool CWeapon::GrenadeLauncherAttachable()
 {
 	return (ALife::eAddonAttachable == m_eGrenadeLauncherStatus);
@@ -1563,18 +1585,19 @@ bool CWeapon::SilencerAttachable()
 	return (ALife::eAddonAttachable == m_eSilencerStatus);
 }
 
+bool CWeapon::HandlerAttachable()
+{
+	return (ALife::eAddonAttachable == m_eHandlerStatus);
+}
+
 shared_str wpn_scope				= "wpn_scope";
 shared_str wpn_silencer				= "wpn_silencer";
 shared_str wpn_grenade_launcher		= "wpn_launcher";
 
-
-
-
 void CWeapon::UpdateHUDAddonsVisibility()
 {//actor only
-	if(!GetHUDmode())										return;
-
-//.	return;
+	if(!GetHUDmode())
+		return;
 
 	auto SetBoneVisible = [&](const shared_str& boneName, BOOL visibility)
 	{
@@ -1687,6 +1710,18 @@ void CWeapon::UpdateHUDAddonsVisibility()
 	else
 		if(m_eGrenadeLauncherStatus==ALife::eAddonPermanent)
 			HudItemData()->set_bone_visible(wpn_grenade_launcher, TRUE, TRUE);
+
+	if(HandlerAttachable())
+	{
+		HudItemData()->set_bone_visible(m_sHandler_bone, IsHandlerAttached());
+	}
+	if(m_eHandlerStatus==ALife::eAddonDisabled )
+	{
+		HudItemData()->set_bone_visible(m_sHandler_bone, FALSE, TRUE);
+	}
+	else
+		if(m_eHandlerStatus==ALife::eAddonPermanent)
+			HudItemData()->set_bone_visible(m_sHandler_bone, TRUE, TRUE);
 }
 
 void CWeapon::UpdateAddonsVisibility()
@@ -1832,7 +1867,25 @@ void CWeapon::UpdateAddonsVisibility()
 		pWeaponVisual->LL_GetBoneVisible(bone_id) )
 	{
 		pWeaponVisual->LL_SetBoneVisible					(bone_id,FALSE,TRUE);
-//		Log("gl", pWeaponVisual->LL_GetBoneVisible			(bone_id));
+	}
+
+	bone_id = pWeaponVisual->LL_BoneID(m_sHandler_bone);
+	if(HandlerAttachable())
+	{
+		if(IsHandlerAttached())
+		{
+			if(!pWeaponVisual->LL_GetBoneVisible(bone_id))
+				pWeaponVisual->LL_SetBoneVisible(bone_id,TRUE,TRUE);
+		}
+		else
+		{
+			if(pWeaponVisual->LL_GetBoneVisible(bone_id))
+				pWeaponVisual->LL_SetBoneVisible(bone_id,FALSE,TRUE);
+		}
+	}
+	if(m_eHandlerStatus == ALife::eAddonDisabled && bone_id != BI_NONE && pWeaponVisual->LL_GetBoneVisible(bone_id))
+	{
+		pWeaponVisual->LL_SetBoneVisible					(bone_id,FALSE,TRUE);
 	}
 
 	///////////////////////////////////////////////////////////////////

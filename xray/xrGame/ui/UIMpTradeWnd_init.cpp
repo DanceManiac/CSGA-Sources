@@ -110,6 +110,7 @@ void CUIMpTradeWnd::Init(const shared_str& sectionName, const shared_str& sectio
 	m_btn_rifle_silencer	= UIHelper::Create3tButtonEx( xml_doc, "btn_rifle_silencer",	this );
 	m_btn_rifle_scope		= UIHelper::Create3tButtonEx( xml_doc, "btn_rifle_scope",		this );
 	m_btn_rifle_glauncher	= UIHelper::Create3tButtonEx( xml_doc, "btn_rifle_glauncher",	this );
+	m_btn_rifle_handler		= UIHelper::Create3tButtonEx( xml_doc, "btn_rifle_handler",		this );
 	m_btn_rifle_ammo2		= NULL;//UIHelper::Create3tButtonEx( xml_doc, "btn_rifle_ammo2",		this );
 	
 
@@ -135,6 +136,7 @@ void CUIMpTradeWnd::Init(const shared_str& sectionName, const shared_str& sectio
 	Register							(m_btn_rifle_silencer	);
 	Register							(m_btn_rifle_scope		);
 	Register							(m_btn_rifle_glauncher	);
+	Register							(m_btn_rifle_handler	);
 //	Register							(m_btn_rifle_ammo2		);
 
 
@@ -162,6 +164,7 @@ void CUIMpTradeWnd::Init(const shared_str& sectionName, const shared_str& sectio
 	AddCallback							("btn_rifle_silencer",BUTTON_CLICKED,	CUIWndCallback::void_function	(this,	&CUIMpTradeWnd::OnBtnRifleSilencerClicked	));
 	AddCallback							("btn_rifle_scope",	BUTTON_CLICKED,		CUIWndCallback::void_function	(this,	&CUIMpTradeWnd::OnBtnRifleScopeClicked		));
 	AddCallback							("btn_rifle_glauncher",BUTTON_CLICKED,	CUIWndCallback::void_function	(this,	&CUIMpTradeWnd::OnBtnRifleGLClicked			));
+	AddCallback							("btn_rifle_handler",BUTTON_CLICKED,	CUIWndCallback::void_function	(this,	&CUIMpTradeWnd::OnBtnRifleHandlerClicked	));
 //	AddCallback							("btn_rifle_ammo2",	BUTTON_CLICKED,		CUIWndCallback::void_function	(this,	&CUIMpTradeWnd::OnBtnRifleAmmo2Clicked		));
 
 	m_static_player_money				= UIHelper::CreateStatic( xml_doc, "static_player_money",		this );

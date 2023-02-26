@@ -18,6 +18,7 @@ bool CUIMpTradeWnd::TryToSellItem(SBuyItemInfo* sell_itm, bool do_destroy, SBuyI
 		SellItemAddons					  (sell_itm, at_scope);
 		SellItemAddons					  (sell_itm, at_silencer);
 		SellItemAddons					  (sell_itm, at_glauncher);
+		SellItemAddons					  (sell_itm, at_handler);
 
 		_item_cost						= m_item_mngr->GetItemCost(sell_itm->m_name_sect, GetRank() );
 	}

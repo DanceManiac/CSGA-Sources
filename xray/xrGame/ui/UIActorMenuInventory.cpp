@@ -16,6 +16,7 @@
 #include "../silencer.h"
 #include "../scope.h"
 #include "../grenadelauncher.h"
+#include "../Handler.h"
 #include "../Artefact.h"
 #include "../eatable_item.h"
 #include "../BottleItem.h"
@@ -769,8 +770,8 @@ void CUIActorMenu::PropertiesBoxForSlots( PIItem item, bool& b_show )
 void CUIActorMenu::PropertiesBoxForWeapon( CUICellItem* cell_item, PIItem item, bool& b_show )
 {
 	//отсоединение аддонов от вещи
-	CWeapon*	pWeapon = smart_cast<CWeapon*>( item );
-	if ( !pWeapon )
+	CWeapon* pWeapon = smart_cast<CWeapon*>( item );
+	if (!pWeapon)
 	{
 		return;
 	}
@@ -788,6 +789,11 @@ void CUIActorMenu::PropertiesBoxForWeapon( CUICellItem* cell_item, PIItem item, 
 	if ( pWeapon->SilencerAttachable() && pWeapon->IsSilencerAttached() )
 	{
 		m_UIPropertiesBox->AddItem( "st_detach_silencer",  NULL, INVENTORY_DETACH_SILENCER_ADDON );
+		b_show			= true;
+	}
+	if (pWeapon->HandlerAttachable() && pWeapon->IsHandlerAttached())
+	{
+		m_UIPropertiesBox->AddItem( "st_detach_handler",  NULL, INVENTORY_DETACH_HANDLER_ADDON );
 		b_show			= true;
 	}
 	if ( smart_cast<CWeaponMagazined*>(pWeapon) && IsGameTypeSingle() )
@@ -820,6 +826,7 @@ void CUIActorMenu::PropertiesBoxForAddon( PIItem item, bool& b_show )
 	CScope*				pScope				= smart_cast<CScope*>			(item);
 	CSilencer*			pSilencer			= smart_cast<CSilencer*>		(item);
 	CGrenadeLauncher*	pGrenadeLauncher	= smart_cast<CGrenadeLauncher*>	(item);
+	CHandler*			pHandler			= smart_cast<CHandler*>			(item);
 	CInventory*			inv					= &m_pActorInvOwner->inventory();
 
 	if ( pScope )
@@ -862,6 +869,16 @@ void CUIActorMenu::PropertiesBoxForAddon( PIItem item, bool& b_show )
 		{
 			PIItem tgt = inv->m_slots[RIFLE_SLOT].m_pIItem;
 			m_UIPropertiesBox->AddItem( "st_attach_gl_to_rifle",  (void*)tgt, INVENTORY_ATTACH_ADDON );
+			b_show			= true;
+		}
+	}
+
+	if ( pHandler )
+	{
+		if ( inv->m_slots[RIFLE_SLOT].m_pIItem && inv->m_slots[RIFLE_SLOT].m_pIItem->CanAttach(pHandler) )
+		{
+			PIItem tgt = inv->m_slots[RIFLE_SLOT].m_pIItem;
+			m_UIPropertiesBox->AddItem( "st_attach_handler_to_rifle",  (void*)tgt, INVENTORY_ATTACH_ADDON );
 			b_show			= true;
 		}
 	}
@@ -971,6 +988,12 @@ void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 		if ( weapon )
 		{
 			DetachAddon( weapon->GetGrenadeLauncherName().c_str() );
+		}
+		break;
+	case INVENTORY_DETACH_HANDLER_ADDON:
+		if( weapon )
+		{
+			DetachAddon( weapon->GetHandlerName().c_str() );
 		}
 		break;
 	case INVENTORY_RELOAD_MAGAZINE:

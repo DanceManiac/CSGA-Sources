@@ -549,6 +549,9 @@ bool CWeaponMagazinedWGrenade::Attach(PIItem pIItem, bool b_send_event)
 		if (m_bRestGL_and_Sil && IsSilencerAttached())
 			Detach(GetSilencerName().c_str(), true);
 
+		if (IsHandlerAttached())
+			Detach(GetHandlerName().c_str(), true);
+
  		//уничтожить подствольник из инвентаря
 		if(b_send_event)
 		{
@@ -604,14 +607,14 @@ void CWeaponMagazinedWGrenade::InitAddons()
 	}
 }
 
-bool	CWeaponMagazinedWGrenade::UseScopeTexture()
+bool CWeaponMagazinedWGrenade::UseScopeTexture()
 {
 	if (IsGrenadeLauncherAttached() && m_bGrenadeMode) return false;
 	
 	return true;
 };
 
-float	CWeaponMagazinedWGrenade::CurrentZoomFactor	()
+float CWeaponMagazinedWGrenade::CurrentZoomFactor()
 {
 	if (IsGrenadeLauncherAttached() && m_bGrenadeMode) return m_zoom_params.m_fIronSightZoomFactor;
 	return inherited::CurrentZoomFactor();
