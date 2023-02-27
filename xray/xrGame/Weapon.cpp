@@ -440,12 +440,12 @@ void CWeapon::Load		(LPCSTR section)
 		m_sHandlerName = pSettings->r_string(section,"handler_name");
 		m_iHandlerX = pSettings->r_s32(section,"handler_x");
 		m_iHandlerY = pSettings->r_s32(section,"handler_y");
-	}
 
-	if (pSettings->line_exist(section, "handler_bone"))
+		if (pSettings->line_exist(section, "handler_bone"))
             m_sHandler_bone = pSettings->r_string(section, "handler_bone");
         else
             m_sHandler_bone = wpn_handler;
+	}
 
 	InitAddons();
 	if(pSettings->line_exist(section,"weapon_remove_time"))
