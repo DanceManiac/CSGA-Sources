@@ -7,7 +7,7 @@
 #include "Scope.h"
 #include "Silencer.h"
 #include "GrenadeLauncher.h"
-#include  "Handler.h"
+#include "Handler.h"
 #include "Inventory.h"
 #include "xrserver_objects_alife_items.h"
 #include "ActorEffector.h"
