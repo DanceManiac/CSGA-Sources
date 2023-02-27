@@ -351,7 +351,7 @@ void hud_adjust_mode_keyb(int dik)
 {
 	if(pInput->iGetAsyncKeyState(DIK_LSHIFT))
 	{
-		if(dik==DIK_RETURN)
+		if(dik==DIK_NUMPADENTER)
 			hud_adj_crosshair = !hud_adj_crosshair;
 		if(dik==DIK_NUMPAD0)
 			hud_adj_mode = 0;
