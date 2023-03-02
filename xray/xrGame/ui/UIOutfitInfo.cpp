@@ -122,7 +122,7 @@ void CUIOutfitInfo::InitFromXml( CUIXml& xml_doc )
 
 	for ( u32 i = 0; i < max_count; ++i )
 	{
-		if ( i == ALife::eHitTypeStrike || i == ALife::eHitTypeExplosion ) // +eHitTypeFireWound = 8,, eHitTypeWound(0..1)
+		if ( i == ALife::eHitTypeStrike) // +eHitTypeFireWound = 8,, eHitTypeWound(0..1)
 		{
 			continue;
 		}
@@ -172,9 +172,25 @@ void CUIOutfitInfo::UpdateInfo( CCustomOutfit* cur_outfit, CCustomOutfit* slot_o
 		VERIFY( ikv );
 		u16 spine_bone = ikv->LL_BoneID( "bip01_spine" );
 
-		float cur = cur_outfit->GetBoneArmor( spine_bone );
-		float slot = (slot_outfit)? slot_outfit->GetBoneArmor( spine_bone ) : cur;
+		float cur = cur_outfit->GetBoneArmor( spine_bone ) * cur_outfit->GetCondition();
+		float slot = (slot_outfit)? slot_outfit->GetBoneArmor( spine_bone ) * slot_outfit->GetCondition() : cur;
 		
 		m_items[ALife::eHitTypeFireWound]->SetProgressValue( cur, slot );
+	}
+
+	if (m_items[ALife::eHitTypeExplosion])
+	{
+		float max_power = actor->conditions().GetZoneMaxPower(ALife::eHitTypeExplosion);
+
+		float cur = cur_outfit->GetDefHitTypeProtection(ALife::eHitTypeExplosion) * 0.6f; // лень трогать геймдату
+		cur /= max_power; // = 0..1
+		float slot = cur;
+
+		if (slot_outfit)
+		{
+			slot = slot_outfit->GetDefHitTypeProtection(ALife::eHitTypeExplosion) * 0.6f; // лень трогать геймдату
+			slot /= max_power; //  = 0..1
+		}
+		m_items[ALife::eHitTypeExplosion]->SetProgressValue(cur, slot);
 	}
 }
