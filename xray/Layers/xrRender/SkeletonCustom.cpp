@@ -482,26 +482,32 @@ void CKinematics::LL_SetBonesVisible(u64 mask)
 
 void CKinematics::Visibility_Update	()
 {
-	Update_Visibility	= FALSE		;
+	Update_Visibility = FALSE;
 	// check visible
-	for (u32 c_it=0; c_it<children.size(); c_it++)				{
-		CSkeletonX*		_c	=	dynamic_cast<CSkeletonX*>	(children[c_it]); VERIFY (_c)	;
-		if				(!_c->has_visible_bones())	{
+	for (u32 c_it=0; c_it<children.size(); c_it++)
+	{
+		CSkeletonX*	_c	= dynamic_cast<CSkeletonX*>(children[c_it]); VERIFY (_c);
+		if	(!_c->has_visible_bones())
+		{
 			// move into invisible list
-			children_invisible.push_back	(children[c_it]);	
+			children_invisible.push_back(children[c_it]);	
 			swap(children[c_it],children.back());
-			children.pop_back				();
+			children.pop_back();
+			Update_Visibility = TRUE;
 		}
 	}
 
 	// check invisible
-	for (u32 _it=0; _it<children_invisible.size(); _it++)	{
-		CSkeletonX*		_c	=	dynamic_cast<CSkeletonX*>	(children_invisible[_it]); VERIFY (_c)	;
-		if				(_c->has_visible_bones())	{
+	for (u32 _it=0; _it<children_invisible.size(); _it++)
+	{
+		CSkeletonX*	_c	= dynamic_cast<CSkeletonX*>(children_invisible[_it]); VERIFY (_c);
+		if	(_c->has_visible_bones())
+		{
 			// move into visible list
-			children.push_back				(children_invisible[_it]);	
+			children.push_back(children_invisible[_it]);	
 			swap(children_invisible[_it],children_invisible.back());
-			children_invisible.pop_back		();
+			children_invisible.pop_back();
+			Update_Visibility = TRUE;
 		}
 	}
 }
