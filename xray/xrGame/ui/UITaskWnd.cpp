@@ -188,13 +188,22 @@ void CUITaskWnd::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 
 void CUITaskWnd::ReloadTaskInfo()
 {
-	CGameTask* t					= Level().GameTaskManager().ActiveTask(eTaskTypeStoryline);
+	CGameTask* t					= Level().GameTaskManager().ActiveTask(eTaskTypeStoryline);\
 	m_pStoryLineTaskItem->InitTask	(t);
+	
+	if (t && (t->m_map_object_id == u16(-1) || t->m_map_location.size() == 0) || !t)
+		m_btn_focus->Show(false);
+	else
+		m_btn_focus->Show(true);
 
 	t								= Level().GameTaskManager().ActiveTask(eTaskTypeAdditional);
 	m_pSecondaryTaskItem->InitTask	(t);
 	m_actual_frame					= Level().GameTaskManager().ActualFrame();
 	
+	if (t && (t->m_map_object_id == u16(-1) || t->m_map_location.size() == 0) || !t)
+		m_btn_focus->Show(false);
+	else
+		m_btn_focus->Show(true);
 	u32 task2_count					= Level().GameTaskManager().GetTaskCount( eTaskStateInProgress, eTaskTypeAdditional );
 	
 	if ( task2_count )
