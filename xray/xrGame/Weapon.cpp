@@ -2471,7 +2471,7 @@ void CWeapon::OnStateSwitch	(u32 S)
 	inherited::OnStateSwitch(S);
 	m_dwAmmoCurrentCalcFrame = 0;
 
-	if(GetState()==eReload)
+	if(GetState() == eReload || GetState() == eLookMis && !IsZoomed())
 	{
 		if(H_Parent()==Level().CurrentEntity() && !fsimilar(m_zoom_params.m_ReloadDof.w,-1.0f))
 		{
