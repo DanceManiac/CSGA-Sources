@@ -86,7 +86,7 @@ void CWeaponShotgun::OnShot()
 {
 	inherited::OnShot();
 
-	if (m_bTriStateReload)
+	if (m_bTriStateReload && m_sounds.FindSoundItem("sndPump", false))
 	{
 		if (!IsMisfire())
 			PlaySound("sndPump", get_LastFP());
