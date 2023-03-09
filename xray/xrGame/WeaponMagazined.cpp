@@ -1504,31 +1504,28 @@ const char* CWeaponMagazined::GetAnimAimName()
 void CWeaponMagazined::PlayAnimAim()
 {
 	if (const char* guns_aim_anm = GetAnimAimName())
-	{
-		if (isHUDAnimationExist(guns_aim_anm))
-		{
-			PlayHUDMotionNew(guns_aim_anm, true, GetState());
-			return;
-		}
-	}
-
-	if (!IsHandlerAttached())
-	{
-		if (!IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_idle_aim_empty", true, nullptr, GetState());
-		else if (IsMisfire())
-			PlayHUDMotion("anm_idle_aim_jammed", true, nullptr, GetState());
-		else
-			PlayHUDMotion("anm_idle_aim", true, nullptr, GetState());
-	}
+			PlayHUDMotion(guns_aim_anm, true, this, GetState());
 	else
 	{
-		if (!IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_idle_aim_empty_handler", true, nullptr, GetState());
-		else if (IsMisfire())
-			PlayHUDMotion("anm_idle_aim_jammed_handler", true, nullptr, GetState());
+
+		if (!IsHandlerAttached())
+		{
+			if (!IsMisfire() && iAmmoElapsed == 0)
+				PlayHUDMotion("anm_idle_aim_empty", true, nullptr, GetState());
+			else if (IsMisfire())
+				PlayHUDMotion("anm_idle_aim_jammed", true, nullptr, GetState());
+			else
+				PlayHUDMotion("anm_idle_aim", true, nullptr, GetState());
+		}
 		else
-			PlayHUDMotion("anm_idle_aim_handler", true, nullptr, GetState());
+		{
+			if (!IsMisfire() && iAmmoElapsed == 0)
+				PlayHUDMotion("anm_idle_aim_empty_handler", true, nullptr, GetState());
+			else if (IsMisfire())
+				PlayHUDMotion("anm_idle_aim_jammed_handler", true, nullptr, GetState());
+			else
+				PlayHUDMotion("anm_idle_aim_handler", true, nullptr, GetState());
+		}
 	}
 }
 
@@ -1580,7 +1577,7 @@ void CWeaponMagazined::PlayAnimShoot()
     string_path guns_shoot_anm{};
         xr_strconcat(guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? (IsScopeAttached() ? "_aim_scope" : "_aim") : "", IsMisfire() ? "_jammed" : (!IsMisfire() && iAmmoElapsed == 1 ? "_last" : ""), IsSilencerAttached() ? "_sil" : "", IsHandlerAttached() ? "_handler" : "");
 
-    PlayHUDMotionNew(guns_shoot_anm, false, GetState());
+    PlayHUDMotion(guns_shoot_anm, false, this, GetState());
 }
 
 void CWeaponMagazined::OnZoomIn()

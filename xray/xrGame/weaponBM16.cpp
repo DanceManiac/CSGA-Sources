@@ -313,38 +313,34 @@ void CWeaponBM16::PlayAnimIdle()
 	{
 
 		if (const char* guns_aim_anm_bm = GetAnimAimName())
+			PlayHUDMotion(guns_aim_anm_bm, true, this, GetState());
+		else
 		{
-            if (isHUDAnimationExist(guns_aim_anm_bm))
+			switch (m_magazine.size())
 			{
-				PlayHUDMotionNew(guns_aim_anm_bm, true, GetState());
-				return;
-			}
+				case 0:
+				{
+					if(IsMisfire())
+						PlayHUDMotion("anm_idle_aim_jammed_0", TRUE, NULL, GetState());
+					else
+						PlayHUDMotion("anm_idle_aim_0", TRUE, NULL, GetState());
+				}break;
+				case 1:
+				{
+					if(IsMisfire())
+						PlayHUDMotion("anm_idle_aim_jammed_1", TRUE, NULL, GetState());
+					else
+						PlayHUDMotion("anm_idle_aim_1", TRUE, NULL, GetState());
+				}break;
+				case 2:
+				{
+					if(IsMisfire())
+						PlayHUDMotion("anm_idle_aim_jammed_2", TRUE, NULL, GetState());
+					else
+						PlayHUDMotion("anm_idle_aim_2", TRUE, NULL, GetState());
+				}break;
+			};
 		}
-
-		switch (m_magazine.size())
-		{
-		case 0:
-		{
-			if(IsMisfire())
-				PlayHUDMotion("anm_idle_aim_jammed_0", TRUE, NULL, GetState());
-			else
-				PlayHUDMotion("anm_idle_aim_0", TRUE, NULL, GetState());
-		}break;
-		case 1:
-		{
-			if(IsMisfire())
-				PlayHUDMotion("anm_idle_aim_jammed_1", TRUE, NULL, GetState());
-			else
-				PlayHUDMotion("anm_idle_aim_1", TRUE, NULL, GetState());
-		}break;
-		case 2:
-		{
-			if(IsMisfire())
-				PlayHUDMotion("anm_idle_aim_jammed_2", TRUE, NULL, GetState());
-			else
-				PlayHUDMotion("anm_idle_aim_2", TRUE, NULL, GetState());
-		}break;
-		};
 	}
 	else
 	{

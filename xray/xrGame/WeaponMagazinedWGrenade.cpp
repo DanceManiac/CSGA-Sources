@@ -759,31 +759,27 @@ void CWeaponMagazinedWGrenade::PlayAnimAim()
     if (IsGrenadeLauncherAttached())
 	{
 		if (const char* guns_aim_anm_full = GetAnimAimName())
-		{
-			if (isHUDAnimationExist(guns_aim_anm_full))
-			{
-				PlayHUDMotionNew(guns_aim_anm_full, true, GetState());
-				return;
-			}
-		}
-
-		if (!m_bGrenadeMode)
-		{
-			if (IsMisfire())
-				PlayHUDMotion("anm_idle_aim_jammed_w_gl", true, nullptr, GetState());
-			else if(iAmmoElapsed == 0 && !IsMisfire())
-				PlayHUDMotion("anm_idle_aim_empty_w_gl", true, nullptr, GetState());
-			else
-				PlayHUDMotion("anm_idle_aim_w_gl", true, nullptr, GetState());
-		}
+			PlayHUDMotion(guns_aim_anm_full, true, this, GetState());
 		else
 		{
-			if(IsMisfire())
-				PlayHUDMotion("anm_idle_aim_jammed_g", true, nullptr, GetState());
-			else if(iAmmoElapsed2 == 0 && !IsMisfire())
-				PlayHUDMotion("anm_idle_aim_empty_g", true, nullptr, GetState());
+			if (!m_bGrenadeMode)
+			{
+				if (IsMisfire())
+					PlayHUDMotion("anm_idle_aim_jammed_w_gl", true, nullptr, GetState());
+				else if(iAmmoElapsed == 0 && !IsMisfire())
+					PlayHUDMotion("anm_idle_aim_empty_w_gl", true, nullptr, GetState());
+				else
+					PlayHUDMotion("anm_idle_aim_w_gl", true, nullptr, GetState());
+			}
 			else
-				PlayHUDMotion("anm_idle_aim_g", true, nullptr, GetState());
+			{
+				if(IsMisfire())
+					PlayHUDMotion("anm_idle_aim_jammed_g", true, nullptr, GetState());
+				else if(iAmmoElapsed2 == 0 && !IsMisfire())
+					PlayHUDMotion("anm_idle_aim_empty_g", true, nullptr, GetState());
+				else
+					PlayHUDMotion("anm_idle_aim_g", true, nullptr, GetState());
+			}
 		}
 	}
 	else
@@ -969,7 +965,7 @@ void CWeaponMagazinedWGrenade::PlayAnimShoot()
 		string_path guns_shoot_anm{};
 		strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (this->IsZoomed() && !this->IsRotatingToZoom()) ? "_aim" : "", IsMisfire() ? "_jammed" : (!IsMisfire() && iAmmoElapsed2 == 0 ? "_empty" : ""), "_g");
 
-		PlayHUDMotionNew(guns_shoot_anm, false, GetState());
+		PlayHUDMotion(guns_shoot_anm, false, this, GetState());
 	}
 	else
 	{
@@ -980,12 +976,10 @@ void CWeaponMagazinedWGrenade::PlayAnimShoot()
 			string_path guns_shoot_anm{};
 			strconcat(sizeof(guns_shoot_anm), guns_shoot_anm, "anm_shoot", (this->IsZoomed() && !this->IsRotatingToZoom()) ? (this->IsScopeAttached() ? "_aim_scope" : "_aim") : "", IsMisfire() ? "_jammed" : (!IsMisfire() && iAmmoElapsed == 1 ? "_last" : ""), this->IsSilencerAttached() ? "_sil" : "", "_w_gl");
 
-			PlayHUDMotionNew(guns_shoot_anm, false, GetState());
+			PlayHUDMotion(guns_shoot_anm, false, this, GetState());
 		}
 		else
-		{
 			inherited::PlayAnimShoot();
-		}
 	}
 }
 
