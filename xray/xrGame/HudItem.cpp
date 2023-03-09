@@ -280,21 +280,6 @@ u32 CHudItem::PlayHUDMotion(const shared_str& M, BOOL bMixIn, CHudItem*  W, u32 
 	return anim_time;
 }
 
-u32 CHudItem::PlayHUDMotionNew(const shared_str& M, const bool bMixIn, const u32 state, const bool randomAnim)
-{
-	u32 anim_time					= PlayHUDMotion_noCB(M, bMixIn);
-	if (anim_time>0)
-	{
-		m_bStopAtEndAnimIsRunning	= true;
-		m_dwMotionStartTm			= Device.dwTimeGlobal;
-		m_dwMotionCurrTm			= m_dwMotionStartTm;
-		m_dwMotionEndTm				= m_dwMotionStartTm + anim_time;
-		m_startedMotionState		= state;
-	}
-
-	return anim_time;
-}
-
 //AVO: check if animation exists
 bool CHudItem::isHUDAnimationExist(LPCSTR anim_name)
 {
