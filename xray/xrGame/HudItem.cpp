@@ -446,16 +446,3 @@ attachable_hud_item* CHudItem::HudItemData()
 
 	return NULL;
 }
-
-void CHudItem::TimeLockAnimation()//OGSR GA
-{
-	/*if (GetState() != eDeviceSwitch)
-		return;*/
-	
-	string128 anm_time_param;
-	strconcat(sizeof(anm_time_param), anm_time_param, "lock_time_end_", m_current_motion.c_str());
-	const float time = READ_IF_EXISTS(pSettings, r_float, HudSection(), anm_time_param, 0) * 1000.f;
-	const float current_time = Device.dwTimeGlobal - m_dwMotionStartTm;
-	if (time && current_time >= time)
-		DeviceUpdate();
-}
