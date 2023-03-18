@@ -692,7 +692,6 @@ const Fvector& player_hud::attach_pos(u8 part) const
 void player_hud::update(const Fmatrix& cam_trans)
 {
 	Fmatrix trans = cam_trans;
-	Fmatrix trans_b = cam_trans;
 
 	Fvector m1pos = attach_pos(0);
 	Fvector m2pos = attach_pos(1);
@@ -701,6 +700,11 @@ void player_hud::update(const Fmatrix& cam_trans)
 	Fvector m2rot = attach_rot(1);
 
 	Fmatrix trans_2 = trans;
+
+	update_inertion(trans);
+	update_additional(trans);
+	update_inertion(trans_2);
+	update_additional(trans_2);
 
 	m1rot.mul(PI / 180.f);
 	m_attach_offset.setHPB(m1rot.x, m1rot.y, m1rot.z);
