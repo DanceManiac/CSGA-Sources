@@ -760,6 +760,9 @@ bool CInventory::Action(s32 cmd, u32 flags)
 			m_slots[m_iActiveSlot].m_pIItem->Action(cmd, flags)) 
 											return true;
 	bool b_send_event = false;
+
+	auto wpn = dynamic_cast<CWeapon*>(ActiveItem());
+
 	switch(cmd) 
 	{
 	case kWPN_1:
@@ -770,8 +773,12 @@ bool CInventory::Action(s32 cmd, u32 flags)
 	case kWPN_6:
 		{
 			b_send_event = true;
-			if (cmd == kWPN_6 && !IsGameTypeSingle()) return false;
+			if (cmd == kWPN_6 && !IsGameTypeSingle())
+				return false;
 			
+			if (wpn && (wpn->GetState() == CWeapon::eReload || wpn->IsZoomed()))
+				return false;
+
 			u32 slot = cmd - kWPN_1;
 			if ( flags & CMD_START )
 			{
