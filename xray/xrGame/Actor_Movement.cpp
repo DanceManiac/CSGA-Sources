@@ -551,6 +551,11 @@ bool CActor::CanRun()
 	return can_run;
 }
 
+void CActor::BreakSprint()
+{
+	mstate_wishful &= ~mcSprint;
+}
+
 bool CActor::CanSprint()
 {
 	bool can_Sprint = CanAccelerate() && !conditions().IsCantSprint() && Game().PlayerCanSprint(this) && CanRun() && !(mstate_real&mcLStrafe || mstate_real&mcRStrafe) && InventoryAllowSprint();

@@ -407,7 +407,10 @@ public:
 	float					CameraHeight			();
 	bool					CanSprint				();
 	bool					CanRun					();
+	void					BreakSprint				();
 	void					StopAnyMove				();
+
+	bool					bTrySprint;
 
 	bool					AnyAction				()	{return (mstate_real & mcAnyAction) != 0;};
 	bool					AnyMove					()	{return (mstate_real & mcAnyMove) != 0;};

@@ -96,6 +96,9 @@ void CActor::IR_OnKeyboardPress(int cmd)
 		}break;
 	case kSPRINT_TOGGLE:	
 		{
+			if(!bTrySprint)
+				return;
+
 			if (mstate_wishful & mcSprint)
 				mstate_wishful &=~mcSprint;
 			else

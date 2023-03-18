@@ -2480,6 +2480,14 @@ void CWeapon::OnStateSwitch	(u32 S)
 				current_actor->Cameras().AddCamEffector(xr_new<CEffectorDOF>(m_zoom_params.m_ReloadDof) );
 		}
 	}
+
+	if (GetState() == eReload)
+	{
+		Actor()->BreakSprint();
+		Actor()->bTrySprint = false;
+	}
+	else
+		Actor()->bTrySprint = true;
 }
 
 void CWeapon::OnAnimationEnd(u32 state) 

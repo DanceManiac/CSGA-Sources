@@ -203,6 +203,8 @@ CActor::CActor() : CEntityAlive()
 	m_night_vision			= NULL;
 	m_bNightVisionAllow		= true;
 	m_bNightVisionOn		= false;
+
+	bTrySprint				= false;
 }
 
 
