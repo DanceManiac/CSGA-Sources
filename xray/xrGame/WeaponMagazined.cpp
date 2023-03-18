@@ -60,7 +60,6 @@ CWeaponMagazined::CWeaponMagazined(ESoundTypes eSoundType) : CWeapon()
 CWeaponMagazined::~CWeaponMagazined()
 {}
 
-
 void CWeaponMagazined::net_Destroy()
 {
 	inherited::net_Destroy();
@@ -115,8 +114,6 @@ void CWeaponMagazined::Load	(LPCSTR section)
 
 	if (m_bJamNotShot)
 		m_sounds.LoadSound(section, "snd_jam", "sndJam", false, m_eSoundShot);
-
-	m_sSndShotCurrent = "sndShot";
 		
 	//звуки и партиклы глушителя, еслит такой есть
 	if (m_eSilencerStatus == ALife::eAddonAttachable || m_eSilencerStatus == ALife::eAddonPermanent)
@@ -724,26 +721,19 @@ void CWeaponMagazined::PlaySoundLowAmmo()
 		PlaySound("sndLowAmmo", get_LastSP());
 }
 
-void CWeaponMagazined::PlaySoundShot()
+void CWeaponMagazined::ShotSoundSelector()
 {
-	if (ParentIsActor())
-	{
-		string128 sndName;
-		strconcat(sizeof(sndName), sndName, m_sSndShotCurrent.c_str(), "Actor");
-		if (m_layered_sounds.FindSoundItem(sndName, false))
-		{
-			m_layered_sounds.PlaySound(sndName, get_LastFP(), H_Root(), !!GetHUDmode(), false, (u8)-1);
-			return;
-		}
-	}
-
-	m_layered_sounds.PlaySound(m_sSndShotCurrent.c_str(), get_LastFP(), H_Root(), !!GetHUDmode(), false, (u8)-1);
+	if(!IsSilencerAttached())
+		m_sSndShotCurrent = "sndShot";
+	else
+		m_sSndShotCurrent = "sndSilencerShot";
 }
 
 void CWeaponMagazined::OnShot()
 {
 	// Sound
-	PlaySoundShot();
+	ShotSoundSelector();
+	m_layered_sounds.PlaySound(m_sSndShotCurrent.c_str(), get_LastFP(), H_Root(), !!GetHUDmode(), false, (u8)-1);
     PlaySoundLowAmmo();
 
 	// Camera	
@@ -1154,7 +1144,6 @@ void CWeaponMagazined::InitAddons()
 	{		
 		m_sFlameParticlesCurrent = m_sSilencerFlameParticles;
 		m_sSmokeParticlesCurrent = m_sSilencerSmokeParticles;
-		m_sSndShotCurrent = "sndSilencerShot";
 
 		if (m_bUseSilHud && IsSilencerAttached())
 			hud_sect = pSettings->r_string(cNameSect(), "hud_silencer");
@@ -1167,7 +1156,6 @@ void CWeaponMagazined::InitAddons()
 	{
 		m_sFlameParticlesCurrent = m_sFlameParticles;
 		m_sSmokeParticlesCurrent = m_sSmokeParticles;
-		m_sSndShotCurrent = "sndShot";
 
 		if (m_bUseSilHud && !IsSilencerAttached())
 			hud_sect = pSettings->r_string(cNameSect(), "hud");

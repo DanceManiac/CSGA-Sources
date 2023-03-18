@@ -58,6 +58,8 @@ protected:
 
 	bool			TryReload		();
 
+	void			ShotSoundSelector();
+
 protected:
 	virtual void	ReloadMagazine();
 			void	ApplySilencerKoeffs();
@@ -172,7 +174,6 @@ protected:
 	const char* GetAnimAimName();
 	
 	virtual void	PlayAnimShoot();
-	virtual void	PlaySoundShot();
 	virtual void	PlayReloadSound();
 	virtual void	PlaySoundLowAmmo();
 	virtual void	PlayAnimAim();
