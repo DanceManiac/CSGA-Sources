@@ -392,6 +392,8 @@ bool CHudItem::TryPlayAnimIdle()
             u32 state = pActor->get_state();
             if (state & mcSprint)
             {
+				if(!SprintType)
+					SwitchState(eSprintStart);
 				if(GetState() != eSprintStart || GetState() != eSprintEnd)
 					PlayAnimIdleSprint();
                 return true;
