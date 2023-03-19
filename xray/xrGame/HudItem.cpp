@@ -43,6 +43,9 @@ void CHudItem::Load(LPCSTR section)
 
 	m_bDisableBore = !!READ_IF_EXISTS(pSettings, r_bool, hud_sect, "disable_bore", false);
 
+	m_sounds.LoadSound(section, "snd_sprint_start", "sndSprintStart", true);
+	m_sounds.LoadSound(section, "snd_sprint_end", "sndSprintEnd", true);
+
 	if(!m_bDisableBore)
 		m_sounds.LoadSound(section,"snd_bore","sndBore", true);
 }
@@ -132,12 +135,14 @@ void CHudItem::OnStateSwitch(u32 S)
 		{
 			SetPending(true);
 			PlayAnimIdleSprintStart();
+            PlaySound("sndSprintStart", object().H_Parent()->Position());
 			SprintType = true;
 		}break;
 		case eSprintEnd:
 		{
 			SetPending(true);
 			PlayAnimIdleSprintEnd();
+			PlaySound("sndSprintEnd", object().H_Parent()->Position());
 			SprintType = false;
 		}break;
 	}
