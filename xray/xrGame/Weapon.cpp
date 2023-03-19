@@ -2468,10 +2468,7 @@ const float &CWeapon::hit_probability	() const
 
 bool CWeapon::NoSprintStates()
 {
-	if (GetState() == eIdle || GetState() == eMisfire || GetState() == eHidden || GetState() == eSprintStart)
-		return false;
-	else
-		return true;
+	return (GetState() == eIdle || GetState() == eMisfire || GetState() == eHidden || GetState() == eSprintStart);
 }
 
 bool CWeapon::StatesNoHideCrosshair()
@@ -2497,7 +2494,7 @@ void CWeapon::OnStateSwitch	(u32 S)
 		}
 	}
 
-	if (NoSprintStates())
+	if (!NoSprintStates())
 	{
 		Actor()->BreakSprint();
 		Actor()->bTrySprint = false;
