@@ -2414,7 +2414,7 @@ extern bool hud_adj_crosshair;
 
 bool CWeapon::show_crosshair()
 {
-	return (!IsPending() && ( !IsZoomed() || !ZoomHideCrosshair())) || (hud_adj_mode != 0 && hud_adj_crosshair);
+	return (StatesNoHideCrosshair() && ( !IsZoomed() || !ZoomHideCrosshair())) || (hud_adj_mode != 0 && hud_adj_crosshair);
 }
 
 bool CWeapon::show_indicators()
@@ -2472,6 +2472,14 @@ bool CWeapon::NoSprintStates()
 		return false;
 	else
 		return true;
+}
+
+bool CWeapon::StatesNoHideCrosshair()
+{
+	if(!IsPending())
+		return true;
+	else
+		return IsPending() && (GetState() == eSprintStart || GetState() == eSprintEnd || GetState() == eLookMis || GetState() == eUnLightMis || GetState() == eHideDet || GetState() == eShowingDet || GetState() == eShowingEndDet);
 }
 
 void CWeapon::OnStateSwitch	(u32 S)

@@ -244,6 +244,7 @@ public:
 
 	bool IsGrenadeLauncherMode();
 	bool NoSprintStates();
+	bool StatesNoHideCrosshair();
 
 protected:
 
