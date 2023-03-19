@@ -154,6 +154,7 @@ public:
 	virtual bool				CheckCompatibility		(CHudItem*)			{return true;}
 public:
 	bool m_bDisableBore; // отключение анимаций "скуки"
+	bool SprintType;
 
 protected:
 
@@ -168,7 +169,6 @@ protected:
 	IC void						AllowHudInertion		(BOOL B)		{ m_huditem_flags.set(fl_inertion_allow, B);}
 
 	u32							m_animation_slot;
-	bool						SprintType;
 
 	HUD_SOUND_COLLECTION		m_sounds;
 

@@ -97,10 +97,16 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			if(!bTrySprint)
 				return;
 
+			auto hi = smart_cast<CHudItem*>(inventory().ActiveItem());
+
 			if (mstate_wishful & mcSprint)
 				mstate_wishful &=~mcSprint;
 			else
-				mstate_wishful |= mcSprint;					
+			{
+				mstate_wishful |= mcSprint;
+				if(!hi->SprintType)
+					hi->SwitchState(CHudItem::eSprintStart);
+			}
 		}break;
 	case kCAM_1:	cam_Set			(eacFirstEye);				break;
 	case kCAM_2:	cam_Set			(eacLookAt);				break;
