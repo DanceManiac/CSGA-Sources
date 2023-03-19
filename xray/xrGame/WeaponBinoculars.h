@@ -27,7 +27,9 @@ public:
 	virtual void PlayAnimHide					();
 	virtual void PlayAnimAim					();
 	virtual void PlayAnimIdleMoving				();
+	virtual void PlayAnimIdleSprintStart		();
 	virtual void PlayAnimIdleSprint				();
+	virtual void PlayAnimIdleSprintEnd			();
 	virtual void PlayAnimIdleMovingSlow			();
 	virtual void PlayAnimIdleMovingCrouchSlow	();
 	virtual void PlayAnimIdleMovingCrouch		();

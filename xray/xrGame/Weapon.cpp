@@ -2468,7 +2468,7 @@ const float &CWeapon::hit_probability	() const
 
 bool CWeapon::NoSprintStates()
 {
-	if (GetState() == eIdle || GetState() == eMisfire || GetState() == eHidden)
+	if (GetState() == eIdle || GetState() == eMisfire || GetState() == eHidden || GetState() == eSprintStart)
 		return false;
 	else
 		return true;

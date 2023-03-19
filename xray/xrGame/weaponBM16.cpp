@@ -184,6 +184,31 @@ void CWeaponBM16::PlayAnimIdleMoving()
 	}
 }
 
+void CWeaponBM16::PlayAnimIdleSprintStart()
+{
+	switch( m_magazine.size() )
+	{
+	case 0:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_sprint_start_jammed_0",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_sprint_start_0",TRUE,this,GetState());
+		break;
+	case 1:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_sprint_start_jammed_1",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_sprint_start_1",TRUE,this,GetState());
+		break;
+	case 2:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_sprint_start_jammed_2",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_sprint_start_2",TRUE,this,GetState());
+		break;
+	}
+}
+
 void CWeaponBM16::PlayAnimIdleSprint()
 {
 	switch( m_magazine.size() )
@@ -205,6 +230,31 @@ void CWeaponBM16::PlayAnimIdleSprint()
 			PlayHUDMotion("anm_idle_sprint_jammed_2",TRUE,this,GetState());
 		else
 			PlayHUDMotion("anm_idle_sprint_2",TRUE,this,GetState());
+		break;
+	}
+}
+
+void CWeaponBM16::PlayAnimIdleSprintEnd()
+{
+	switch( m_magazine.size() )
+	{
+	case 0:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_sprint_end_jammed_0",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_sprint_end_0",TRUE,this,GetState());
+		break;
+	case 1:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_sprint_end_jammed_1",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_sprint_1",TRUE,this,GetState());
+		break;
+	case 2:
+		if(IsMisfire())
+			PlayHUDMotion("anm_idle_sprint_end_jammed_2",TRUE,this,GetState());
+		else
+			PlayHUDMotion("anm_idle_sprint_end_2",TRUE,this,GetState());
 		break;
 	}
 }

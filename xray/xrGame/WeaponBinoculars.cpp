@@ -97,9 +97,19 @@ void CWeaponBinoculars::PlayAnimIdleMoving()
 	PlayHUDMotion("anm_idle_moving", true, nullptr, GetState());
 }
 
+void CWeaponBinoculars::PlayAnimIdleSprintStart()
+{
+	PlayHUDMotion("anm_idle_sprint_start", true, nullptr, GetState());
+}
+
 void CWeaponBinoculars::PlayAnimIdleSprint()
 {
 	PlayHUDMotion("anm_idle_sprint", true, nullptr, GetState());
+}
+
+void CWeaponBinoculars::PlayAnimIdleSprintEnd()
+{
+	PlayHUDMotion("anm_idle_sprint_end", true, nullptr, GetState());
 }
 
 void CWeaponBinoculars::PlayAnimIdleMovingCrouch()

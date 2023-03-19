@@ -21,6 +21,8 @@ enum EHudStates {
 		eShowing,
 		eHiding,
 		eHidden,
+		eSprintStart,
+		eSprintEnd,
 		eBore,
 		eLastBaseState = eBore,
 };
@@ -114,7 +116,9 @@ public:
 	virtual bool				MovingAnimAllowedNow ()				{return true;}
 
 	virtual void				PlayAnimIdleMoving	();
+	virtual void				PlayAnimIdleSprintStart	();
 	virtual void				PlayAnimIdleSprint	();
+	virtual void				PlayAnimIdleSprintEnd	();
 	virtual void				PlayAnimIdleMovingSlow	();
 	virtual void				PlayAnimIdleMovingCrouchSlow	();
 	virtual void				PlayAnimIdleMovingCrouch	();
@@ -164,6 +168,7 @@ protected:
 	IC void						AllowHudInertion		(BOOL B)		{ m_huditem_flags.set(fl_inertion_allow, B);}
 
 	u32							m_animation_slot;
+	bool						SprintType;
 
 	HUD_SOUND_COLLECTION		m_sounds;
 

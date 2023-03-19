@@ -158,7 +158,9 @@ protected:
 	virtual void	PlayAnimReload		();
 	virtual void	PlayAnimIdle		();
     virtual void	PlayAnimIdleMoving	();
+	virtual void	PlayAnimIdleSprintEnd	();
     virtual void	PlayAnimIdleSprint	();
+	virtual void	PlayAnimIdleSprintStart	();
     virtual void	PlayAnimAimStart	();
     virtual void	PlayAnimAimEnd		();
 	virtual void	PlayAnimLookMis		();

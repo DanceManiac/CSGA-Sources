@@ -71,7 +71,9 @@ public:
     virtual void	PlayAnimAimEnd		();
 	virtual void	PlayAnimLookMis		();
 	virtual void	PlayAnimIdleMoving	();
+	virtual void	PlayAnimIdleSprintStart	();
 	virtual void	PlayAnimIdleSprint	();
+	virtual void	PlayAnimIdleSprintEnd	();
 	virtual void	PlayAnimAim			();
 	virtual void	PlayAnimIdleMovingSlow	();
 	virtual void	PlayAnimIdleMovingCrouchSlow	();

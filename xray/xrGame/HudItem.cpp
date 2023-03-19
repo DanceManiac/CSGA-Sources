@@ -41,7 +41,7 @@ void CHudItem::Load(LPCSTR section)
 	hud_sect = pSettings->r_string(section,"hud");
 	m_animation_slot = pSettings->r_u32(section,"animation_slot");
 
-	m_bDisableBore = !!READ_IF_EXISTS(pSettings, r_bool, hud_sect, "disable_bore", false);//отключает eBore состояние у оружия
+	m_bDisableBore = !!READ_IF_EXISTS(pSettings, r_bool, hud_sect, "disable_bore", false);
 
 	if(!m_bDisableBore)
 		m_sounds.LoadSound(section,"snd_bore","sndBore", true);
@@ -127,9 +127,23 @@ void CHudItem::OnStateSwitch(u32 S)
 				Fvector P = HudItemData()->m_item_transform.c;
 				m_sounds.PlaySound("sndBore", P, object().H_Root(), !!GetHUDmode(), false, m_started_rnd_anim_idx);
 			}
-
+		}break;
+		case eSprintStart:
+		{
+			SetPending(true);
+			PlayAnimIdleSprintStart();
+			SprintType = true;
+		}break;
+		case eSprintEnd:
+		{
+			SetPending(true);
+			PlayAnimIdleSprintEnd();
+			SprintType = false;
 		}break;
 	}
+
+    if (S != eIdle && S != eSprintStart && S != eSprintEnd)
+        SprintType = false;
 }
 
 void CHudItem::OnAnimationEnd(u32 state)
@@ -137,7 +151,13 @@ void CHudItem::OnAnimationEnd(u32 state)
 	switch(state)
 	{
 		case eBore:
-			SwitchState	(eIdle);
+			SwitchState(eIdle);
+		break;
+		case eSprintStart:
+			SwitchState(eIdle);
+		break;
+		case eSprintEnd:
+			SwitchState(eIdle);
 		break;
 	}
 }
@@ -367,9 +387,17 @@ bool CHudItem::TryPlayAnimIdle()
             u32 state = pActor->get_state();
             if (state & mcSprint)
             {
-                PlayAnimIdleSprint();
+				if(!SprintType)
+					SwitchState(eSprintStart);
+				if(GetState() != eSprintStart || GetState() != eSprintEnd)
+					PlayAnimIdleSprint();
                 return true;
             }
+			else if (SprintType)
+			{
+				SwitchState(eSprintEnd);
+				return true;
+			}
             else if ((state & mcAnyMove))
             {
                 if (!(state & mcCrouch))
@@ -401,9 +429,19 @@ void CHudItem::PlayAnimIdleMoving()
 	PlayHUDMotion("anm_idle_moving", true, nullptr, GetState());
 }
 
+void CHudItem::PlayAnimIdleSprintStart()
+{
+	PlayHUDMotion("anm_idle_sprint_start", true, nullptr, GetState());
+}
+
 void CHudItem::PlayAnimIdleSprint()
 {
 	PlayHUDMotion("anm_idle_sprint", true, nullptr, GetState());
+}
+
+void CHudItem::PlayAnimIdleSprintEnd()
+{
+	PlayHUDMotion("anm_idle_sprint_end", true, nullptr, GetState());
 }
 
 void CHudItem::PlayAnimIdleMovingCrouch()
