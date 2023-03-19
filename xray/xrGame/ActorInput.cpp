@@ -52,11 +52,9 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	{
 	case kWPN_FIRE:
 		{
-			if( (mstate_wishful & mcLookout) && !IsGameTypeSingle() ) return;
+			if( (mstate_wishful & mcLookout) && !IsGameTypeSingle() )
+				return;
 
-			u32 slot = inventory().GetActiveSlot();
-			if(inventory().ActiveItem() && (slot==RIFLE_SLOT || slot==PISTOL_SLOT) )
-				mstate_wishful &=~mcSprint;
 			//-----------------------------
 			if (OnServer())
 			{
