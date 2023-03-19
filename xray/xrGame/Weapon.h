@@ -243,6 +243,7 @@ public:
 	bool m_bUseSilHud; //запрос на юз hud_silencer
 
 	bool IsGrenadeLauncherMode();
+	bool NoSprintStates();
 
 protected:
 

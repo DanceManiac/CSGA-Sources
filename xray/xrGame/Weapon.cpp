@@ -2466,6 +2466,14 @@ const float &CWeapon::hit_probability	() const
 	return					(m_hit_probability[egdNovice]);
 }
 
+bool CWeapon::NoSprintStates()
+{
+	if (GetState() == eIdle || GetState() == eMisfire || GetState() == eHidden)
+		return false;
+	else
+		return true;
+}
+
 void CWeapon::OnStateSwitch	(u32 S)
 {
 	inherited::OnStateSwitch(S);
@@ -2481,7 +2489,7 @@ void CWeapon::OnStateSwitch	(u32 S)
 		}
 	}
 
-	if (GetState() == eReload)
+	if (NoSprintStates())
 	{
 		Actor()->BreakSprint();
 		Actor()->bTrySprint = false;
