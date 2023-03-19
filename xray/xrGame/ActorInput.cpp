@@ -104,7 +104,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			else
 			{
 				mstate_wishful |= mcSprint;
-				if(!hi->SprintType)
+				if(hi &&!hi->SprintType)
 					hi->SwitchState(CHudItem::eSprintStart);
 			}
 		}break;
