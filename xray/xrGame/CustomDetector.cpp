@@ -119,7 +119,7 @@ void CCustomDetector::OnStateSwitch(u32 S)
 			if(oldState != eHiding)
 			{
 				m_sounds.PlaySound("sndHide", Fvector().set(0,0,0), this, true, false);
-				PlayHUDMotion(m_bFastAnimMode?"anm_hide_fast":"anm_hide", false, this, GetState());
+				PlayHUDMotion(m_bFastAnimMode?"anm_hide_fast":"anm_hide", true, this, GetState());
                 SetPending(true);
 				SetHideDetStateInWeapon();
 			}
