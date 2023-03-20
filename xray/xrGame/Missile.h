@@ -51,6 +51,8 @@ public:
 	virtual void 			OnStateSwitch				(u32 S);
 	virtual void			GetBriefInfo				(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count, string16& fire_mode);
 
+	bool					NoSprintStatesMissile();
+
 protected:
 	virtual void			UpdateFireDependencies_internal	();
 

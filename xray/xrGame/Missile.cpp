@@ -278,6 +278,11 @@ void CMissile::shedule_Update(u32 dt)
 	} 
 }
 
+bool CMissile::NoSprintStatesMissile()
+{
+	return (GetState() == eIdle || GetState() == eHidden || GetState() == eSprintStart);
+}
+
 void CMissile::State(u32 state, u32 old_state) 
 {
 	switch(state) 
@@ -340,6 +345,14 @@ void CMissile::State(u32 state, u32 old_state)
 			SwitchState			(eShowing); 
 		} break;
 	}
+
+	if (!NoSprintStatesMissile())
+	{
+		Actor()->BreakSprint();
+		Actor()->bTrySprint = false;
+	}
+	else
+		Actor()->bTrySprint = true;
 }
 
 void CMissile::OnStateSwitch	(u32 S)
