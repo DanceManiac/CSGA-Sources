@@ -366,8 +366,7 @@ u32 attachable_hud_item::anim_play(const shared_str& anm_name_b, BOOL bMixIn, co
 
 	R_ASSERT				(strstr(anm_name_b.c_str(),"anm_")==anm_name_b.c_str());
 	string256				anim_name_r;
-	bool is_16x9			= UI().is_widescreen();
-	sprintf_s				(anim_name_r,"%s%s",anm_name_b.c_str(),((m_attach_place_idx==1)&&is_16x9)?"_16x9":"");
+	sprintf_s				(anim_name_r,"%s",anm_name_b.c_str());
 
 	player_hud_motion* anm	= m_hand_motions.find_motion(anim_name_r);
 
