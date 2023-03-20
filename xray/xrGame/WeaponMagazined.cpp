@@ -1626,6 +1626,11 @@ void CWeaponMagazined::OnZoomOut()
 
 }
 
+float CWeaponMagazined::GetWeaponDeterioration()
+{
+	return (m_iShotNum==1) ? conditionDecreasePerShot : conditionDecreasePerQueueShot;
+};
+
 //переключение режимов стрельбы одиночными и очередями
 bool CWeaponMagazined::SwitchMode()
 {

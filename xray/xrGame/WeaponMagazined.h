@@ -181,7 +181,7 @@ protected:
 	virtual void	PlayAnimAim();
 
 	virtual	int		ShotsFired			() { return m_iShotNum; }
-    virtual float GetWeaponDeterioration() { return (m_iShotNum == 1) ? conditionDecreasePerShot : conditionDecreasePerQueueShot; }
+    virtual float   GetWeaponDeterioration();
 
 	HUD_SOUND_COLLECTION_LAYERED m_layered_sounds;
 

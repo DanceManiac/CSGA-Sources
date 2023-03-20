@@ -362,7 +362,7 @@ protected:
 
 	//трассирование полета пули
 	virtual	void			FireTrace			(const Fvector& P, const Fvector& D);
-	virtual float           GetWeaponDeterioration() { return conditionDecreasePerShot; };
+	virtual float			GetWeaponDeterioration	();
 
 	virtual void			FireStart			() {CShootingObject::FireStart();}
 	virtual void			FireEnd				();
