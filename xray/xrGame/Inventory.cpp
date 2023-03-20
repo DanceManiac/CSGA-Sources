@@ -21,6 +21,7 @@
 #include "clsid_game.h"
 #include "static_cast_checked.hpp"
 #include "player_hud.h"
+#include "Bolt.h"
 
 using namespace InventoryUtilities;
 
@@ -762,6 +763,7 @@ bool CInventory::Action(s32 cmd, u32 flags)
 	bool b_send_event = false;
 
 	auto wpn = dynamic_cast<CWeapon*>(ActiveItem());
+	auto bolt = dynamic_cast<CBolt*>(ActiveItem());
 
 	switch(cmd) 
 	{
@@ -777,6 +779,9 @@ bool CInventory::Action(s32 cmd, u32 flags)
 				return false;
 			
 			if (wpn && (wpn->GetState() == CWeapon::eReload || wpn->IsZoomed()))
+				return false;
+
+			if (bolt && (bolt->GetState() == CBolt::eThrow || bolt->GetState() == CBolt::eThrowStart || bolt->GetState() == CBolt::eThrowEnd || bolt->GetState() == CBolt::eReady))
 				return false;
 
 			u32 slot = cmd - kWPN_1;
