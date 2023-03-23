@@ -223,6 +223,13 @@ bool CWeaponMagazined::TryReload()
     CWeaponBinoculars* binoc = smart_cast<CWeaponBinoculars*>(m_pInventory->ActiveItem());
 	if(m_pInventory && !binoc) 
 	{
+		if(IsMisfire())
+		{
+			SetPending(true);
+			SwitchState(eReload); 
+			return true;
+		}
+
 		if(IsGameTypeSingle() && ParentIsActor())
 		{
 			int	AC = GetSuitableAmmoTotal();
@@ -232,13 +239,6 @@ bool CWeaponMagazined::TryReload()
 			m_pAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[m_ammoType]));
 		else
 			m_pAmmo = nullptr;
-
-		if(IsMisfire() && iAmmoElapsed)
-		{
-			SetPending(true);
-			SwitchState(eReload); 
-			return true;
-		}
 
 		if(m_pAmmo || unlimited_ammo())  
 		{
