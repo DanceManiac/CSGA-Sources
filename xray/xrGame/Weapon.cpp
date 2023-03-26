@@ -2156,16 +2156,8 @@ void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 		attachable_hud_item*		hi = HudItemData();
 		R_ASSERT					(hi);
 		Fvector						curr_offs, curr_rot;
-		if(idx == 3)
-		{
-			curr_offs = hi->m_measures.m_hands_offset[0][3];//pos,alt-aim
-			curr_rot = hi->m_measures.m_hands_offset[1][3];//rot,alt-aim
-		}
-		else
-		{
-			curr_offs = hi->m_measures.m_hands_offset[0][idx];//pos,aim
-			curr_rot = hi->m_measures.m_hands_offset[1][idx];//rot,aim
-		}
+		curr_offs = hi->m_measures.m_hands_offset[0][idx];//pos,aim
+		curr_rot = hi->m_measures.m_hands_offset[1][idx];//rot,aim
 		curr_offs.mul				(m_zoom_params.m_fZoomRotationFactor);
 		curr_rot.mul				(m_zoom_params.m_fZoomRotationFactor);
 
