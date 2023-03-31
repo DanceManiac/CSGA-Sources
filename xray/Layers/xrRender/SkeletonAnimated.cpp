@@ -701,7 +701,7 @@ void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
                     Msg			("!Can't find motion file '%s'.",nm);
                     return;
 #else
-                    Debug.fatal	(DEBUG_INFO,"Can't find motion file '%s'.",nm);
+                    Debug.fatal	(DEBUG_INFO,"Can't find motion file '%s' in model '%s'.", nm, N);
 #endif
                 }
             }
