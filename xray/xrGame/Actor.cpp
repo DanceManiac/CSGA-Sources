@@ -531,10 +531,6 @@ void	CActor::Hit							(SHit* pHDS)
 		HitSector						(pLastHitter, pLastHittingWeapon);
 	};
 
-	if( (mstate_real&mcSprint) && Level().CurrentControlEntity() == this && conditions().DisableSprint(pHDS) )
-	{
-		mstate_wishful	&=~mcSprint;
-	};
 	if(!g_dedicated_server)
 	{
 		HitMark			(HDS.damage(), HDS.dir, HDS.who, HDS.bone(), HDS.p_in_bone_space, HDS.impulse, HDS.hit_type);
