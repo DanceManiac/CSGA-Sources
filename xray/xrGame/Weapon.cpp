@@ -2476,17 +2476,18 @@ void CWeapon::OnStateSwitch	(u32 S)
 	inherited::OnStateSwitch(S);
 	m_dwAmmoCurrentCalcFrame = 0;
 
+	auto current_actor = dynamic_cast<CActor*>(H_Parent());
+
 	if(GetState() == eReload || GetState() == eLookMis && !IsZoomed())
 	{
 		if(H_Parent()==Level().CurrentEntity() && !fsimilar(m_zoom_params.m_ReloadDof.w,-1.0f))
 		{
-			CActor* current_actor	= smart_cast<CActor*>(H_Parent());
 			if (current_actor)
 				current_actor->Cameras().AddCamEffector(xr_new<CEffectorDOF>(m_zoom_params.m_ReloadDof) );
 		}
 	}
 
-	if (!NoSprintStates())
+	if (!NoSprintStates() && current_actor && this == current_actor->inventory().ActiveItem())
 	{
 		Actor()->BreakSprint();
 		Actor()->bTrySprint = false;
