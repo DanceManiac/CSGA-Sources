@@ -80,10 +80,6 @@ void CTorch::Load(LPCSTR section)
 {
 	inherited::Load(section);
 	light_trace_bone = pSettings->r_string(section, "light_trace_bone");
-	if (pSettings->line_exist(section, "snd_turn_on"))
-		m_sounds.LoadSound(section, "snd_turn_on", "sndTurnOn", SOUND_TYPE_ITEM_USING);
-	if (pSettings->line_exist(section, "snd_turn_off"))
-		m_sounds.LoadSound(section, "snd_turn_off", "sndTurnOff", SOUND_TYPE_ITEM_USING);
 	m_torch_offset = READ_IF_EXISTS(pSettings, r_fvector3, section, "torch_offset", TORCH_OFFSET);
 	m_omni_offset = READ_IF_EXISTS(pSettings, r_fvector3, section, "omni_offset", OMNI_OFFSET);
 	m_torch_inertion_speed_max = READ_IF_EXISTS(pSettings, r_float, section, "torch_inertion_speed_max", TORCH_INERTION_SPEED_MAX);
