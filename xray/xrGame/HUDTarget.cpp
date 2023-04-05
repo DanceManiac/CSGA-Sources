@@ -24,8 +24,6 @@
 #include "ui/UIMainIngameWnd.h"
 
 #include "../Include/xrRender/UIRender.h"
-#include "Weapon.h"
-#include "Actor.h"
 
 #define C_DEFAULT	D3DCOLOR_RGBA(0xff,0xff,0xff,0x80)
 #define C_SIZE		0.025f

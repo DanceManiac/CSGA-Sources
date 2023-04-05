@@ -208,9 +208,6 @@ protected:
 	shared_str		m_sGrenadeLauncherName;
 	shared_str		m_sHandlerName;
 
-	shared_str m_sWpn_laser_bone;
-	shared_str m_sHud_wpn_laser_bone;
-
 	shared_str m_sWpn_flashlight_bone;
 	shared_str m_sHud_wpn_flashlight_bone;
 
@@ -541,8 +538,8 @@ public:
 	virtual void				DumpActiveParams			(shared_str const & section_name, CInifile & dst_ini) const;
 	virtual shared_str const	GetAnticheatSectionName		() const { return cNameSect(); };
 
-	virtual void processing_deactivate() {
-		UpdateLaser();
+	virtual void processing_deactivate()
+	{
 		UpdateFlashlight();
 		inherited::processing_deactivate();
 	}
@@ -552,27 +549,6 @@ public:
 	void CorrectDirFromWorldToHud(Fvector& dir);
 
 	float hud_recalc_koef{};
-
-	bool has_laser{};
-	shared_str laserdot_attach_bone;
-	Fvector laserdot_attach_offset{}, laserdot_world_attach_offset{};
-	ref_light laser_light_render;
-	CLAItem* laser_lanim{};
-	float laser_fBrightness{ 1.f };
-
-	void UpdateLaser();
-	void SwitchLaser(bool on) {
-		if (!has_laser)
-			return;
-
-		if (on)
-			m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonLaserOn;
-		else
-			m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonLaserOn;
-	}
-	inline bool IsLaserOn() const {
-		return m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonLaserOn;
-	}
 
 	bool has_flashlight{};
 	shared_str flashlight_attach_bone;

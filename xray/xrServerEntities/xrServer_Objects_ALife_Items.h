@@ -146,10 +146,9 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon,CSE_ALifeItem)
 		eWeaponAddonGrenadeLauncher = 1 << 1,
 		eWeaponAddonSilencer = 1 << 2,
 
-		eWeaponAddonLaserOn = 1 << 3,
-		eWeaponAddonFlashlightOn = 1 << 4,
+		eWeaponAddonFlashlightOn = 1 << 3,
 
-		eWeaponAddonHandler = 1 << 5,
+		eWeaponAddonHandler = 1 << 4,
 	};
 
 	EWeaponAddonStatus				m_scope_status;

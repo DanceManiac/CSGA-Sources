@@ -1561,8 +1561,7 @@ ALife::_TIME_ID	 CActor::TimePassedAfterDeath()	const
 		return 0;
 }
 
-
-void CActor::OnItemTake			(CInventoryItem *inventory_item)
+void CActor::OnItemTake(CInventoryItem *inventory_item)
 {
 	CInventoryOwner::OnItemTake(inventory_item);
 	if (OnClient()) return;
@@ -1582,29 +1581,26 @@ void CActor::OnItemDrop(CInventoryItem *inventory_item)
 		outfit->ApplySkinModel	(this, false, false);
 	}
 
-	CWeapon* wpn		= smart_cast<CWeapon*>(inventory_item);
-	if (wpn && wpn->has_laser && wpn->IsLaserOn())
-		wpn->UpdateLaser();
+	auto wpn = dynamic_cast<CWeapon*>(inventory_item);
+
 	if (wpn && wpn->has_flashlight && wpn->IsFlashlightOn())
 		wpn->UpdateFlashlight();
 	
 }
 
-
-void CActor::OnItemDropUpdate ()
+void CActor::OnItemDropUpdate()
 {
-	CInventoryOwner::OnItemDropUpdate		();
+	CInventoryOwner::OnItemDropUpdate();
 
-	TIItemContainer::iterator				I = inventory().m_all.begin();
-	TIItemContainer::iterator				E = inventory().m_all.end();
+	TIItemContainer::iterator I = inventory().m_all.begin();
+	TIItemContainer::iterator E = inventory().m_all.end();
 	
 	for ( ; I != E; ++I)
 		if( !(*I)->IsInvalid() && !attached(*I))
 			attach(*I);
 }
 
-
-void CActor::OnItemRuck		(CInventoryItem *inventory_item, EItemPlace previous_place)
+void CActor::OnItemRuck(CInventoryItem *inventory_item, EItemPlace previous_place)
 {
 	CInventoryOwner::OnItemRuck(inventory_item, previous_place);
 
@@ -1612,13 +1608,13 @@ void CActor::OnItemRuck		(CInventoryItem *inventory_item, EItemPlace previous_pl
 	if(artefact && previous_place == eItemPlaceBelt)
 		MoveArtefactBelt(artefact, false);
 
-	CWeapon* wpn = smart_cast<CWeapon*>(inventory_item);
-	if (wpn && wpn->has_laser && wpn->IsLaserOn())
-		wpn->UpdateLaser();
+	auto wpn = dynamic_cast<CWeapon*>(inventory_item);
+
 	if (wpn && wpn->has_flashlight && wpn->IsFlashlightOn())
 		wpn->UpdateFlashlight();
 }
-void CActor::OnItemBelt		(CInventoryItem *inventory_item, EItemPlace previous_place)
+
+void CActor::OnItemBelt(CInventoryItem *inventory_item, EItemPlace previous_place)
 {
 	CInventoryOwner::OnItemBelt(inventory_item, previous_place);
 

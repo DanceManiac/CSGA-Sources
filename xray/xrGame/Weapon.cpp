@@ -81,24 +81,21 @@ CWeapon::CWeapon(): m_fLR_MovingFactor(0.f), m_strafe_offset{}
 	bSwitchAmmoType = false;
 }
 
-CWeapon::~CWeapon		()
+CWeapon::~CWeapon()
 {
-	xr_delete	(m_UIScope);
+	xr_delete(m_UIScope);
 	
-	laser_light_render.destroy();
 	flashlight_render.destroy();
 	flashlight_omni.destroy();
 	flashlight_glow.destroy();
 }
 
-void CWeapon::Hit					(SHit* pHDS)
+void CWeapon::Hit(SHit* pHDS)
 {
 	inherited::Hit(pHDS);
 }
 
-
-
-void CWeapon::UpdateXForm	()
+void CWeapon::UpdateXForm()
 {
 	//if (Device.dwFrame == dwXF_Frame)
 	//	return;
@@ -399,10 +396,8 @@ void CWeapon::Load		(LPCSTR section)
 	m_fMinRadius		= pSettings->r_float		(section,"min_radius");
 	m_fMaxRadius		= pSettings->r_float		(section,"max_radius");
 
-	m_sWpn_laser_bone = READ_IF_EXISTS(pSettings, r_string, section, "laser_ray_bones", "");
 	m_sWpn_flashlight_bone = READ_IF_EXISTS(pSettings, r_string, section, "torch_cone_bones", "");
 
-	m_sHud_wpn_laser_bone = READ_IF_EXISTS(pSettings, r_string, hud_sect, "laser_ray_bones", m_sWpn_laser_bone);
 	m_sHud_wpn_flashlight_bone = READ_IF_EXISTS(pSettings, r_string, hud_sect, "torch_cone_bones", m_sWpn_flashlight_bone);
 
 	// информация о возможных апгрейдах и их визуализации в инвентаре
@@ -489,33 +484,6 @@ void CWeapon::Load		(LPCSTR section)
 	}
 	// Added by Axel, to enable optional condition use on any item
 	m_flags.set(FUsingCondition, READ_IF_EXISTS(pSettings, r_bool, section, "use_condition", true));
-	
-	if (!laser_light_render && pSettings->line_exist(section, "laser_light_section"))
-	{
-		has_laser = true;
-
-		laserdot_attach_bone = READ_IF_EXISTS(pSettings, r_string, section, "laserdot_attach_bone", "");
-		laserdot_attach_offset = Fvector{ READ_IF_EXISTS(pSettings, r_float, section, "laserdot_attach_offset_x", 0.0f), READ_IF_EXISTS(pSettings, r_float, section, "laserdot_attach_offset_y", 0.0f), READ_IF_EXISTS(pSettings, r_float, section, "laserdot_attach_offset_z", 0.0f) };
-		laserdot_world_attach_offset = Fvector{ READ_IF_EXISTS(pSettings, r_float, section, "laserdot_world_attach_offset_x", 0.0f), READ_IF_EXISTS(pSettings, r_float, section, "laserdot_world_attach_offset_y", 0.0f), READ_IF_EXISTS(pSettings, r_float, section, "laserdot_world_attach_offset_z", 0.0f) };
-
-		const bool b_r2 = psDeviceFlags.test(rsR2) || psDeviceFlags.test(rsR3);
-
-		const char* m_light_section = pSettings->r_string(section, "laser_light_section");
-
-		laser_lanim = LALib.FindItem(READ_IF_EXISTS(pSettings, r_string, m_light_section, "color_animator", ""));
-
-		laser_light_render = ::Render->light_create();
-		laser_light_render->set_type(IRender_Light::SPOT);
-		laser_light_render->set_shadow(true);
-
-		const Fcolor clr = READ_IF_EXISTS(pSettings, r_fcolor, m_light_section, b_r2 ? "color_r2" : "color", (Fcolor{ 1.0f, 0.0f, 0.0f, 1.0f }));
-		laser_fBrightness = clr.intensity();
-		laser_light_render->set_color(clr);
-		const float range = READ_IF_EXISTS(pSettings, r_float, m_light_section, b_r2 ? "range_r2" : "range", 100.f);
-		laser_light_render->set_range(range);
-		laser_light_render->set_cone(deg2rad(READ_IF_EXISTS(pSettings, r_float, m_light_section, "spot_angle", 1.f)));
-		laser_light_render->set_texture(READ_IF_EXISTS(pSettings, r_string, m_light_section, "spot_texture", nullptr));
-	}
 	
 	if (!flashlight_render && pSettings->line_exist(section, "flashlight_section"))
 	{
@@ -951,7 +919,6 @@ void CWeapon::UpdateCL		()
 	inherited::UpdateCL		();
 	UpdateHUDAddonsVisibility();
 	//подсветка от выстрела
-	UpdateLaser();
 	UpdateLight				();
 
 	//нарисовать партиклы
@@ -996,55 +963,6 @@ void CWeapon::CorrectDirFromWorldToHud(Fvector& dir) {
 	dir.mul(diff);
 	dir.add(CamDir);
 	dir.normalize();
-}
-
-void CWeapon::UpdateLaser()
-{
-	if (laser_light_render)
-	{
-		auto io = smart_cast<CInventoryOwner*>(H_Parent());
-		if (!laser_light_render->get_active() && IsLaserOn() && (!H_Parent() || (io && this == io->inventory().ActiveItem()))) {
-			laser_light_render->set_active(true);
-			UpdateAddonsVisibility();
-		}
-		else if (laser_light_render->get_active() && (!IsLaserOn() || !(!H_Parent() || (io && this == io->inventory().ActiveItem())))) {
-			laser_light_render->set_active(false);
-			UpdateAddonsVisibility();
-		}
-
-		if (laser_light_render->get_active()) {
-			Fvector laser_pos = get_LastFP(), laser_dir = get_LastFD();
-
-			if (GetHUDmode()) {
-				if (laserdot_attach_bone.size()) {
-					GetBoneOffsetPosDir(laserdot_attach_bone, laser_pos, laser_dir, laserdot_attach_offset);
-					CorrectDirFromWorldToHud(laser_dir);
-				}
-			}
-			else {
-				XFORM().transform_tiny(laser_pos, laserdot_world_attach_offset);
-			}
-
-			Fmatrix laserXForm;
-			laserXForm.identity();
-			laserXForm.k.set(laser_dir);
-			Fvector::generate_orthonormal_basis_normalized(laserXForm.k, laserXForm.j, laserXForm.i);
-
-			laser_light_render->set_position(laser_pos);
-			laser_light_render->set_rotation(laserXForm.k, laserXForm.i);
-
-			// calc color animator
-			if (laser_lanim)
-			{
-				int frame;
-				const u32 clr = laser_lanim->CalculateBGR(Device.fTimeGlobal, frame);
-
-				Fcolor fclr{ (float)color_get_B(clr), (float)color_get_G(clr), (float)color_get_R(clr), 1.f };
-				fclr.mul_rgb(laser_fBrightness / 255.f);
-				laser_light_render->set_color(fclr);
-			}
-		}
-	}
 }
 
 void CWeapon::UpdateFlashlight()
@@ -1667,11 +1585,6 @@ void CWeapon::UpdateHUDAddonsVisibility()
 		}
 	}
 
-	if (m_sHud_wpn_laser_bone.size() && has_laser)
-	{
-		HudItemData()->set_bone_visible(m_sHud_wpn_laser_bone, IsLaserOn(), TRUE);
-	}
-
 	if (m_sHud_wpn_flashlight_bone.size() && has_flashlight)
 	{
 		HudItemData()->set_bone_visible(m_sHud_wpn_flashlight_bone, IsFlashlightOn(), TRUE);
@@ -1820,19 +1733,6 @@ void CWeapon::UpdateAddonsVisibility()
 	if(m_eSilencerStatus == ALife::eAddonDisabled && bone_id != BI_NONE && pWeaponVisual->LL_GetBoneVisible(bone_id))
 	{
 		pWeaponVisual->LL_SetBoneVisible					(bone_id,FALSE,TRUE);
-	}
-
-	if (m_sWpn_laser_bone.size() && has_laser)
-	{
-		bone_id = pWeaponVisual->LL_BoneID(m_sWpn_laser_bone);
-
-		if (bone_id != BI_NONE) {
-			const bool laser_on = IsLaserOn();
-			if (pWeaponVisual->LL_GetBoneVisible(bone_id) && !laser_on)
-				pWeaponVisual->LL_SetBoneVisible(bone_id, FALSE, TRUE);
-			else if (!pWeaponVisual->LL_GetBoneVisible(bone_id) && laser_on)
-				pWeaponVisual->LL_SetBoneVisible(bone_id, TRUE, TRUE);
-		}
 	}
 
 	///////////////////////////////////////////////////////////////////

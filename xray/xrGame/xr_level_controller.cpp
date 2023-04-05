@@ -54,7 +54,6 @@ _action  actions[]		= {
 	{ "wpn_zoom_dec",		kWPN_ZOOM_DEC			,_both},	
 	{ "wpn_reload",			kWPN_RELOAD				,_both},	
 	{ "wpn_flashlight",		kFLASHLIGHT				,_both},	
-	{ "wpn_laser",			kLASER_ON				,_both},	
 	{ "wpn_func",			kWPN_FUNC				,_both},	
 	{ "wpn_firemode_prev",	kWPN_FIREMODE_PREV		,_both},	
 	{ "wpn_firemode_next",	kWPN_FIREMODE_NEXT		,_both},	
