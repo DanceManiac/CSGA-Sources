@@ -473,7 +473,7 @@ player_hud::~player_hud()
 
 	v = m_model_2->dcast_RenderVisual();
 	::Render->model_Delete(v);
-	m_model_2 = nullptr;
+	m_model_2 = NULL;
 
 	if(m_FpBody)
 	{

@@ -20,6 +20,7 @@ CHudItem::CHudItem()
 	m_bStopAtEndAnimIsRunning	= false;
 	m_current_motion_def		= NULL;
 	m_started_rnd_anim_idx		= u8(-1);
+	SprintType					= false;
 }
 
 DLL_Pure *CHudItem::_construct()
