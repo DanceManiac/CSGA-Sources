@@ -346,7 +346,9 @@ void CMissile::State(u32 state, u32 old_state)
 		} break;
 	}
 
-	if (!NoSprintStatesMissile())
+	auto pActor = dynamic_cast<CActor*>(H_Parent());
+
+	if (!NoSprintStatesMissile() && pActor && this == pActor->inventory().ActiveItem())
 	{
 		Actor()->BreakSprint();
 		Actor()->bTrySprint = false;
