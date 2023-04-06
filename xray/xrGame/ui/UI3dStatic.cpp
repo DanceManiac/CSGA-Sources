@@ -93,8 +93,8 @@ void  CUI3dStatic::Draw()
 
 		float x1, y1, x2, y2;
 
-		FromScreenToItem(rect.left, rect.top, x1, y1);
-		FromScreenToItem(rect.right, rect.bottom, x2, y2);
+		FromScreenToItem(int(rect.left), int(rect.top), x1, y1);
+		FromScreenToItem(int(rect.right), int(rect.bottom), x2, y2);
 
 		float normal_size;
 		normal_size =_abs(x2-x1)<_abs(y2-y1)?_abs(x2-x1):_abs(y2-y1);
@@ -115,9 +115,7 @@ void  CUI3dStatic::Draw()
 		
 		///////////////////////////////	
 		
-		FromScreenToItem(rect.left + iFloor(GetWidth()/2 * UI().GetScaleX()),
-						 rect.top + iFloor(GetHeight()/2 * UI().GetScaleY()), 
-						 right_item_offset, up_item_offset);
+		FromScreenToItem(int(rect.left) + iFloor(GetWidth()/2 * UI().GetScaleX()), int(rect.top) + iFloor(GetHeight()/2 * UI().GetScaleY()), right_item_offset, up_item_offset);
 
 		translate_matrix.identity();
 		translate_matrix.translate(right_item_offset,

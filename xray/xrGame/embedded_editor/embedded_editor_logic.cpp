@@ -15,7 +15,7 @@ extern CObject* object;
 float r_float(CInifile::Sect* sect, LPCSTR name, float def)
 {
     LPCSTR temp;
-    float val = sect->line_exist(name, &temp) ? atof(temp) : def;
+    float val = sect->line_exist(name, &temp) ? float(atof(temp)) : def;
     return val;
 }
 
@@ -1503,7 +1503,7 @@ Connection addSignal(Connection src, const xr_string& sig, ImGui::NodeGraphEdito
     } else {
         node = (XrayNode*)nge->addNode(MNT_EVENT_NODE, pos);
         ((EventNode*)node)->setSignal(event.c_str());
-        ((EventNode*)node)->setParam(atof(sig.c_str()));
+        ((EventNode*)node)->setParam(float(atof(sig.c_str())));
     }
     nge->addLink(src.Node, src.Pin, node, 0);
     return Connection(node, 0);

@@ -141,8 +141,8 @@ enum FieldType {
                    int _numEnumElements=0,TextFromEnumDelegate _textFromEnumFunctionPointer=NULL,void* _userData=NULL,GetNumEnumElementsDelegate _getNumEnumElementsFunctionPointer=NULL,
                    RenderFieldDelegate _renderFieldDelegate=NULL,EditedFieldDelegate _editedFieldDelegate=NULL)
         {
-            label[0]='\0';if (_label) {strncpy(label,_label,IMGUIFIELDINFO_MAX_LABEL_LENGTH);label[IMGUIFIELDINFO_MAX_LABEL_LENGTH-1]='\0';}
-            tooltip[0]='\0';if (_tooltip) {strncpy(tooltip,_tooltip,IMGUIFIELDINFO_MAX_TOOLTIP_LENGTH);tooltip[IMGUIFIELDINFO_MAX_TOOLTIP_LENGTH-1]='\0';}
+            label[0]='\0';if (_label) {strncpy_s(label,_label,IMGUIFIELDINFO_MAX_LABEL_LENGTH);label[IMGUIFIELDINFO_MAX_LABEL_LENGTH-1]='\0';}
+            tooltip[0]='\0';if (_tooltip) {strncpy_s(tooltip,_tooltip,IMGUIFIELDINFO_MAX_TOOLTIP_LENGTH);tooltip[IMGUIFIELDINFO_MAX_TOOLTIP_LENGTH-1]='\0';}
             type = _type;
             pdata = _pdata;
             precision = _precision;
@@ -279,7 +279,7 @@ class Node
         bool nodeEdited = false;
         for (int i=0,isz=fields.size();i<isz;i++)   {
             FieldInfo& f = fields[i];
-            nodeEdited|=f.render(nodeWidth);
+            nodeEdited|=f.render(int(nodeWidth));
         }
         return nodeEdited;
     }
@@ -360,7 +360,7 @@ struct NodeLink
         OutputNode = output_node; OutputSlot = output_slot;
     }
 
-    friend struct NodeGraphEditor;
+    friend class NodeGraphEditor;
 };
 
 class NodeGraphEditor
@@ -693,7 +693,10 @@ class NodeGraphEditor
     // It should be better not to add/delete node/links in the callbacks... (but all is untested here)
     void setNodeCallback(NodeCallback cb) {nodeCallback=cb;}
     void setLinkCallback(LinkCallback cb) {linkCallback=cb;}
-    void setNodeEditedCallbackTimeThreshold(int seconds) {nodeEditedTimeThreshold=seconds;}
+    void setNodeEditedCallbackTimeThreshold(int seconds)
+    {
+        nodeEditedTimeThreshold = seconds;
+    }
 	void setLeftPaneCallback(LeftPaneCallback cb) { leftPaneCallback = cb; }
 	void setSaveCallback(SaveCallback cb) { saveCallback = cb; }
 

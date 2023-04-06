@@ -153,7 +153,7 @@ u32 MODEL_Base::memory	()
 {
 	if (S_BUILD==status)	{ Msg	("! xrCDB: model still isn't ready"); return 0; }
 	u32 V					= verts_count*sizeof(Fvector);
-	u32 T					= tris_count *m_triSize;
+	u32 T					= tris_count *u32(m_triSize);
 	return tree->GetUsedBytes()+V+T+sizeof(*this)+sizeof(*tree);
 }
 

@@ -37,7 +37,7 @@ bool CControllerPsyHit::tube_ready () const
 {
 	u32 tube_condition_min_delay	=	5000;
 	if ( CController* controller = smart_cast<CController*>(m_object) )
-		tube_condition_min_delay	=	controller->m_tube_condition_min_delay;
+		tube_condition_min_delay	=	u32(controller->m_tube_condition_min_delay);
 
 	return m_time_last_tube + tube_condition_min_delay < time();
 }

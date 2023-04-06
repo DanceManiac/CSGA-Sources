@@ -434,9 +434,9 @@ bool CScriptStorage::load_buffer	(lua_State *L, LPCSTR caBuffer, size_t tSize, L
 
 		sprintf_s		(insert,header,caNameSpaceName,a,b);
 		u32				str_len = xr_strlen(insert);
-		LPSTR			script = xr_alloc<char>(str_len + tSize);
+		LPSTR			script = xr_alloc<char>(str_len + u32(tSize));
 		strcpy_s		(script, str_len + tSize, insert);
-		CopyMemory		(script + str_len,caBuffer,u32(tSize));
+		CopyMemory		(script + str_len,caBuffer,tSize);
 //		try 
 		{
 			l_iErrorCode= luaL_loadbuffer(L,script,tSize + str_len,caScriptName);

@@ -758,7 +758,7 @@ public:
 
 		char hex_digest[64];
 		s32 ban_time = 0;
-		if (sscanf_s(args_, "%s %i", &hex_digest, sizeof(hex_digest), &ban_time) != 2)
+		if (sscanf(args_, "%s %i", &hex_digest, &ban_time) != 2)
 		{
 			Msg("! ERROR: bad command parameters.");
 			Msg("Ban player. Format: \"sv_banplayer_by_digest <hex digest> <ban_time_in_sec>\". To get player hex digest you can enter: sv_listplayers_banned");
@@ -797,7 +797,7 @@ public:
 		} else
 		{
 			size_t player_index = 0;
-			if (sscanf_s(args_, "%u", &player_index) != 1)
+			if (sscanf(args_, "%zu", &player_index) != 1)
 			{
 				Msg("! ERROR: bad command parameters.");
 				Msg(" Unban player. Format: \"sv_unbanplayer <banned player index | \'%s\'>. To receive list of banned players se sv_listplayers_banned",
@@ -1008,7 +1008,7 @@ public:
 			exclude_raid_from_args(args, tmp_dest, sizeof(tmp_dest));
 			if (xr_strlen(tmp_dest))
 			{
-				sscanf_s(tmp_dest, "%s", filter_string);
+				sscanf(tmp_dest, "%s", filter_string);
 				tmp_functor.filter_string = filter_string;
 			}
 		}
@@ -1032,7 +1032,7 @@ public:
 		exclude_raid_from_args(args, tmp_dest, sizeof(tmp_dest));
 		if (xr_strlen(tmp_dest))
 		{
-			sscanf_s(tmp_dest, "%s", filter_dest);
+			sscanf(tmp_dest, "%s", filter_dest);
 		}
 		tmp_sv_game->PrintBanList(filter_dest);
 		Level().Server->Print_Banned_Addreses();
@@ -1060,11 +1060,7 @@ public:
 		string256		GameType;	
 		GameType[0]		=0;
 		
-		sscanf_s		(args,"%255s %255s %255s",
-			LevelName, sizeof(LevelName),
-			LevelVersion, sizeof(LevelVersion),
-			GameType, sizeof(GameType)
-		);
+		sscanf(args,"%255s %255s %255s", LevelName, LevelVersion, GameType);
 
 		EGameIDs GameTypeID = ParseStringToGameType(GameType);
 		if(GameTypeID==eGameIDNoGame)
@@ -1144,10 +1140,7 @@ public:
 		string256		LevelVersion;
 		LevelName[0]	=	0;
 		LevelVersion[0] =	0;
-		sscanf_s		(args,"%255s %255s",
-			LevelName, sizeof(LevelName),
-			LevelVersion, sizeof(LevelVersion)
-		);
+		sscanf(args,"%255s %255s", LevelName, LevelVersion);
 
 		string1024		argsNew;
 		sprintf_s		(argsNew, "%s %s %s", LevelName, LevelVersion, Level().Server->game->type_name());
