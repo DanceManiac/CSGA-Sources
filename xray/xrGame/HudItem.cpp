@@ -10,7 +10,6 @@
 #include "../xrEngine/CameraBase.h"
 #include "player_hud.h"
 #include "../xrEngine/SkeletonMotions.h"
-#include "ui_base.h"
 
 CHudItem::CHudItem()
 {
@@ -311,9 +310,8 @@ bool CHudItem::isHUDAnimationExist(LPCSTR anim_name)
 	if (HudItemData()) // First person
 	{
 		string256 anim_name_r;
-		bool is_16x9 = ui_core().is_widescreen();
 		u16 attach_place_idx = pSettings->r_u16(HudItemData()->m_sect_name, "attach_place_idx");
-		sprintf(anim_name_r, "%s%s", anim_name, (attach_place_idx == 1 && is_16x9) ? "_16x9" : "");
+		sprintf(anim_name_r, "%s", anim_name);
 		player_hud_motion* anm = HudItemData()->m_hand_motions.find_motion(anim_name_r);
 		if (anm)
 			return true;
