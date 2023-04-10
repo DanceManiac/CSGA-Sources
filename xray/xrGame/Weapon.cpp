@@ -2388,14 +2388,17 @@ void CWeapon::OnStateSwitch	(u32 S)
 				current_actor->Cameras().AddCamEffector(xr_new<CEffectorDOF>(m_zoom_params.m_ReloadDof) );
 		}
 	}
-
-	if (!NoSprintStates() && current_actor && this == current_actor->inventory().ActiveItem())
+	
+	if (current_actor)
 	{
-		Actor()->BreakSprint();
-		Actor()->bTrySprint = false;
+		if (!NoSprintStates() && this == current_actor->inventory().ActiveItem())
+		{
+			Actor()->BreakSprint();
+			Actor()->bTrySprint = false;
+		}
+		else
+			Actor()->bTrySprint = true;
 	}
-	else
-		Actor()->bTrySprint = true;
 }
 
 void CWeapon::OnAnimationEnd(u32 state) 
