@@ -1695,9 +1695,6 @@ void CWeaponMagazined::OnNextFireMode()
 	if (GetState() != eIdle)
 		return;
 
-	if (IsPending())
-		return;
-
 	if (IsZoomed())
 		return;
 
@@ -1714,9 +1711,6 @@ void CWeaponMagazined::OnPrevFireMode()
 		return;
 
 	if (GetState() != eIdle)
-		return;
-
-	if (IsPending())
 		return;
 
 	if (IsZoomed())
