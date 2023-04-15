@@ -1132,6 +1132,45 @@ void CWeaponMagazinedWGrenade::PlayAnimAimEnd()
         inherited::PlayAnimAimEnd();
 }
 
+void CWeaponMagazinedWGrenade::PlayAnimFireMode()
+{
+	VERIFY(GetState() == eSwitchMode);
+
+	if (IsGrenadeLauncherAttached())
+	{
+		std::string anm_name = "anm_changefiremode_from_";
+		auto firemode = GetQueueSize();
+		auto new_mode = m_iOldFireMode;
+		if (new_mode < 0)
+			anm_name += "a";
+		else
+			anm_name += std::to_string(new_mode);
+
+		anm_name += "_to_";
+
+		if (firemode < 0)
+			anm_name += "a";
+		else
+			anm_name += std::to_string(firemode);
+
+		if (!IsMisfire() && (m_bGrenadeMode && iAmmoElapsed2 == 0 || !m_bGrenadeMode && iAmmoElapsed == 0))
+			anm_name += "_empty";
+		else if (IsMisfire())
+			anm_name += "_jammed";
+		else
+			anm_name += "";
+
+		if (m_bGrenadeMode)
+			anm_name += "_g";
+		else
+			anm_name += "_w_gl";
+
+		PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
+	}
+	else
+		inherited::PlayAnimFireMode();
+}
+
 void CWeaponMagazinedWGrenade::UpdateSounds	()
 {
 	inherited::UpdateSounds			();

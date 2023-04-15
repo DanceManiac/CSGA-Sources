@@ -1260,8 +1260,14 @@ void CWeaponMagazined::PlayAnimFireMode()
 	else
 		anm_name += std::to_string(firemode);
 
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire())
+		anm_name += "_jammed";
+	else
+		anm_name += "";
+
 	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
-	Msg("Current motion: [%s]", m_current_motion.c_str());
 }
 
 void CWeaponMagazined::PlayAnimShowDet()
