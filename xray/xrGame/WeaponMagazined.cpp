@@ -151,6 +151,8 @@ void CWeaponMagazined::Load	(LPCSTR section)
 		
 		m_iCurFireMode = ModesCount - 1;
 		m_iPrefferedFireMode = READ_IF_EXISTS(pSettings, r_s16,section,"preffered_fire_mode",-1);
+
+		m_sounds.LoadSound(section, "snd_changefiremode", "sndFireMode", false, m_eSoundShow);
 	}
 	else
 	{
@@ -469,7 +471,11 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
         } break;
 		case eHidden:
 			switch2_Hidden();
-			break;
+		break;
+		case eSwitchMode:
+		{
+			switch2_FireMode();
+		}break;
 		}
 }
 
@@ -494,6 +500,7 @@ void CWeaponMagazined::UpdateCL()
 		case eZoomStart:
 		case eZoomEnd:
 		case eReload:
+		case eSwitchMode:
 		case eIdle:
 			{
 				fShotTimeCounter -=	dt;
@@ -821,13 +828,16 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		}break;
 		case eShowingEndDet:
 			SwitchState(eIdle);
-			break;
+		break;
 		case eZoomStart:
 			SwitchState(eIdle);
-			break;
+		break;
 		case eZoomEnd:
 			SwitchState(eIdle);
-			break;
+		break;
+		case eSwitchMode:
+			SwitchState(eIdle);
+		break;
 	}
 	inherited::OnAnimationEnd(state);
 }
@@ -923,12 +933,20 @@ void CWeaponMagazined::switch2_Hidden()
 	signal_HideComplete();
 	RemoveShotEffector();
 }
+
 void CWeaponMagazined::switch2_Showing()
 {
 	PlaySound("sndShow", get_LastFP());
 
 	SetPending(true);
 	PlayAnimShow();
+}
+
+void CWeaponMagazined::switch2_FireMode()
+{
+	SetPending(TRUE);
+	PlayAnimFireMode();
+	PlaySound("sndFireMode", get_LastFP());
 }
 
 bool CWeaponMagazined::Action(s32 cmd, u32 flags) 
@@ -1221,6 +1239,29 @@ void CWeaponMagazined::PlayAnimShow()
 		else
 			PlayHUDMotion("anm_show_handler", false, this, GetState());
 	}
+}
+
+void CWeaponMagazined::PlayAnimFireMode()
+{
+	VERIFY(GetState() == eSwitchMode);
+
+	std::string anm_name = "anm_changefiremode_from_";
+	auto firemode = GetQueueSize();
+	auto new_mode = m_iOldFireMode;
+	if (new_mode < 0)
+		anm_name += "a";
+	else
+		anm_name += std::to_string(new_mode);
+
+	anm_name += "_to_";
+
+	if (firemode < 0)
+		anm_name += "a";
+	else
+		anm_name += std::to_string(firemode);
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
+	Msg("Current motion: [%s]", m_current_motion.c_str());
 }
 
 void CWeaponMagazined::PlayAnimShowDet()
@@ -1583,7 +1624,7 @@ void CWeaponMagazined::PlayAnimShoot()
 	VERIFY(GetState()==eFire);
 	
     string_path guns_shoot_anm{};
-        xr_strconcat(guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? (IsScopeAttached() ? "_aim_scope" : "_aim") : "", IsMisfire() ? "_jammed" : (!IsMisfire() && iAmmoElapsed == 1 ? "_last" : ""), IsSilencerAttached() ? "_sil" : "", IsHandlerAttached() ? "_handler" : "");
+	xr_strconcat(guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? (IsScopeAttached() ? "_aim_scope" : "_aim") : "", IsMisfire() ? "_jammed" : (!IsMisfire() && iAmmoElapsed == 1 ? "_last" : ""), IsSilencerAttached() ? "_sil" : "", IsHandlerAttached() ? "_handler" : "");
 
     PlayHUDMotion(guns_shoot_anm, false, this, GetState());
 }
@@ -1648,18 +1689,44 @@ bool CWeaponMagazined::SwitchMode()
 
 void CWeaponMagazined::OnNextFireMode()
 {
-	if (!m_bHasDifferentFireModes) return;
-	if (GetState() != eIdle) return;
+	if (!m_bHasDifferentFireModes)
+		return;
+
+	if (GetState() != eIdle)
+		return;
+
+	if (IsPending())
+		return;
+
+	if (IsZoomed())
+		return;
+
+	m_iOldFireMode = m_iQueueSize;
 	m_iCurFireMode = (m_iCurFireMode+1+m_aFireModes.size()) % m_aFireModes.size();
 	SetQueueSize(GetCurrentFireMode());
+
+	SwitchState(eSwitchMode);
 };
 
 void CWeaponMagazined::OnPrevFireMode()
 {
-	if (!m_bHasDifferentFireModes) return;
-	if (GetState() != eIdle) return;
+	if (!m_bHasDifferentFireModes)
+		return;
+
+	if (GetState() != eIdle)
+		return;
+
+	if (IsPending())
+		return;
+
+	if (IsZoomed())
+		return;
+
+	m_iOldFireMode = m_iQueueSize;
 	m_iCurFireMode = (m_iCurFireMode-1+m_aFireModes.size()) % m_aFireModes.size();
-	SetQueueSize(GetCurrentFireMode());	
+	SetQueueSize(GetCurrentFireMode());
+
+	SwitchState(eSwitchMode);
 };
 
 void CWeaponMagazined::OnH_A_Chield()
@@ -1684,6 +1751,7 @@ void CWeaponMagazined::save(NET_Packet &output_packet)
 	save_data(m_iQueueSize, output_packet);
 	save_data(m_iShotNum, output_packet);
 	save_data(m_iCurFireMode, output_packet);
+	save_data(m_iOldFireMode, output_packet);
 }
 
 void CWeaponMagazined::load(IReader &input_packet)
@@ -1692,6 +1760,7 @@ void CWeaponMagazined::load(IReader &input_packet)
 	load_data(m_iQueueSize, input_packet);SetQueueSize(m_iQueueSize);
 	load_data(m_iShotNum, input_packet);
 	load_data(m_iCurFireMode, input_packet);
+	load_data(m_iOldFireMode, input_packet);
 }
 
 void CWeaponMagazined::net_Export(NET_Packet& P)

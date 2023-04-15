@@ -43,6 +43,7 @@ protected:
 	virtual void	switch2_Showing	();
 	virtual void	switch2_LookMisfire();
 	virtual void	switch2_LightMisfire();
+	virtual void	switch2_FireMode();
 	
 	virtual void	OnShot			();	
 	virtual void	OnShotJammed	();
@@ -126,6 +127,7 @@ protected:
 	bool			m_bHasDifferentFireModes;
 	xr_vector<s8>	m_aFireModes;
 	int				m_iCurFireMode;
+	int				m_iOldFireMode;
 	int				m_iPrefferedFireMode;
 
 	//переменная блокирует использование
@@ -138,7 +140,7 @@ public:
 			void	OnNextFireMode		();
 			void	OnPrevFireMode		();
 			bool	HasFireModes		() { return m_bHasDifferentFireModes; };
-	virtual	int		GetCurrentFireMode	() { return m_aFireModes[m_iCurFireMode]; };	
+	virtual	int		GetCurrentFireMode	() { return m_aFireModes[m_iCurFireMode]; };
 
 	virtual void	save				(NET_Packet &output_packet);
 	virtual void	load				(IReader &input_packet);
@@ -169,6 +171,7 @@ protected:
 	virtual void	PlayAnimIdleMovingSlow();
 	virtual void	PlayAnimIdleMovingCrouchSlow();
 	virtual void	PlayAnimIdleMovingCrouch();
+	virtual void	PlayAnimFireMode();
 
 private:
 	string64 guns_aim_anm;

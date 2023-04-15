@@ -121,6 +121,7 @@ public:
 		eZoomEnd,
 		eLookMis,
 		eUnLightMis,
+		eSwitchMode,
 	};
 	enum EWeaponSubStates{
 		eSubstateReloadBegin		=0,
