@@ -26,6 +26,7 @@
 #include "WeaponKnife.h"
 #include "WeaponMagazinedWGrenade.h"
 #include "WeaponBM16.h"
+#include "player_hud.h"
 
 ENGINE_API bool	g_dedicated_server;
 
@@ -91,6 +92,23 @@ void CWeaponMagazined::Load	(LPCSTR section)
 {
 	inherited::Load		(section);
 		
+	auto LoadBoneNames = [](shared_str section, LPCTSTR line, RStringVec& list)
+	{
+		list.clear();
+		if(pSettings->line_exist(section, line))
+		{
+			pcstr lineStr = pSettings->r_string(section, line);
+			for (int j = 0, cnt = _GetItemCount(lineStr); j < cnt; ++j)
+			{
+				string128 bone_name;
+				_GetItem(lineStr, j, bone_name);
+				list.push_back(bone_name);
+			}
+			return true;
+		}
+		return false;
+	};
+
 	// Sounds
 	m_sounds.LoadSound(section, "snd_draw", "sndShow", false, m_eSoundShow);
 	m_sounds.LoadSound(section, "snd_holster", "sndHide", false, m_eSoundHide);
@@ -166,6 +184,14 @@ void CWeaponMagazined::Load	(LPCSTR section)
 
 		if (pSettings->line_exist(hud_sect, "mask_firemode_a"))
 			m_sFireModeMask_a = pSettings->r_string(hud_sect, "mask_firemode_a");
+
+		if (pSettings->line_exist(hud_sect, "firemode_bones_total"))
+		{
+			LoadBoneNames(hud_sect, "firemode_bones_total", m_sFireModeBonesTotal);
+			LoadBoneNames(hud_sect, "firemode_bones_1", m_sFireModeBone_1);
+			LoadBoneNames(hud_sect, "firemode_bones_3", m_sFireModeBone_3);
+			LoadBoneNames(hud_sect, "firemode_bones_a", m_sFireModeBone_a);
+		}
 	}
 	else
 	{
@@ -498,7 +524,6 @@ void CWeaponMagazined::UpdateCL()
 	float dt = Device.fTimeDelta;
 
 	
-
 	//когда происходит апдейт состояния оружия
 	//ничего другого не делать
 	if(GetNextState() == GetState())
@@ -513,7 +538,6 @@ void CWeaponMagazined::UpdateCL()
 		case eZoomStart:
 		case eZoomEnd:
 		case eReload:
-		case eSwitchMode:
 		case eIdle:
 			{
 				fShotTimeCounter -=	dt;
@@ -524,6 +548,9 @@ void CWeaponMagazined::UpdateCL()
 				state_Fire(dt);
 			}break;
 		case eMisfire: state_Misfire(dt); break;
+		case eSwitchMode:
+			UpdateAddonsVisibility();
+		break;
 		case eEmpty: break;
 		case eLookMis: break;
 		case eUnLightMis: break;
@@ -2102,6 +2129,102 @@ void CWeaponMagazined::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_na
 			sprintf_s(sItemName, "%d/--",AE);
 
 		str_count = sItemName;
+	}
+}
+
+void CWeaponMagazined::UpdateAddonsVisibility()
+{
+	inherited::UpdateAddonsVisibility();
+
+	IKinematics* pWeaponVisual = smart_cast<IKinematics*>(Visual()); R_ASSERT(pWeaponVisual);
+
+	u16 bone_id;
+
+	UpdateHUDAddonsVisibility();
+	pWeaponVisual->CalculateBones_Invalidate();
+
+	auto firemode = GetQueueSize();
+
+	for (const auto& boneName : m_sFireModeBonesTotal)
+	{
+		bone_id = pWeaponVisual->LL_BoneID(boneName);
+		if (bone_id != BI_NONE && pWeaponVisual->LL_GetBoneVisible(bone_id))
+			pWeaponVisual->LL_SetBoneVisible(bone_id, FALSE, TRUE);
+	}
+
+	if (firemode == 1)
+	{
+		for (const auto& boneName : m_sFireModeBone_1)
+		{
+			bone_id = pWeaponVisual->LL_BoneID(boneName);
+			if (bone_id != BI_NONE && pWeaponVisual->LL_GetBoneVisible(bone_id))
+				pWeaponVisual->LL_SetBoneVisible(bone_id, TRUE, TRUE);
+		}
+	}
+	if (firemode == 3)
+	{
+		for (const auto& boneName : m_sFireModeBone_3)
+		{
+			bone_id = pWeaponVisual->LL_BoneID(boneName);
+			if (bone_id != BI_NONE && pWeaponVisual->LL_GetBoneVisible(bone_id))
+				pWeaponVisual->LL_SetBoneVisible(bone_id, TRUE, TRUE);
+		}
+	}
+	if (firemode == -1)
+	{
+		for (const auto& boneName : m_sFireModeBone_a)
+		{
+			bone_id = pWeaponVisual->LL_BoneID(boneName);
+			if (bone_id != BI_NONE && pWeaponVisual->LL_GetBoneVisible(bone_id))
+				pWeaponVisual->LL_SetBoneVisible(bone_id, TRUE, TRUE);
+		}
+	}
+
+	pWeaponVisual->CalculateBones_Invalidate();
+	pWeaponVisual->CalculateBones(TRUE);
+}
+
+void CWeaponMagazined::UpdateHUDAddonsVisibility()
+{
+	if(!GetHUDmode())
+		return;
+
+	inherited::UpdateHUDAddonsVisibility();
+
+	auto firemode = GetQueueSize();
+
+	auto SetBoneVisible = [&](const shared_str& boneName, BOOL visibility)
+	{
+		HudItemData()->set_bone_visible(boneName, visibility, TRUE);
+	};
+
+	for (const shared_str& bone : m_sFireModeBonesTotal)
+	{
+		SetBoneVisible(bone, FALSE);
+	}
+
+	if (firemode == 1)
+	{
+		for (const shared_str& bone : m_sFireModeBone_1)
+		{
+			SetBoneVisible(bone, TRUE);
+		}
+	}
+
+	if (firemode == 3)
+	{
+		for (const shared_str& bone : m_sFireModeBone_3)
+		{
+			SetBoneVisible(bone, TRUE);
+		}
+	}
+
+	if (firemode == -1)
+	{
+		for (const shared_str& bone : m_sFireModeBone_a)
+		{
+			SetBoneVisible(bone, TRUE);
+		}
 	}
 }
 

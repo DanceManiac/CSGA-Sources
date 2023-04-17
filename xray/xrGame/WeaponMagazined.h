@@ -102,6 +102,11 @@ public:
 
 	virtual void	GetBriefInfo				(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count, string16& fire_mode);
 
+	RStringVec m_sFireModeBonesTotal;
+	RStringVec m_sFireModeBone_1;
+	RStringVec m_sFireModeBone_3;
+	RStringVec m_sFireModeBone_a;
+
 public:
 	virtual bool	SwitchMode				();
 	virtual bool	SingleShotMode			()			{return 1 == m_iQueueSize;}
@@ -148,6 +153,9 @@ public:
 
 	virtual void	save				(NET_Packet &output_packet);
 	virtual void	load				(IReader &input_packet);
+
+	virtual void UpdateAddonsVisibility();
+	virtual void UpdateHUDAddonsVisibility();
 
 protected:
 	virtual bool	install_upgrade_impl( LPCSTR section, bool test );
