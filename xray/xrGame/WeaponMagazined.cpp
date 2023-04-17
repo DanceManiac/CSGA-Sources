@@ -55,6 +55,10 @@ CWeaponMagazined::CWeaponMagazined(ESoundTypes eSoundType) : CWeapon()
 	m_iShotNum = 0;
 	m_iQueueSize = WEAPON_ININITE_QUEUE;
 	m_bLockType = false;
+
+	m_sFireModeMask_1 = nullptr;
+	m_sFireModeMask_3 = nullptr;
+	m_sFireModeMask_a = nullptr;
 }
 
 CWeaponMagazined::~CWeaponMagazined()
@@ -153,6 +157,15 @@ void CWeaponMagazined::Load	(LPCSTR section)
 		m_iPrefferedFireMode = READ_IF_EXISTS(pSettings, r_s16,section,"preffered_fire_mode",-1);
 
 		m_sounds.LoadSound(section, "snd_changefiremode", "sndFireMode", false, m_eSoundShow);
+
+		if (pSettings->line_exist(hud_sect, "mask_firemode_1"))
+			m_sFireModeMask_1 = pSettings->r_string(hud_sect, "mask_firemode_1");
+
+		if (pSettings->line_exist(hud_sect, "mask_firemode_3"))
+			m_sFireModeMask_3 = pSettings->r_string(hud_sect, "mask_firemode_3");
+
+		if (pSettings->line_exist(hud_sect, "mask_firemode_a"))
+			m_sFireModeMask_a = pSettings->r_string(hud_sect, "mask_firemode_a");
 	}
 	else
 	{
@@ -659,10 +672,24 @@ void CWeaponMagazined::switch2_LightMisfire()
 
 void CWeaponMagazined::PlayAnimLightMis()
 {
-	if(IsZoomed())
-        PlayHUDMotion("anm_shoot_lightmisfire_aim", false, this, GetState());
+	std::string anm_name = "anm_shoot_lightmisfire";
+	auto firemode = GetQueueSize();
+
+	if (IsZoomed())
+		anm_name += "_aim";
 	else
-		PlayHUDMotion("anm_shoot_lightmisfire", true, this, GetState());
+		anm_name += "";
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }
 
 void CWeaponMagazined::PlayAnimLookMis()
@@ -671,10 +698,24 @@ void CWeaponMagazined::PlayAnimLookMis()
 
 	if (!bm)
 	{
-		if(IsZoomed())
-			PlayHUDMotion("anm_fakeshoot_aim_jammed", false, this, GetState());
+		std::string anm_name = "anm_fakeshoot";
+		auto firemode = GetQueueSize();
+
+		if (firemode == -1 && m_sFireModeMask_a != nullptr)
+			anm_name += m_sFireModeMask_a.c_str();
+		else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+			anm_name += m_sFireModeMask_1.c_str();
+		else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+			anm_name += m_sFireModeMask_3.c_str();
 		else
-			PlayHUDMotion("anm_fakeshoot_jammed", true, this, GetState());
+			anm_name += "";
+
+		if(IsZoomed())
+			anm_name += "_aim_jammed";
+		else
+			anm_name += "_jammed";
+
+		PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 	}
 	else
 	{
@@ -1219,26 +1260,35 @@ void CWeaponMagazined::ResetSilencerKoeffs()
 
 void CWeaponMagazined::PlayAnimShow()
 {
-	VERIFY(GetState()==eShowing);
+	VERIFY(GetState() == eShowing);
 
-	if (!IsHandlerAttached())
-	{
-		if (!IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_show_empty", false, this, GetState());
-		else if(IsMisfire())
-			PlayHUDMotion("anm_show_jammed", false, this, GetState());
-		else
-			PlayHUDMotion("anm_show", false, this, GetState());
-	}
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		PlayHUDMotion("anm_show_empty", false, this, GetState());
+	else if(IsMisfire())
+		PlayHUDMotion("anm_show_jammed", false, this, GetState());
 	else
-	{
-		if (!IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_show_empty_handler", false, this, GetState());
-		else if(IsMisfire())
-			PlayHUDMotion("anm_show_jammed_handler", false, this, GetState());
-		else
-			PlayHUDMotion("anm_show_handler", false, this, GetState());
-	}
+		PlayHUDMotion("anm_show", false, this, GetState());
+
+	std::string anm_name = "anm_show";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
+	else
+		anm_name += "";
+
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire())
+		anm_name += "_jammed";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), FALSE, this, GetState());
 }
 
 void CWeaponMagazined::PlayAnimFireMode()
@@ -1272,98 +1322,138 @@ void CWeaponMagazined::PlayAnimFireMode()
 
 void CWeaponMagazined::PlayAnimShowDet()
 {
-	VERIFY(GetState()==eShowingDet);
+	VERIFY(GetState() ==  eShowingDet);
+
+	std::string anm_name = "anm_prepare_detector";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
+	else
+		anm_name += "";
 
 	if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_prepare_detector_empty", false, this, GetState());
-	else if(IsMisfire())
-		PlayHUDMotion("anm_prepare_detector_jammed", false, this, GetState());
+		anm_name += "_empty";
+	else if (IsMisfire() && iAmmoElapsed != 0)
+		anm_name += "_jammed";
 	else
-		PlayHUDMotion("anm_prepare_detector", false, this, GetState());
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }
 
 void CWeaponMagazined::PlayAnimShowEndDet()
 {
     VERIFY(GetState() == eShowingEndDet);
 
-    if (iAmmoElapsed == 0)
-        PlayHUDMotion("anm_draw_detector_empty", false, this, GetState());
-    else if (IsMisfire())
-        PlayHUDMotion("anm_draw_detector_jammed", false, this, GetState());
-    else
-        PlayHUDMotion("anm_draw_detector", false, this, GetState());
+	std::string anm_name = "anm_draw_detector";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
+	else
+		anm_name += "";
+
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire() && iAmmoElapsed != 0)
+		anm_name += "_jammed";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), FALSE, this, GetState());
 }
 
 void CWeaponMagazined::PlayAnimHide()
 {
-	VERIFY(GetState()==eHiding);
+	VERIFY(GetState() == eHiding);
 
-	if (!IsHandlerAttached())
-	{
-		if (!IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_hide_empty", true, this, GetState());
-		else if(IsMisfire())
-			PlayHUDMotion("anm_hide_jammed", true, this, GetState());
-		else
-			PlayHUDMotion("anm_hide", true, this, GetState());
-	}
+	std::string anm_name = "anm_hide";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
 	else
-	{
-		if (!IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_hide_empty_handler", true, this, GetState());
-		else if(IsMisfire())
-			PlayHUDMotion("anm_hide_jammed_handler", true, this, GetState());
-		else
-			PlayHUDMotion("anm_hide_handler", true, this, GetState());
-	}
+		anm_name += "";
+
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire())
+		anm_name += "_jammed";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), FALSE, this, GetState());
 }
 
 void CWeaponMagazined::PlayAnimHideDet()
 {
-    VERIFY(GetState()==eHideDet);
+    VERIFY(GetState() == eHideDet);
 
-    if (!IsMisfire() && iAmmoElapsed == 0)
-        PlayHUDMotion("anm_finish_detector_empty", true, this, GetState());
-    else if (IsMisfire())
-        PlayHUDMotion("anm_finish_detector_jammed", true, this, GetState());
+	std::string anm_name = "anm_finish_detector";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
 	else
-        PlayHUDMotion("anm_finish_detector", true, this, GetState());
+		anm_name += "";
+
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire() && iAmmoElapsed != 0)
+		anm_name += "_jammed";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }
 
 void CWeaponMagazined::PlayAnimReload()
 {
-	VERIFY(GetState()==eReload);
+	VERIFY(GetState() == eReload);
 
-	if (!IsHandlerAttached())
-	{
-		if(!IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_reload_empty", true, this, GetState());
-		else if(IsMisfire() && iAmmoElapsed != 0)
-			PlayHUDMotion("anm_reload_jammed", true, this, GetState());
-		else if(IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_reload_jammed_last", true, this, GetState());
-		else if(bSwitchAmmoType)
-			PlayHUDMotion("anm_reload_ammochange", true, this, GetState());
-		else if(bSwitchAmmoType && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_reload_empty_ammochange", true, this, GetState());
-		else
-			PlayHUDMotion("anm_reload", true, this, GetState());
-	}
+	std::string anm_name = "anm_reload";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
 	else
-	{
-		if(!IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_reload_empty_handler", true, this, GetState());
-		else if(IsMisfire() && iAmmoElapsed != 0)
-			PlayHUDMotion("anm_reload_jammed_handler", true, this, GetState());
-		else if(IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_reload_jammed_last_handler", true, this, GetState());
-		else if(bSwitchAmmoType)
-			PlayHUDMotion("anm_reload_ammochange_handler", true, this, GetState());
-		else if(bSwitchAmmoType && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_reload_empty_ammochange_handler", true, this, GetState());
-		else
-			PlayHUDMotion("anm_reload_handler", true, this, GetState());
-	}
+		anm_name += "";
+
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire() && iAmmoElapsed != 0)
+		anm_name += "_jammed";
+	else if (IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_jammed_last";
+	else if (bSwitchAmmoType)
+		anm_name += "_ammochange";
+	else if(bSwitchAmmoType && iAmmoElapsed == 0)
+		anm_name += "_empty_ammochange";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }
 
 void CWeaponMagazined::PlayAnimAimStart()
@@ -1374,12 +1464,17 @@ void CWeaponMagazined::PlayAnimAimStart()
 
 	if(!bm)
 	{
+		std::string anm_name = "anm_idle_aim_start";
+		auto firemode = GetQueueSize();
+
 		if (!IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_idle_aim_start_empty", true, this, GetState());
-		else if (IsMisfire())
-			PlayHUDMotion("anm_idle_aim_start_jammed", true, this, GetState());
+			anm_name += "_empty";
+		else if (IsMisfire() && iAmmoElapsed != 0)
+			anm_name += "_jammed";
 		else
-			PlayHUDMotion("anm_idle_aim_start", true, this, GetState());
+			anm_name += "";
+
+		PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 	}
 	else
 	{
@@ -1412,72 +1507,171 @@ void CWeaponMagazined::PlayAnimAimStart()
 
 void CWeaponMagazined::PlayAnimIdleMoving()
 {
-    if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_idle_moving_empty", true, nullptr, GetState());
-	else if(IsMisfire())
-		PlayHUDMotion("anm_idle_moving_jammed", true, nullptr, GetState());
+	std::string anm_name = "anm_idle_moving";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
 	else
-		PlayHUDMotion("anm_idle_moving", true, nullptr, GetState());
+		anm_name += "";
+
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire() && iAmmoElapsed != 0)
+		anm_name += "_jammed";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, nullptr, GetState());
 }
 
 void CWeaponMagazined::PlayAnimIdleSprintStart()
 {
-    if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_idle_sprint_start_empty", true, nullptr, GetState());
-	else if(IsMisfire())
-		PlayHUDMotion("anm_idle_sprint_start_jammed", true, nullptr, GetState());
+
+	std::string anm_name = "anm_idle_sprint_start";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
 	else
-		PlayHUDMotion("anm_idle_sprint_start", true, nullptr, GetState());
+		anm_name += "";
+
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire() && iAmmoElapsed != 0)
+		anm_name += "_jammed";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, nullptr, GetState());
 }
 
 void CWeaponMagazined::PlayAnimIdleSprint()
 {
-    if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_idle_sprint_empty", true, nullptr, GetState());
-	else if(IsMisfire())
-		PlayHUDMotion("anm_idle_sprint_jammed", true, nullptr, GetState());
+	std::string anm_name = "anm_idle_sprint";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
 	else
-		PlayHUDMotion("anm_idle_sprint", true, nullptr, GetState());
+		anm_name += "";
+
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire() && iAmmoElapsed != 0)
+		anm_name += "_jammed";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, nullptr, GetState());
 }
 
 void CWeaponMagazined::PlayAnimIdleSprintEnd()
 {
-    if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_idle_sprint_end_empty", true, nullptr, GetState());
-	else if(IsMisfire())
-		PlayHUDMotion("anm_idle_sprint_end_jammed", true, nullptr, GetState());
+	std::string anm_name = "anm_idle_sprint_end";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
 	else
-		PlayHUDMotion("anm_idle_sprint_end", true, nullptr, GetState());
+		anm_name += "";
+
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire() && iAmmoElapsed != 0)
+		anm_name += "_jammed";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, nullptr, GetState());
 }
 
 void CWeaponMagazined::PlayAnimIdleMovingCrouch()
 {
-    if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_idle_moving_crouch_empty", true, nullptr, GetState());
-	else if (IsMisfire())
-		PlayHUDMotion("anm_idle_moving_crouch_jammed", true, nullptr, GetState());
+	std::string anm_name = "anm_idle_moving_crouch";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
 	else
-		PlayHUDMotion("anm_idle_moving_crouch", true, nullptr, GetState());
+		anm_name += "";
+
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire() && iAmmoElapsed != 0)
+		anm_name += "_jammed";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, nullptr, GetState());
 }
 
 void CWeaponMagazined::PlayAnimIdleMovingCrouchSlow()
 {
-    if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_idle_moving_crouch_slow_empty", true, nullptr, GetState());
-    else if (IsMisfire())
-		PlayHUDMotion("anm_idle_moving_crouch_slow_jammed", true, nullptr, GetState());
+	std::string anm_name = "anm_idle_moving_crouch_slow";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
 	else
-		PlayHUDMotion("anm_idle_moving_crouch_slow", true, nullptr, GetState());
+		anm_name += "";
+
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire() && iAmmoElapsed != 0)
+		anm_name += "_jammed";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, nullptr, GetState());
 }
 
 void CWeaponMagazined::PlayAnimIdleMovingSlow()
 {
-    if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_idle_moving_slow_empty", true, nullptr, GetState());
-    else if (IsMisfire())
-		PlayHUDMotion("anm_idle_moving_slow_jammed", true, nullptr, GetState());
+	std::string anm_name = "anm_idle_moving_slow";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
 	else
-		PlayHUDMotion("anm_idle_moving_slow", true, nullptr, GetState());
+		anm_name += "";
+
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire() && iAmmoElapsed != 0)
+		anm_name += "_jammed";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, nullptr, GetState());
 }
 
 void CWeaponMagazined::PlayAnimAimEnd()
@@ -1488,12 +1682,26 @@ void CWeaponMagazined::PlayAnimAimEnd()
 
 	if(!bm)
 	{
-		if (!IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_idle_aim_end_empty", true, this, GetState());
-		else if (IsMisfire())
-			PlayHUDMotion("anm_idle_aim_end_jammed", true, this, GetState());
+		std::string anm_name = "anm_idle_aim_end";
+		auto firemode = GetQueueSize();
+
+		if (firemode == -1 && m_sFireModeMask_a != nullptr)
+			anm_name += m_sFireModeMask_a.c_str();
+		else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+			anm_name += m_sFireModeMask_1.c_str();
+		else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+			anm_name += m_sFireModeMask_3.c_str();
 		else
-			PlayHUDMotion("anm_idle_aim_end", true, this, GetState());
+			anm_name += "";
+
+		if (!IsMisfire() && iAmmoElapsed == 0)
+			anm_name += "_empty";
+		else if (IsMisfire() && iAmmoElapsed != 0)
+			anm_name += "_jammed";
+		else
+			anm_name += "";
+
+		PlayHUDMotion(anm_name.c_str(), TRUE, nullptr, GetState());
 	}
 	else
 	{
@@ -1530,10 +1738,24 @@ void CWeaponMagazined::EmptyMove()
 
     OnEmptyClick(); //звук
 
-    if (IsZoomed())
-        PlayHUDMotion("anm_fakeshoot_aim_empty", false, this, GetState());
-    else
-        PlayHUDMotion("anm_fakeshoot_empty", false, this, GetState());
+	std::string anm_name = "anm_fakeshoot";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
+	else
+		anm_name += "";
+
+	if(IsZoomed())
+		anm_name += "_aim_empty";
+	else
+		anm_name += "_empty";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }
 
 const char* CWeaponMagazined::GetAnimAimName()
@@ -1544,13 +1766,25 @@ const char* CWeaponMagazined::GetAnimAimName()
         u32 state = pActor->get_state();
         if (state & mcAnyMove)
 		{
+			std::string anm_name = "";
+			auto firemode = GetQueueSize();
+
+			if (firemode == -1 && m_sFireModeMask_a != nullptr)
+				anm_name += m_sFireModeMask_a.c_str();
+			else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+				anm_name += m_sFireModeMask_1.c_str();
+			else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+				anm_name += m_sFireModeMask_3.c_str();
+			else
+				anm_name += "";
+
 			if (IsScopeAttached())
 			{
 				strcpy_s(guns_aim_anm, "anm_idle_aim_scope_moving");
 				return guns_aim_anm;
 			}
 			else
-				return xr_strconcat(guns_aim_anm, "anm_idle_aim_moving", (state & mcFwd) ? "_forward" : ((state & mcBack) ? "_back" : ""), (state & mcLStrafe) ? "_left" : ((state & mcRStrafe) ? "_right" : ""), IsMisfire() ? "_jammed" : (!IsMisfire() && iAmmoElapsed == 0 ? "_empty" : ""));
+				return xr_strconcat(guns_aim_anm, "anm_idle_aim_moving", (state & mcFwd) ? "_forward" : ((state & mcBack) ? "_back" : ""), (state & mcLStrafe) ? "_left" : ((state & mcRStrafe) ? "_right" : ""), anm_name.c_str(), IsMisfire() ? "_jammed" : (!IsMisfire() && iAmmoElapsed == 0 ? "_empty" : ""));
 		}
 	}
 	return nullptr;
@@ -1559,28 +1793,29 @@ const char* CWeaponMagazined::GetAnimAimName()
 void CWeaponMagazined::PlayAnimAim()
 {
 	if (const char* guns_aim_anm = GetAnimAimName())
-			PlayHUDMotion(guns_aim_anm, true, this, GetState());
+		PlayHUDMotion(guns_aim_anm, true, this, GetState());
 	else
 	{
+		std::string anm_name = "anm_idle_aim";
+		auto firemode = GetQueueSize();
 
-		if (!IsHandlerAttached())
-		{
-			if (!IsMisfire() && iAmmoElapsed == 0)
-				PlayHUDMotion("anm_idle_aim_empty", true, nullptr, GetState());
-			else if (IsMisfire())
-				PlayHUDMotion("anm_idle_aim_jammed", true, nullptr, GetState());
-			else
-				PlayHUDMotion("anm_idle_aim", true, nullptr, GetState());
-		}
+		if (firemode == -1 && m_sFireModeMask_a != nullptr)
+			anm_name += m_sFireModeMask_a.c_str();
+		else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+			anm_name += m_sFireModeMask_1.c_str();
+		else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+			anm_name += m_sFireModeMask_3.c_str();
 		else
-		{
-			if (!IsMisfire() && iAmmoElapsed == 0)
-				PlayHUDMotion("anm_idle_aim_empty_handler", true, nullptr, GetState());
-			else if (IsMisfire())
-				PlayHUDMotion("anm_idle_aim_jammed_handler", true, nullptr, GetState());
-			else
-				PlayHUDMotion("anm_idle_aim_handler", true, nullptr, GetState());
-		}
+			anm_name += "";
+
+		if (!IsMisfire() && iAmmoElapsed == 0)
+			anm_name += "_empty";
+		else if (IsMisfire() && iAmmoElapsed != 0)
+			anm_name += "_jammed";
+		else
+			anm_name += "";
+
+		PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 	}
 }
 
@@ -1591,48 +1826,96 @@ void CWeaponMagazined::PlayAnimIdle()
     if (TryPlayAnimIdle())
         return;
 
-	if (!IsHandlerAttached())
+	if (!IsZoomed())
 	{
-		if (IsZoomed())
-			PlayAnimAim();
-		else if (!IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_idle_empty", true, nullptr, GetState());
-		else if (IsMisfire())
-			PlayHUDMotion("anm_idle_jammed", true, nullptr, GetState());
+		std::string anm_name = "anm_idle";
+		auto firemode = GetQueueSize();
+
+		if (firemode == -1 && m_sFireModeMask_a != nullptr)
+			anm_name += m_sFireModeMask_a.c_str();
+		else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+			anm_name += m_sFireModeMask_1.c_str();
+		else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+			anm_name += m_sFireModeMask_3.c_str();
 		else
-			PlayHUDMotion("anm_idle", true, nullptr, GetState());
+			anm_name += "";
+
+		if (!IsMisfire() && iAmmoElapsed == 0)
+			anm_name += "_empty";
+		else if (IsMisfire() && iAmmoElapsed != 0)
+			anm_name += "_jammed";
+		else
+			anm_name += "";
+
+		PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 	}
 	else
-	{
-		if (IsZoomed())
-			PlayAnimAim();
-		else if (!IsMisfire() && iAmmoElapsed == 0)
-			PlayHUDMotion("anm_idle_empty_handler", true, nullptr, GetState());
-		else if (IsMisfire())
-			PlayHUDMotion("anm_idle_jammed_handler", true, nullptr, GetState());
-		else
-			PlayHUDMotion("anm_idle_handler", true, nullptr, GetState());
-	}
+		PlayAnimAim();
 }
 
 void CWeaponMagazined::PlayAnimBore()
 {
-	if (!IsMisfire() && iAmmoElapsed == 0)
-		PlayHUDMotion("anm_bore_empty", true, nullptr, GetState());
-	else if (IsMisfire())
-		PlayHUDMotion("anm_bore_jammed", true, nullptr, GetState());
+	std::string anm_name = "anm_bore";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
 	else
-		PlayHUDMotion("anm_bore", true, nullptr, GetState());
+		anm_name += "";
+
+	if (!IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_empty";
+	else if (IsMisfire() && iAmmoElapsed != 0)
+		anm_name += "_jammed";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }
 
 void CWeaponMagazined::PlayAnimShoot()
 {
-	VERIFY(GetState()==eFire);
-	
-    string_path guns_shoot_anm{};
-	xr_strconcat(guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? (IsScopeAttached() ? "_aim_scope" : "_aim") : "", IsMisfire() ? "_jammed" : (!IsMisfire() && iAmmoElapsed == 1 ? "_last" : ""), IsSilencerAttached() ? "_sil" : "", IsHandlerAttached() ? "_handler" : "");
+	VERIFY(GetState() == eFire);
 
-    PlayHUDMotion(guns_shoot_anm, false, this, GetState());
+	std::string anm_name = "anm_shoot";
+	auto firemode = GetQueueSize();
+
+	if (IsZoomed())
+	{
+		if(!IsScopeAttached())
+			anm_name += "_aim";
+		else
+			anm_name += "_aim_scope";
+	}
+	else
+		anm_name += "";
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
+	else
+		anm_name += "";
+
+	if (IsMisfire() && iAmmoElapsed == 0)
+		anm_name += "_jammed";
+	else if (iAmmoElapsed == 1)
+		anm_name += "_last";
+	else
+		anm_name += "";
+
+	if (IsSilencerAttached())
+		anm_name += "_sil";
+	else
+		anm_name += "";
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }
 
 void CWeaponMagazined::OnZoomIn()
