@@ -866,7 +866,7 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		} break; // End of Hide
 		case eHideDet:
 		    SwitchState(eIdle);
-			break;
+		break;
 		case eShowing:
 		{
 			SwitchState(eIdle);
@@ -874,16 +874,7 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		} break;	// End of Show
 		case eIdle:
 			switch2_Idle();
-			break;  // Keep showing idle
-		case eEmpty:
-			SwitchState(eIdle);
-			break;
-		case eLookMis:
-			SwitchState(eIdle);
-			break;
-		case eUnLightMis:
-			SwitchState(eIdle);
-			break;
+		break;  // Keep showing idle
 		case eShowingDet:
 		{
 		    auto det = smart_cast<CCustomDetector*>(m_pInventory->ItemFromSlot(DETECTOR_SLOT));
@@ -894,15 +885,12 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 				det->TurnDetectorInternal(true);
 			}
 		}break;
+		case eEmpty:
+		case eLookMis:
+		case eUnLightMis:
 		case eShowingEndDet:
-			SwitchState(eIdle);
-		break;
 		case eZoomStart:
-			SwitchState(eIdle);
-		break;
 		case eZoomEnd:
-			SwitchState(eIdle);
-		break;
 		case eSwitchMode:
 			SwitchState(eIdle);
 		break;
