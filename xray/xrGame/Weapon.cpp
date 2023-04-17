@@ -1214,6 +1214,12 @@ bool CWeapon::SwitchAmmoType( u32 flags )
 	if(IsZoomed())
 		return false;
 
+	if (IsMisfire())
+	{
+		Reload();
+		return false;
+	}
+
 	bSwitchAmmoType = true;
 
 	u32 l_newType = m_ammoType;
