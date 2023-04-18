@@ -730,6 +730,11 @@ void CWeaponMagazined::PlayAnimLookMis()
 		std::string anm_name = "anm_fakeshoot";
 		auto firemode = GetQueueSize();
 
+		if(IsZoomed())
+			anm_name += "_aim";
+		else
+			anm_name += "";
+
 		if (firemode == -1 && m_sFireModeMask_a != nullptr)
 			anm_name += m_sFireModeMask_a.c_str();
 		else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
@@ -739,10 +744,7 @@ void CWeaponMagazined::PlayAnimLookMis()
 		else
 			anm_name += "";
 
-		if(IsZoomed())
-			anm_name += "_aim_jammed";
-		else
-			anm_name += "_jammed";
+		anm_name += "_jammed";
 
 		PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 	}
@@ -1757,6 +1759,11 @@ void CWeaponMagazined::EmptyMove()
 	std::string anm_name = "anm_fakeshoot";
 	auto firemode = GetQueueSize();
 
+	if(IsZoomed())
+		anm_name += "_aim";
+	else
+		anm_name += "";
+
 	if (firemode == -1 && m_sFireModeMask_a != nullptr)
 		anm_name += m_sFireModeMask_a.c_str();
 	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
@@ -1766,10 +1773,7 @@ void CWeaponMagazined::EmptyMove()
 	else
 		anm_name += "";
 
-	if(IsZoomed())
-		anm_name += "_aim_empty";
-	else
-		anm_name += "_empty";
+	anm_name += "_empty";
 
 	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }

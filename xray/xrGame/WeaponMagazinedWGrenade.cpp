@@ -446,9 +446,13 @@ void CWeaponMagazinedWGrenade::PlayAnimLookMis()
 {
     if (IsGrenadeLauncherAttached())
 	{
-
 		std::string anm_name = "anm_fakeshoot";
 		auto firemode = GetQueueSize();
+
+		if(IsZoomed())
+			anm_name += "_aim";
+		else
+			anm_name += "";
 
 		if (firemode == -1 && m_sFireModeMask_a != nullptr)
 			anm_name += m_sFireModeMask_a.c_str();
@@ -459,10 +463,7 @@ void CWeaponMagazinedWGrenade::PlayAnimLookMis()
 		else
 			anm_name += "";
 
-		if(IsZoomed())
-			anm_name += "_aim_jammed_w_gl";
-		else
-			anm_name += "_jammed_w_gl";
+		anm_name += "_jammed_w_gl";
 
 		PlayHUDMotion(anm_name.c_str(), true, this, GetState());
 	}
@@ -484,48 +485,17 @@ void CWeaponMagazinedWGrenade::EmptyMove()
 		else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
 			anm_name += m_sFireModeMask_3.c_str();
 
-		if (m_bGrenadeMode)
-		{
-			if (IsZoomed())
-			{
-				if(iAmmoElapsed2 == 0 && !IsMisfire())
-					anm_name += "_aim_empty_g";
-				else if (IsMisfire())
-					anm_name += "_aim_jammed_g";
-				else
-					anm_name += "_aim_g";
-			}
-			else
-			{
-				if(iAmmoElapsed2 == 0 && !IsMisfire())
-					anm_name += "_empty_g";
-				else if (IsMisfire())
-					anm_name += "_jammed_g";
-				else
-					anm_name += "_g";
-			}
-		}
+		if (IsZoomed())
+			anm_name += "_aim";
 		else
-		{
-			if (IsZoomed())
-			{
-				if(iAmmoElapsed == 0 && !IsMisfire())
-					anm_name += "_aim_empty_w_gl";
-				else if (IsMisfire())
-					anm_name += "_aim_jammed_w_gl";
-				else
-					anm_name += "_aim_w_gl";
-			}
-			else
-			{
-				if(iAmmoElapsed == 0 && !IsMisfire())
-					anm_name += "_empty_w_gl";
-				else if (IsMisfire())
-					anm_name += "_jammed_w_gl";
-				else
-					anm_name += "_w_gl";
-			}
-		}
+			anm_name += "";
+
+		anm_name += "_empty";
+
+		if (m_bGrenadeMode)
+			anm_name += "_g";
+		else
+			anm_name += "_w_gl";
 
 		PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 	}
