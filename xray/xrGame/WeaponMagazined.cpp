@@ -455,7 +455,8 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
 {
 	u32 old_state = GetState();
 	inherited::OnStateSwitch(S);
-        switch (S) {
+        switch (S)
+		{
         case eIdle:
             switch2_Idle();
             break;
@@ -538,6 +539,7 @@ void CWeaponMagazined::UpdateCL()
 		case eZoomStart:
 		case eZoomEnd:
 		case eReload:
+		case eSwitch:
 		case eIdle:
 			{
 				fShotTimeCounter -=	dt;
@@ -864,9 +866,6 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		    SwitchState(eHidden);
 		    bSwitchAmmoType = false;
 		} break; // End of Hide
-		case eHideDet:
-		    SwitchState(eIdle);
-		break;
 		case eShowing:
 		{
 			SwitchState(eIdle);
@@ -892,6 +891,8 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		case eZoomStart:
 		case eZoomEnd:
 		case eSwitchMode:
+		case eSwitch:
+		case eHideDet:
 			SwitchState(eIdle);
 		break;
 	}

@@ -1214,7 +1214,7 @@ bool CWeapon::SwitchAmmoType( u32 flags )
 	if(IsZoomed())
 		return false;
 
-	if (IsMisfire())
+	if (IsMisfire() && !IsGrenadeLauncherMode())
 	{
 		Reload();
 		return false;

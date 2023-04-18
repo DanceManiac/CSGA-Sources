@@ -145,33 +145,10 @@ void CWeaponMagazinedWGrenade::switch2_Reload()
 	     inherited::switch2_Reload();
 }
 
-void CWeaponMagazinedWGrenade::OnShot()
+void CWeaponMagazinedWGrenade::switch2_SwitchGL()
 {
-	if(m_bGrenadeMode)
-	{
-		PlayAnimShoot		();
-		PlaySound			("sndShotG", get_LastFP2());
-		AddShotEffector		();
-		StartFlameParticles2();
-	} 
-	else 
-		inherited::OnShot	();
-}
+	SetPending(TRUE);
 
-bool CWeaponMagazinedWGrenade::SwitchMode() 
-{
-	bool bUsefulStateToSwitch = (GetState() == eIdle && !IsZoomed() && !IsPending());
-
-	if(!bUsefulStateToSwitch)
-		return false;
-
-	if(!IsGrenadeLauncherAttached()) 
-		return false;
-
-	SetPending				(true);
-
-	PerformSwitchGL			();
-	
 	if(m_bGrenadeMode)
 	{
 		if(IsScopeAttached())
@@ -187,11 +164,40 @@ bool CWeaponMagazinedWGrenade::SwitchMode()
 			PlaySound				("sndSwitchToG", get_LastFP());
 	}
 
-	PlayAnimModeSwitch		();
+	PlayAnimModeSwitch();
+}
+
+void CWeaponMagazinedWGrenade::OnShot()
+{
+	if(m_bGrenadeMode)
+	{
+		PlayAnimShoot		();
+		PlaySound			("sndShotG", get_LastFP2());
+		AddShotEffector		();
+		StartFlameParticles2();
+	} 
+	else 
+		inherited::OnShot	();
+}
+
+bool CWeaponMagazinedWGrenade::SwitchMode() 
+{
+
+	if(!IsGrenadeLauncherAttached()) 
+		return false;
+
+	bool bUsefulStateToSwitch = (GetState() == eIdle && !IsZoomed() && !IsPending());
+
+	if(!bUsefulStateToSwitch)
+		return false;
+
+	PerformSwitchGL();
+
+	SwitchState(eSwitch);
 
 	m_dwAmmoCurrentCalcFrame = 0;
 
-	return					true;
+	return true;
 }
 
 void  CWeaponMagazinedWGrenade::PerformSwitchGL()
@@ -237,9 +243,10 @@ bool CWeaponMagazinedWGrenade::Action(s32 cmd, u32 flags)
 	{
 	case kWPN_FUNC: 
 		{
-            if(flags&CMD_START && !IsPending()) 
-				SwitchState(eSwitch);
-			return true;
+            if(flags&CMD_START && !IsPending() && GetState() == eIdle) 
+				return SwitchMode();
+            else
+				return false;
 		}
 	}
 	return false;
@@ -423,19 +430,14 @@ void CWeaponMagazinedWGrenade::ReloadMagazine()
 
 void CWeaponMagazinedWGrenade::OnStateSwitch(u32 S) 
 {
-
 	switch (S)
 	{
 	case eSwitch:
 		{
-			if(!SwitchMode())
-			{
-				SwitchState(eIdle);
-				return;
-			}
+			switch2_SwitchGL();
 		}break;
 	}
-	
+
 	inherited::OnStateSwitch(S);
 	UpdateGrenadeVisibility(!!iAmmoElapsed || S == eReload);
 }
@@ -507,7 +509,7 @@ void CWeaponMagazinedWGrenade::EmptyMove()
 		{
 			if (IsZoomed())
 			{
-				if(iAmmoElapsed2 == 0 && !IsMisfire())
+				if(iAmmoElapsed == 0 && !IsMisfire())
 					anm_name += "_aim_empty_w_gl";
 				else if (IsMisfire())
 					anm_name += "_aim_jammed_w_gl";
@@ -516,7 +518,7 @@ void CWeaponMagazinedWGrenade::EmptyMove()
 			}
 			else
 			{
-				if(iAmmoElapsed2 == 0 && !IsMisfire())
+				if(iAmmoElapsed == 0 && !IsMisfire())
 					anm_name += "_empty_w_gl";
 				else if (IsMisfire())
 					anm_name += "_jammed_w_gl";
@@ -529,18 +531,6 @@ void CWeaponMagazinedWGrenade::EmptyMove()
 	}
 	else
 		inherited::EmptyMove();
-}
-
-void CWeaponMagazinedWGrenade::OnAnimationEnd(u32 state)
-{
-	switch (state)
-	{
-	case eSwitch:
-		{
-			SwitchState(eIdle);
-		}break;
-	}
-	inherited::OnAnimationEnd(state);
 }
 
 void CWeaponMagazinedWGrenade::OnH_B_Independent(bool just_before_destroy)
@@ -689,7 +679,7 @@ void CWeaponMagazinedWGrenade::PlayAnimShow()
 		}
 		else
 		{
-			if(iAmmoElapsed2 == 0 && !IsMisfire())
+			if(iAmmoElapsed == 0 && !IsMisfire())
 				anm_name += "_empty_w_gl";
 			else if (IsMisfire())
 				anm_name += "_jammed_w_gl";
@@ -730,7 +720,7 @@ void CWeaponMagazinedWGrenade::PlayAnimHide()
 		}
 		else
 		{
-			if(iAmmoElapsed2 == 0 && !IsMisfire())
+			if(iAmmoElapsed == 0 && !IsMisfire())
 				anm_name += "_empty_w_gl";
 			else if (IsMisfire())
 				anm_name += "_jammed_w_gl";
@@ -738,7 +728,7 @@ void CWeaponMagazinedWGrenade::PlayAnimHide()
 				anm_name += "_w_gl";
 		}
 
-		PlayHUDMotion(anm_name.c_str(), FALSE, this, GetState());
+		PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 	}	
 	else
 		inherited::PlayAnimHide();
@@ -874,7 +864,7 @@ void CWeaponMagazinedWGrenade::PlayAnimAim()
 			{
 				if (IsMisfire())
 					anm_name += "_jammed_g";
-				else if(iAmmoElapsed == 0 && !IsMisfire())
+				else if(iAmmoElapsed2 == 0 && !IsMisfire())
 					anm_name += "_empty_g";
 				else
 					anm_name += "_g";
@@ -923,7 +913,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 			{
 				if (IsMisfire())
 					anm_name += "_jammed_g";
-				else if(iAmmoElapsed == 0 && !IsMisfire())
+				else if(iAmmoElapsed2 == 0 && !IsMisfire())
 					anm_name += "_empty_g";
 				else
 					anm_name += "_g";
@@ -963,7 +953,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdleMovingCrouch()
 		{
 			if (IsMisfire())
 				anm_name += "_jammed_g";
-			else if(iAmmoElapsed == 0 && !IsMisfire())
+			else if(iAmmoElapsed2 == 0 && !IsMisfire())
 				anm_name += "_empty_g";
 			else
 				anm_name += "_g";
@@ -1002,7 +992,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdleMovingCrouchSlow()
 		{
 			if (IsMisfire())
 				anm_name += "_jammed_g";
-			else if(iAmmoElapsed == 0 && !IsMisfire())
+			else if(iAmmoElapsed2 == 0 && !IsMisfire())
 				anm_name += "_empty_g";
 			else
 				anm_name += "_g";
@@ -1041,7 +1031,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdleMovingSlow()
 		{
 			if (IsMisfire())
 				anm_name += "_jammed_g";
-			else if(iAmmoElapsed == 0 && !IsMisfire())
+			else if(iAmmoElapsed2 == 0 && !IsMisfire())
 				anm_name += "_empty_g";
 			else
 				anm_name += "_g";
@@ -1080,7 +1070,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdleMoving()
 		{
 			if (IsMisfire())
 				anm_name += "_jammed_g";
-			else if(iAmmoElapsed == 0 && !IsMisfire())
+			else if(iAmmoElapsed2 == 0 && !IsMisfire())
 				anm_name += "_empty_g";
 			else
 				anm_name += "_g";
@@ -1119,7 +1109,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdleSprintStart()
 		{
 			if (IsMisfire())
 				anm_name += "_jammed_g";
-			else if(iAmmoElapsed == 0 && !IsMisfire())
+			else if(iAmmoElapsed2 == 0 && !IsMisfire())
 				anm_name += "_empty_g";
 			else
 				anm_name += "_g";
@@ -1158,7 +1148,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdleSprint()
 		{
 			if (IsMisfire())
 				anm_name += "_jammed_g";
-			else if(iAmmoElapsed == 0 && !IsMisfire())
+			else if(iAmmoElapsed2 == 0 && !IsMisfire())
 				anm_name += "_empty_g";
 			else
 				anm_name += "_g";
@@ -1197,7 +1187,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdleSprintEnd()
 		{
 			if (IsMisfire())
 				anm_name += "_jammed_g";
-			else if(iAmmoElapsed == 0 && !IsMisfire())
+			else if(iAmmoElapsed2 == 0 && !IsMisfire())
 				anm_name += "_empty_g";
 			else
 				anm_name += "_g";
@@ -1230,7 +1220,7 @@ void CWeaponMagazinedWGrenade::PlayAnimShoot()
 	}
 	else
 	{
-		VERIFY(GetState()==eFire);
+		VERIFY(GetState() == eFire);
 
 		if (IsGrenadeLauncherAttached())
 		{
@@ -1242,40 +1232,6 @@ void CWeaponMagazinedWGrenade::PlayAnimShoot()
 		else
 			inherited::PlayAnimShoot();
 	}
-}
-
-void CWeaponMagazinedWGrenade::PlayAnimModeSwitch()
-{
-	std::string anm_name = "anm_switch";
-	auto firemode = GetQueueSize();
-
-	if (firemode == -1 && m_sFireModeMask_a != nullptr)
-		anm_name += m_sFireModeMask_a.c_str();
-	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
-		anm_name += m_sFireModeMask_1.c_str();
-	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
-		anm_name += m_sFireModeMask_3.c_str();
-
-	if (!m_bGrenadeMode)
-	{
-		if (IsMisfire())
-			anm_name += "_jammed_w_gl";
-		else if(iAmmoElapsed == 0 && !IsMisfire())
-			anm_name += "_empty_w_gl";
-		else
-			anm_name += "_w_gl";
-	}
-	else
-	{
-		if (IsMisfire())
-			anm_name += "_jammed_g";
-		else if(iAmmoElapsed == 0 && !IsMisfire())
-			anm_name += "_empty_g";
-		else
-			anm_name += "_g";
-	}
-
-	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }
 
 void CWeaponMagazinedWGrenade::PlayAnimBore()
@@ -1305,7 +1261,7 @@ void CWeaponMagazinedWGrenade::PlayAnimBore()
 		{
 			if (IsMisfire())
 				anm_name += "_jammed_g";
-			else if(iAmmoElapsed == 0 && !IsMisfire())
+			else if(iAmmoElapsed2 == 0 && !IsMisfire())
 				anm_name += "_empty_g";
 			else
 				anm_name += "_g";
@@ -1319,7 +1275,8 @@ void CWeaponMagazinedWGrenade::PlayAnimBore()
 
 void CWeaponMagazinedWGrenade::PlayAnimAimStart()
 {
-    if (IsGrenadeLauncherAttached()) {
+    if (IsGrenadeLauncherAttached())
+	{
 
 		std::string anm_name = "anm_idle_aim_start";
 		auto firemode = GetQueueSize();
@@ -1344,7 +1301,7 @@ void CWeaponMagazinedWGrenade::PlayAnimAimStart()
 		{
 			if (IsMisfire())
 				anm_name += "_jammed_g";
-			else if(iAmmoElapsed == 0 && !IsMisfire())
+			else if(iAmmoElapsed2 == 0 && !IsMisfire())
 				anm_name += "_empty_g";
 			else
 				anm_name += "_g";
@@ -1358,7 +1315,8 @@ void CWeaponMagazinedWGrenade::PlayAnimAimStart()
 
 void CWeaponMagazinedWGrenade::PlayAnimAimEnd()
 {
-    if (IsGrenadeLauncherAttached()) {
+    if (IsGrenadeLauncherAttached())
+	{
 
 		std::string anm_name = "anm_idle_aim_end";
 		auto firemode = GetQueueSize();
@@ -1383,7 +1341,7 @@ void CWeaponMagazinedWGrenade::PlayAnimAimEnd()
 		{
 			if (IsMisfire())
 				anm_name += "_jammed_g";
-			else if(iAmmoElapsed == 0 && !IsMisfire())
+			else if(iAmmoElapsed2 == 0 && !IsMisfire())
 				anm_name += "_empty_g";
 			else
 				anm_name += "_g";
@@ -1432,6 +1390,40 @@ void CWeaponMagazinedWGrenade::PlayAnimFireMode()
 	}
 	else
 		inherited::PlayAnimFireMode();
+}
+
+void CWeaponMagazinedWGrenade::PlayAnimModeSwitch()
+{
+	std::string anm_name = "anm_switch";
+	auto firemode = GetQueueSize();
+
+	if (firemode == -1 && m_sFireModeMask_a != nullptr)
+		anm_name += m_sFireModeMask_a.c_str();
+	else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+		anm_name += m_sFireModeMask_1.c_str();
+	else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+		anm_name += m_sFireModeMask_3.c_str();
+
+	if (!m_bGrenadeMode)
+	{
+		if (IsMisfire())
+			anm_name += "_jammed_w_gl";
+		else if(iAmmoElapsed == 0 && !IsMisfire())
+			anm_name += "_empty_w_gl";
+		else
+			anm_name += "_w_gl";
+	}
+	else
+	{
+		if (IsMisfire())
+			anm_name += "_jammed_g";
+		else if(iAmmoElapsed2 == 0 && !IsMisfire())
+			anm_name += "_empty_g";
+		else
+			anm_name += "_g";
+	}
+
+	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }
 
 void CWeaponMagazinedWGrenade::UpdateSounds	()
