@@ -889,7 +889,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 					anm_name += "_g";
 			}
 
-			PlayHUDMotion(anm_name.c_str(), TRUE, nullptr, GetState());
+			PlayHUDMotion(anm_name.c_str(), TRUE, nullptr, eIdle);
 		}
 	}
 	else
@@ -1356,7 +1356,7 @@ void CWeaponMagazinedWGrenade::PlayAnimFireMode()
 		else
 			anm_name += "_w_gl";
 
-		PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
+		PlayHUDMotion(anm_name.c_str(), TRUE, this, eSwitchMode);
 	}
 	else
 		inherited::PlayAnimFireMode();
@@ -1364,6 +1364,8 @@ void CWeaponMagazinedWGrenade::PlayAnimFireMode()
 
 void CWeaponMagazinedWGrenade::PlayAnimModeSwitch()
 {
+	VERIFY(GetState() == eSwitch);
+
 	std::string anm_name = "anm_switch";
 	auto firemode = GetQueueSize();
 
@@ -1393,7 +1395,7 @@ void CWeaponMagazinedWGrenade::PlayAnimModeSwitch()
 			anm_name += "_g";
 	}
 
-	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
+	PlayHUDMotion(anm_name.c_str(), TRUE, this, eSwitch);
 }
 
 void CWeaponMagazinedWGrenade::UpdateSounds	()
