@@ -478,17 +478,17 @@ void CWeaponMagazinedWGrenade::EmptyMove()
 		std::string anm_name = "anm_fakeshoot";
 		auto firemode = GetQueueSize();
 
+		if (IsZoomed())
+			anm_name += "_aim";
+		else
+			anm_name += "";
+
 		if (firemode == -1 && m_sFireModeMask_a != nullptr)
 			anm_name += m_sFireModeMask_a.c_str();
 		else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
 			anm_name += m_sFireModeMask_1.c_str();
 		else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
 			anm_name += m_sFireModeMask_3.c_str();
-
-		if (IsZoomed())
-			anm_name += "_aim";
-		else
-			anm_name += "";
 
 		anm_name += "_empty";
 
