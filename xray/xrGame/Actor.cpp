@@ -66,6 +66,7 @@
 #include "../Include/xrRender/UIRender.h"
 #include "ai_object_location.h"
 #include "embedded_editor/embedded_editor_prop.h"
+#include "CustomDetector.h"
 
 const u32		patch_frames	= 50;
 const float		respawn_delay	= 1.f;
@@ -1585,6 +1586,20 @@ void CActor::OnItemDrop(CInventoryItem *inventory_item)
 
 	if (wpn && wpn->has_flashlight && wpn->IsFlashlightOn())
 		wpn->UpdateFlashlight();
+
+	if (wpn)
+	{
+		auto i1 = g_player_hud->attached_item(1);
+		if (i1 && wpn->HudItemData())
+		{
+			auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+			if (det)
+			{
+				det->bZoomed = false;
+				det->SwitchState(CCustomDetector::eIdle);
+			}
+		}
+	}
 	
 }
 

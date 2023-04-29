@@ -13,6 +13,8 @@
 #include "game_cl_single.h"
 #include "../xrEngine/SkeletonMotions.h"
 #include "hudsound.h"
+#include "CustomDetector.h"
+#include "player_hud.h"
 
 #define KNIFE_MATERIAL_NAME "objects\\knife"
 
@@ -201,7 +203,20 @@ void CWeaponKnife::switch2_Attacking	(u32 state)
 	else //eFire2
 		PlayHUDMotion("anm_attack2", FALSE, this, state);
 
-	SetPending			(TRUE);
+	attachable_hud_item* i1 = g_player_hud->attached_item(1);
+	if (i1 && HudItemData())
+	{
+		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+		if (det && (det->GetState() == CCustomDetector::eIdle || det->GetState() == CCustomDetector::eKickKnf || det->GetState() == CCustomDetector::eKickKnf2))
+		{
+			if(state == eFire)
+				det->SwitchState(CCustomDetector::eKickKnf);
+			else
+				det->SwitchState(CCustomDetector::eKickKnf2);
+		}
+	}
+
+	SetPending(TRUE);
 }
 
 void CWeaponKnife::switch2_Idle	()

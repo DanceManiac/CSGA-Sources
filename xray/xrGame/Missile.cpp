@@ -20,6 +20,8 @@
 #ifdef DEBUG
 #	include "phdebug.h"
 #endif
+#include "CustomDetector.h"
+#include "player_hud.h"
 
 
 #define PLAYING_ANIM_TIME 10000
@@ -263,6 +265,7 @@ void CMissile::UpdateCL()
 	m_sounds.SetPosition("SndThrowBegin", P);
 
 }
+
 void CMissile::shedule_Update(u32 dt)
 {
 	inherited::shedule_Update(dt);
@@ -305,6 +308,14 @@ void CMissile::State(u32 state, u32 old_state)
 				SetPending			(TRUE);
 				PlaySound		("SndHide",Position());
 				PlayHUDMotion("anm_hide", TRUE,this, GetState());
+
+				attachable_hud_item* i1 = g_player_hud->attached_item(1);
+				if (i1 && HudItemData())
+				{
+					auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+					if (det)
+						det->SwitchState(CCustomDetector::eHideParItm);
+				}
 			}
 		} break;
 	case eHidden:
@@ -328,10 +339,26 @@ void CMissile::State(u32 state, u32 old_state)
 			m_fThrowForce		= m_fMinForce;
 			PlaySound		("SndThrowBegin",Position());
 			PlayHUDMotion		("anm_throw_begin", TRUE, this, GetState());
+
+			attachable_hud_item* i1 = g_player_hud->attached_item(1);
+			if (i1 && HudItemData())
+			{
+				auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+				if (det)
+					det->SwitchState(CCustomDetector::eThrowStartMis);
+			}
 		} break;
 	case eReady:
 		{
 			PlayHUDMotion		("anm_throw_idle", TRUE,this, GetState());
+
+			attachable_hud_item* i1 = g_player_hud->attached_item(1);
+			if (i1 && HudItemData())
+			{
+				auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+				if (det)
+					det->SwitchState(CCustomDetector::eReadyMis);
+			}
 		} break;
 	case eThrow:
 		{
@@ -339,6 +366,14 @@ void CMissile::State(u32 state, u32 old_state)
 			m_throw				= false;
 			PlaySound		("SndThrow",Position());
 			PlayHUDMotion		("anm_throw", TRUE, this, GetState());
+
+			attachable_hud_item* i1 = g_player_hud->attached_item(1);
+			if (i1 && HudItemData())
+			{
+				auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+				if (det)
+					det->SwitchState(CCustomDetector::eThrowMis);
+			}
 		} break;
 	case eThrowEnd:
 		{

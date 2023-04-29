@@ -76,11 +76,11 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
 		{
 			if (wpn)
 			{
-                if (knf || wpn->bIsDetReload)
+                if (knf || wpn->bIsNeedCallDet)
 				{
 					SwitchState(eShowing);
 					TurnDetectorInternal(true);
-					wpn->bIsDetReload = false;
+					wpn->bIsNeedCallDet = false;
 				}
 				else
 				{
@@ -130,6 +130,144 @@ void CCustomDetector::OnStateSwitch(u32 S)
 			PlayAnimIdle();
 			SetPending(false);
 		}break;
+	case eShowingParItm:
+		{
+			PlayHUDMotion("anm_show_right_hand", TRUE, this, eShowingParItm);
+			SetPending(TRUE);
+		}break;
+	case eHideParItm:
+		{
+			PlayHUDMotion("anm_hide_right_hand", TRUE, this, eHideParItm);
+			SetPending(TRUE);
+		}break;
+	case eFireDet:
+		{
+			if(bZoomed)
+				PlayHUDMotion("anm_aim_wpn_shoot_det", TRUE, this, eFireDet);
+			else
+				PlayHUDMotion("anm_wpn_shoot_det", TRUE, this, eFireDet);
+
+			SetPending(FALSE);
+		}break;
+	case eEmptyDet:
+		{
+			if(bZoomed)
+				PlayHUDMotion("anm_aim_wpn_shoot_empty_det", TRUE, this, eEmptyDet);
+			else
+				PlayHUDMotion("anm_wpn_shoot_empty_det", TRUE, this, eEmptyDet);
+
+			SetPending(TRUE);
+		}break;
+        case eKickKnf:
+		{
+			PlayHUDMotion("anm_knf_kick_det", TRUE, this, eKickKnf);
+			SetPending(FALSE);
+		}break;
+        case eKickKnf2:
+		{
+			PlayHUDMotion("anm_knf_kick2_det", TRUE, this, eKickKnf);
+			SetPending(FALSE);
+		}break;
+	case eUnLightMisDet:
+		{
+			if(bZoomed)
+				PlayHUDMotion("anm_aim_wpn_lightmis_det", TRUE, this, eUnLightMisDet);
+			else
+				PlayHUDMotion("anm_wpn_lightmis_det", TRUE, this, eUnLightMisDet);
+			SetPending(TRUE);
+		}break;
+	case eLookMisDet:
+		{
+			if(bZoomed)
+				PlayHUDMotion("anm_aim_wpn_lookmis_det", TRUE, this, eLookMisDet);
+			else
+				PlayHUDMotion("anm_wpn_lookmis_det", TRUE, this, eLookMisDet);
+			SetPending(TRUE);
+		}break;
+	case eSwitchModeDet:
+		{
+			PlayHUDMotion("anm_wpn_firemode_det", TRUE, this, eSwitchModeDet);
+			SetPending(TRUE);
+		}break;
+        case eThrowStartMis:
+		{
+			PlayHUDMotion("anm_throw_start_det", TRUE, this, eThrowStartMis);
+			SetPending(FALSE);
+		}break;
+        case eReadyMis:
+		{
+			PlayHUDMotion("anm_throw_det", TRUE, this, eThrowStartMis);
+			SetPending(FALSE);
+		}break;
+        case eThrowMis:
+		{
+			PlayHUDMotion("anm_throw_end_det", TRUE, this, eThrowMis);
+			SetPending(FALSE);
+		}break;
+        case eZoomStartDet:
+		{
+			PlayHUDMotion("anm_zoom_start_det", TRUE, this, eZoomStartDet);
+			SetPending(FALSE);
+			bZoomed = true;
+		}break;
+        case eZoomEndDet:
+		{
+			PlayHUDMotion("anm_zoom_end_det", TRUE, this, eZoomEndDet);
+			SetPending(FALSE);
+			bZoomed = false;
+		}break;
+	}
+}
+
+bool CCustomDetector::TryPlayAnimIdle()
+{
+	if (bZoomed)
+		return false;
+
+	return inherited::TryPlayAnimIdle();
+}
+
+const char* CCustomDetector::GetAnimAimName()
+{
+	auto pActor = smart_cast<const CActor*>(H_Parent());
+	if (pActor)
+	{
+        u32 state = pActor->get_state();
+        if (state & mcAnyMove)
+		{
+			std::string anm_name = "";
+			if (state & mcFwd)
+				anm_name += "_forward";
+			else if (state & mcBack)
+				anm_name += "_back";
+			else if (state & mcLStrafe)
+				anm_name += "_left";
+			else if (state & mcRStrafe)
+				anm_name += "_right";
+
+			return xr_strconcat(guns_aim_det_anm, "anm_idle_aim_moving_det", anm_name.c_str());
+		}
+	}
+	return nullptr;
+}
+
+void CCustomDetector::PlayAnimIdle()
+{
+	if (TryPlayAnimIdle())
+		return;
+
+	if (!bZoomed)
+	{
+		bZoomed = false;
+		PlayHUDMotion("anm_idle", true, nullptr, GetState());
+	}
+	else
+	{
+		bZoomed = true;
+		if (const char* guns_aim_det_anm = GetAnimAimName())
+			PlayHUDMotion(guns_aim_det_anm, true, this, GetState());
+		else
+			PlayHUDMotion("anm_idle_aim", true, nullptr, GetState());
 	}
 }
 
@@ -154,16 +292,26 @@ void CCustomDetector::OnAnimationEnd(u32 state)
 	inherited::OnAnimationEnd	(state);
 	switch(state)
 	{
-	case eShowing:
+		case eHiding:
 		{
-			SwitchState					(eIdle);
-		} break;
-	case eHiding:
-		{
-			SwitchState					(eHidden);
-			TurnDetectorInternal		(false);
-			g_player_hud->detach_item	(this);
-		} break;
+			SwitchState(eHidden);
+			TurnDetectorInternal(false);
+			g_player_hud->detach_item(this);
+		}break;
+		case eShowing:
+		case eFireDet:
+		case eKickKnf:
+		case eKickKnf2:
+		case eEmptyDet:
+		case eShowingParItm:
+		case eHideParItm:
+		case eZoomStartDet:
+		case eZoomEndDet:
+		case eLookMisDet:
+		case eUnLightMisDet:
+		case eSwitchModeDet:
+			SwitchState(eIdle);
+		break;
 	}
 }
 
@@ -185,6 +333,7 @@ CCustomDetector::CCustomDetector()
 	m_ui				= nullptr;
 	m_bFastAnimMode		= false;
 	m_bNeedActivation	= false;
+	bZoomed				= false;
 }
 
 CCustomDetector::~CCustomDetector() 
@@ -233,40 +382,36 @@ bool CCustomDetector::IsWorking()
 
 void CCustomDetector::UpfateWork()
 {
-	UpdateAf				();
-	m_ui->update			();
+	UpdateAf();
+	m_ui->update();
 }
 
 void CCustomDetector::UpdateVisibility()
 {
 	//check visibility
-	attachable_hud_item* i0		= g_player_hud->attached_item(0);
+	attachable_hud_item* i0 = g_player_hud->attached_item(0);
 	if(i0 && HudItemData())
 	{
-		CWeapon* wpn			= smart_cast<CWeapon*>(i0->m_parent_hud_item);
+		auto wpn = dynamic_cast<CWeapon*>(i0->m_parent_hud_item);
 		if(wpn)
 		{
-			u32 state			= wpn->GetState();
-			bool bClimb			= ( (Actor()->MovingState()&mcClimb) != 0 );
-			if(bClimb || state==CWeapon::eReload || state==CWeapon::eSwitch)
+			u32 state = wpn->GetState();
+			bool bClimb	 = ((Actor()->MovingState()&mcClimb) != 0);
+			if(bClimb || state==CWeapon::eReload || state==CWeapon::eSwitch || (state == CWeapon::eSwitchMode && wpn->m_magazine.size() == 0))
 			{
-				HideDetector		(true);
-				m_bNeedActivation	= true;
+				HideDetector(true);
+				m_bNeedActivation = true;
 			}
 		}
 	}
-	else
-	if(m_bNeedActivation)
+	else if(m_bNeedActivation)
 	{
-		attachable_hud_item* i0		= g_player_hud->attached_item(0);
-		bool bClimb					= ( (Actor()->MovingState()&mcClimb) != 0 );
+		bool bClimb = ((Actor()->MovingState()&mcClimb) != 0);
 		if(!bClimb)
 		{
-			CWeapon* wpn			= (i0)?smart_cast<CWeapon*>(i0->m_parent_hud_item) : NULL;
-			if(	!wpn || ( !wpn->IsZoomed() && wpn->GetState()!=CWeapon::eReload && wpn->GetState()!=CWeapon::eSwitch ) )
-			{
-				ShowDetector		(true);
-			}
+			auto wpn = (i0) ? dynamic_cast<CWeapon*>(i0->m_parent_hud_item) : NULL;
+			if(!wpn || (!wpn->IsZoomed() && wpn->GetState() != CWeapon::eReload && wpn->GetState() != CWeapon::eSwitch && wpn->GetState() != CWeapon::eSwitchMode))
+				ShowDetector(true);
 		}
 	}
 }
@@ -275,22 +420,24 @@ void CCustomDetector::UpdateCL()
 {
 	inherited::UpdateCL();
 
-	UpdateVisibility		();
+	UpdateVisibility();
 
-	if( !IsWorking() )		return;
-	UpfateWork				();
+	if(!IsWorking())
+		return;
+
+	UpfateWork();
 }
 
 void CCustomDetector::OnH_A_Chield() 
 {
-	inherited::OnH_A_Chield		();
+	inherited::OnH_A_Chield();
 }
 
 void CCustomDetector::OnH_B_Independent(bool just_before_destroy) 
 {
 	inherited::OnH_B_Independent(just_before_destroy);
 	
-	m_artefacts.clear			();
+	m_artefacts.clear();
 
 	if (GetState() != eHidden)
 	{
@@ -300,36 +447,32 @@ void CCustomDetector::OnH_B_Independent(bool just_before_destroy)
 	}
 }
 
-
 void CCustomDetector::OnMoveToRuck(EItemPlace prev)
 {
-	inherited::OnMoveToRuck	(prev);
-	if(GetState()==eIdle)
+	inherited::OnMoveToRuck(prev);
+	if(GetState() == eIdle)
 	{
-		SwitchState					(eHidden);
-		g_player_hud->detach_item	(this);
+		SwitchState(eHidden);
+		g_player_hud->detach_item(this);
 	}
-	TurnDetectorInternal	(false);
+	TurnDetectorInternal(false);
 }
 
 void CCustomDetector::OnMoveToSlot()
 {
-	inherited::OnMoveToSlot	();
+	inherited::OnMoveToSlot();
 }
 
 void CCustomDetector::TurnDetectorInternal(bool b)
 {
-	m_bWorking				= b;
-	if(b && m_ui==NULL)
+	m_bWorking = b;
+	if(b && m_ui == NULL)
 	{
-		CreateUI			();
+		CreateUI();
 	}
-	else{}
 
-	UpdateNightVisionMode	(b);
+	UpdateNightVisionMode(b);
 }
-
-
 
 #include "game_base_space.h"
 void CCustomDetector::UpdateNightVisionMode(bool b_on)

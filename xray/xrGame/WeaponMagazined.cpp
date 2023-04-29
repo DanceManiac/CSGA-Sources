@@ -687,6 +687,14 @@ void CWeaponMagazined::switch2_LookMisfire()
 
 	if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
 		HUD().GetUI()->AddInfoMessage("gun_jammed");
+
+	attachable_hud_item* i1 = g_player_hud->attached_item(1);
+	if (i1 && HudItemData())
+	{
+		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+		if (det && det->GetState() == CCustomDetector::eIdle)
+			det->SwitchState(CCustomDetector::eLookMisDet);
+	}
 }
 
 void CWeaponMagazined::switch2_LightMisfire()
@@ -697,6 +705,14 @@ void CWeaponMagazined::switch2_LightMisfire()
 
 	if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
 		HUD().GetUI()->AddInfoMessage("gun_misfire");
+
+	attachable_hud_item* i1 = g_player_hud->attached_item(1);
+	if (i1 && HudItemData())
+	{
+		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+		if (det && det->GetState() == CCustomDetector::eIdle)
+			det->SwitchState(CCustomDetector::eUnLightMisDet);
+	}
 }
 
 void CWeaponMagazined::PlayAnimLightMis()
@@ -1006,6 +1022,14 @@ void CWeaponMagazined::switch2_FireMode()
 	SetPending(TRUE);
 	PlayAnimFireMode();
 	PlaySound("sndFireMode", get_LastFP());
+
+	attachable_hud_item* i1 = g_player_hud->attached_item(1);
+	if (i1 && HudItemData())
+	{
+		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+		if (det && det->GetState() == CCustomDetector::eIdle && m_magazine.size() != 0)
+			det->SwitchState(CCustomDetector::eSwitchModeDet);
+	}
 }
 
 bool CWeaponMagazined::Action(s32 cmd, u32 flags) 
@@ -1335,6 +1359,24 @@ void CWeaponMagazined::PlayAnimFireMode()
 	else
 		anm_name += "";
 
+	attachable_hud_item* i1 = g_player_hud->attached_item(1);
+	if (i1 && HudItemData())
+	{
+		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+		if (det && iAmmoElapsed == 0)
+		{
+			anm_name += "_detector";
+			bIsNeedCallDet = true;
+		}
+		else
+		{
+			anm_name += "";
+			bIsNeedCallDet = false;
+		}
+	}
+	else
+		bIsNeedCallDet = false;
+
 	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }
 
@@ -1356,7 +1398,7 @@ void CWeaponMagazined::PlayAnimShowDet()
 
 	if (!IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_empty";
-	else if (IsMisfire() && iAmmoElapsed != 0)
+	else if (IsMisfire())
 		anm_name += "_jammed";
 	else
 		anm_name += "";
@@ -1382,7 +1424,7 @@ void CWeaponMagazined::PlayAnimShowEndDet()
 
 	if (!IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_empty";
-	else if (IsMisfire() && iAmmoElapsed != 0)
+	else if (IsMisfire())
 		anm_name += "_jammed";
 	else
 		anm_name += "";
@@ -1434,7 +1476,7 @@ void CWeaponMagazined::PlayAnimHideDet()
 
 	if (!IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_empty";
-	else if (IsMisfire() && iAmmoElapsed != 0)
+	else if (IsMisfire())
 		anm_name += "_jammed";
 	else
 		anm_name += "";
@@ -1460,7 +1502,7 @@ void CWeaponMagazined::PlayAnimReload()
 
 	if (!IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_empty";
-	else if (IsMisfire() && iAmmoElapsed != 0)
+	else if (IsMisfire())
 		anm_name += "_jammed";
 	else if (IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_jammed_last";
@@ -1478,16 +1520,16 @@ void CWeaponMagazined::PlayAnimReload()
 		if (det)
 		{
 			anm_name += "_detector";
-			bIsDetReload = true;
+			bIsNeedCallDet = true;
 		}
 		else
 		{
 			anm_name += "";
-			bIsDetReload = false;
+			bIsNeedCallDet = false;
 		}
 	}
 	else
-		bIsDetReload = false;
+		bIsNeedCallDet = false;
 
 	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }
@@ -1503,12 +1545,29 @@ void CWeaponMagazined::PlayAnimAimStart()
 		std::string anm_name = "anm_idle_aim_start";
 		auto firemode = GetQueueSize();
 
+		if (firemode == -1 && m_sFireModeMask_a != nullptr)
+			anm_name += m_sFireModeMask_a.c_str();
+		else if (firemode == 1 && m_sFireModeMask_1 != nullptr)
+			anm_name += m_sFireModeMask_1.c_str();
+		else if (firemode == 3 && m_sFireModeMask_3 != nullptr)
+			anm_name += m_sFireModeMask_3.c_str();
+		else
+			anm_name += "";
+
 		if (!IsMisfire() && iAmmoElapsed == 0)
 			anm_name += "_empty";
-		else if (IsMisfire() && iAmmoElapsed != 0)
+		else if (IsMisfire())
 			anm_name += "_jammed";
 		else
 			anm_name += "";
+
+		attachable_hud_item* i1 = g_player_hud->attached_item(1);
+		if (i1 && HudItemData())
+		{
+			auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+			if (det)
+				det->SwitchState(CCustomDetector::eZoomStartDet);
+		}
 
 		PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 	}
@@ -1557,7 +1616,7 @@ void CWeaponMagazined::PlayAnimIdleMoving()
 
 	if (!IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_empty";
-	else if (IsMisfire() && iAmmoElapsed != 0)
+	else if (IsMisfire())
 		anm_name += "_jammed";
 	else
 		anm_name += "";
@@ -1582,7 +1641,7 @@ void CWeaponMagazined::PlayAnimIdleSprintStart()
 
 	if (!IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_empty";
-	else if (IsMisfire() && iAmmoElapsed != 0)
+	else if (IsMisfire())
 		anm_name += "_jammed";
 	else
 		anm_name += "";
@@ -1606,7 +1665,7 @@ void CWeaponMagazined::PlayAnimIdleSprint()
 
 	if (!IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_empty";
-	else if (IsMisfire() && iAmmoElapsed != 0)
+	else if (IsMisfire())
 		anm_name += "_jammed";
 	else
 		anm_name += "";
@@ -1630,7 +1689,7 @@ void CWeaponMagazined::PlayAnimIdleSprintEnd()
 
 	if (!IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_empty";
-	else if (IsMisfire() && iAmmoElapsed != 0)
+	else if (IsMisfire())
 		anm_name += "_jammed";
 	else
 		anm_name += "";
@@ -1654,7 +1713,7 @@ void CWeaponMagazined::PlayAnimIdleMovingCrouch()
 
 	if (!IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_empty";
-	else if (IsMisfire() && iAmmoElapsed != 0)
+	else if (IsMisfire())
 		anm_name += "_jammed";
 	else
 		anm_name += "";
@@ -1678,7 +1737,7 @@ void CWeaponMagazined::PlayAnimIdleMovingCrouchSlow()
 
 	if (!IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_empty";
-	else if (IsMisfire() && iAmmoElapsed != 0)
+	else if (IsMisfire())
 		anm_name += "_jammed";
 	else
 		anm_name += "";
@@ -1702,7 +1761,7 @@ void CWeaponMagazined::PlayAnimIdleMovingSlow()
 
 	if (!IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_empty";
-	else if (IsMisfire() && iAmmoElapsed != 0)
+	else if (IsMisfire())
 		anm_name += "_jammed";
 	else
 		anm_name += "";
@@ -1732,10 +1791,18 @@ void CWeaponMagazined::PlayAnimAimEnd()
 
 		if (!IsMisfire() && iAmmoElapsed == 0)
 			anm_name += "_empty";
-		else if (IsMisfire() && iAmmoElapsed != 0)
+		else if (IsMisfire())
 			anm_name += "_jammed";
 		else
 			anm_name += "";
+
+		attachable_hud_item* i1 = g_player_hud->attached_item(1);
+		if (i1 && HudItemData())
+		{
+			auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+			if (det)
+				det->SwitchState(CCustomDetector::eZoomEndDet);
+		}
 
 		PlayHUDMotion(anm_name.c_str(), TRUE, nullptr, GetState());
 	}
@@ -1793,6 +1860,14 @@ void CWeaponMagazined::EmptyMove()
 
 	anm_name += "_empty";
 
+	attachable_hud_item* i1 = g_player_hud->attached_item(1);
+	if (i1 && HudItemData())
+	{
+		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+		if (det && det->GetState() == CCustomDetector::eIdle)
+			det->SwitchState(CCustomDetector::eEmptyDet);
+	}
+
 	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }
 
@@ -1848,7 +1923,7 @@ void CWeaponMagazined::PlayAnimAim()
 
 		if (!IsMisfire() && iAmmoElapsed == 0)
 			anm_name += "_empty";
-		else if (IsMisfire() && iAmmoElapsed != 0)
+		else if (IsMisfire())
 			anm_name += "_jammed";
 		else
 			anm_name += "";
@@ -1880,7 +1955,7 @@ void CWeaponMagazined::PlayAnimIdle()
 
 		if (!IsMisfire() && iAmmoElapsed == 0)
 			anm_name += "_empty";
-		else if (IsMisfire() && iAmmoElapsed != 0)
+		else if (IsMisfire())
 			anm_name += "_jammed";
 		else
 			anm_name += "";
@@ -1907,7 +1982,7 @@ void CWeaponMagazined::PlayAnimBore()
 
 	if (!IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_empty";
-	else if (IsMisfire() && iAmmoElapsed != 0)
+	else if (IsMisfire())
 		anm_name += "_jammed";
 	else
 		anm_name += "";
@@ -1941,7 +2016,7 @@ void CWeaponMagazined::PlayAnimShoot()
 	else
 		anm_name += "";
 
-	if (IsMisfire() && iAmmoElapsed == 0)
+	if (IsMisfire())
 		anm_name += "_jammed";
 	else if (iAmmoElapsed == 1)
 		anm_name += "_last";
@@ -1952,6 +2027,14 @@ void CWeaponMagazined::PlayAnimShoot()
 		anm_name += "_sil";
 	else
 		anm_name += "";
+
+	attachable_hud_item* i1 = g_player_hud->attached_item(1);
+	if (i1 && HudItemData())
+	{
+		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+		if (det && det->GetState() == CCustomDetector::eIdle)
+			det->SwitchState(CCustomDetector::eFireDet);
+	}
 
 	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }

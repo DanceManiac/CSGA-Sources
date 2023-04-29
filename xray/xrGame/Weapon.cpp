@@ -25,6 +25,7 @@
 #include "../xrEngine/LightAnimLibrary.h"
 #include "WeaponBinoculars.h"
 #include "WeaponMagazinedWGrenade.h"
+#include "CustomDetector.h"
 
 #define WEAPON_REMOVE_TIME		60000
 #define ROTATION_TIME			0.25f
@@ -79,7 +80,7 @@ CWeapon::CWeapon(): m_fLR_MovingFactor(0.f), m_strafe_offset{}
 	m_crosshair_inertion	= 0.f;
 
 	bSwitchAmmoType = false;
-	bIsDetReload = false;
+	bIsNeedCallDet = false;
 }
 
 CWeapon::~CWeapon()
@@ -2405,6 +2406,28 @@ void CWeapon::OnStateSwitch	(u32 S)
 		}
 		else
 			Actor()->bTrySprint = true;
+	}
+
+	if (GetState() == eShowing)
+	{
+		attachable_hud_item* i1 = g_player_hud->attached_item(1);
+		if (i1 && HudItemData())
+		{
+			auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+			if (det)
+				det->SwitchState(CCustomDetector::eShowingParItm);
+		}
+	}
+
+	if (GetState() == eHiding)
+	{
+		attachable_hud_item* i1 = g_player_hud->attached_item(1);
+		if (i1 && HudItemData())
+		{
+			auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+			if (det)
+				det->SwitchState(CCustomDetector::eHideParItm);
+		}
 	}
 }
 

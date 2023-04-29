@@ -27,6 +27,24 @@ public:
 					CCustomDetector		();
 	virtual			~CCustomDetector	();
 
+	enum EDetStates
+	{
+		eFireDet		= eLastBaseState+1,
+		eKickKnf,
+		eKickKnf2,
+		eEmptyDet,
+		eShowingParItm,
+		eHideParItm,
+		eThrowStartMis,
+		eReadyMis,
+		eThrowMis,
+		eZoomStartDet,
+		eZoomEndDet,
+		eLookMisDet,
+		eUnLightMisDet,
+		eSwitchModeDet,
+    };
+
 	virtual BOOL 	net_Spawn			(CSE_Abstract* DC);
 	virtual void 	Load				(LPCSTR section);
 
@@ -58,13 +76,15 @@ public:
 	virtual u32		ef_detector_type	() const	{return 1;};
 	void 	TurnDetectorInternal		(bool b);
 
-	/*virtual void PlayAnimIdle();
-    const char* GetAnimAimName();*/
+	virtual bool TryPlayAnimIdle		();
+	virtual void PlayAnimIdle			();
 
-/*private:
-        string64 guns_aim_anm_detector;*/
+	bool bZoomed;
 
+private:
+	string64 guns_aim_det_anm;
 protected:
+	const	char*	GetAnimAimName				();
 			bool	CheckCompatibilityInt		(CHudItem*);
 	void 			UpdateNightVisionMode		(bool b_off);
 	void			UpdateVisibility			();
