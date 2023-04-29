@@ -76,10 +76,11 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
 		{
 			if (wpn)
 			{
-                if (knf)
+                if (knf || wpn->bIsDetReload)
 				{
 					SwitchState(eShowing);
 					TurnDetectorInternal(true);
+					wpn->bIsDetReload = false;
 				}
 				else
 				{

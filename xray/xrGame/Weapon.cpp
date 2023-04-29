@@ -79,6 +79,7 @@ CWeapon::CWeapon(): m_fLR_MovingFactor(0.f), m_strafe_offset{}
 	m_crosshair_inertion	= 0.f;
 
 	bSwitchAmmoType = false;
+	bIsDetReload = false;
 }
 
 CWeapon::~CWeapon()

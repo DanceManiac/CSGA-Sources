@@ -1471,6 +1471,24 @@ void CWeaponMagazined::PlayAnimReload()
 	else
 		anm_name += "";
 
+	attachable_hud_item* i1 = g_player_hud->attached_item(1);
+	if (i1 && HudItemData())
+	{
+		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+		if (det)
+		{
+			anm_name += "_detector";
+			bIsDetReload = true;
+		}
+		else
+		{
+			anm_name += "";
+			bIsDetReload = false;
+		}
+	}
+	else
+		bIsDetReload = false;
+
 	PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
 }
 
