@@ -310,6 +310,7 @@ void CCustomDetector::OnAnimationEnd(u32 state)
 		case eLookMisDet:
 		case eUnLightMisDet:
 		case eSwitchModeDet:
+		case eThrowMis:
 			SwitchState(eIdle);
 		break;
 	}
