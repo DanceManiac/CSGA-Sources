@@ -1044,8 +1044,18 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 	case kWPN_RELOAD:
 		{
 			if(flags&CMD_START && !IsZoomed() && GetState() == eIdle) 
+			{
+				attachable_hud_item* i1 = g_player_hud->attached_item(1);
+				if (i1 && HudItemData())
+				{
+					auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+					if (det && det->GetState() != CCustomDetector::eIdle)
+						return false;
+				}
+
 				if(iAmmoElapsed < iMagazineSize || (IsMisfire() && !IsGrenadeLauncherMode())) 
 					Reload();
+			}
 		} 
 		return true;
 	case kWPN_FIREMODE_PREV:
@@ -2108,6 +2118,14 @@ void CWeaponMagazined::OnNextFireMode()
 	if (IsZoomed())
 		return;
 
+	attachable_hud_item* i1 = g_player_hud->attached_item(1);
+	if (i1 && HudItemData())
+	{
+		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+		if (det && det->GetState() != CCustomDetector::eIdle)
+			return;
+	}
+
 	m_iOldFireMode = m_iQueueSize;
 	m_iCurFireMode = (m_iCurFireMode+1+m_aFireModes.size()) % m_aFireModes.size();
 	SetQueueSize(GetCurrentFireMode());
@@ -2125,6 +2143,14 @@ void CWeaponMagazined::OnPrevFireMode()
 
 	if (IsZoomed())
 		return;
+
+	attachable_hud_item* i1 = g_player_hud->attached_item(1);
+	if (i1 && HudItemData())
+	{
+		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+		if (det && det->GetState() != CCustomDetector::eIdle)
+			return;
+	}
 
 	m_iOldFireMode = m_iQueueSize;
 	m_iCurFireMode = (m_iCurFireMode-1+m_aFireModes.size()) % m_aFireModes.size();
