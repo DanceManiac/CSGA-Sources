@@ -21,7 +21,6 @@ class CCustomDetector :		public CHudItemObject
 protected:
 	CUIArtefactDetectorBase*			m_ui;
 	bool			m_bFastAnimMode;
-	bool			m_bNeedActivation;
 
 public:
 					CCustomDetector		();
@@ -79,7 +78,8 @@ public:
 	virtual bool TryPlayAnimIdle		();
 	virtual void PlayAnimIdle			();
 
-	bool bZoomed;
+	bool			bZoomed;
+	bool			m_bNeedActivation;
 
 private:
 	string64 guns_aim_det_anm;

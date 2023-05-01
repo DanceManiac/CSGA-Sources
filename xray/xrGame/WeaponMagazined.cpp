@@ -1057,7 +1057,7 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 				if (i1 && HudItemData())
 				{
 					auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
-					if (det && det->GetState() != CCustomDetector::eIdle)
+					if (det && (det->GetState() != CCustomDetector::eIdle || det->m_bNeedActivation))
 						return false;
 				}
 
