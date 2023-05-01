@@ -2408,25 +2408,19 @@ void CWeapon::OnStateSwitch	(u32 S)
 			Actor()->bTrySprint = true;
 	}
 
-	if (GetState() == eShowing)
+	if (GetState() == eHiding || GetState() == eShowing)
 	{
 		attachable_hud_item* i1 = g_player_hud->attached_item(1);
 		if (i1 && HudItemData())
 		{
 			auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
 			if (det)
-				det->SwitchState(CCustomDetector::eShowingParItm);
-		}
-	}
-
-	if (GetState() == eHiding)
-	{
-		attachable_hud_item* i1 = g_player_hud->attached_item(1);
-		if (i1 && HudItemData())
-		{
-			auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
-			if (det)
-				det->SwitchState(CCustomDetector::eHideParItm);
+			{
+				if (GetState() == eShowing)
+					det->SwitchState(CCustomDetector::eShowingParItm);
+				else
+					det->SwitchState(CCustomDetector::eHideParItm);
+			}
 		}
 	}
 }

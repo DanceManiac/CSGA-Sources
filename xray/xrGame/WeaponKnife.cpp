@@ -134,14 +134,10 @@ void CWeaponKnife::KnifeStrike(const Fvector& pos, const Fvector& dir, u32 state
 	iAmmoElapsed					= m_magazine.size();
 	bool SendHit					= SendHitAllowed(H_Parent());
 
-	if(state==eFire)
-	{
-		PlaySound						("SndKick1",pos);
-	}
+	if(state == eFire)
+		PlaySound("SndKick1",pos);
 	else
-	{
-		PlaySound						("SndKick2",pos);
-	}
+		PlaySound("SndKick2",pos);
 
 	Level().BulletManager().AddBullet(	pos, 
 										dir, 
@@ -198,9 +194,9 @@ void CWeaponKnife::switch2_Attacking	(u32 state)
 {
 	if(IsPending())	return;
 
-	if(state==eFire)
+	if(state == eFire)
 		PlayHUDMotion("anm_attack", FALSE, this, state);
-	else //eFire2
+	else
 		PlayHUDMotion("anm_attack2", FALSE, this, state);
 
 	attachable_hud_item* i1 = g_player_hud->attached_item(1);

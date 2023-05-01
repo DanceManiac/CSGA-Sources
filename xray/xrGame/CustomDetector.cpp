@@ -156,7 +156,7 @@ void CCustomDetector::OnStateSwitch(u32 S)
 			else
 				PlayHUDMotion("anm_wpn_shoot_empty_det", TRUE, this, eEmptyDet);
 
-			SetPending(TRUE);
+			SetPending(FALSE);
 		}break;
         case eKickKnf:
 		{

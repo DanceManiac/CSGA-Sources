@@ -763,6 +763,14 @@ void CWeaponMagazined::PlayAnimLookMis()
 		anm_name += "_jammed";
 
 		PlayHUDMotion(anm_name.c_str(), TRUE, this, GetState());
+
+		attachable_hud_item* i1 = g_player_hud->attached_item(1);
+		if (i1 && HudItemData())
+		{
+			auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+			if (det && det->GetState() == CCustomDetector::eIdle)
+					det->SwitchState(CCustomDetector::eLookMisDet);
+		}
 	}
 	else
 	{
@@ -898,8 +906,8 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		    if (det) 
 			{
 				det->SwitchState(CCustomDetector::eShowing);
-				SwitchState(eShowingEndDet);
 				det->TurnDetectorInternal(true);
+				SwitchState(eShowingEndDet);
 			}
 		}break;
 		case eEmpty:
@@ -1874,7 +1882,7 @@ void CWeaponMagazined::EmptyMove()
 	if (i1 && HudItemData())
 	{
 		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
-		if (det && det->GetState() == CCustomDetector::eIdle)
+		if (det && (det->GetState() == CCustomDetector::eIdle || det->GetState() == CCustomDetector::eEmptyDet))
 			det->SwitchState(CCustomDetector::eEmptyDet);
 	}
 
@@ -2042,7 +2050,7 @@ void CWeaponMagazined::PlayAnimShoot()
 	if (i1 && HudItemData())
 	{
 		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
-		if (det && det->GetState() == CCustomDetector::eIdle)
+		if (det && (det->GetState() == CCustomDetector::eIdle || det->GetState() == CCustomDetector::eFireDet))
 			det->SwitchState(CCustomDetector::eFireDet);
 	}
 
