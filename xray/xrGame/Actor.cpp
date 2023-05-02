@@ -1589,6 +1589,8 @@ void CActor::OnItemDrop(CInventoryItem *inventory_item)
 		if(wpn->has_flashlight && wpn->IsFlashlightOn())
 			wpn->UpdateFlashlight();
 
+		wpn->bIsNeedCallDet = false;
+
 		auto i1 = g_player_hud->attached_item(1);
 		if (i1 && wpn->HudItemData())
 		{
