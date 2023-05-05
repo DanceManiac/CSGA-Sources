@@ -240,11 +240,12 @@ public:
     bool m_bRestGL_and_Sil; //запрет на одновременное использование ПГ и глушителя
 	bool m_bUseSilHud; //запрос на юз hud_silencer
     bool bIsNeedCallDet; //нужно ли вызывать детектор без eShowingDet состояния
-	bool bZoomKeyPressed;
+	bool bZoomKeyPressed; //нажали мы кнопку зума или нет
 
 	bool IsGrenadeLauncherMode();
 	bool NoSprintStates();
 	bool StatesNoHideCrosshair();
+	bool TryZoom(u32 flags);
 
 protected:
 

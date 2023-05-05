@@ -932,10 +932,10 @@ void CWeapon::UpdateCL		()
 
 	if (!b_toggle_weapon_aim && IsZoomed() && GetState() == eIdle && !bZoomKeyPressed)
 	{
+		OnZoomOut();
 		auto binoc = dynamic_cast<CWeaponBinoculars*>(Actor()->inventory().ActiveItem());
 		if(!binoc)
 			SwitchState(eZoomEnd);
-		OnZoomOut();
 	}
 
 	if (!m_bDisableBore && (GetNextState() == GetState()) && IsGameTypeSingle() && H_Parent() == Level().CurrentEntity())
@@ -1095,8 +1095,6 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 {
 	if(inherited::Action(cmd, flags)) return true;
 
-	CWeaponBinoculars* binoc = smart_cast<CWeaponBinoculars*>(m_pInventory->ActiveItem());
-
 	switch(cmd) 
 	{
 		case kWPN_FIRE: 
@@ -1104,87 +1102,19 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 				//если оружие чем-то занято, то ничего не делать
 				{				
 					if(IsPending())		
-						return				false;
+						return false;
 
 					if(flags&CMD_START) 
-						FireStart			();
+						FireStart();
 					else 
-						FireEnd				();
+						FireEnd();
 				};
 			} 
 			return true;
 		case kWPN_NEXT: 
-			{
 				return SwitchAmmoType(flags);
-			} 
-
 		case kWPN_ZOOM:
-			if(IsZoomEnabled())
-			{
-				if(b_toggle_weapon_aim)
-				{
-					if(flags&CMD_START)
-					{
-						if(!IsZoomed())
-						{
-							if(!IsPending())
-							{
-								if(GetState()==eIdle || GetState()==eZoomEnd) {
-									if(!binoc)
-										SwitchState(eZoomStart);
-
-									OnZoomIn();
-								}
-							}
-						}
-						else
-						{
-                            if (GetState()==eIdle || GetState()==eZoomStart) {
-								if(!binoc)
-									SwitchState(eZoomEnd);
-
-
-								OnZoomOut();
-							}
-                        }
-					}
-				}
-				else
-				{
-					if(flags&CMD_START)
-					{
-						bZoomKeyPressed = true;
-						if(!IsZoomed() && !IsPending())
-						{
-							if(GetState()==eIdle || GetState()==eZoomEnd || GetState()==eFire || GetState()==eEmpty) {
-                                if (GetState()==eFire)
-									FireEnd();
-
-								if (!binoc)
-									SwitchState(eZoomStart);
-
-								OnZoomIn();
-							}
-						}
-					}
-					else
-					{
-						bZoomKeyPressed = false;
-                        if (IsZoomed() && (GetState()==eIdle || GetState()==eZoomStart || GetState()==eFire || GetState()==eEmpty)) {
-							if (GetState() == eFire)
-                               FireEnd();
-
-                            if (!binoc)
-								SwitchState(eZoomEnd);
-
-                           OnZoomOut();
-						}
-                    }
-				}
-				return true;
-			}
-			else 
-				return false;
+			return TryZoom(flags);
 		case kWPN_ALT_ZOOM:
 			if(m_bUseAltScope && !IsGrenadeLauncherMode())
 			{
@@ -1215,12 +1145,77 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 	return false;
 }
 
-bool CWeapon::SwitchAmmoType( u32 flags ) 
+bool CWeapon::TryZoom(u32 flags)
 {
-	if ( IsPending() || OnClient() )
+	if (!IsZoomEnabled())
 		return false;
 
-	if ( !(flags & CMD_START) )
+	auto binoc = dynamic_cast<CWeaponBinoculars*>(Actor()->inventory().ActiveItem());
+
+	if (b_toggle_weapon_aim)
+	{
+		if(flags & CMD_START)
+		{
+			if(!IsPending())
+			{
+				if(!IsZoomed())
+				{
+					OnZoomIn();
+					if(!binoc)
+						SwitchState(eZoomStart);
+				}
+				else
+				{
+					OnZoomOut();
+					if(!binoc)
+						SwitchState(eZoomEnd);
+				}
+			}
+		}
+	}
+	else
+	{
+		if (flags & CMD_START)
+		{
+			bZoomKeyPressed = true;
+			if(!IsPending())
+			{
+				if(!IsZoomed())
+				{
+					OnZoomIn();
+					if(GetState() == eFire)
+						FireEnd();
+					if(!binoc)
+						SwitchState(eZoomStart);
+				}
+			}
+		}
+		else
+		{
+			bZoomKeyPressed = false;
+			if(GetState() == eFire)
+				return false;
+			if(!IsPending())
+			{
+				if(IsZoomed())
+				{
+					OnZoomOut();
+					if(!binoc)
+						SwitchState(eZoomEnd);
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+bool CWeapon::SwitchAmmoType(u32 flags) 
+{
+	if (IsPending() || OnClient())
+		return false;
+
+	if (!(flags & CMD_START))
 		return false;
 
 	if(IsZoomed())
