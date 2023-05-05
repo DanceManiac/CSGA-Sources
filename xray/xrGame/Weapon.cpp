@@ -930,6 +930,14 @@ void CWeapon::UpdateCL		()
 	if(!IsGameTypeSingle())
 		make_Interpolation		();
 
+	if (!b_toggle_weapon_aim && IsZoomed() && GetState() == eIdle && !bZoomKeyPressed)
+	{
+		auto binoc = dynamic_cast<CWeaponBinoculars*>(Actor()->inventory().ActiveItem());
+		if(!binoc)
+			SwitchState(eZoomEnd);
+		OnZoomOut();
+	}
+
 	if (!m_bDisableBore && (GetNextState() == GetState()) && IsGameTypeSingle() && H_Parent() == Level().CurrentEntity())
 	{
 		CActor* pActor	= smart_cast<CActor*>(H_Parent());
@@ -1145,6 +1153,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 				{
 					if(flags&CMD_START)
 					{
+						bZoomKeyPressed = true;
 						if(!IsZoomed() && !IsPending())
 						{
 							if(GetState()==eIdle || GetState()==eZoomEnd || GetState()==eFire || GetState()==eEmpty) {
@@ -1160,6 +1169,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 					}
 					else
 					{
+						bZoomKeyPressed = false;
                         if (IsZoomed() && (GetState()==eIdle || GetState()==eZoomStart || GetState()==eFire || GetState()==eEmpty)) {
 							if (GetState() == eFire)
                                FireEnd();
@@ -2319,7 +2329,6 @@ u32 CWeapon::Cost() const
 	return res;
 }
 
-extern u32 hud_adj_mode;
 extern bool hud_adj_crosshair;
 
 bool CWeapon::show_crosshair()
