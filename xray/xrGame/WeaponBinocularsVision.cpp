@@ -139,16 +139,16 @@ void SBinocVisibleObj::Update()
 			{
 				if (Level().CurrentViewEntity())
 				{
-					pActor = smart_cast<CActor*> (Level().CurrentViewEntity());
+					pActor = dynamic_cast<CActor*> (Level().CurrentViewEntity());
 				}
 			}
 			if (pActor) 
 			{
 				//-----------------------------------------------------
 
-				CInventoryOwner* our_inv_owner		= smart_cast<CInventoryOwner*>(pActor);
-				CInventoryOwner* others_inv_owner	= smart_cast<CInventoryOwner*>(m_object);
-				CBaseMonster	*monster			= smart_cast<CBaseMonster*>(m_object);
+				CInventoryOwner* our_inv_owner		= dynamic_cast<CInventoryOwner*>(pActor);
+				CInventoryOwner* others_inv_owner	= dynamic_cast<CInventoryOwner*>(m_object);
+				CBaseMonster	*monster			= dynamic_cast<CBaseMonster*>(m_object);
 
 				if(our_inv_owner && others_inv_owner && !monster){
 					if (IsGameTypeSingle())
@@ -165,8 +165,8 @@ void SBinocVisibleObj::Update()
 					}
 					else
 					{
-						CEntityAlive* our_ealive		= smart_cast<CEntityAlive*>(pActor);
-						CEntityAlive* others_ealive		= smart_cast<CEntityAlive*>(m_object);
+						CEntityAlive* our_ealive		= dynamic_cast<CEntityAlive*>(pActor);
+						CEntityAlive* others_ealive		= dynamic_cast<CEntityAlive*>(m_object);
 						if (our_ealive && others_ealive)
 						{
 							if (Game().IsEnemy(our_ealive, others_ealive))
@@ -216,7 +216,7 @@ void CBinocularsVision::Update()
 	{
 		if (Level().CurrentViewEntity())
 		{
-			pActor = smart_cast<const CActor*> (Level().CurrentViewEntity());
+			pActor = dynamic_cast<const CActor*> (Level().CurrentViewEntity());
 		}
 	}
 	if (!pActor) return;
@@ -232,13 +232,13 @@ void CBinocularsVision::Update()
 	for (; v_it!=vVisibles.end(); ++v_it)
 	{
 		const CObject*	_object_			= (*v_it).m_object;
-		if (!pActor->memory().visual().visible_now(smart_cast<const CGameObject*>(_object_)))
+		if (!pActor->memory().visual().visible_now(dynamic_cast<const CGameObject*>(_object_)))
 			continue;
 
 		CObject* object_ = const_cast<CObject*>(_object_);
 		
 
-		CEntityAlive*	EA = smart_cast<CEntityAlive*>(object_);
+		CEntityAlive*	EA = dynamic_cast<CEntityAlive*>(object_);
 		if(!EA || !EA->g_Alive())						continue;
 		
 

@@ -212,7 +212,7 @@ void CLevelGraph::draw_stalkers		(const int &vertex_id)
 		const_iterator			E = objects.objects().end();
 		for (; I != E; ++I) {
 			CSE_ALifeDynamicObject	*object = (*I).second;
-			CSE_ALifeHumanStalker	*stalker = smart_cast<CSE_ALifeHumanStalker*>(object);
+			CSE_ALifeHumanStalker	*stalker = dynamic_cast<CSE_ALifeHumanStalker*>(object);
 			if (!stalker)
 				continue;
 
@@ -237,7 +237,7 @@ void CLevelGraph::draw_stalkers		(const int &vertex_id)
 	const_iterator				E = objects.objects().end();
 	for (; I != E; ++I) {
 		CSE_ALifeDynamicObject	*object = (*I).second;
-		CSE_ALifeHumanStalker	*stalker = smart_cast<CSE_ALifeHumanStalker*>(object);
+		CSE_ALifeHumanStalker	*stalker = dynamic_cast<CSE_ALifeHumanStalker*>(object);
 		if (!stalker)
 			continue;
 
@@ -356,7 +356,7 @@ void CLevelGraph::draw_objects		(const int &vertex_id)
 		const_iterator			E = objects.objects().end();
 		for (; I != E; ++I) {
 			CSE_ALifeDynamicObject	*object = (*I).second;
-			CSE_ALifeMonsterAbstract*monster = smart_cast<CSE_ALifeMonsterAbstract*>(object);
+			CSE_ALifeMonsterAbstract*monster = dynamic_cast<CSE_ALifeMonsterAbstract*>(object);
 			if (!monster)
 				continue;
 
@@ -381,7 +381,7 @@ void CLevelGraph::draw_objects		(const int &vertex_id)
 	const_iterator				E = objects.objects().end();
 	for (; I != E; ++I) {
 		CSE_ALifeDynamicObject	*object = (*I).second;
-		CSE_ALifeMonsterAbstract*monster = smart_cast<CSE_ALifeMonsterAbstract*>(object);
+		CSE_ALifeMonsterAbstract*monster = dynamic_cast<CSE_ALifeMonsterAbstract*>(object);
 		if (!monster)
 			continue;
 
@@ -561,9 +561,9 @@ void CLevelGraph::draw_game_graph	()
 		ALife::D_OBJECT_P_MAP::const_iterator	E = ai().alife().objects().objects().end();
 		for ( ; I != E; ++I) {
 			{
-				CSE_ALifeMonsterAbstract *tpALifeMonsterAbstract = smart_cast<CSE_ALifeMonsterAbstract *>((*I).second);
+				CSE_ALifeMonsterAbstract *tpALifeMonsterAbstract = dynamic_cast<CSE_ALifeMonsterAbstract *>((*I).second);
 				if (tpALifeMonsterAbstract && tpALifeMonsterAbstract->m_bDirectControl && !tpALifeMonsterAbstract->m_bOnline) {
-					CSE_ALifeHumanAbstract *tpALifeHuman = smart_cast<CSE_ALifeHumanAbstract *>(tpALifeMonsterAbstract);
+					CSE_ALifeHumanAbstract *tpALifeHuman = dynamic_cast<CSE_ALifeHumanAbstract *>(tpALifeMonsterAbstract);
 					if (tpALifeHuman && tpALifeHuman->brain().movement().detail().path().size()) {
 						Fvector t1 = ai().game_graph().vertex(tpALifeHuman->brain().movement().detail().path().back())->game_point();
 						t1.y += .6f;
@@ -596,7 +596,7 @@ void CLevelGraph::draw_game_graph	()
 					}
 				}
 				else {
-					CSE_ALifeInventoryItem *l_tpALifeInventoryItem = smart_cast<CSE_ALifeInventoryItem*>((*I).second);
+					CSE_ALifeInventoryItem *l_tpALifeInventoryItem = dynamic_cast<CSE_ALifeInventoryItem*>((*I).second);
 					if (l_tpALifeInventoryItem && !l_tpALifeInventoryItem->attached()) {
 						Fvector t1 = ai().game_graph().vertex((*I).second->m_tGraphID)->game_point();
 						t1.y += .6f;
@@ -604,7 +604,7 @@ void CLevelGraph::draw_game_graph	()
 						Level().debug_renderer().draw_aabb(t1,.05f,.05f,.05f,D3DCOLOR_XRGB(255,255,0));
 					}
 					else {
-						CSE_ALifeCreatureActor *tpALifeCreatureActor = smart_cast<CSE_ALifeCreatureActor*>((*I).second);
+						CSE_ALifeCreatureActor *tpALifeCreatureActor = dynamic_cast<CSE_ALifeCreatureActor*>((*I).second);
 						if (tpALifeCreatureActor) {
 							Fvector t1 = ai().game_graph().vertex((*I).second->m_tGraphID)->game_point();
 							t1.y += .6f;
@@ -612,7 +612,7 @@ void CLevelGraph::draw_game_graph	()
 							Level().debug_renderer().draw_aabb(t1,.05f,.05f,.05f,D3DCOLOR_XRGB(255,255,255));
 						}
 						else {
-							CSE_ALifeTrader *tpALifeTrader = smart_cast<CSE_ALifeTrader*>((*I).second);
+							CSE_ALifeTrader *tpALifeTrader = dynamic_cast<CSE_ALifeTrader*>((*I).second);
 							if (tpALifeTrader) {
 								Fvector t1 = ai().game_graph().vertex((*I).second->m_tGraphID)->game_point();
 								t1.y += .6f;
@@ -620,7 +620,7 @@ void CLevelGraph::draw_game_graph	()
 								Level().debug_renderer().draw_aabb(t1,.05f,.05f,.05f,D3DCOLOR_XRGB(0,0,0));
 							}
 							else {
-								CSE_ALifeSmartZone *smart_zone = smart_cast<CSE_ALifeSmartZone*>((*I).second);
+								CSE_ALifeSmartZone *smart_zone = dynamic_cast<CSE_ALifeSmartZone*>((*I).second);
 								if (smart_zone) {
 									Fvector t1 = ai().game_graph().vertex((*I).second->m_tGraphID)->game_point();
 									t1.y += .6f;

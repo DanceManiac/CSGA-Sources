@@ -59,7 +59,7 @@ bool CSightManager::aim_target	(Fvector &my_position, Fvector &aim_target, const
 		)
 	);
 #else
-	const CEntityAlive			*entity_alive = smart_cast<const CEntityAlive*>(object);
+	const CEntityAlive			*entity_alive = dynamic_cast<const CEntityAlive*>(object);
 	if (!entity_alive || entity_alive->g_Alive()) {
 		aim_target.x			= m_object->Position().x;
 		aim_target.z			= m_object->Position().z;

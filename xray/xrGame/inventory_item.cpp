@@ -89,7 +89,7 @@ void CInventoryItem::Load(LPCSTR section)
 {
 	CHitImmunity::LoadImmunities	(pSettings->r_string(section,"immunities_sect"),pSettings);
 
-	ISpatial*			self				=	smart_cast<ISpatial*> (this);
+	ISpatial*			self				=	dynamic_cast<ISpatial*> (this);
 	if (self)			self->spatial.type	|=	STYPE_VISIBLEFORAI;	
 
 	m_section_id._set	( section );
@@ -248,10 +248,10 @@ void CInventoryItem::OnEvent (NET_Packet& P, u16 type)
 		{
 			u16 ItemID;
 			P.r_u16			(ItemID);
-			CInventoryItem*	 ItemToAttach	= smart_cast<CInventoryItem*>(Level().Objects.net_Find(ItemID));
+			CInventoryItem*	 ItemToAttach	= dynamic_cast<CInventoryItem*>(Level().Objects.net_Find(ItemID));
 			if (!ItemToAttach) break;
 			Attach(ItemToAttach,true);
-			CActor* pActor = smart_cast<CActor*>(object().H_Parent());
+			CActor* pActor = dynamic_cast<CActor*>(object().H_Parent());
 			if (pActor && pActor->inventory().ActiveItem() == this)
 			{
 				pActor->inventory().SetPrevActiveSlot(pActor->inventory().GetActiveSlot());
@@ -264,7 +264,7 @@ void CInventoryItem::OnEvent (NET_Packet& P, u16 type)
 			string64			i_name;
 			P.r_stringZ			(i_name);
 			Detach(i_name, true);
-			CActor* pActor = smart_cast<CActor*>(object().H_Parent());
+			CActor* pActor = dynamic_cast<CActor*>(object().H_Parent());
 			if (pActor && pActor->inventory().ActiveItem() == this)
 			{
 				pActor->inventory().SetPrevActiveSlot(pActor->inventory().GetActiveSlot());
@@ -299,7 +299,7 @@ bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item)
 		CSE_Abstract*		D	= F_entity_Create(item_section_name);
 		R_ASSERT		   (D);
 		CSE_ALifeDynamicObject	*l_tpALifeDynamicObject = 
-								smart_cast<CSE_ALifeDynamicObject*>(D);
+								dynamic_cast<CSE_ALifeDynamicObject*>(D);
 		R_ASSERT			(l_tpALifeDynamicObject);
 		
 		l_tpALifeDynamicObject->m_tNodeID = (g_dedicated_server)?u32(-1):object().ai_location().level_vertex_id();
@@ -347,12 +347,12 @@ BOOL CInventoryItem::net_Spawn			(CSE_Abstract* DC)
 
 	m_flags.set						(Fuseful_for_NPC, TRUE);
 	CSE_Abstract					*e	= (CSE_Abstract*)(DC);
-	CSE_ALifeObject					*alife_object = smart_cast<CSE_ALifeObject*>(e);
+	CSE_ALifeObject					*alife_object = dynamic_cast<CSE_ALifeObject*>(e);
 	if (alife_object)	{
 		m_flags.set(Fuseful_for_NPC, alife_object->m_flags.test(CSE_ALifeObject::flUsefulForAI));
 	}
 
-	CSE_ALifeInventoryItem			*pSE_InventoryItem = smart_cast<CSE_ALifeInventoryItem*>(e);
+	CSE_ALifeInventoryItem			*pSE_InventoryItem = dynamic_cast<CSE_ALifeInventoryItem*>(e);
 	if (!pSE_InventoryItem)			return TRUE;
 
 	//!!!
@@ -1241,7 +1241,7 @@ bool CInventoryItem::ready_to_kill		() const
 
 void CInventoryItem::activate_physic_shell()
 {
-	CEntityAlive*	E		= smart_cast<CEntityAlive*>(object().H_Parent());
+	CEntityAlive*	E		= dynamic_cast<CEntityAlive*>(object().H_Parent());
 	if (!E) {
 		on_activate_physic_shell();
 		return;
@@ -1257,12 +1257,12 @@ void CInventoryItem::UpdateXForm	()
 	if (0==object().H_Parent())	return;
 
 	// Get access to entity and its visual
-	CEntityAlive*	E		= smart_cast<CEntityAlive*>(object().H_Parent());
+	CEntityAlive*	E		= dynamic_cast<CEntityAlive*>(object().H_Parent());
 	if (!E) return;
 	
 	if (E->cast_base_monster()) return;
 
-	const CInventoryOwner	*parent = smart_cast<const CInventoryOwner*>(E);
+	const CInventoryOwner	*parent = dynamic_cast<const CInventoryOwner*>(E);
 	if (parent && parent->use_simplified_visual())
 		return;
 
@@ -1270,7 +1270,7 @@ void CInventoryItem::UpdateXForm	()
 		return;
 
 	R_ASSERT		(E);
-	IKinematics*	V		= smart_cast<IKinematics*>	(E->Visual());
+	IKinematics*	V		= dynamic_cast<IKinematics*>	(E->Visual());
 	VERIFY			(V);
 
 	// Get matrices
@@ -1394,7 +1394,7 @@ void CInventoryItem::OnRender()
 
 DLL_Pure *CInventoryItem::_construct	()
 {
-	m_object	= smart_cast<CPhysicsShellHolder*>(this);
+	m_object	= dynamic_cast<CPhysicsShellHolder*>(this);
 	VERIFY		(m_object);
 	return		(inherited::_construct());
 }

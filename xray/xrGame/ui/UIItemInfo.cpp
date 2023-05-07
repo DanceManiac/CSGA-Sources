@@ -224,10 +224,10 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem, CInventoryItem* pCompareIte
 		}
 	}
 	
-//	CActor* actor = smart_cast<CActor*>( Level().CurrentViewEntity() );
+//	CActor* actor = dynamic_cast<CActor*>( Level().CurrentViewEntity() );
 //	if ( g_pGameLevel && Level().game && actor )
 //	{
-//		game_cl_Deathmatch* gs_mp = smart_cast<game_cl_Deathmatch*>( Game() );
+//		game_cl_Deathmatch* gs_mp = dynamic_cast<game_cl_Deathmatch*>( Game() );
 //		IBuyWnd* buy_menu = gs_mp->pCurBuyMenu->GetItemPrice();
 //		GetItemPrice();
 //	}
@@ -335,10 +335,10 @@ void CUIItemInfo::TryAddArtefactInfo	(const shared_str& af_section)
 
 void CUIItemInfo::TryAddOutfitInfo( CInventoryItem& pInvItem, CInventoryItem* pCompareItem )
 {
-	CCustomOutfit* outfit = smart_cast<CCustomOutfit*>(&pInvItem);
+	CCustomOutfit* outfit = dynamic_cast<CCustomOutfit*>(&pInvItem);
 	if ( outfit && UIOutfitInfo )
 	{
-		CCustomOutfit* comp_outfit = smart_cast<CCustomOutfit*>(pCompareItem);
+		CCustomOutfit* comp_outfit = dynamic_cast<CCustomOutfit*>(pCompareItem);
 		UIOutfitInfo->UpdateInfo( outfit, comp_outfit );
 		UIDesc->AddWindow( UIOutfitInfo, false );
 	}

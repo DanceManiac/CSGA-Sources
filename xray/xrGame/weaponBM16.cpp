@@ -336,7 +336,7 @@ void CWeaponBM16::PlayAnimIdleMovingSlow()
 
 const char* CWeaponBM16::GetAnimAimName()
 {
-	auto pActor = smart_cast<const CActor*>(H_Parent());
+	auto pActor = dynamic_cast<const CActor*>(H_Parent());
 	if (pActor)
 	{
         u32 state = pActor->get_state();

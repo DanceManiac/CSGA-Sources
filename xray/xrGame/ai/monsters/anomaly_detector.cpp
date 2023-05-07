@@ -77,7 +77,7 @@ void CAnomalyDetector::on_contact(CObject *obj)
 {
 	if (!m_active) return;
 	
-	CCustomZone	*custom_zone = smart_cast<CCustomZone*>(obj);
+	CCustomZone	*custom_zone = dynamic_cast<CCustomZone*>(obj);
 	if (!custom_zone) return;
 	
 	// if its NOT A restrictor - skip

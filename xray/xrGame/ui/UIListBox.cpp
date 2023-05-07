@@ -87,7 +87,7 @@ CUIListBoxItem* CUIListBox::GetSelectedItem()
 	CUIWindow* w	=	GetSelected();
 
 	if(w)
-		return smart_cast<CUIListBoxItem*>(w);
+		return dynamic_cast<CUIListBoxItem*>(w);
 	else
 		return NULL;
 
@@ -99,7 +99,7 @@ LPCSTR CUIListBox::GetSelectedText()
 
 	if(w)
 	{
-		CUIListBoxItem* item = smart_cast<CUIListBoxItem*>(w);
+		CUIListBoxItem* item = dynamic_cast<CUIListBoxItem*>(w);
 		return item->m_text.GetText();
 	}else
 		return NULL;
@@ -112,7 +112,7 @@ u32 CUIListBox::GetSelectedIDX()
 
 	for(WINDOW_LIST_it it = m_pad->GetChildWndList().begin(); m_pad->GetChildWndList().end()!=it; ++it)
 	{
-		CUIListBoxItem* item = smart_cast<CUIListBoxItem*>(*it);
+		CUIListBoxItem* item = dynamic_cast<CUIListBoxItem*>(*it);
 		if (item)
 		{
 			if(*it==w)
@@ -127,7 +127,7 @@ u32 CUIListBox::GetSelectedIDX()
 LPCSTR CUIListBox::GetText(u32 idx)
 {
 	R_ASSERT				(idx<GetSize());
-	CUIListBoxItem* item = smart_cast<CUIListBoxItem*>(GetItem(idx));
+	CUIListBoxItem* item = dynamic_cast<CUIListBoxItem*>(GetItem(idx));
 	return item->m_text.GetText();
 }
 
@@ -199,7 +199,7 @@ CUIListBoxItem* CUIListBox::GetItemByTAG(u32 tag_val)
 {
 	for(WINDOW_LIST_it it = m_pad->GetChildWndList().begin(); m_pad->GetChildWndList().end()!=it; ++it)
 	{
-		CUIListBoxItem* item = smart_cast<CUIListBoxItem*>(*it);
+		CUIListBoxItem* item = dynamic_cast<CUIListBoxItem*>(*it);
 		if (item)
 		{
 			if (item->GetTAG() == tag_val)
@@ -215,7 +215,7 @@ CUIListBoxItem* CUIListBox::GetItemByIDX(u32 idx)
 	u32 _idx = 0;
 	for(WINDOW_LIST_it it = m_pad->GetChildWndList().begin(); m_pad->GetChildWndList().end()!=it; ++it)
 	{
-		CUIListBoxItem* item = smart_cast<CUIListBoxItem*>(*it);
+		CUIListBoxItem* item = dynamic_cast<CUIListBoxItem*>(*it);
 		if (item)
 		{
 			if(_idx == idx)
@@ -230,7 +230,7 @@ CUIListBoxItem* CUIListBox::GetItemByText(LPCSTR txt)
 {
 	for(WINDOW_LIST_it it = m_pad->GetChildWndList().begin(); m_pad->GetChildWndList().end()!=it; ++it)
 	{
-		CUIListBoxItem* item = smart_cast<CUIListBoxItem*>(*it);
+		CUIListBoxItem* item = dynamic_cast<CUIListBoxItem*>(*it);
 		if (item)
 		{
 			if (0 == xr_strcmp(item->m_text.GetText(), txt))
@@ -283,7 +283,7 @@ float CUIListBox::GetLongestLength()
 	float len = 0;
 	for(WINDOW_LIST_it it = m_pad->GetChildWndList().begin(); m_pad->GetChildWndList().end()!=it; ++it)
 	{
-		CUIListBoxItem* item = smart_cast<CUIListBoxItem*>(*it);
+		CUIListBoxItem* item = dynamic_cast<CUIListBoxItem*>(*it);
 		if (item)
 		{
 			float tmp_len = item->GetFont()->SizeOf_(item->m_text.GetText()); //all ok

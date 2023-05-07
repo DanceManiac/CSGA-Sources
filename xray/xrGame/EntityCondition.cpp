@@ -292,7 +292,7 @@ void CEntityCondition::UpdateCondition()
 
 float CEntityCondition::HitOutfitEffect( float hit_power, ALife::EHitType hit_type, s16 element, float ap, bool& add_wound )
 {
-    CInventoryOwner* pInvOwner		= smart_cast<CInventoryOwner*>(m_object);
+    CInventoryOwner* pInvOwner		= dynamic_cast<CInventoryOwner*>(m_object);
 	if(!pInvOwner)					return hit_power;
 
 	CCustomOutfit* pOutfit			= (CCustomOutfit*)pInvOwner->inventory().m_slots[OUTFIT_SLOT].m_pIItem;
@@ -328,7 +328,7 @@ float CEntityCondition::HitOutfitEffect( float hit_power, ALife::EHitType hit_ty
 
 float CEntityCondition::HitPowerEffect(float power_loss)
 {
-	CInventoryOwner* pInvOwner		 = smart_cast<CInventoryOwner*>(m_object);
+	CInventoryOwner* pInvOwner		 = dynamic_cast<CInventoryOwner*>(m_object);
 	if(!pInvOwner)					 return power_loss;
 
 	CCustomOutfit* pOutfit			= (CCustomOutfit*)pInvOwner->inventory().m_slots[OUTFIT_SLOT].m_pIItem;
@@ -439,7 +439,7 @@ CWound* CEntityCondition::ConditionHit(SHit* pHDS)
 		}break;
 	}
 
-	if (bDebug) Msg("%s hitted in %s with %f[%f]", m_object->Name(), smart_cast<IKinematics*>(m_object->Visual())->LL_BoneName_dbg(pHDS->boneID), m_fHealthLost*100.0f, hit_power_org);
+	if (bDebug) Msg("%s hitted in %s with %f[%f]", m_object->Name(), dynamic_cast<IKinematics*>(m_object->Visual())->LL_BoneName_dbg(pHDS->boneID), m_fHealthLost*100.0f, hit_power_org);
 	//раны добавляются только живому
 	if( bAddWound && GetHealth()>0 )
 	{

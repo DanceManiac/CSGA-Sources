@@ -77,7 +77,7 @@ void CGameGraphBuilder::load_graph_point	(NET_Packet &net_packet)
 		return;
 	}
 
-	CSE_ALifeGraphPoint		*graph_point = smart_cast<CSE_ALifeGraphPoint*>(entity);
+	CSE_ALifeGraphPoint		*graph_point = dynamic_cast<CSE_ALifeGraphPoint*>(entity);
 	if (!graph_point) {
 		F_entity_Destroy	(entity);
 		return;

@@ -150,7 +150,7 @@ void CControlAnimationBase::select_animation(bool anim_end)
 
 	// установить анимацию	
 	string128	s1,s2;
-	MotionID	cur_anim		= smart_cast<IKinematicsAnimated*>(m_object->Visual())->ID_Cycle_Safe(strconcat(sizeof(s2),s2,*anim_it->target_name,itoa(index,s1,10)));
+	MotionID	cur_anim		= dynamic_cast<IKinematicsAnimated*>(m_object->Visual())->ID_Cycle_Safe(strconcat(sizeof(s2),s2,*anim_it->target_name,itoa(index,s1,10)));
 
 	// Setup Com
 	ctrl_data->global.motion	= cur_anim;
@@ -230,7 +230,7 @@ void CControlAnimationBase::CheckReplacedAnim()
 SAAParam &CControlAnimationBase::AA_GetParams(LPCSTR anim_name)
 {
 	// искать текущую анимацию в AA_VECTOR
-	MotionID motion = smart_cast<IKinematicsAnimated*>(m_object->Visual())->LL_MotionID(anim_name);
+	MotionID motion = dynamic_cast<IKinematicsAnimated*>(m_object->Visual())->LL_MotionID(anim_name);
 
 	for (AA_VECTOR_IT it = m_attack_anims.begin(); it != m_attack_anims.end(); it++) {
 		if (it->motion == motion) return (*it);
@@ -280,7 +280,7 @@ void CControlAnimationBase::FX_Play(EHitSide side, float amount)
 		case eSideRight:	p_str = &anim_it->fxs.right;	break;
 	}
 
-	if (p_str && p_str->size()) smart_cast<IKinematicsAnimated*>(m_object->Visual())->PlayFX(*(*p_str), amount);
+	if (p_str && p_str->size()) dynamic_cast<IKinematicsAnimated*>(m_object->Visual())->PlayFX(*(*p_str), amount);
 
 	fx_time_last_play = m_object->m_dwCurrentTime;
 }
@@ -408,7 +408,7 @@ void CControlAnimationBase::ValidateAnimation()
 ///////////////////////////////////////////////////////////////////////////////////////
 void CControlAnimationBase::UpdateAnimCount()
 {
-	IKinematicsAnimated *skel = smart_cast<IKinematicsAnimated*>(m_object->Visual());
+	IKinematicsAnimated *skel = dynamic_cast<IKinematicsAnimated*>(m_object->Visual());
 
 	for (ANIM_ITEM_VECTOR_IT it = m_anim_storage.begin(); it != m_anim_storage.end(); it++)	{
 		if (!(*it)) continue;
@@ -442,7 +442,7 @@ void CControlAnimationBase::UpdateAnimCount()
 CMotionDef *CControlAnimationBase::get_motion_def(SAnimItem *it, u32 index)
 {
 	string128			s1,s2;
-	IKinematicsAnimated	*skeleton_animated = smart_cast<IKinematicsAnimated*>(m_object->Visual());
+	IKinematicsAnimated	*skeleton_animated = dynamic_cast<IKinematicsAnimated*>(m_object->Visual());
 	const MotionID		&motion_id = skeleton_animated->ID_Cycle_Safe(strconcat(sizeof(s2),s2,*it->target_name,itoa(index,s1,10)));
 	return				(skeleton_animated->LL_GetMotionDef(motion_id));
 }
@@ -477,7 +477,7 @@ MotionID CControlAnimationBase::get_motion_id(EMotionAnim a, u32 index)
 	}
 
 	string128			s1,s2;
-	return				(smart_cast<IKinematicsAnimated*>(m_object->Visual())->ID_Cycle_Safe(strconcat(sizeof(s2),s2,*anim_it->target_name,itoa(index,s1,10))));
+	return				(dynamic_cast<IKinematicsAnimated*>(m_object->Visual())->ID_Cycle_Safe(strconcat(sizeof(s2),s2,*anim_it->target_name,itoa(index,s1,10))));
 }
 
 void CControlAnimationBase::stop_now()
@@ -566,7 +566,7 @@ void CControlAnimationBase::AA_reload(LPCSTR section)
 	SAAParam			anim;
 	LPCSTR				anim_name,val;
 
-	IKinematicsAnimated	*skel_animated = smart_cast<IKinematicsAnimated*>(m_object->Visual());
+	IKinematicsAnimated	*skel_animated = dynamic_cast<IKinematicsAnimated*>(m_object->Visual());
 
 	for (u32 i=0; pSettings->r_line(section,i,&anim_name,&val); ++i) {
 		

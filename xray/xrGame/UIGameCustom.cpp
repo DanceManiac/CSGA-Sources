@@ -231,8 +231,8 @@ bool CUIGameCustom::ShowActorMenu()
 	{
 		if ( !m_ActorMenu->IsShown() )
 		{
-//			CInventoryOwner* pIOActor	= smart_cast<CInventoryOwner*>( Level().CurrentControlEntity() );
-			CInventoryOwner* pIOActor	= smart_cast<CInventoryOwner*>( Level().CurrentViewEntity() );
+//			CInventoryOwner* pIOActor	= dynamic_cast<CInventoryOwner*>( Level().CurrentControlEntity() );
+			CInventoryOwner* pIOActor	= dynamic_cast<CInventoryOwner*>( Level().CurrentViewEntity() );
 			VERIFY						(pIOActor);
 			m_ActorMenu->SetActor		(pIOActor);
 			m_ActorMenu->SetMenuMode	(mmInventory);

@@ -87,7 +87,7 @@ BOOL CArtefact::net_Spawn(CSE_Abstract* DC)
 
 	StartLights();
 	m_CarringBoneID					= u16(-1);
-	IKinematicsAnimated	*K			= smart_cast<IKinematicsAnimated*>(Visual());
+	IKinematicsAnimated	*K			= dynamic_cast<IKinematicsAnimated*>(Visual());
 	if(K)
 		K->PlayCycle("idle");
 	
@@ -122,7 +122,7 @@ void CArtefact::OnH_A_Chield()
 	}
 	else
 	{
-		IKinematics* K	= smart_cast<IKinematics*>(H_Parent()->Visual());
+		IKinematics* K	= dynamic_cast<IKinematics*>(H_Parent()->Visual());
 		if (K)
 			m_CarringBoneID			= K->LL_BoneID("bip01_head");
 		else
@@ -196,7 +196,7 @@ void CArtefact::UpdateWorkload		(u32 dt)
 	Fvector vel = {0, 0, 0};
 	if (H_Parent()) 
 	{
-		CPhysicsShellHolder* pPhysicsShellHolder = smart_cast<CPhysicsShellHolder*>(H_Parent());
+		CPhysicsShellHolder* pPhysicsShellHolder = dynamic_cast<CPhysicsShellHolder*>(H_Parent());
 		if(pPhysicsShellHolder) pPhysicsShellHolder->PHGetLinearVell(vel);
 	}
 	CParticlesPlayer::SetParentVel	(vel);
@@ -335,16 +335,16 @@ void CArtefact::UpdateXForm()
 		if (0==H_Parent())	return;
 
 		// Get access to entity and its visual
-		CEntityAlive*		E		= smart_cast<CEntityAlive*>(H_Parent());
+		CEntityAlive*		E		= dynamic_cast<CEntityAlive*>(H_Parent());
         
 		if(!E)				return	;
 
-		const CInventoryOwner	*parent = smart_cast<const CInventoryOwner*>(E);
+		const CInventoryOwner	*parent = dynamic_cast<const CInventoryOwner*>(E);
 		if (parent && parent->use_simplified_visual())
 			return;
 
 		VERIFY				(E);
-		IKinematics*		V		= smart_cast<IKinematics*>	(E->Visual());
+		IKinematics*		V		= dynamic_cast<IKinematics*>	(E->Visual());
 		VERIFY				(V);
 
 		// Get matrices
@@ -510,7 +510,7 @@ void SArtefactDetectorsSupport::SetVisible(bool b)
 
 	LPCSTR curr				= pSettings->r_string(m_parent->cNameSect().c_str(), (b)?"det_show_particles":"det_hide_particles");
 
-	IKinematics* K			= smart_cast<IKinematics*>(m_parent->Visual());
+	IKinematics* K			= dynamic_cast<IKinematics*>(m_parent->Visual());
 	R_ASSERT2				(K, m_parent->cNameSect().c_str());
 	LPCSTR bone				= pSettings->r_string(m_parent->cNameSect().c_str(), "particles_bone");
 	u16 bone_id				= K->LL_BoneID(bone);
@@ -530,7 +530,7 @@ void SArtefactDetectorsSupport::Blink()
 {
 	LPCSTR curr				= pSettings->r_string(m_parent->cNameSect().c_str(), "det_show_particles");
 
-	IKinematics* K			= smart_cast<IKinematics*>(m_parent->Visual());
+	IKinematics* K			= dynamic_cast<IKinematics*>(m_parent->Visual());
 	R_ASSERT2				(K, m_parent->cNameSect().c_str());
 	LPCSTR bone				= pSettings->r_string(m_parent->cNameSect().c_str(), "particles_bone");
 	u16 bone_id				= K->LL_BoneID(bone);

@@ -105,7 +105,7 @@ void CCustomOutfit::Load(LPCSTR section)
 	{
 		m_BonesProtectionSect._set( pSettings->r_string( cNameSect(), "bones_koeff_protection" ) );
 	}
-	CActor* pActor = smart_cast<CActor*>( Level().CurrentViewEntity() );
+	CActor* pActor = dynamic_cast<CActor*>( Level().CurrentViewEntity() );
 	ReloadBonesProtection( pActor );
 
 	// Added by Axel, to enable optional condition use on any item
@@ -118,7 +118,7 @@ void CCustomOutfit::ReloadBonesProtection( CActor* pActor )
 	{
 		return;
 	}
-	m_boneProtection->reload( m_BonesProtectionSect, smart_cast<IKinematics*>( pActor->Visual() ) );
+	m_boneProtection->reload( m_BonesProtectionSect, dynamic_cast<IKinematics*>( pActor->Visual() ) );
 }
 
 void CCustomOutfit::Hit(float hit_power, ALife::EHitType hit_type)
@@ -190,7 +190,7 @@ void	CCustomOutfit::OnMoveToSlot		()
 {
 	if ( m_pInventory )
 	{
-		CActor* pActor = smart_cast<CActor*>( m_pInventory->GetOwner() );
+		CActor* pActor = dynamic_cast<CActor*>( m_pInventory->GetOwner() );
 		if ( pActor )
 		{
 			ReloadBonesProtection( pActor );
@@ -250,7 +250,7 @@ void	CCustomOutfit::OnMoveToRuck		(EItemPlace prev)
 {
 	if (m_pInventory)
 	{
-		CActor* pActor = smart_cast<CActor*> (m_pInventory->GetOwner());
+		CActor* pActor = dynamic_cast<CActor*> (m_pInventory->GetOwner());
 		if (pActor && prev == eItemPlaceSlot)
 		{
 			pActor->SwitchNightVision(false);
@@ -293,7 +293,7 @@ bool CCustomOutfit::install_upgrade_impl( LPCSTR section, bool test )
 	if ( result2 && !test )
 	{
 		m_BonesProtectionSect._set( str );
-		CActor* pActor = smart_cast<CActor*>( Level().CurrentViewEntity() );
+		CActor* pActor = dynamic_cast<CActor*>( Level().CurrentViewEntity() );
 		ReloadBonesProtection( pActor );
 	}
 	result |= result2;

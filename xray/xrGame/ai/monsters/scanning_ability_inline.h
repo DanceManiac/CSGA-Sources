@@ -70,7 +70,7 @@ void CScanningAbilityAbstract::schedule_update()
 	if (state == eStateDisabled) return;
 	if (!object->g_Alive()) return;
 
-	CActor *scan_obj	= smart_cast<CActor *>(Level().CurrentEntity());
+	CActor *scan_obj	= dynamic_cast<CActor *>(Level().CurrentEntity());
 	if (!scan_obj)		return;
 
 	// проверка на активность
@@ -131,7 +131,7 @@ void CScanningAbilityAbstract::frame_update(u32 dt)
 TEMPLATE_SPECIALIZATION
 float CScanningAbilityAbstract::get_velocity(CObject *obj)
 {
-	CActor *actor = smart_cast<CActor *>(obj);
+	CActor *actor = dynamic_cast<CActor *>(obj);
 	return (actor->character_physics_support()->movement()->GetVelocityActual()); 
 }
 

@@ -32,7 +32,7 @@ void CParticlesObject::Init	(LPCSTR p_name, IRender_Sector* S, BOOL bAutoRemove)
 		// create visual
 		renderable.visual		= Render->model_CreateParticles(p_name);
 		VERIFY					(renderable.visual);
-		IParticleCustom* V		= smart_cast<IParticleCustom*>(renderable.visual);  VERIFY(V);
+		IParticleCustom* V		= dynamic_cast<IParticleCustom*>(renderable.visual);  VERIFY(V);
 		time_limit				= V->GetTimeLimit();
 	}else
 	{
@@ -111,7 +111,7 @@ const shared_str CParticlesObject::Name()
 {
 	if(g_dedicated_server)	return "";
 
-	IParticleCustom* V	= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
+	IParticleCustom* V	= dynamic_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
 	return (V) ? V->Name() : "";
 }
 
@@ -120,7 +120,7 @@ void CParticlesObject::Play		(bool bHudMode)
 {
 	if(g_dedicated_server)		return;
 
-	IParticleCustom* V			= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
+	IParticleCustom* V			= dynamic_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
 	if(bHudMode)
 		V->SetHudMode			(bHudMode);
 
@@ -135,7 +135,7 @@ void CParticlesObject::play_at_pos(const Fvector& pos, BOOL xform)
 {
 	if(g_dedicated_server)		return;
 
-	IParticleCustom* V			= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
+	IParticleCustom* V			= dynamic_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
 	Fmatrix m; m.translate		(pos); 
 	V->UpdateParent				(m,zero_vel,xform);
 	V->Play						();
@@ -149,7 +149,7 @@ void CParticlesObject::Stop		(BOOL bDefferedStop)
 {
 	if(g_dedicated_server)		return;
 
-	IParticleCustom* V			= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
+	IParticleCustom* V			= dynamic_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
 	V->Stop						(bDefferedStop);
 	m_bStopping					= true;
 }
@@ -170,7 +170,7 @@ void CParticlesObject::shedule_Update	(u32 _dt)
 			Device.seqParallel.push_back		(delegate);
 		} else {
 			mt_dt					= 0;
-			IParticleCustom* V		= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
+			IParticleCustom* V		= dynamic_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
 			V->OnFrame				(dt);
 		}
 		dwLastTime					= Device.dwTimeGlobal;
@@ -185,7 +185,7 @@ void CParticlesObject::PerformAllTheWork(u32 _dt)
 	// Update
 	u32 dt							= Device.dwTimeGlobal - dwLastTime;
 	if (dt)							{
-		IParticleCustom* V		= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
+		IParticleCustom* V		= dynamic_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
 		V->OnFrame				(dt);
 		dwLastTime				= Device.dwTimeGlobal;
 	}
@@ -197,7 +197,7 @@ void CParticlesObject::PerformAllTheWork_mt()
 	if(g_dedicated_server)		return;
 
 	if (0==mt_dt)			return;	//???
-	IParticleCustom* V		= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
+	IParticleCustom* V		= dynamic_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
 	V->OnFrame				(mt_dt);
 	mt_dt					= 0;
 }
@@ -206,7 +206,7 @@ void CParticlesObject::SetXFORM			(const Fmatrix& m)
 {
 	if(g_dedicated_server)		return;
 
-	IParticleCustom* V	= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
+	IParticleCustom* V	= dynamic_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
 	V->UpdateParent		(m,zero_vel,TRUE);
 	renderable.xform.set(m);
 	UpdateSpatial		();
@@ -216,7 +216,7 @@ void CParticlesObject::UpdateParent		(const Fmatrix& m, const Fvector& vel)
 {
 	if(g_dedicated_server)		return;
 
-	IParticleCustom* V	= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
+	IParticleCustom* V	= dynamic_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
 	V->UpdateParent		(m,vel,FALSE);
 	UpdateSpatial		();
 }
@@ -244,7 +244,7 @@ void CParticlesObject::renderable_Render	()
 	VERIFY					(renderable.visual);
 	u32 dt					= Device.dwTimeGlobal - dwLastTime;
 	if (dt){
-		IParticleCustom* V	= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
+		IParticleCustom* V	= dynamic_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
 		V->OnFrame			(dt);
 		dwLastTime			= Device.dwTimeGlobal;
 	}
@@ -270,7 +270,7 @@ bool CParticlesObject::IsPlaying()
 {
 	if(g_dedicated_server)		return false;
 
-	IParticleCustom* V	= smart_cast<IParticleCustom*>(renderable.visual); 
+	IParticleCustom* V	= dynamic_cast<IParticleCustom*>(renderable.visual); 
 	VERIFY(V);
 	return !!V->IsPlaying();
 }

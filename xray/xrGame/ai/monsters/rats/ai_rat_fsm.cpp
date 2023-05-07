@@ -617,11 +617,11 @@ void CAI_Rat::EatCorpse()
 		SWITCH_TO_NEW_STATE_THIS_UPDATE(aiRatFreeRecoil);
 	}
 
-	//	IKinematicsAnimated					*V= smart_cast<IKinematicsAnimated*>(const_cast<CGameObject*>(memory().item().selected())->Visual());
+	//	IKinematicsAnimated					*V= dynamic_cast<IKinematicsAnimated*>(const_cast<CGameObject*>(memory().item().selected())->Visual());
 	//	R_ASSERT							(V);
 	//	u16									head_bone = V->LL_BoneID("bip01_head");
 	//	Fmatrix								l_tMatrix;
-	//	l_tMatrix.mul_43					(const_cast<CGameObject*>(memory().item().selected())->XFORM(),smart_cast<IKinematics*>(const_cast<CGameObject*>(memory().item().selected())->Visual())->LL_GetBoneInstance(head_bone).mTransform);
+	//	l_tMatrix.mul_43					(const_cast<CGameObject*>(memory().item().selected())->XFORM(),dynamic_cast<IKinematics*>(const_cast<CGameObject*>(memory().item().selected())->Visual())->LL_GetBoneInstance(head_bone).mTransform);
 	//	Fvector								temp_position = l_tMatrix.c;
 	Fvector								temp_position;
 	memory().item().selected()->Center						(temp_position);
@@ -640,7 +640,7 @@ void CAI_Rat::EatCorpse()
 		m_fSpeed						= 0;
 		if (Device.dwTimeGlobal - m_previous_query_time > m_dwHitInterval) {
 			m_previous_query_time		= Device.dwTimeGlobal;
-			const CEntityAlive			*const_corpse = smart_cast<const CEntityAlive*>(memory().item().selected());
+			const CEntityAlive			*const_corpse = dynamic_cast<const CEntityAlive*>(memory().item().selected());
 			VERIFY						(const_corpse);
 			CEntityAlive				*corpse = const_cast<CEntityAlive*>(const_corpse);
 			VERIFY						(corpse);

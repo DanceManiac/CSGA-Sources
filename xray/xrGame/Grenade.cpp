@@ -141,7 +141,7 @@ void CGrenade::SendHiddenItem						()
 		Msg("MotionMarks !!![%d][%d]", ID(), Device.dwFrame);
 		Throw				();
 	}
-	CActor* pActor = smart_cast<CActor*>( m_pInventory->GetOwner());
+	CActor* pActor = dynamic_cast<CActor*>( m_pInventory->GetOwner());
 	if (pActor && (GetState()==eReady || GetState()==eThrow))
 	{
 		return;
@@ -158,7 +158,7 @@ void CGrenade::Throw()
 	if (!m_fake_missile)
 		return;
 
-	CGrenade					*pGrenade = smart_cast<CGrenade*>( m_fake_missile );
+	CGrenade					*pGrenade = dynamic_cast<CGrenade*>( m_fake_missile );
 	VERIFY						(pGrenade);
 	
 	if (pGrenade) 
@@ -217,10 +217,10 @@ void CGrenade::PutNextToSlot()
 	else
 		Msg ("! PutNextToSlot : m_pInventory = NULL [%d][%d]", ID(), Device.dwFrame);	
 
-	if (smart_cast<CInventoryOwner*>(H_Parent()) && m_pInventory)
+	if (dynamic_cast<CInventoryOwner*>(H_Parent()) && m_pInventory)
 	{
-		CGrenade *pNext						= smart_cast<CGrenade*>(	m_pInventory->Same(this,true)		);
-		if(!pNext) pNext					= smart_cast<CGrenade*>(	m_pInventory->SameSlot(GRENADE_SLOT, this, true)	);
+		CGrenade *pNext						= dynamic_cast<CGrenade*>(	m_pInventory->Same(this,true)		);
+		if(!pNext) pNext					= dynamic_cast<CGrenade*>(	m_pInventory->SameSlot(GRENADE_SLOT, this, true)	);
 
 		VERIFY								(pNext != this);
 
@@ -273,7 +273,7 @@ bool CGrenade::Action(s32 cmd, u32 flags)
 					TIItemContainer::iterator it_e = m_pInventory->m_ruck.end();
 					for(;it!=it_e;++it) 
 					{
-						CGrenade *pGrenade = smart_cast<CGrenade*>(*it);
+						CGrenade *pGrenade = dynamic_cast<CGrenade*>(*it);
 						if(pGrenade && xr_strcmp(pGrenade->cNameSect(), cNameSect())) 
 						{
 							m_pInventory->Ruck(this);
@@ -330,12 +330,12 @@ void CGrenade::DeactivateItem()
 	{
 		if (m_fake_missile)
 		{
-			CGrenade*		pGrenade	= smart_cast<CGrenade*>( m_fake_missile );
+			CGrenade*		pGrenade	= dynamic_cast<CGrenade*>( m_fake_missile );
 			if ( pGrenade )
 			{
 				if ( m_pInventory->GetOwner() )
 				{
-					CActor* pActor = smart_cast<CActor*>( m_pInventory->GetOwner() );
+					CActor* pActor = dynamic_cast<CActor*>( m_pInventory->GetOwner() );
 					if (pActor)
 					{
 						if ( !pActor->g_Alive() )

@@ -326,7 +326,7 @@ void CActor::cam_Update(float dt, float fFOV)
 
 				smoothvector(fpb_smooth_y, dyn_y, dt);
 				smoothvector(fpb_smooth_z, dyn_z, dt);
-				smart_cast<CCameraFirstEye*>(cameras[eacFirstEye])->m_cam1_offset.set(0.f, 0.f, result.z + fpb_smooth_z);
+				dynamic_cast<CCameraFirstEye*>(cameras[eacFirstEye])->m_cam1_offset.set(0.f, 0.f, result.z + fpb_smooth_z);
 				point.y = result.y + fpb_smooth_y;
 			}
 		}

@@ -186,7 +186,7 @@ void game_cl_CaptureTheArtefact::shedule_Update(u32 dt)
 					UpdateTimeLimit(current_time);
 				}
 				/*if (Level().CurrentControlEntity()){
-						CGameObject* GO = smart_cast<CGameObject*>(Level().CurrentControlEntity());
+						CGameObject* GO = dynamic_cast<CGameObject*>(Level().CurrentControlEntity());
 						Msg("---I'm ready (ID = %d) sending player ready packet !!!", GO->ID());
 						NET_Packet			P;
 						GO->u_EventGen		(P,GE_GAME_EVENT,GO->ID()	);
@@ -646,7 +646,7 @@ bool game_cl_CaptureTheArtefact::InWarmUp() const
 CUIGameCustom* game_cl_CaptureTheArtefact::createGameUI()
 {
 	game_cl_mp::createGameUI();
-	m_game_ui	= smart_cast<CUIGameCTA*> (NEW_INSTANCE(CLSID_GAME_UI_CAPTURETHEARTEFACT));
+	m_game_ui	= dynamic_cast<CUIGameCTA*> (NEW_INSTANCE(CLSID_GAME_UI_CAPTURETHEARTEFACT));
 	VERIFY2(m_game_ui, "failed to create Capture The Artefact game UI");
 	m_game_ui->SetClGame(this);
 	m_game_ui->Init();
@@ -681,11 +681,11 @@ void game_cl_CaptureTheArtefact::OnGameMenuRespond_ChangeSkin(NET_Packet& P)
 
 void game_cl_CaptureTheArtefact::SpawnMe()
 {
-	CActor*			currActor	= smart_cast<CActor*>(Level().CurrentControlEntity());
+	CActor*			currActor	= dynamic_cast<CActor*>(Level().CurrentControlEntity());
 	if (!currActor)
 		return;
 
-	/*CGameObject*	go = smart_cast<CGameObject*>(curr);
+	/*CGameObject*	go = dynamic_cast<CGameObject*>(curr);
 	VERIFY			(go);*/
 
 	NET_Packet		packet;
@@ -809,7 +809,7 @@ void game_cl_CaptureTheArtefact::OnSpawn(CObject* pObj)
 	if (g_dedicated_server)
 		return;
 
-	CArtefact *pArtefact = smart_cast<CArtefact*>(pObj);
+	CArtefact *pArtefact = dynamic_cast<CArtefact*>(pObj);
 	if (pArtefact)
 	{
 		Level().MapManager().AddMapLocation(ARTEFACT_NEUTRAL, pObj->ID())->EnablePointer();
@@ -828,7 +828,7 @@ void game_cl_CaptureTheArtefact::OnSpawn(CObject* pObj)
 		}*/
 		return;
 	}
-	CActor *pActor = smart_cast<CActor*>(pObj);
+	CActor *pActor = dynamic_cast<CActor*>(pObj);
 	if (pActor && local_player)
 	{
 		game_PlayerState *ps = GetPlayerByGameID(pActor->ID());
@@ -848,7 +848,7 @@ void game_cl_CaptureTheArtefact::OnSpawn(CObject* pObj)
 			}
 		}
 	}
-	if (smart_cast<CWeapon*>(pObj))
+	if (dynamic_cast<CWeapon*>(pObj))
 	{
 		if (pObj->H_Parent())
 		{
@@ -868,7 +868,7 @@ void game_cl_CaptureTheArtefact::SetInvinciblePlayer(u16 const gameId, bool cons
 	if (!pObject)
 		return;
 
-	if (!smart_cast<CActor*>(pObject))
+	if (!dynamic_cast<CActor*>(pObject))
 		return;
 
 	CActor* pActor		= static_cast<CActor*>		(pObject);
@@ -1084,7 +1084,7 @@ void game_cl_CaptureTheArtefact::OnBuySpawnMenu_Ok		()
 	if (!curr)
 		return;
 
-	CGameObject*	go = smart_cast<CGameObject*>(curr);
+	CGameObject*	go = dynamic_cast<CGameObject*>(curr);
 	NET_Packet		packet;
 	go->u_EventGen	(packet, GE_GAME_EVENT, go->ID());
 	packet.w_u16	(GAME_EVENT_PLAYER_BUY_SPAWN);
@@ -1413,7 +1413,7 @@ void game_cl_CaptureTheArtefact::OnTeamSelect(int Team)
 	{
 		CObject *l_pObj = Level().CurrentEntity();
 
-		CGameObject *l_pPlayer = smart_cast<CGameObject*>(l_pObj);
+		CGameObject *l_pPlayer = dynamic_cast<CGameObject*>(l_pObj);
 		VERIFY(l_pPlayer);
 
 		NET_Packet		P;
@@ -1446,7 +1446,7 @@ void game_cl_CaptureTheArtefact::OnSkinMenu_Ok()
 	NET_Packet P;
 	
 	CObject *l_pObj = Level().CurrentEntity();
-	CGameObject *l_pPlayer = smart_cast<CGameObject*>(l_pObj);
+	CGameObject *l_pPlayer = dynamic_cast<CGameObject*>(l_pObj);
 	VERIFY2(l_pPlayer, make_string("local player object not found"));
 	
 	// sending request for selecting actor scin
@@ -1553,11 +1553,11 @@ void game_cl_CaptureTheArtefact::OnRender()
 			if (!pObject)
 				continue;
 
-			if (!pObject || !smart_cast<CActor*>(pObject))
+			if (!pObject || !dynamic_cast<CActor*>(pObject))
 				continue;
 
 			VERIFY(pObject);
-			CActor* pActor = smart_cast<CActor*>(pObject);
+			CActor* pActor = dynamic_cast<CActor*>(pObject);
 			VERIFY(pActor); 
 			Fvector IPos = pTS->IndicatorPos;
 

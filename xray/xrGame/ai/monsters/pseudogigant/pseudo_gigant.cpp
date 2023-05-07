@@ -191,7 +191,7 @@ void CPseudoGigant::event_on_step()
 {
 	//////////////////////////////////////////////////////////////////////////
 	// Earthquake Effector	//////////////
-	CActor* pActor =  smart_cast<CActor*>(Level().CurrentEntity());
+	CActor* pActor =  dynamic_cast<CActor*>(Level().CurrentEntity());
 	if(pActor)
 	{
 		float dist_to_actor = pActor->Position().distance_to(Position());
@@ -239,7 +239,7 @@ void CPseudoGigant::on_threaten_execute()
 	m_nearest.clear_not_free		();
 	Level().ObjectSpace.GetNearest	(m_nearest,Position(), 15.f, NULL); 
 	for (u32 i=0;i<m_nearest.size();i++) {
-		CPhysicsShellHolder  *obj = smart_cast<CPhysicsShellHolder *>(m_nearest[i]);
+		CPhysicsShellHolder  *obj = dynamic_cast<CPhysicsShellHolder *>(m_nearest[i]);
 		if (!obj || !obj->m_pPhysicsShell) continue;
 
 		Fvector dir;
@@ -260,7 +260,7 @@ void CPseudoGigant::on_threaten_execute()
 	// играть партиклы
 	PlayParticles(m_kick_particles, pos, Direction());
 	
-	CActor *pA = const_cast<CActor *>(smart_cast<const CActor *>(EnemyMan.get_enemy()));
+	CActor *pA = const_cast<CActor *>(dynamic_cast<const CActor *>(EnemyMan.get_enemy()));
 	if (!pA) return;
 	if ((pA->MovingState() & ACTOR_DEFS::mcJump) != 0) return;
 
@@ -290,7 +290,7 @@ void CPseudoGigant::on_threaten_execute()
 	HS.weaponID			= (ID());														//	l_P.w_u16	(ID());
 	HS.dir				= (Fvector().set(0.f,1.f,0.f));									//	l_P.w_dir	(Fvector().set(0.f,1.f,0.f));
 	HS.power			= (hit_value);													//	l_P.w_float	(m_kick_damage);
-	HS.boneID			= (smart_cast<IKinematics*>(pA->Visual())->LL_GetBoneRoot());	//	l_P.w_s16	(smart_cast<IKinematics*>(pA->Visual())->LL_GetBoneRoot());
+	HS.boneID			= (dynamic_cast<IKinematics*>(pA->Visual())->LL_GetBoneRoot());	//	l_P.w_s16	(dynamic_cast<IKinematics*>(pA->Visual())->LL_GetBoneRoot());
 	HS.p_in_bone_space	= (Fvector().set(0.f,0.f,0.f));									//	l_P.w_vec3	(Fvector().set(0.f,0.f,0.f));
 	HS.impulse			= (80 * pA->character_physics_support()->movement()->GetMass());						//	l_P.w_float	(20 * pA->movement_control()->GetMass());
 	HS.hit_type			= ( ALife::eHitTypeStrike);										//	l_P.w_u16	( u16(ALife::eHitTypeWound) );

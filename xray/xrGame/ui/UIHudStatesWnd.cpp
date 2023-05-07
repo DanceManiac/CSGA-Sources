@@ -186,7 +186,7 @@ void CUIHudStatesWnd::Load_section_type( ALife::EInfluenceType type, LPCSTR sect
 
 void CUIHudStatesWnd::Update()
 {
-	CActor* actor = smart_cast<CActor*>( Level().CurrentViewEntity() );
+	CActor* actor = dynamic_cast<CActor*>( Level().CurrentViewEntity() );
 	if ( !actor )
 	{
 		return;
@@ -349,7 +349,7 @@ void CUIHudStatesWnd::UpdateZones()
 	//float actor_radia = m_actor->conditions().GetRadiation() * m_actor_radia_factor;
 	//m_radia_hit = _max( m_zone_cur_power[it_rad], actor_radia );
 
-	CActor* actor = smart_cast<CActor*>( Level().CurrentViewEntity() );
+	CActor* actor = dynamic_cast<CActor*>( Level().CurrentViewEntity() );
 	if ( !actor )
 	{
 		return;

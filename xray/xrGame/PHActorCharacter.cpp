@@ -291,8 +291,8 @@ void CPHActorCharacter::InitContact(dContact* c,bool &do_collide,u16 material_id
 		dxGeomUserData* D2=retrieveGeomUserData(c->geom.g2);
 		if(D1&&D2)
 		{
-			CActor* A1=smart_cast<CActor*>(D1->ph_ref_object);
-			CActor* A2=smart_cast<CActor*>(D2->ph_ref_object);
+			CActor* A1=dynamic_cast<CActor*>(D1->ph_ref_object);
+			CActor* A2=dynamic_cast<CActor*>(D2->ph_ref_object);
 			if(A1&&A2)
 			{
 				do_collide=do_collide&&!b_restrictor&&(A1->PPhysicsShell()==0)==(A2->PPhysicsShell()==0);

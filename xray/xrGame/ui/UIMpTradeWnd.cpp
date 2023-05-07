@@ -17,7 +17,7 @@ void CUIMpTradeWnd::OnBtnOkClicked(CUIWindow* w, void* d)
 	CheckDragItemToDestroy				();
 	StorePreset							(_preset_idx_last, true, false, false);
 	GetHolder()->StartStopMenu			(this,true);
-	game_cl_mp* clgame					= smart_cast<game_cl_mp*>(&(Game()));
+	game_cl_mp* clgame					= dynamic_cast<game_cl_mp*>(&(Game()));
 	VERIFY(clgame);
 	clgame->OnBuyMenu_Ok					();
 //.	StorePreset							(_preset_idx_last, true, true);
@@ -27,7 +27,7 @@ void CUIMpTradeWnd::OnBtnCancelClicked(CUIWindow* w, void* d)
 {
 	CheckDragItemToDestroy				();
 	GetHolder()->StartStopMenu			(this,true);
-	game_cl_mp* clgame					= smart_cast<game_cl_mp*>(&(Game()));
+	game_cl_mp* clgame					= dynamic_cast<game_cl_mp*>(&(Game()));
 	VERIFY(clgame);
 	clgame->OnBuyMenu_Cancel			();
 }
@@ -147,7 +147,7 @@ void CUIMpTradeWnd::OnRootTabChanged(CUIWindow* w, void* d)
 void CUIMpTradeWnd::OnSubLevelBtnClicked(CUIWindow* w, void* d)
 {
 	CheckDragItemToDestroy				();
-	CUITabButtonMP* btn					= smart_cast<CUITabButtonMP*>(w);
+	CUITabButtonMP* btn					= dynamic_cast<CUITabButtonMP*>(w);
 
 	shared_str curr						= btn->m_temp_id;
 	m_store_hierarchy->MoveDown			(curr);
@@ -223,7 +223,7 @@ void CUIMpTradeWnd::Show()
 	inherited::Show			();
 
 
-	CActor *pActor			= smart_cast<CActor*>(Level().CurrentEntity());
+	CActor *pActor			= dynamic_cast<CActor*>(Level().CurrentEntity());
 	if(pActor) 
 		pActor->SetWeaponHideState(INV_STATE_BUY_MENU, true);
 
@@ -236,7 +236,7 @@ void CUIMpTradeWnd::Hide()
 	CheckDragItemToDestroy	();
 	inherited::Hide			();
 
-	CActor *pActor			= smart_cast<CActor*>(Level().CurrentEntity());
+	CActor *pActor			= dynamic_cast<CActor*>(Level().CurrentEntity());
 	if(pActor)
 		pActor->SetWeaponHideState(INV_STATE_BUY_MENU, false);
 

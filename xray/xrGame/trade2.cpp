@@ -25,7 +25,7 @@ bool CTrade::CanTrade()
 		for (u32 i=0, n = m_nearest.size(); i<n; ++i) 
 		{
 			// Может ли объект торговать
-			pEntity = smart_cast<CEntity *>(m_nearest[i]);
+			pEntity = dynamic_cast<CEntity *>(m_nearest[i]);
 			if (pEntity && !pEntity->g_Alive()) return false;
 			if (SetPartner(pEntity)) break;
 		}
@@ -77,8 +77,8 @@ void CTrade::TransferItem(CInventoryItem* pItem, bool bBuying)
 		pPartner.inv_owner->on_before_buy	(pItem);
 	}
 
-	CGameObject* O1			= smart_cast<CGameObject *>(pPartner.inv_owner);
-	CGameObject* O2			= smart_cast<CGameObject *>(pThis.inv_owner);
+	CGameObject* O1			= dynamic_cast<CGameObject *>(pPartner.inv_owner);
+	CGameObject* O2			= dynamic_cast<CGameObject *>(pThis.inv_owner);
 	
 	if(!bBuying)
 		swap(O1,O2);
@@ -108,10 +108,10 @@ void CTrade::TransferItem(CInventoryItem* pItem, bool bBuying)
 
 	if (pThis.type == TT_TRADER && bBuying) 
 	{
-		CArtefact* pArtefact	= smart_cast<CArtefact*>(pItem);
+		CArtefact* pArtefact	= dynamic_cast<CArtefact*>(pItem);
 		if(pArtefact)
 		{
-			pTrader							= smart_cast<CAI_Trader*>(pThis.base);
+			pTrader							= dynamic_cast<CAI_Trader*>(pThis.base);
 			m_bNeedToUpdateArtefactTasks |= pTrader->BuyArtefact		(pArtefact);
 		}
 	}
@@ -148,12 +148,12 @@ CInventoryOwner* CTrade::GetPartner()
 
 u32	CTrade::GetItemPrice(PIItem pItem, bool b_buying)
 {
-	CArtefact				*pArtefact = smart_cast<CArtefact*>(pItem);
+	CArtefact				*pArtefact = dynamic_cast<CArtefact*>(pItem);
 
 	// computing base_cost
 	float					base_cost;
 	if (pArtefact && (pThis.type == TT_ACTOR) && (pPartner.type == TT_TRADER)) {
-		CAI_Trader			*pTrader = smart_cast<CAI_Trader*>(pPartner.inv_owner);
+		CAI_Trader			*pTrader = dynamic_cast<CAI_Trader*>(pPartner.inv_owner);
 		VERIFY				(pTrader);
 		base_cost			= (float)pTrader->ArtefactPrice(pArtefact);
 	}

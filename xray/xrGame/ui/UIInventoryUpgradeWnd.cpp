@@ -86,7 +86,7 @@ void CUIInventoryUpgradeWnd::Init()
 //	m_info_orig_pos.set( m_item_info->GetWndPos() );
 	
 	m_btn_repair = UIHelper::Create3tButtonEx( uiXml, "repair_button", this );
-	CUIActorMenu* parent_wnd = smart_cast<CUIActorMenu*>(m_pParentWnd);
+	CUIActorMenu* parent_wnd = dynamic_cast<CUIActorMenu*>(m_pParentWnd);
 	if ( parent_wnd )
 	{
 		m_btn_repair->set_hint_wnd( parent_wnd->get_hint_wnd() );
@@ -269,7 +269,7 @@ void CUIInventoryUpgradeWnd::AskUsing( LPCSTR text, LPCSTR upgrade_name )
 
 	m_cur_upgrade_id = upgrade_name;
 	
-	CUIActorMenu* parent_wnd = smart_cast<CUIActorMenu*>(m_pParentWnd);
+	CUIActorMenu* parent_wnd = dynamic_cast<CUIActorMenu*>(m_pParentWnd);
 	if ( parent_wnd )
 	{
 		parent_wnd->CallMessageBoxYesNo( text );
@@ -284,7 +284,7 @@ void CUIInventoryUpgradeWnd::OnMesBoxYes()
 //-		UpdateAllUpgrades();
 		
 		VERIFY( m_pParentWnd );
-		CUIActorMenu* parent_wnd = smart_cast<CUIActorMenu*>( m_pParentWnd );
+		CUIActorMenu* parent_wnd = dynamic_cast<CUIActorMenu*>( m_pParentWnd );
 		if ( parent_wnd )
 		{
 			parent_wnd->UpdateActor();
@@ -321,7 +321,7 @@ void CUIInventoryUpgradeWnd::set_info_cur_upgrade( Upgrade_type* upgrade )
 		upgrade = NULL;
 	}
 
-	CUIActorMenu* parent_wnd = smart_cast<CUIActorMenu*>(m_pParentWnd);
+	CUIActorMenu* parent_wnd = dynamic_cast<CUIActorMenu*>(m_pParentWnd);
 	if ( parent_wnd )
 	{
 		if ( parent_wnd->SetInfoCurUpgrade( upgrade, m_inv_item ) )
@@ -338,7 +338,7 @@ CUIInventoryUpgradeWnd::Manager_type& CUIInventoryUpgradeWnd::get_manager()
 /*
 void CUIInventoryUpgradeWnd::PreUpgradeItem()
 {
-	CWeapon* weapon = smart_cast<CWeapon*>( m_inv_item );
+	CWeapon* weapon = dynamic_cast<CWeapon*>( m_inv_item );
 	if ( weapon )
 	{
 		if ( weapon->ScopeAttachable() && weapon->IsScopeAttached() )
@@ -354,7 +354,7 @@ void CUIInventoryUpgradeWnd::PreUpgradeItem()
 			weapon->Detach( weapon->GetGrenadeLauncherName().c_str(), true );
 		}
 	}
-	CWeaponMagazined* wm = smart_cast<CWeaponMagazined*>( m_inv_item );
+	CWeaponMagazined* wm = dynamic_cast<CWeaponMagazined*>( m_inv_item );
 	if ( wm )
 	{
 		wm->UnloadMagazine();

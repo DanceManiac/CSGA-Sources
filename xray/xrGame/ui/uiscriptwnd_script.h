@@ -32,7 +32,7 @@ IC T*	CUIDialogWndEx::GetControl(LPCSTR name){
 	if(pWnd == NULL)
 		return NULL;
 
-	return smart_cast<T*>(pWnd);
+	return dynamic_cast<T*>(pWnd);
 }
 
 typedef luabind::class_<CUIDialogWndEx, WrapType, luabind::bases<CUIDialogWnd,DLL_Pure> > export_class;

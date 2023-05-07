@@ -22,7 +22,7 @@
 
 CWeapon	*CAI_Stalker::GetCurrentWeapon() const
 {
-	return			(smart_cast<CWeapon*>(inventory().ActiveItem()));
+	return			(dynamic_cast<CWeapon*>(inventory().ActiveItem()));
 }
 
 u32 CAI_Stalker::GetWeaponAmmo() const
@@ -92,7 +92,7 @@ bool CAI_Stalker::bfAssignWatch(CScriptEntityAction *tpEntityAction)
 			if (!xr_strlen(l_tWatchAction.m_bone_to_watch))
 				l_tWatchAction.m_tpObjectToWatch->Center(l_tWatchAction.m_tWatchVector);
 			else {
-				CBoneInstance	&l_tBoneInstance = smart_cast<IKinematics*>(l_tWatchAction.m_tpObjectToWatch->Visual())->LL_GetBoneInstance(smart_cast<IKinematics*>(l_tWatchAction.m_tpObjectToWatch->Visual())->LL_BoneID(l_tWatchAction.m_bone_to_watch));
+				CBoneInstance	&l_tBoneInstance = dynamic_cast<IKinematics*>(l_tWatchAction.m_tpObjectToWatch->Visual())->LL_GetBoneInstance(dynamic_cast<IKinematics*>(l_tWatchAction.m_tpObjectToWatch->Visual())->LL_BoneID(l_tWatchAction.m_bone_to_watch));
 				Fmatrix			l_tMatrix;
 
 				l_tMatrix			= l_tBoneInstance.mTransform;
@@ -129,7 +129,7 @@ bool CAI_Stalker::bfAssignWatch(CScriptEntityAction *tpEntityAction)
 bool CAI_Stalker::bfAssignObject(CScriptEntityAction *tpEntityAction)
 {
 	CScriptObjectAction	&l_tObjectAction	= tpEntityAction->m_tObjectAction;
-	CInventoryItem	*l_tpInventoryItem	= smart_cast<CInventoryItem*>(l_tObjectAction.m_tpObject);
+	CInventoryItem	*l_tpInventoryItem	= dynamic_cast<CInventoryItem*>(l_tObjectAction.m_tpObject);
 
 	if (!inherited::bfAssignObject(tpEntityAction) || !l_tObjectAction.m_tpObject || !l_tpInventoryItem) {
 		if (!inventory().ActiveItem()) {
@@ -145,8 +145,8 @@ bool CAI_Stalker::bfAssignObject(CScriptEntityAction *tpEntityAction)
 	if (!l_tpInventoryItem->object().H_Parent())
 		return			(true);
 
-	CWeapon				*l_tpWeapon				= smart_cast<CWeapon*>(inventory().ActiveItem());
-	CWeaponMagazined	*l_tpWeaponMagazined	= smart_cast<CWeaponMagazined*>(inventory().ActiveItem());
+	CWeapon				*l_tpWeapon				= dynamic_cast<CWeapon*>(inventory().ActiveItem());
+	CWeaponMagazined	*l_tpWeaponMagazined	= dynamic_cast<CWeaponMagazined*>(inventory().ActiveItem());
 
 	if (l_tpWeaponMagazined)
 		l_tpWeaponMagazined->SetQueueSize		(l_tObjectAction.m_dwQueueSize);
@@ -236,7 +236,7 @@ bool CAI_Stalker::bfAssignObject(CScriptEntityAction *tpEntityAction)
 			break;
 		}
 		case eObjectActionActivate : {
-			CTorch			*torch = smart_cast<CTorch*>(l_tObjectAction.m_tpObject);
+			CTorch			*torch = dynamic_cast<CTorch*>(l_tObjectAction.m_tpObject);
 			if (torch) {
 				torch->Switch(true);
 				break;
@@ -252,7 +252,7 @@ bool CAI_Stalker::bfAssignObject(CScriptEntityAction *tpEntityAction)
 			break;
 		}
 		case eObjectActionDeactivate : {
-			CTorch			*torch = smart_cast<CTorch*>(l_tObjectAction.m_tpObject);
+			CTorch			*torch = dynamic_cast<CTorch*>(l_tObjectAction.m_tpObject);
 			if (torch) {
 				torch->Switch(false);
 				break;

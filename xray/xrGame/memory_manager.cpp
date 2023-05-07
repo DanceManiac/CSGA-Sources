@@ -28,8 +28,8 @@
 CMemoryManager::CMemoryManager		(CEntityAlive *entity_alive, CSound_UserDataVisitor *visitor)
 {
 	VERIFY				(entity_alive);
-	m_object			= smart_cast<CCustomMonster*>(entity_alive);
-	m_stalker			= smart_cast<CAI_Stalker*>(m_object);
+	m_object			= dynamic_cast<CCustomMonster*>(entity_alive);
+	m_stalker			= dynamic_cast<CAI_Stalker*>(m_object);
 
 	if (m_stalker)
 		m_visual		= xr_new<CVisualMemoryManager>(m_stalker);
@@ -98,8 +98,8 @@ void CMemoryManager::update_enemies	(const bool &registered_in_combat)
 			(
 				!enemy().selected() || 
 				(
-					smart_cast<const CAI_Stalker*>(enemy().selected()) && 
-					smart_cast<const CAI_Stalker*>(enemy().selected())->wounded()
+					dynamic_cast<const CAI_Stalker*>(enemy().selected()) && 
+					dynamic_cast<const CAI_Stalker*>(enemy().selected())->wounded()
 				)
 			) &&
 			registered_in_combat
@@ -172,12 +172,12 @@ void CMemoryManager::update			(const xr_vector<T> &objects, bool add_enemies)
 		danger().add				(*I);
 		
 		if (add_enemies) {
-			const CEntityAlive		*entity_alive = smart_cast<const CEntityAlive*>((*I).m_object);
+			const CEntityAlive		*entity_alive = dynamic_cast<const CEntityAlive*>((*I).m_object);
 			if (entity_alive && enemy().add(entity_alive))
 				continue;
 		}
 
-		const CAI_Stalker			*stalker = smart_cast<const CAI_Stalker*>((*I).m_object);
+		const CAI_Stalker			*stalker = dynamic_cast<const CAI_Stalker*>((*I).m_object);
 		if (m_stalker && stalker)
 			continue;
 
@@ -193,7 +193,7 @@ CMemoryInfo CMemoryManager::memory(const CObject *object) const
 		return						(result);
 
 	u32								level_time = 0;
-	const CGameObject				*game_object = smart_cast<const CGameObject*>(object);
+	const CGameObject				*game_object = dynamic_cast<const CGameObject*>(object);
 	VERIFY							(game_object);
 	squad_mask_type					mask = m_stalker ? m_stalker->agent_manager().member().mask(m_stalker) : squad_mask_type(-1);
 
@@ -237,7 +237,7 @@ u32 CMemoryManager::memory_time(const CObject *object) const
 	if (!this->object().g_Alive())
 		return			(0);
 
-	const CGameObject	*game_object = smart_cast<const CGameObject*>(object);
+	const CGameObject	*game_object = dynamic_cast<const CGameObject*>(object);
 	VERIFY				(game_object);
 
 	{
@@ -268,7 +268,7 @@ Fvector CMemoryManager::memory_position	(const CObject *object) const
 	if (!this->object().g_Alive())
 		return			(result);
 
-	const CGameObject	*game_object = smart_cast<const CGameObject*>(object);
+	const CGameObject	*game_object = dynamic_cast<const CGameObject*>(object);
 	VERIFY				(game_object);
 
 	{

@@ -121,11 +121,11 @@ CSE_Abstract *CALifeSimulatorBase::spawn_item	(LPCSTR section, const Fvector &po
 	strcat						(s_name_replace,itoa(abstract->ID,S1,10));
 	abstract->set_name_replace	(s_name_replace);
 
-	CSE_ALifeDynamicObject		*dynamic_object = smart_cast<CSE_ALifeDynamicObject*>(abstract);
+	CSE_ALifeDynamicObject		*dynamic_object = dynamic_cast<CSE_ALifeDynamicObject*>(abstract);
 	VERIFY						(dynamic_object);
 
 	//оружие спавним с полным магазинои
-	CSE_ALifeItemWeapon* weapon = smart_cast<CSE_ALifeItemWeapon*>(dynamic_object);
+	CSE_ALifeItemWeapon* weapon = dynamic_cast<CSE_ALifeItemWeapon*>(dynamic_object);
 	if(weapon)
 		weapon->a_elapsed		= weapon->get_ammo_magsize();
 
@@ -149,7 +149,7 @@ CSE_Abstract *CALifeSimulatorBase::create(CSE_ALifeGroupAbstract *tpALifeGroupAb
 	LPCSTR						S = pSettings->r_string(tpALifeGroupAbstract->base()->s_name,"monster_section");
 	CSE_Abstract				*l_tpAbstract = F_entity_Create(S);
 	R_ASSERT2					(l_tpAbstract,"Can't create entity.");
-	CSE_ALifeDynamicObject		*k = smart_cast<CSE_ALifeDynamicObject*>(l_tpAbstract);
+	CSE_ALifeDynamicObject		*k = dynamic_cast<CSE_ALifeDynamicObject*>(l_tpAbstract);
 	R_ASSERT2					(k,"Non-ALife object in the 'game.spawn'");
 
 	j->Spawn_Write				(tNetPacket,TRUE);
@@ -187,7 +187,7 @@ void CALifeSimulatorBase::create(CSE_ALifeDynamicObject *&i, CSE_ALifeDynamicObj
 {
 	CSE_Abstract				*tpSE_Abstract = F_entity_Create(*j->s_name);
 	R_ASSERT3					(tpSE_Abstract,"Cannot find item with section",*j->s_name);
-	i							= smart_cast<CSE_ALifeDynamicObject*>(tpSE_Abstract);
+	i							= dynamic_cast<CSE_ALifeDynamicObject*>(tpSE_Abstract);
 	R_ASSERT2					(i,"Non-ALife object in the 'game.spawn'");
 
 	NET_Packet					tNetPacket;
@@ -202,7 +202,7 @@ void CALifeSimulatorBase::create(CSE_ALifeDynamicObject *&i, CSE_ALifeDynamicObj
 	R_ASSERT3					(!(i->used_ai_locations()) || (i->m_tNodeID != u32(-1)),"Invalid vertex for object ",i->name_replace());
 
 	i->m_tSpawnID				= tSpawnID;
-	if (!graph().actor() && smart_cast<CSE_ALifeCreatureActor*>(i))
+	if (!graph().actor() && dynamic_cast<CSE_ALifeCreatureActor*>(i))
 		i->ID					= 0;
 	else
 		i->ID					= server().PerformIDgen(0xffff);
@@ -210,11 +210,11 @@ void CALifeSimulatorBase::create(CSE_ALifeDynamicObject *&i, CSE_ALifeDynamicObj
 	register_object				(i,true);
 	i->m_bALifeControl			= true;
 
-	CSE_ALifeMonsterAbstract	*monster	= smart_cast<CSE_ALifeMonsterAbstract*>(i);
+	CSE_ALifeMonsterAbstract	*monster	= dynamic_cast<CSE_ALifeMonsterAbstract*>(i);
 	if (monster)
 		graph().assign			(monster);
 
-	CSE_ALifeGroupAbstract		*group = smart_cast<CSE_ALifeGroupAbstract*>(i);
+	CSE_ALifeGroupAbstract		*group = dynamic_cast<CSE_ALifeGroupAbstract*>(i);
 	if (group) {
 		group->m_tpMembers.resize(group->m_wCount);
 		OBJECT_IT				I = group->m_tpMembers.begin();
@@ -232,7 +232,7 @@ void CALifeSimulatorBase::create(CSE_ALifeDynamicObject *&i, CSE_ALifeDynamicObj
 
 void CALifeSimulatorBase::create	(CSE_ALifeObject *object)
 {
-	CSE_ALifeDynamicObject		*dynamic_object = smart_cast<CSE_ALifeDynamicObject*>(object);
+	CSE_ALifeDynamicObject		*dynamic_object = dynamic_cast<CSE_ALifeDynamicObject*>(object);
 	if (!dynamic_object)
 		return;
 	
@@ -265,7 +265,7 @@ void CALifeSimulatorBase::release	(CSE_Abstract *abstract, bool alife_query)
 {
 #ifdef DEBUG
 	if (psAI_Flags.test(aiALife)) {
-		Msg							("[LSS] Releasing object [%s][%s][%d][%x]",abstract->name_replace(),*abstract->s_name,abstract->ID,smart_cast<void*>(abstract));
+		Msg							("[LSS] Releasing object [%s][%s][%d][%x]",abstract->name_replace(),*abstract->s_name,abstract->ID,dynamic_cast<void*>(abstract));
 	}
 #endif
 	CSE_ALifeDynamicObject			*object = objects().object(abstract->ID);
@@ -301,7 +301,7 @@ void CALifeSimulatorBase::append_item_vector(OBJECT_VECTOR &tObjectVector, ITEM_
 	OBJECT_IT	I = tObjectVector.begin();
 	OBJECT_IT	E = tObjectVector.end();
 	for ( ; I != E; ++I) {
-		CSE_ALifeInventoryItem *l_tpALifeInventoryItem = smart_cast<CSE_ALifeInventoryItem*>(objects().object(*I));
+		CSE_ALifeInventoryItem *l_tpALifeInventoryItem = dynamic_cast<CSE_ALifeInventoryItem*>(objects().object(*I));
 		if (l_tpALifeInventoryItem)
 			tItemList.push_back		(l_tpALifeInventoryItem);
 	}
@@ -312,10 +312,10 @@ void CALifeSimulatorBase::assign_death_position(CSE_ALifeCreatureAbstract *tpALi
 	tpALifeCreatureAbstract->set_health		( 0.f );
 	
 	if (tpALifeSchedulable) {
-		CSE_ALifeAnomalousZone				*l_tpALifeAnomalousZone = smart_cast<CSE_ALifeAnomalousZone*>(tpALifeSchedulable);
+		CSE_ALifeAnomalousZone				*l_tpALifeAnomalousZone = dynamic_cast<CSE_ALifeAnomalousZone*>(tpALifeSchedulable);
 		if (l_tpALifeAnomalousZone) {
 			spawns().assign_artefact_position(l_tpALifeAnomalousZone,tpALifeCreatureAbstract);
-			CSE_ALifeMonsterAbstract		*l_tpALifeMonsterAbstract = smart_cast<CSE_ALifeMonsterAbstract*>(tpALifeCreatureAbstract);
+			CSE_ALifeMonsterAbstract		*l_tpALifeMonsterAbstract = dynamic_cast<CSE_ALifeMonsterAbstract*>(tpALifeCreatureAbstract);
 			if (l_tpALifeMonsterAbstract)
 				l_tpALifeMonsterAbstract->m_tPrevGraphID = l_tpALifeMonsterAbstract->m_tNextGraphID = l_tpALifeMonsterAbstract->m_tGraphID;
 			return;
@@ -336,7 +336,7 @@ void CALifeSimulatorBase::assign_death_position(CSE_ALifeCreatureAbstract *tpALi
 	tpALifeCreatureAbstract->m_tNodeID		= (*i).level_vertex_id();
 	R_ASSERT2								((ai().game_graph().vertex(tGraphID)->level_id() != graph().level().level_id()) || ai().level_graph().valid_vertex_id(tpALifeCreatureAbstract->m_tNodeID),"Invalid vertex");
 	tpALifeCreatureAbstract->m_fDistance	= (*i).distance();
-	CSE_ALifeMonsterAbstract				*l_tpALifeMonsterAbstract = smart_cast<CSE_ALifeMonsterAbstract*>(tpALifeCreatureAbstract);
+	CSE_ALifeMonsterAbstract				*l_tpALifeMonsterAbstract = dynamic_cast<CSE_ALifeMonsterAbstract*>(tpALifeCreatureAbstract);
 	if (l_tpALifeMonsterAbstract)
 		l_tpALifeMonsterAbstract->m_tPrevGraphID = l_tpALifeMonsterAbstract->m_tNextGraphID = l_tpALifeMonsterAbstract->m_tGraphID;
 }

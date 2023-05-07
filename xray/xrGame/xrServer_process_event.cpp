@@ -147,7 +147,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		if (!e_dest)
 			break;
 
-		CSE_ALifeCreatureAbstract	*creature = smart_cast<CSE_ALifeCreatureAbstract*>(e_dest);
+		CSE_ALifeCreatureAbstract	*creature = dynamic_cast<CSE_ALifeCreatureAbstract*>(e_dest);
 		if (creature)
 			creature->set_killer_id( id_src );
 
@@ -157,7 +157,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 	}
 	case GE_CHANGE_VISUAL:
 		{
-			CSE_Visual* visual		= smart_cast<CSE_Visual*>(receiver); VERIFY(visual);
+			CSE_Visual* visual		= dynamic_cast<CSE_Visual*>(receiver); VERIFY(visual);
 			string256 tmp;
 			P.r_stringZ				(tmp);
 			visual->set_visual		(tmp);
@@ -246,7 +246,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		{
 			shared_str				upgrade_id;
 			P.r_stringZ				( upgrade_id );
-			CSE_ALifeInventoryItem* iitem = smart_cast<CSE_ALifeInventoryItem*>( receiver );
+			CSE_ALifeInventoryItem* iitem = dynamic_cast<CSE_ALifeInventoryItem*>( receiver );
 			if ( !iitem )
 			{
 				break;
@@ -294,7 +294,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 	case GE_MONEY:
 		{
 			CSE_Abstract				*e_dest = receiver;
-			CSE_ALifeTraderAbstract*	pTa = smart_cast<CSE_ALifeTraderAbstract*>(e_dest);
+			CSE_ALifeTraderAbstract*	pTa = dynamic_cast<CSE_ALifeTraderAbstract*>(e_dest);
 			pTa->m_dwMoney				= P.r_u32();
 						
 		}break;
@@ -302,7 +302,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		break;
 	case GE_TRADER_FLAGS:
 	{
-		CSE_ALifeTraderAbstract* pTa = smart_cast<CSE_ALifeTraderAbstract*>(receiver);
+		CSE_ALifeTraderAbstract* pTa = dynamic_cast<CSE_ALifeTraderAbstract*>(receiver);
 		if (pTa)
 		{
 			pTa->m_trader_flags.assign(P.r_u32());

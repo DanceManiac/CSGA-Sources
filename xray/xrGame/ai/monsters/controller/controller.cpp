@@ -285,7 +285,7 @@ void CController::load_friend_community_overrides(LPCSTR section)
 
 bool CController::is_community_friend_overrides(const CEntityAlive *entity_alive) const
 {
-	const CInventoryOwner	*IO = smart_cast<const CInventoryOwner*>(entity_alive);
+	const CInventoryOwner	*IO = dynamic_cast<const CInventoryOwner*>(entity_alive);
 	if (!IO) return false;
 	if (const_cast<CEntityAlive *>(entity_alive)->cast_base_monster()) return false;
 	
@@ -313,7 +313,7 @@ void CController::UpdateControlled()
 {
 	// если есть враг, проверить может ли быть враг взят под контроль
 	if (EnemyMan.get_enemy()) {
-		CControlledEntityBase *entity = smart_cast<CControlledEntityBase *>(const_cast<CEntityAlive *>(EnemyMan.get_enemy()));
+		CControlledEntityBase *entity = dynamic_cast<CControlledEntityBase *>(const_cast<CEntityAlive *>(EnemyMan.get_enemy()));
 		if (entity) {
 			if (!entity->is_under_control() && (m_controlled_objects.size() < m_max_controlled_number)) {
 				// взять под контроль
@@ -332,7 +332,7 @@ void CController::set_controlled_task(u32 task)
 	const CEntity *object = ((((ETask)task) == eTaskNone) ? 0 : ((((ETask)task) == eTaskFollow) ? this : EnemyMan.get_enemy()));
 	
 	for	(u32 i=0; i<m_controlled_objects.size(); i++) {
-		CControlledEntityBase *entity = smart_cast<CControlledEntityBase *>(m_controlled_objects[i]);		
+		CControlledEntityBase *entity = dynamic_cast<CControlledEntityBase *>(m_controlled_objects[i]);		
 		entity->get_data().m_object = object;
 		entity->get_data().m_task	= (ETask)task;
 	}
@@ -348,7 +348,7 @@ void CController::CheckSpecParams(u32 spec_params)
 void CController::InitThink()
 {
 	for	(u32 i=0; i<m_controlled_objects.size(); i++) {	
-		CBaseMonster *base = smart_cast<CBaseMonster*>(m_controlled_objects[i]);
+		CBaseMonster *base = dynamic_cast<CBaseMonster*>(m_controlled_objects[i]);
 		if (!base) continue;
 		if (base->EnemyMan.get_enemy()) 
 			EnemyMemory.add_enemy  (base->EnemyMan.get_enemy(), 
@@ -407,7 +407,7 @@ void CController::control_hit()
 	Hit_Psy						(const_cast<CEntityAlive*>(EnemyMan.get_enemy()), 30.f);
 	
 	// start postprocess
-	CActor *pA = const_cast<CActor *>(smart_cast<const CActor *>(EnemyMan.get_enemy()));
+	CActor *pA = const_cast<CActor *>(dynamic_cast<const CActor *>(EnemyMan.get_enemy()));
 	if (!pA) return;
 	
 	Actor()->Cameras().AddCamEffector(xr_new<CMonsterEffectorHit>(m_control_effector.ce_time,m_control_effector.ce_amplitude,m_control_effector.ce_period_number,m_control_effector.ce_power));
@@ -509,7 +509,7 @@ void CController::net_Relcase(CObject *O)
 
 void CController::FreeFromControl()
 {
-	for	(u32 i=0; i<m_controlled_objects.size(); i++) smart_cast<CControlledEntityBase *>(m_controlled_objects[i])->free_from_control();
+	for	(u32 i=0; i<m_controlled_objects.size(); i++) dynamic_cast<CControlledEntityBase *>(m_controlled_objects[i])->free_from_control();
 	m_controlled_objects.clear();
 }
 

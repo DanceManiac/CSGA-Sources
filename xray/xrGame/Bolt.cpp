@@ -23,7 +23,7 @@ void CBolt::OnH_A_Chield()
 
 void CBolt::Throw() 
 {
-	CMissile					*l_pBolt = smart_cast<CMissile*>(m_fake_missile);
+	CMissile					*l_pBolt = dynamic_cast<CMissile*>(m_fake_missile);
 	if(!l_pBolt)				return;
 	l_pBolt->set_destroy_time	(u32(m_dwDestroyTimeMax/phTimefactor));
 	inherited::Throw			();

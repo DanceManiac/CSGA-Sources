@@ -144,11 +144,11 @@ _value_type CStalkerPropertyEvaluatorEnemySeeMe::evaluate	()
 	if (!enemy)
 		return				(false);
 
-	const CCustomMonster	*enemy_monster = smart_cast<const CCustomMonster*>(enemy);
+	const CCustomMonster	*enemy_monster = dynamic_cast<const CCustomMonster*>(enemy);
 	if (enemy_monster)
 		return				(enemy_monster->memory().visual().visible_now(m_object));
 
-	const CActor			*actor = smart_cast<const CActor*>(enemy);
+	const CActor			*actor = dynamic_cast<const CActor*>(enemy);
 	if (actor)
 		return				(actor->memory().visual().visible_now(m_object));
 
@@ -247,7 +247,7 @@ _value_type CStalkerPropertyEvaluatorReadyToKill::evaluate	()
 		return		(true);
 
 	VERIFY			(m_object->best_weapon());
-	CWeapon&		best_weapon = smart_cast<CWeapon&>(*m_object->best_weapon());
+	CWeapon&		best_weapon = dynamic_cast<CWeapon&>(*m_object->best_weapon());
 	if (best_weapon.GetAmmoElapsed() <= (int)m_min_ammo_count) {
 		if (best_weapon.GetAmmoMagSize() <= (int)m_min_ammo_count)
 			return	(true);
@@ -346,7 +346,7 @@ _value_type CStalkerPropertyEvaluatorSmartTerrainTask::evaluate	()
 	if (!ai().get_alife())
 		return			(false);
 
-	CSE_ALifeHumanAbstract		*stalker = smart_cast<CSE_ALifeHumanAbstract*>(ai().alife().objects().object(m_object->ID(), true));
+	CSE_ALifeHumanAbstract		*stalker = dynamic_cast<CSE_ALifeHumanAbstract*>(ai().alife().objects().object(m_object->ID(), true));
 	if (!stalker)
 		return					(false);
 
@@ -417,7 +417,7 @@ _value_type CStalkerPropertyEvaluatorEnemyCriticallyWounded::evaluate	()
 	if (!enemy)
 		return					(false);
 
-	const CAI_Stalker			*enemy_stalker = smart_cast<const CAI_Stalker*>(enemy);
+	const CAI_Stalker			*enemy_stalker = dynamic_cast<const CAI_Stalker*>(enemy);
 	if (!enemy_stalker)
 		return					(false);
 

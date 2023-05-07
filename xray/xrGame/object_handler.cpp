@@ -49,7 +49,7 @@ void CObjectHandler::reinit			(CAI_Stalker *object)
 	inherited::reinit			();
 	m_hammer_is_clutched		= false;
 	planner().setup				(object);
-	IKinematics					*kinematics = smart_cast<IKinematics*>(planner().m_object->Visual());
+	IKinematics					*kinematics = dynamic_cast<IKinematics*>(planner().m_object->Visual());
 	m_r_hand					= kinematics->LL_BoneID(pSettings->r_string(*planner().m_object->cNameSect(),"weapon_bone0"));
 	m_l_finger1					= kinematics->LL_BoneID(pSettings->r_string(*planner().m_object->cNameSect(),"weapon_bone1"));
 	m_r_finger2					= kinematics->LL_BoneID(pSettings->r_string(*planner().m_object->cNameSect(),"weapon_bone2"));
@@ -70,7 +70,7 @@ BOOL CObjectHandler::net_Spawn		(CSE_Abstract* DC)
 		return					(FALSE);
 
 	CSE_Abstract				*abstract = static_cast<CSE_Abstract*>(DC);
-	CSE_ALifeTraderAbstract		*trader = smart_cast<CSE_ALifeTraderAbstract*>(abstract);
+	CSE_ALifeTraderAbstract		*trader = dynamic_cast<CSE_ALifeTraderAbstract*>(abstract);
 	VERIFY						(trader);
 
 	m_infinite_ammo				= !!trader->m_trader_flags.test(CSE_ALifeTraderAbstract::eTraderFlagInfiniteAmmo);
@@ -93,7 +93,7 @@ void CObjectHandler::OnItemTake		(CInventoryItem *inventory_item)
 		m_ammo_in_box_to_spawn	= 0;
 	}
 
-	CWeapon						*weapon = smart_cast<CWeapon*>(inventory_item);
+	CWeapon						*weapon = dynamic_cast<CWeapon*>(inventory_item);
 	if (weapon)
 	{
 		CameraRecoil cam_recoil_copy;
@@ -110,7 +110,7 @@ void CObjectHandler::OnItemDrop		(CInventoryItem *inventory_item)
 	m_inventory_actual		= false;
 	
 	if (m_infinite_ammo && planner().object().g_Alive() && !inventory_item->useful_for_NPC()) {
-		CWeaponAmmo				*weapon_ammo = smart_cast<CWeaponAmmo*>(inventory_item);
+		CWeaponAmmo				*weapon_ammo = dynamic_cast<CWeaponAmmo*>(inventory_item);
 		if (weapon_ammo) {
 			Level().spawn_item		(*weapon_ammo->cNameSect(),planner().object().Position(),planner().object().ai_location().level_vertex_id(),planner().object().ID());
 			m_item_to_spawn			= weapon_ammo->cNameSect();
@@ -156,7 +156,7 @@ bool CObjectHandler::goal_reached	()
 
 void CObjectHandler::weapon_bones	(int &b0, int &b1, int &b2) const
 {
-	CWeapon						*weapon = smart_cast<CWeapon*>(inventory().ActiveItem());
+	CWeapon						*weapon = dynamic_cast<CWeapon*>(inventory().ActiveItem());
 	if (!weapon || !planner().m_storage.property(ObjectHandlerSpace::eWorldPropertyStrapped)) {
 		if (weapon)
 			weapon->strapped_mode	(false);
@@ -169,7 +169,7 @@ void CObjectHandler::weapon_bones	(int &b0, int &b1, int &b2) const
 	THROW3						(weapon->can_be_strapped(),"Cannot strap weapon",*weapon->cName());
 
 	if (weapon->ID() != m_strap_object_id) {
-		IKinematics				*kinematics = smart_cast<IKinematics*>(planner().m_object->Visual());
+		IKinematics				*kinematics = dynamic_cast<IKinematics*>(planner().m_object->Visual());
 		m_strap_bone0			= kinematics->LL_BoneID(weapon->strap_bone0());
 		m_strap_bone1			= kinematics->LL_BoneID(weapon->strap_bone1());
 		m_strap_object_id		= weapon->ID();
@@ -183,7 +183,7 @@ void CObjectHandler::weapon_bones	(int &b0, int &b1, int &b2) const
 
 bool CObjectHandler::weapon_strapped	() const
 {
-	CWeapon						*weapon = smart_cast<CWeapon*>(inventory().ActiveItem());
+	CWeapon						*weapon = dynamic_cast<CWeapon*>(inventory().ActiveItem());
 	if (!weapon)
 		return					(false);
 
@@ -226,7 +226,7 @@ bool CObjectHandler::weapon_strapped	(CWeapon *weapon) const
 
 bool CObjectHandler::weapon_unstrapped	() const
 {
-	CWeapon						*weapon = smart_cast<CWeapon*>(inventory().ActiveItem());
+	CWeapon						*weapon = dynamic_cast<CWeapon*>(inventory().ActiveItem());
 	if (!weapon)
 		return					(true);
 
@@ -260,7 +260,7 @@ bool CObjectHandler::weapon_unstrapped	(CWeapon *weapon) const
 
 IC	void CObjectHandler::switch_torch	(CInventoryItem *inventory_item, bool value)
 {
-	CTorch						*torch = smart_cast<CTorch*>(inventory_item);
+	CTorch						*torch = dynamic_cast<CTorch*>(inventory_item);
 	if (torch && attached(torch) && planner().object().g_Alive())
 		torch->Switch			(value);
 }

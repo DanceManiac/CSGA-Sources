@@ -25,7 +25,7 @@ void CPhantom::Load( LPCSTR section )
 {
 	inherited::Load		(section);
 	//////////////////////////////////////////////////////////////////////////
-	ISpatial* self		= smart_cast<ISpatial*> (this);
+	ISpatial* self		= dynamic_cast<ISpatial*> (this);
 	if (self) {
 		self->spatial.type &=~STYPE_VISIBLEFORAI;
 		self->spatial.type &=~STYPE_REACTTOSOUND;
@@ -54,7 +54,7 @@ void CPhantom::Load( LPCSTR section )
 }
 BOOL CPhantom::net_Spawn(CSE_Abstract* DC)
 {
-	CSE_ALifeCreaturePhantom*	OBJ	= smart_cast<CSE_ALifeCreaturePhantom*>(DC); VERIFY(OBJ);
+	CSE_ALifeCreaturePhantom*	OBJ	= dynamic_cast<CSE_ALifeCreaturePhantom*>(DC); VERIFY(OBJ);
 	
 	// select visual at first
 	LPCSTR vis_name = OBJ->get_visual();
@@ -89,7 +89,7 @@ BOOL CPhantom::net_Spawn(CSE_Abstract* DC)
 	XFORM().k.getHP	(vHP.x,vHP.y);
 
 	// set animation
-	IKinematicsAnimated *K			= smart_cast<IKinematicsAnimated*>(Visual());
+	IKinematicsAnimated *K			= dynamic_cast<IKinematicsAnimated*>(Visual());
 	m_state_data[stBirth].motion	= K->ID_Cycle("birth_0");	
 	m_state_data[stFly].motion		= K->ID_Cycle("fly_0");
 	m_state_data[stContact].motion	= K->ID_Cycle("contact_0"); 
@@ -132,7 +132,7 @@ void CPhantom::animation_end_callback(CBlend* B)
 void CPhantom::SwitchToState_internal(EState new_state)
 {
 	if (new_state!=m_CurState){
-		IKinematicsAnimated *K	= smart_cast<IKinematicsAnimated*>(Visual());
+		IKinematicsAnimated *K	= dynamic_cast<IKinematicsAnimated*>(Visual());
 		Fmatrix	xform			= XFORM_center	();
 		UpdateEvent				= 0;
 		// after event
@@ -244,7 +244,7 @@ void CPhantom::shedule_Update(u32 DT)
 
 	inherited::shedule_Update(DT);
 
-	IKinematicsAnimated *K	= smart_cast<IKinematicsAnimated*>(Visual());
+	IKinematicsAnimated *K	= dynamic_cast<IKinematicsAnimated*>(Visual());
 	K->UpdateTracks			();
 }
 

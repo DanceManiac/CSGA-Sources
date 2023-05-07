@@ -25,7 +25,7 @@ static const float VEL_A_MAX	= 10.f;
 //возвращает текуший разброс стрельбы (в радианах)с учетом движения
 float CActor::GetWeaponAccuracy() const
 {
-	CWeapon* W	= smart_cast<CWeapon*>(inventory().ActiveItem());
+	CWeapon* W	= dynamic_cast<CWeapon*>(inventory().ActiveItem());
 	
 	if ( IsZoomAimingMode() && W && !GetWeaponParam(W, IsRotatingToZoom(), false) )
 	{
@@ -65,7 +65,7 @@ void CActor::g_fireParams	(const CHudItem* pHudItem, Fvector &fire_pos, Fvector 
 	fire_pos		= Cameras().Position();
 	fire_dir		= Cameras().Direction();
 
-	const CMissile	*pMissile = smart_cast <const CMissile*> (pHudItem);
+	const CMissile	*pMissile = dynamic_cast <const CMissile*> (pHudItem);
 	if (pMissile)
 	{
 		Fvector offset;
@@ -126,10 +126,10 @@ void CActor::SelectBestWeapon	(CObject* O)
 	//if (Level().CurrentControlEntity() != this) return;
 	//if (OnClient()) return;
 	//-------------------------------------------------
-	CWeapon* pWeapon = smart_cast<CWeapon*>(O);
-	CGrenade* pGrenade = smart_cast<CGrenade*>(O);
-	CArtefact* pArtefact = smart_cast<CArtefact*>(O);
-	CInventoryItem*	pIItem	= smart_cast<CInventoryItem*> (O);
+	CWeapon* pWeapon = dynamic_cast<CWeapon*>(O);
+	CGrenade* pGrenade = dynamic_cast<CGrenade*>(O);
+	CArtefact* pArtefact = dynamic_cast<CArtefact*>(O);
+	CInventoryItem*	pIItem	= dynamic_cast<CInventoryItem*> (O);
 	bool NeedToSelectBestWeapon = false;
 	if ((pWeapon || pGrenade || pArtefact) && pIItem)
 	{
@@ -181,13 +181,13 @@ void	CActor::HitSector(CObject* who, CObject* weapon)
 
 	bool bShowHitSector = true;
 	
-	CEntityAlive* pEntityAlive = smart_cast<CEntityAlive*>(who);
+	CEntityAlive* pEntityAlive = dynamic_cast<CEntityAlive*>(who);
 
 	if (!pEntityAlive || this == who) bShowHitSector = false;
 
 	if (weapon)
 	{
-		CWeapon* pWeapon = smart_cast<CWeapon*> (weapon);
+		CWeapon* pWeapon = dynamic_cast<CWeapon*> (weapon);
 		if (pWeapon)
 		{
 			if (pWeapon->IsSilencerAttached())
@@ -206,10 +206,10 @@ void	CActor::HitSector(CObject* who, CObject* weapon)
 
 void CActor::on_weapon_shot_start		(CWeapon *weapon)
 {	
-	//CWeaponMagazined* pWM = smart_cast<CWeaponMagazined*> (weapon);
+	//CWeaponMagazined* pWM = dynamic_cast<CWeaponMagazined*> (weapon);
 	CameraRecoil const& camera_recoil = ( IsZoomAimingMode() )? weapon->zoom_cam_recoil : weapon->cam_recoil;
 		
-	CCameraShotEffector* effector = smart_cast<CCameraShotEffector*>( Cameras().GetCamEffector(eCEShot) );
+	CCameraShotEffector* effector = dynamic_cast<CCameraShotEffector*>( Cameras().GetCamEffector(eCEShot) );
 	if ( !effector )
 	{
 		effector = (CCameraShotEffector*)Cameras().AddCamEffector( xr_new<CCameraShotEffector>( camera_recoil ) );
@@ -232,7 +232,7 @@ void CActor::on_weapon_shot_start		(CWeapon *weapon)
 
 void CActor::on_weapon_shot_update		()
 {
-	CCameraShotEffector* effector = smart_cast<CCameraShotEffector*>( Cameras().GetCamEffector(eCEShot) );
+	CCameraShotEffector* effector = dynamic_cast<CCameraShotEffector*>( Cameras().GetCamEffector(eCEShot) );
 	if ( effector )
 	{
 		update_camera( effector );
@@ -246,7 +246,7 @@ void CActor::on_weapon_shot_remove		(CWeapon *weapon)
 
 void CActor::on_weapon_shot_stop		()
 {
-	CCameraShotEffector				*effector = smart_cast<CCameraShotEffector*>(Cameras().GetCamEffector(eCEShot)); 
+	CCameraShotEffector				*effector = dynamic_cast<CCameraShotEffector*>(Cameras().GetCamEffector(eCEShot)); 
 	if (effector && effector->IsActive())
 	{
 		effector->StopShoting();
@@ -255,14 +255,14 @@ void CActor::on_weapon_shot_stop		()
 
 void CActor::on_weapon_hide				(CWeapon *weapon)
 {
-	CCameraShotEffector				*effector = smart_cast<CCameraShotEffector*>(Cameras().GetCamEffector(eCEShot)); 
+	CCameraShotEffector				*effector = dynamic_cast<CCameraShotEffector*>(Cameras().GetCamEffector(eCEShot)); 
 	if (effector && effector->IsActive())
 		effector->Reset				();
 }
 
 Fvector CActor::weapon_recoil_delta_angle	()
 {
-	CCameraShotEffector				*effector = smart_cast<CCameraShotEffector*>(Cameras().GetCamEffector(eCEShot));
+	CCameraShotEffector				*effector = dynamic_cast<CCameraShotEffector*>(Cameras().GetCamEffector(eCEShot));
 	Fvector							result = {0.f,0.f,0.f};
 
 	if (effector)
@@ -273,7 +273,7 @@ Fvector CActor::weapon_recoil_delta_angle	()
 
 Fvector CActor::weapon_recoil_last_delta()
 {
-	CCameraShotEffector				*effector = smart_cast<CCameraShotEffector*>(Cameras().GetCamEffector(eCEShot));
+	CCameraShotEffector				*effector = dynamic_cast<CCameraShotEffector*>(Cameras().GetCamEffector(eCEShot));
 	Fvector							result = {0.f,0.f,0.f};
 
 	if (effector)
@@ -288,10 +288,10 @@ void	CActor::SpawnAmmoForWeapon	(CInventoryItem *pIItem)
 	if (OnClient()) return;
 	if (!pIItem) return;
 
-	CWeaponMagazined* pWM = smart_cast<CWeaponMagazined*> (pIItem);
+	CWeaponMagazined* pWM = dynamic_cast<CWeaponMagazined*> (pIItem);
 	if (!pWM || !pWM->AutoSpawnAmmo()) return;
 
-	///	CWeaponAmmo* pAmmo = smart_cast<CWeaponAmmo*>(inventory().GetAny( *(pWM->m_ammoTypes[0]) ));
+	///	CWeaponAmmo* pAmmo = dynamic_cast<CWeaponAmmo*>(inventory().GetAny( *(pWM->m_ammoTypes[0]) ));
 	//	if (!pAmmo) 
 	pWM->SpawnAmmo(0xffffffff, NULL, ID());
 };
@@ -301,10 +301,10 @@ void	CActor::RemoveAmmoForWeapon	(CInventoryItem *pIItem)
 	if (OnClient()) return;
 	if (!pIItem) return;
 
-	CWeaponMagazined* pWM = smart_cast<CWeaponMagazined*> (pIItem);
+	CWeaponMagazined* pWM = dynamic_cast<CWeaponMagazined*> (pIItem);
 	if (!pWM || !pWM->AutoSpawnAmmo()) return;
 
-	CWeaponAmmo* pAmmo = smart_cast<CWeaponAmmo*>(inventory().GetAny(*(pWM->m_ammoTypes[0]) ));
+	CWeaponAmmo* pAmmo = dynamic_cast<CWeaponAmmo*>(inventory().GetAny(*(pWM->m_ammoTypes[0]) ));
 	if (!pAmmo) return;
 	//--- мы нашли патроны к текущему оружию	
 	/*
@@ -315,7 +315,7 @@ void	CActor::RemoveAmmoForWeapon	(CInventoryItem *pIItem)
 	for ( ; I != E; ++I)
 	{
 	CInventoryItem* pItem = (*I);//->m_pIItem;
-	CWeaponMagazined* pWM = smart_cast<CWeaponMagazined*> (pItem);
+	CWeaponMagazined* pWM = dynamic_cast<CWeaponMagazined*> (pItem);
 	if (!pWM || !pWM->AutoSpawnAmmo()) continue;
 	if (pWM == pIItem) continue;
 	if (pWM->m_ammoTypes[0] != pAmmo->CInventoryItem::object().cNameSect()) continue;

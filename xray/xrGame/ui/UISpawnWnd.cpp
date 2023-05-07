@@ -92,9 +92,9 @@ void CUISpawnWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 	if (BUTTON_CLICKED == msg)
 	{
 		Game().StartStopMenu(this,true);
-		game_cl_mp * game = smart_cast<game_cl_mp*>(&Game());
+		game_cl_mp * game = dynamic_cast<game_cl_mp*>(&Game());
 		VERIFY(game);
-		//game_cl_TeamDeathmatch * tdm = smart_cast<game_cl_TeamDeathmatch *>(&(Game()));
+		//game_cl_TeamDeathmatch * tdm = dynamic_cast<game_cl_TeamDeathmatch *>(&(Game()));
 		if (pWnd == m_pImage1)
 			game->OnTeamSelect(0);
 		else if (pWnd == m_pImage2)
@@ -119,7 +119,7 @@ bool CUISpawnWnd::OnKeyboard(int dik, EUIMessages keyboard_action)
 		if (dik == DIK_TAB)
 		{
 			ShowChildren(true);
-			game_cl_mp* game = smart_cast<game_cl_mp*>(&Game());
+			game_cl_mp* game = dynamic_cast<game_cl_mp*>(&Game());
 			game->OnKeyboardRelease(kSCORES);
 			UI().GetUICursor().Show();
 		}		
@@ -129,15 +129,15 @@ bool CUISpawnWnd::OnKeyboard(int dik, EUIMessages keyboard_action)
 	if (dik == DIK_TAB)
 	{
         ShowChildren(false);
-		game_cl_mp* game = smart_cast<game_cl_mp*>(&Game());
+		game_cl_mp* game = dynamic_cast<game_cl_mp*>(&Game());
 		game->OnKeyboardPress(kSCORES);
 		UI().GetUICursor().Hide();
 		return false;
 	}
 
-	game_cl_mp* game = smart_cast<game_cl_mp*>(&Game());
+	game_cl_mp* game = dynamic_cast<game_cl_mp*>(&Game());
 	VERIFY(game);
-	//game_cl_TeamDeathmatch * dm = smart_cast<game_cl_TeamDeathmatch *>(&(Game()));
+	//game_cl_TeamDeathmatch * dm = dynamic_cast<game_cl_TeamDeathmatch *>(&(Game()));
 	
 	if (DIK_1 == dik || DIK_2 == dik)
 	{

@@ -32,7 +32,7 @@ void CMonsterEnemyMemory::update()
 
 	if ( monster_hit_memory.is_hit() && time() < monster_hit_memory.get_last_hit_time() + 1000 )
 	{
-		if ( CEntityAlive* enemy = smart_cast<CEntityAlive*>(monster->HitMemory.get_last_hit_object()) )
+		if ( CEntityAlive* enemy = dynamic_cast<CEntityAlive*>(monster->HitMemory.get_last_hit_object()) )
 		{
 			if ( monster->Position().distance_to(enemy->Position()) 
 				                        < 

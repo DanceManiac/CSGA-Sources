@@ -21,7 +21,7 @@ CUIWndCallback::~CUIWndCallback()
 
 void CUIWndCallback::Register			(CUIWindow* pChild)
 {
-	pChild->SetMessageTarget( smart_cast<CUIWindow*>(this) );
+	pChild->SetMessageTarget( dynamic_cast<CUIWindow*>(this) );
 }
 
 void CUIWndCallback::OnEvent(CUIWindow* pWnd, s16 msg, void* pData)

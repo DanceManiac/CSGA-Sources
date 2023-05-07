@@ -688,7 +688,6 @@
     <ClInclude Include="..\..\xrServerEntities\script_value_container.h" />
     <ClInclude Include="..\..\xrServerEntities\script_value_container_impl.h" />
     <ClInclude Include="..\..\xrServerEntities\ShapeData.h" />
-    <ClInclude Include="..\..\xrServerEntities\smart_cast.h" />
     <ClInclude Include="..\..\xrServerEntities\WaveForm.h" />
     <ClInclude Include="..\..\xrServerEntities\xrEProps.h" />
     <ClInclude Include="..\..\xrServerEntities\xrMessages.h" />

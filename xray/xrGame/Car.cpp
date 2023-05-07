@@ -147,7 +147,7 @@ void	CCar::Load					( LPCSTR section )
 {
 	inherited::Load					(section);
 	//CPHSkeleton::Load(section);
-	ISpatial*		self				=	smart_cast<ISpatial*> (this);
+	ISpatial*		self				=	dynamic_cast<ISpatial*> (this);
 	if (self)		self->spatial.type	|=	STYPE_VISIBLEFORAI;	
 }
 
@@ -157,7 +157,7 @@ BOOL	CCar::net_Spawn				(CSE_Abstract* DC)
 	InitDebug();
 #endif
 	CSE_Abstract					*e = (CSE_Abstract*)(DC);
-	CSE_ALifeCar					*co=smart_cast<CSE_ALifeCar*>(e);
+	CSE_ALifeCar					*co=dynamic_cast<CSE_ALifeCar*>(e);
 	BOOL							R = inherited::net_Spawn(DC);
 
 	PKinematics(Visual())->CalculateBones_Invalidate();
@@ -204,11 +204,11 @@ void CCar::ActorObstacleCallback					(bool& do_colide,bool bo1,dContact& c,SGame
 
 void CCar::SpawnInitPhysics	(CSE_Abstract	*D)
 {
-	CSE_PHSkeleton		*so = smart_cast<CSE_PHSkeleton*>(D);
+	CSE_PHSkeleton		*so = dynamic_cast<CSE_PHSkeleton*>(D);
 	R_ASSERT						(so);
 	ParseDefinitions				();//parse ini filling in m_driving_wheels,m_steering_wheels,m_breaking_wheels
 	CreateSkeleton					(D);//creates m_pPhysicsShell & fill in bone_map
-	IKinematics *K					=smart_cast<IKinematics*>(Visual());
+	IKinematics *K					=dynamic_cast<IKinematics*>(Visual());
 	K->CalculateBones_Invalidate();//this need to call callbacks
 	K->CalculateBones	(TRUE);
 	Init							();//inits m_driving_wheels,m_steering_wheels,m_breaking_wheels values using recieved in ParceDefinitions & from bone_map
@@ -222,7 +222,7 @@ void	CCar::net_Destroy()
 #ifdef DEBUG
 	DBgClearPlots();
 #endif
-	IKinematics* pKinematics=smart_cast<IKinematics*>(Visual());
+	IKinematics* pKinematics=dynamic_cast<IKinematics*>(Visual());
 	if(m_bone_steer!=BI_NONE)
 	{
 
@@ -307,7 +307,7 @@ void CCar::RestoreNetState(CSE_PHSkeleton* po)
 	if(!po->_flags.test(CSE_PHSkeleton::flSavedData))return;
 	CPHSkeleton::RestoreNetState(po);
 	
-	CSE_ALifeCar* co=smart_cast<CSE_ALifeCar*>(po);
+	CSE_ALifeCar* co=dynamic_cast<CSE_ALifeCar*>(po);
 
 	{
 		xr_map<u16,SDoor>::iterator i,e;
@@ -629,7 +629,7 @@ bool CCar::attach_Actor(CGameObject* actor)
 	if(Owner()||CPHDestroyable::Destroyed()) return false;
 	CHolderCustom::attach_Actor(actor);
 
-	IKinematics* K	= smart_cast<IKinematics*>(Visual());
+	IKinematics* K	= dynamic_cast<IKinematics*>(Visual());
 	CInifile* ini	= K->LL_UserData();
 	int id;
 	if(ini->line_exist("car_definition","driver_place"))
@@ -725,7 +725,7 @@ void CCar::ParseDefinitions()
 	
 	bone_map.clear();
 
-	IKinematics* pKinematics=smart_cast<IKinematics*>(Visual());
+	IKinematics* pKinematics=dynamic_cast<IKinematics*>(Visual());
 	bone_map.insert(mk_pair(pKinematics->LL_GetBoneRoot(),physicsBone()));
 	CInifile* ini = pKinematics->LL_UserData();
 	R_ASSERT2(ini,"Car has no description !!! See ActorEditor Object - UserData");
@@ -832,8 +832,8 @@ void CCar::CreateSkeleton(CSE_Abstract	*po)
 
 	if (!Visual()) return;
 	IRenderVisual *pVis = Visual();
-	IKinematics* pK = smart_cast<IKinematics*>(pVis);
-	IKinematicsAnimated* pKA = smart_cast<IKinematicsAnimated*>(pVis);
+	IKinematics* pK = dynamic_cast<IKinematics*>(pVis);
+	IKinematicsAnimated* pKA = dynamic_cast<IKinematicsAnimated*>(pVis);
 	if(pKA)
 	{
 		pKA->PlayCycle		("idle");
@@ -859,7 +859,7 @@ void CCar::Init()
 	CPHCollisionDamageReceiver::Init();
 
 	//get reference wheel radius
-	IKinematics* pKinematics=smart_cast<IKinematics*>(Visual());
+	IKinematics* pKinematics=dynamic_cast<IKinematics*>(Visual());
 	CInifile* ini = pKinematics->LL_UserData();
 	R_ASSERT2(ini,"Car has no description !!! See ActorEditor Object - UserData");
 	///SWheel& ref_wheel=m_wheels_map.find(pKinematics->LL_BoneID(ini->r_string("car_definition","reference_wheel")))->second;
@@ -1689,10 +1689,10 @@ void CCar::OnEvent(NET_Packet& P, u16 type)
 		{
 			P.r_u16		(id);
 			CObject* O	= Level().Objects.net_Find	(id);
-			if( GetInventory()->CanTakeItem(smart_cast<CInventoryItem*>(O)) ) 
+			if( GetInventory()->CanTakeItem(dynamic_cast<CInventoryItem*>(O)) ) 
 			{
 				O->H_SetParent(this);
-				GetInventory()->Take(smart_cast<CGameObject*>(O), false, false);
+				GetInventory()->Take(dynamic_cast<CGameObject*>(O), false, false);
 			}
 			else 
 			{
@@ -1710,8 +1710,8 @@ void CCar::OnEvent(NET_Packet& P, u16 type)
 
 			bool just_before_destroy		= !P.r_eof() && P.r_u8();
 			O->SetTmpPreDestroy				(just_before_destroy);
-			GetInventory()->DropItem(smart_cast<CGameObject*>(O), just_before_destroy);
-			//if(GetInventory()->DropItem(smart_cast<CGameObject*>(O), just_before_destroy)) 
+			GetInventory()->DropItem(dynamic_cast<CGameObject*>(O), just_before_destroy);
+			//if(GetInventory()->DropItem(dynamic_cast<CGameObject*>(O), just_before_destroy)) 
 			//{
 			//	O->H_SetParent(0, just_before_destroy);
 			//}
@@ -1817,7 +1817,7 @@ void CCar::CarExplode()
 //	if(! l_pUD1) return;
 //	if(!l_pUD2) return;
 //
-//	CEntityAlive* capturer=smart_cast<CEntityAlive*>(l_pUD1->ph_ref_object);
+//	CEntityAlive* capturer=dynamic_cast<CEntityAlive*>(l_pUD1->ph_ref_object);
 //	if(capturer)
 //	{
 //		CPHCapture* capture=capturer->m_PhysicMovementControl->PHCapture();
@@ -1835,7 +1835,7 @@ void CCar::CarExplode()
 //
 //	}
 //
-//	capturer=smart_cast<CEntityAlive*>(l_pUD2->ph_ref_object);
+//	capturer=dynamic_cast<CEntityAlive*>(l_pUD2->ph_ref_object);
 //	if(capturer)
 //	{
 //		CPHCapture* capture=capturer->m_PhysicMovementControl->PHCapture();
@@ -1855,7 +1855,7 @@ void CCar::CarExplode()
 
 template <class T> IC void CCar::fill_wheel_vector(LPCSTR S,xr_vector<T>& type_wheels)
 {
-	IKinematics* pKinematics	=smart_cast<IKinematics*>(Visual());
+	IKinematics* pKinematics	=dynamic_cast<IKinematics*>(Visual());
 	string64					S1;
 	int count =					_GetItemCount(S);
 	for (int i=0 ;i<count; ++i) 
@@ -1890,7 +1890,7 @@ template <class T> IC void CCar::fill_wheel_vector(LPCSTR S,xr_vector<T>& type_w
 
 IC void CCar::fill_exhaust_vector(LPCSTR S,xr_vector<SExhaust>& exhausts)
 {
-	IKinematics* pKinematics	=smart_cast<IKinematics*>(Visual());
+	IKinematics* pKinematics	=dynamic_cast<IKinematics*>(Visual());
 	string64					S1;
 	int count =					_GetItemCount(S);
 	for (int i=0 ;i<count; ++i) 
@@ -1914,7 +1914,7 @@ IC void CCar::fill_exhaust_vector(LPCSTR S,xr_vector<SExhaust>& exhausts)
 
 IC void CCar::fill_doors_map(LPCSTR S,xr_map<u16,SDoor>& doors)
 {
-	IKinematics* pKinematics	=smart_cast<IKinematics*>(Visual());
+	IKinematics* pKinematics	=dynamic_cast<IKinematics*>(Visual());
 	string64					S1;
 	int count =					_GetItemCount(S);
 	for (int i=0 ;i<count; ++i) 

@@ -196,7 +196,7 @@ void attachable_hud_item::setup_firedeps(firedeps& fd)
 		fd.vLastFD.set									(0.f,0.f,1.f);
 		m_item_transform.transform_dir					(fd.vLastFD);
 
-		if (auto Wpn = smart_cast<CWeapon*>(m_parent_hud_item))
+		if (auto Wpn = dynamic_cast<CWeapon*>(m_parent_hud_item))
 		{
 			Wpn->CorrectDirFromWorldToHud(fd.vLastFD);
 		}
@@ -354,7 +354,7 @@ void attachable_hud_item::load(const shared_str& sect_name)
 
 	// Visual
 	const shared_str& visual_name = pSettings->r_string(sect_name, "item_visual");
-	m_model						 = smart_cast<IKinematics*>(::Render->model_Create(visual_name.c_str()));
+	m_model						 = dynamic_cast<IKinematics*>(::Render->model_Create(visual_name.c_str()));
 
 	m_attach_place_idx			= pSettings->r_u16(sect_name, "attach_place_idx");
 	m_measures.load				(sect_name, m_model);
@@ -510,8 +510,8 @@ void player_hud::load(const shared_str& player_hud_sect)
 	}
 
 	const shared_str& model_name = pSettings->r_string(player_hud_sect, "visual");
-	m_model = smart_cast<IKinematicsAnimated*>(::Render->model_Create(model_name.c_str()));
-	m_model_2 = smart_cast<IKinematicsAnimated*>(::Render->model_Create(pSettings->line_exist(player_hud_sect, "visual_2") ? pSettings->r_string(player_hud_sect, "visual_2") : model_name.c_str()));
+	m_model = dynamic_cast<IKinematicsAnimated*>(::Render->model_Create(model_name.c_str()));
+	m_model_2 = dynamic_cast<IKinematicsAnimated*>(::Render->model_Create(pSettings->line_exist(player_hud_sect, "visual_2") ? pSettings->r_string(player_hud_sect, "visual_2") : model_name.c_str()));
 	bool b_reload = (m_attached_items[0] != nullptr || m_attached_items[1] != nullptr);
 
 	u16 l_arm = m_model->dcast_PKinematics()->LL_BoneID("l_clavicle");

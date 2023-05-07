@@ -292,7 +292,7 @@ void CBaseMonster::debug_fsm()
 	sprintf_s(st, "Team[%u]Squad[%u]Group[%u]", g_Team(), g_Squad(), g_Group());
 	DBG().object_info(this,this).add_item	 (st, D3DCOLOR_XRGB(255,0,0), 2);
 
-	CEntityAlive *entity = smart_cast<CEntityAlive *>(Level().CurrentEntity());
+	CEntityAlive *entity = dynamic_cast<CEntityAlive *>(Level().CurrentEntity());
 	if (entity && entity->character_physics_support()->movement()) {
 		sprintf_s(st,"VELOCITY [%f,%f,%f] Value[%f]",VPUSH(entity->character_physics_support()->movement()->GetVelocity()),entity->character_physics_support()->movement()->GetVelocityActual());
 		DBG().text(this).clear();
@@ -391,7 +391,7 @@ void   add_debug_info (debug::text_tree& root_s, SoundElem& sound_elem, bool dan
 	root_s.add_line("Val",  sound_elem.value);
 
 	debug::text_tree& src_s = root_s.add_line("Src");
-	add_debug_info(src_s, smart_cast<const CEntity*>(sound_elem.who));
+	add_debug_info(src_s, dynamic_cast<const CEntity*>(sound_elem.who));
 	
 	root_s.add_line("Dangerous",  dangerous);
 }
@@ -536,7 +536,7 @@ void   CBaseMonster::add_debug_info (debug::text_tree& root_s)
 	visuals_s.add_line("Eye_Range", object_range);
 	visuals_s.add_line("FOV", rad2deg(object_fov));
 
-	CActor* actor = smart_cast<CActor*>(Level().Objects.net_Find(0));
+	CActor* actor = dynamic_cast<CActor*>(Level().Objects.net_Find(0));
 	if ( !actor ) 
 	{
 		actor = g_debug_actor;
@@ -586,7 +586,7 @@ void   CBaseMonster::add_debug_info (debug::text_tree& root_s)
 	if ( HitMemory.is_hit() ) 
 	{
 		TextTree& last_hit_object_s = hit_s.add_line("Object");
-		detail::add_debug_info(last_hit_object_s, smart_cast<CEntity*>(HitMemory.get_last_hit_object()));
+		detail::add_debug_info(last_hit_object_s, dynamic_cast<CEntity*>(HitMemory.get_last_hit_object()));
 		hit_s.add_line("Time", HitMemory.get_last_hit_time());
 		hit_s.add_line("Pos", HitMemory.get_last_hit_position());
 		hit_s.add_line("Dir", HitMemory.get_last_hit_dir());
@@ -758,7 +758,7 @@ void   CBaseMonster::add_debug_info (debug::text_tree& root_s)
 	movement_s.add_line("Actual",  control().path_builder().actual());
 	movement_s.add_line("Enabled",  control().path_builder().enabled());
 
-	CEntityAlive *entity = smart_cast<CEntityAlive *>(Level().CurrentEntity());
+	CEntityAlive *entity = dynamic_cast<CEntityAlive *>(Level().CurrentEntity());
 	if ( entity && entity->character_physics_support()->movement() ) 
 	{
 		movement_s.add_line("Velocity",  entity->character_physics_support()->movement()->GetVelocityActual());

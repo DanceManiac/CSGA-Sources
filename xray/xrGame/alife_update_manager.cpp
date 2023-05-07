@@ -398,7 +398,7 @@ void CALifeUpdateManager::teleport_object	(ALife::_OBJECT_ID id, GameGraph::_GRA
 	graph().change							(object,object->m_tGraphID,game_vertex_id);
 	object->m_tNodeID						= level_vertex_id;
 	object->o_Position						= position;
-	CSE_ALifeMonsterAbstract				*monster_abstract = smart_cast<CSE_ALifeMonsterAbstract*>(object);
+	CSE_ALifeMonsterAbstract				*monster_abstract = dynamic_cast<CSE_ALifeMonsterAbstract*>(object);
 	if (monster_abstract)
 		monster_abstract->m_tNextGraphID	= object->m_tGraphID;
 }
@@ -417,13 +417,13 @@ void CALifeUpdateManager::add_restriction	(ALife::_OBJECT_ID id, ALife::_OBJECT_
 		return;
 	}
 
-	CSE_ALifeCreatureAbstract				*creature = smart_cast<CSE_ALifeCreatureAbstract*>(object);
+	CSE_ALifeCreatureAbstract				*creature = dynamic_cast<CSE_ALifeCreatureAbstract*>(object);
 	if (!creature) {
 		Msg									("! cannot add restriction with id %d to the entity with id %d, because there is an object with the specified id, but it is not a creature",restriction_id,id);
 		return;
 	}
 	
-	CSE_ALifeSpaceRestrictor				*restrictor = smart_cast<CSE_ALifeSpaceRestrictor*>(object_restrictor);
+	CSE_ALifeSpaceRestrictor				*restrictor = dynamic_cast<CSE_ALifeSpaceRestrictor*>(object_restrictor);
 	if (!restrictor) {
 		Msg									("! cannot add restriction with id %d to the entity with id %d, because there is an object with the specified id, but it is not a space restrictor",restriction_id,id);
 		return;
@@ -475,13 +475,13 @@ void CALifeUpdateManager::remove_restriction(ALife::_OBJECT_ID id, ALife::_OBJEC
 		return;
 	}
 
-	CSE_ALifeCreatureAbstract				*creature = smart_cast<CSE_ALifeCreatureAbstract*>(object);
+	CSE_ALifeCreatureAbstract				*creature = dynamic_cast<CSE_ALifeCreatureAbstract*>(object);
 	if (!creature) {
 		Msg									("! cannot remove restriction with id %d to the entity with id %d, because there is an object with the specified id, but it is not a creature",restriction_id,id);
 		return;
 	}
 	
-	CSE_ALifeSpaceRestrictor				*restrictor = smart_cast<CSE_ALifeSpaceRestrictor*>(object_restrictor);
+	CSE_ALifeSpaceRestrictor				*restrictor = dynamic_cast<CSE_ALifeSpaceRestrictor*>(object_restrictor);
 	if (!restrictor) {
 		Msg									("! cannot remove restriction with id %d to the entity with id %d, because there is an object with the specified id, but it is not a space restrictor",restriction_id,id);
 		return;
@@ -525,7 +525,7 @@ void CALifeUpdateManager::remove_all_restrictions	(ALife::_OBJECT_ID id, const R
 		return;
 	}
 
-	CSE_ALifeCreatureAbstract				*creature = smart_cast<CSE_ALifeCreatureAbstract*>(object);
+	CSE_ALifeCreatureAbstract				*creature = dynamic_cast<CSE_ALifeCreatureAbstract*>(object);
 	if (!creature) {
 		Msg									("! cannot remove restriction to the entity with id %d, because there is an object with the specified id, but it is not a creature",id);
 		return;

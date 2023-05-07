@@ -48,7 +48,7 @@ bool CUIDialogWnd::IR_OnKeyboardHold(int dik)
 	if( !StopAnyMove() && g_pGameLevel ){
 		CObject* O = Level().CurrentEntity();
 		if( O ){
-			IInputReceiver*		IR	= smart_cast<IInputReceiver*>( smart_cast<CGameObject*>(O) );
+			IInputReceiver*		IR	= dynamic_cast<IInputReceiver*>( dynamic_cast<CGameObject*>(O) );
 			if (!IR)
 				return			(false);
 			IR->IR_OnKeyboardHold(get_binded_action(dik));
@@ -75,7 +75,7 @@ bool CUIDialogWnd::IR_OnKeyboardPress(int dik)
 	if( !StopAnyMove() && g_pGameLevel ){
 		CObject* O = Level().CurrentEntity();
 		if( O ){
-			IInputReceiver*		IR	= smart_cast<IInputReceiver*>( smart_cast<CGameObject*>(O) );
+			IInputReceiver*		IR	= dynamic_cast<IInputReceiver*>( dynamic_cast<CGameObject*>(O) );
 			if (!IR)
 				return			(false);
 			IR->IR_OnKeyboardPress(get_binded_action(dik));
@@ -103,7 +103,7 @@ bool CUIDialogWnd::IR_OnKeyboardRelease(int dik)
 	if( !StopAnyMove() && g_pGameLevel ){
 		CObject* O = Level().CurrentEntity();
 		if( O ){
-			IInputReceiver*		IR	= smart_cast<IInputReceiver*>( smart_cast<CGameObject*>(O) );
+			IInputReceiver*		IR	= dynamic_cast<IInputReceiver*>( dynamic_cast<CGameObject*>(O) );
 			if (!IR)
 				return			(false);
 			IR->IR_OnKeyboardRelease(get_binded_action(dik));
@@ -139,7 +139,7 @@ bool CUIDialogWnd::IR_OnMouseMove(int dx, int dy)
 	else if( !StopAnyMove() && g_pGameLevel ){
 		CObject* O = Level().CurrentEntity();
 		if( O ){
-			IInputReceiver*		IR	= smart_cast<IInputReceiver*>( smart_cast<CGameObject*>(O) );
+			IInputReceiver*		IR	= dynamic_cast<IInputReceiver*>( dynamic_cast<CGameObject*>(O) );
 			if (!IR)
 				return			(false);
 

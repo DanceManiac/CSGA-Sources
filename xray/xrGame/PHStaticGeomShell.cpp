@@ -50,7 +50,7 @@ void P_BuildStaticGeomShell(CPHStaticGeomShell* pUnbrokenObject,CGameObject* obj
 	pUnbrokenObject->add_Box	(b);
 	pUnbrokenObject->Activate	(obj->XFORM());
 
-	pUnbrokenObject->set_PhysicsRefObject(smart_cast<CPhysicsShellHolder*>(obj));
+	pUnbrokenObject->set_PhysicsRefObject(dynamic_cast<CPhysicsShellHolder*>(obj));
 	//m_pUnbrokenObject->SetPhObjectInGeomData(m_pUnbrokenObject);
 	pUnbrokenObject->set_ObjectContactCallback(object_contact_callback);
 	CPHCollideValidator::SetNonDynamicObject(*pUnbrokenObject);
@@ -68,14 +68,14 @@ CPHStaticGeomShell* P_BuildStaticGeomShell(CGameObject* obj,ObjectContactCallbac
 	IRenderVisual* V=obj->Visual();
 	R_ASSERT2(V,"need visual to build");
 
-	smart_cast<IKinematics*>(V)->CalculateBones	(TRUE);		//. bForce - was TRUE
+	dynamic_cast<IKinematics*>(V)->CalculateBones	(TRUE);		//. bForce - was TRUE
 	V->getVisData().box.getradius	(b.m_halfsize);
 
 	b.xform_set					(Fidentity);
 	CPHStaticGeomShell* pUnbrokenObject =P_BuildStaticGeomShell(obj,object_contact_callback,b);
 
 	
-	IKinematics* K=smart_cast<IKinematics*>(V); VERIFY(K);
+	IKinematics* K=dynamic_cast<IKinematics*>(V); VERIFY(K);
 	K->CalculateBones(TRUE);
 	for (u16 k=0; k<K->LL_BoneCount(); k++){
 		K->LL_GetBoneInstance(k).set_callback( bctPhysics,cb,K->LL_GetBoneInstance(k).callback_param(), TRUE);

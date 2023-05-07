@@ -29,7 +29,7 @@ void CRocketLauncher::SpawnRocket(const shared_str& rocket_section, CGameObject*
 
 	CSE_Abstract*		D	= F_entity_Create(rocket_section.c_str());
 	R_ASSERT			(D);
-	CSE_Temporary		*l_tpTemporary = smart_cast<CSE_Temporary*>(D);
+	CSE_Temporary		*l_tpTemporary = dynamic_cast<CSE_Temporary*>(D);
 	R_ASSERT			(l_tpTemporary);
 	l_tpTemporary->m_tNodeID= (g_dedicated_server)?u32(-1) : parent_rocket_launcher->ai_location().level_vertex_id();
 	D->s_name			= rocket_section;
@@ -51,8 +51,8 @@ void CRocketLauncher::SpawnRocket(const shared_str& rocket_section, CGameObject*
 
 void CRocketLauncher::AttachRocket(u16 rocket_id, CGameObject* parent_rocket_launcher)
 {
-	CCustomRocket * pRocket = smart_cast<CCustomRocket*>(Level().Objects.net_Find(rocket_id));
-	pRocket->m_pOwner = smart_cast<CGameObject*>(parent_rocket_launcher->H_Root());
+	CCustomRocket * pRocket = dynamic_cast<CCustomRocket*>(Level().Objects.net_Find(rocket_id));
+	pRocket->m_pOwner = dynamic_cast<CGameObject*>(parent_rocket_launcher->H_Root());
 	VERIFY(pRocket->m_pOwner);
 	pRocket->H_SetParent(parent_rocket_launcher);
 	m_rockets.push_back(pRocket);
@@ -60,7 +60,7 @@ void CRocketLauncher::AttachRocket(u16 rocket_id, CGameObject* parent_rocket_lau
 
 void CRocketLauncher::DetachRocket(u16 rocket_id, bool bLaunch)
 {
-	CCustomRocket *pRocket = smart_cast<CCustomRocket*>(Level().Objects.net_Find(rocket_id));
+	CCustomRocket *pRocket = dynamic_cast<CCustomRocket*>(Level().Objects.net_Find(rocket_id));
 	if (!pRocket && OnClient()) return;
 
 	VERIFY(pRocket);

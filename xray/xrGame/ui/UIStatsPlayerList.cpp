@@ -299,7 +299,7 @@ void CUIStatsPlayerList::Update()
 
 	for (; it != m_pad->GetChildWndList().end(); it++, itit++)
 	{
-		CUIStatsPlayerInfo* pi = smart_cast<CUIStatsPlayerInfo*>(*it);
+		CUIStatsPlayerInfo* pi = dynamic_cast<CUIStatsPlayerInfo*>(*it);
 		R_ASSERT(pi);
 		game_PlayerState* ps = static_cast<game_PlayerState*>(*itit);
 		pi->SetInfo(ps);

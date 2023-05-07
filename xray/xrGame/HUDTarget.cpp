@@ -142,7 +142,7 @@ void CHUDTarget::Render()
 
 	CObject*	O		= Level().CurrentEntity();
 	if (0==O)	return;
-	CEntity*	E		= smart_cast<CEntity*>(O);
+	CEntity*	E		= dynamic_cast<CEntity*>(O);
 	if (0==E)	return;
 
 	Fvector p1				= Device.vCameraPosition;
@@ -193,16 +193,16 @@ void CHUDTarget::Render()
 	{ 
 		if(PP.RQ.O && PP.RQ.O->getVisible())
 		{
-			CEntityAlive*	E		= smart_cast<CEntityAlive*>	(PP.RQ.O);
-			CEntityAlive*	pCurEnt = smart_cast<CEntityAlive*>	(Level().CurrentEntity());
-			PIItem			l_pI	= smart_cast<PIItem>		(PP.RQ.O);
+			CEntityAlive*	E		= dynamic_cast<CEntityAlive*>	(PP.RQ.O);
+			CEntityAlive*	pCurEnt = dynamic_cast<CEntityAlive*>	(Level().CurrentEntity());
+			PIItem			l_pI	= dynamic_cast<PIItem>		(PP.RQ.O);
 
 			if (IsGameTypeSingle())
 			{
-				CInventoryOwner* our_inv_owner		= smart_cast<CInventoryOwner*>(pCurEnt);
+				CInventoryOwner* our_inv_owner		= dynamic_cast<CInventoryOwner*>(pCurEnt);
 				if (E && E->g_Alive() && !E->cast_base_monster())
 				{
-					CInventoryOwner* others_inv_owner	= smart_cast<CInventoryOwner*>(E);
+					CInventoryOwner* others_inv_owner	= dynamic_cast<CInventoryOwner*>(E);
 
 					if(our_inv_owner && others_inv_owner){
 

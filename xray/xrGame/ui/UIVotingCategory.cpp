@@ -109,7 +109,7 @@ bool CUIVotingCategory::OnKeyboard(int dik, EUIMessages keyboard_action)
 
 void CUIVotingCategory::OnBtn(int i)
 {
-	game_cl_mp* game = smart_cast<game_cl_mp*>(&Game());
+	game_cl_mp* game = dynamic_cast<game_cl_mp*>(&Game());
 
 	//check buttons state, based on voting mask
 	u16 flag = 1<<(u16(i+1) & 0xff);
@@ -167,7 +167,7 @@ void CUIVotingCategory::OnBtn(int i)
 
 void CUIVotingCategory::OnBtnCancel()
 {
-	game_cl_mp* game = smart_cast<game_cl_mp*>(&Game());
+	game_cl_mp* game = dynamic_cast<game_cl_mp*>(&Game());
 	game->StartStopMenu(this, true);
 }
 

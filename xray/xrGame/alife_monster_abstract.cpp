@@ -54,7 +54,7 @@ void CSE_ALifeMonsterAbstract::update								()
 				m_fDistanceToPoint		= m_fDistanceFromPoint	= 0.0f;
 				m_tPrevGraphID			= m_tGraphID;
 				alife().graph().change	(this,m_tGraphID,m_tNextGraphID);
-				CSE_ALifeGroupAbstract	*tpALifeGroupAbstract = smart_cast<CSE_ALifeGroupAbstract*>(this);
+				CSE_ALifeGroupAbstract	*tpALifeGroupAbstract = dynamic_cast<CSE_ALifeGroupAbstract*>(this);
 				if (tpALifeGroupAbstract)
 					tpALifeGroupAbstract->m_bCreateSpawnPositions = true;
 			}
@@ -136,13 +136,13 @@ ALife::EMeetActionType	CSE_ALifeMonsterAbstract::tfGetActionType(CSE_ALifeSchedu
 	return						(ALife::eMeetActionTypeIgnore);
 	/**
 	if (ALife::eCombatTypeMonsterMonster == ai().alife().combat_type()) {
-		CSE_ALifeMonsterAbstract	*l_tpALifeMonsterAbstract = smart_cast<CSE_ALifeMonsterAbstract*>(tpALifeSchedulable);
+		CSE_ALifeMonsterAbstract	*l_tpALifeMonsterAbstract = dynamic_cast<CSE_ALifeMonsterAbstract*>(tpALifeSchedulable);
 		R_ASSERT2					(l_tpALifeMonsterAbstract,"Inconsistent meet action type");
-		return						(ALife::eRelationTypeFriend == ai().alife().relation_type(this,smart_cast<CSE_ALifeMonsterAbstract*>(tpALifeSchedulable)) ? ALife::eMeetActionTypeIgnore : ((bMutualDetection || alife().choose_combat_action(iGroupIndex) == ALife::eCombatActionAttack) ? ALife::eMeetActionTypeAttack : ALife::eMeetActionTypeIgnore));
+		return						(ALife::eRelationTypeFriend == ai().alife().relation_type(this,dynamic_cast<CSE_ALifeMonsterAbstract*>(tpALifeSchedulable)) ? ALife::eMeetActionTypeIgnore : ((bMutualDetection || alife().choose_combat_action(iGroupIndex) == ALife::eCombatActionAttack) ? ALife::eMeetActionTypeAttack : ALife::eMeetActionTypeIgnore));
 	}
 	else
 		if (ALife::eCombatTypeSmartTerrain == ai().alife().combat_type()) {
-			CSE_ALifeSmartZone		*smart_zone = smart_cast<CSE_ALifeSmartZone*>(tpALifeSchedulable);
+			CSE_ALifeSmartZone		*smart_zone = dynamic_cast<CSE_ALifeSmartZone*>(tpALifeSchedulable);
 			VERIFY					(smart_zone);
 			return					(smart_zone->tfGetActionType(this,iGroupIndex ? 0 : 1,bMutualDetection));
 		}
@@ -153,13 +153,13 @@ ALife::EMeetActionType	CSE_ALifeMonsterAbstract::tfGetActionType(CSE_ALifeSchedu
 
 bool CSE_ALifeMonsterAbstract::bfActive()
 {
-	CSE_ALifeGroupAbstract		*l_tpALifeGroupAbstract = smart_cast<CSE_ALifeGroupAbstract*>(this);
+	CSE_ALifeGroupAbstract		*l_tpALifeGroupAbstract = dynamic_cast<CSE_ALifeGroupAbstract*>(this);
 	return						(/**/interactive() && /**/((l_tpALifeGroupAbstract && (l_tpALifeGroupAbstract->m_wCount > 0)) || (!l_tpALifeGroupAbstract && (get_health() > EPS_L))));
 }
 
 CSE_ALifeDynamicObject *CSE_ALifeMonsterAbstract::tpfGetBestDetector()
 {
-	CSE_ALifeGroupAbstract		*l_tpALifeGroupAbstract = smart_cast<CSE_ALifeGroupAbstract*>(this);
+	CSE_ALifeGroupAbstract		*l_tpALifeGroupAbstract = dynamic_cast<CSE_ALifeGroupAbstract*>(this);
 	if (!l_tpALifeGroupAbstract)
 		return					(this);
 	else {
@@ -172,7 +172,7 @@ CSE_ALifeDynamicObject *CSE_ALifeMonsterAbstract::tpfGetBestDetector()
 
 void CSE_ALifeMonsterAbstract::vfCheckForPopulationChanges	()
 {
-	CSE_ALifeGroupAbstract		*l_tpALifeGroupAbstract = smart_cast<CSE_ALifeGroupAbstract*>(this);
+	CSE_ALifeGroupAbstract		*l_tpALifeGroupAbstract = dynamic_cast<CSE_ALifeGroupAbstract*>(this);
 	if (!l_tpALifeGroupAbstract || !bfActive() || m_bOnline)
 		return;
 

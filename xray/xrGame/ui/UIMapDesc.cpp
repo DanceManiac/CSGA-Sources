@@ -96,7 +96,7 @@ void CUIMapDesc::Init(){
 void CUIMapDesc::SendMessage(CUIWindow* pWnd,s16 msg, void* pData){
 	if (BUTTON_CLICKED == msg)
 	{
-		game_cl_mp * dm = smart_cast<game_cl_mp *>(&(Game()));
+		game_cl_mp * dm = dynamic_cast<game_cl_mp *>(&(Game()));
 		dm->StartStopMenu(this,true);
 		if (pWnd == m_pBtnSpectator)
 			dm->OnSpectatorSelect();
@@ -112,7 +112,7 @@ bool CUIMapDesc::OnKeyboard(int dik, EUIMessages keyboard_action){
 		if (dik == DIK_TAB)
 		{
 			ShowChildren(true);
-			game_cl_mp* game = smart_cast<game_cl_mp*>(&Game());
+			game_cl_mp* game = dynamic_cast<game_cl_mp*>(&Game());
 			game->OnKeyboardRelease(kSCORES);
 			UI().GetUICursor().Show();
 		}
@@ -123,13 +123,13 @@ bool CUIMapDesc::OnKeyboard(int dik, EUIMessages keyboard_action){
 	if (dik == DIK_TAB)
 	{
         ShowChildren(false);
-		game_cl_mp* game = smart_cast<game_cl_mp*>(&Game());
+		game_cl_mp* game = dynamic_cast<game_cl_mp*>(&Game());
 		game->OnKeyboardPress(kSCORES);
 		UI().GetUICursor().Hide();
 		return false;
 	}
 
-	game_cl_mp * dm = smart_cast<game_cl_mp *>(&(Game()));
+	game_cl_mp * dm = dynamic_cast<game_cl_mp *>(&(Game()));
 
 	switch (dik){
 		case DIK_ESCAPE:

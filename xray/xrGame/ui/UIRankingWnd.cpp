@@ -195,8 +195,8 @@ void CUIRankingWnd::clear_all_factions()
 
 bool CUIRankingWnd::SortingLessFunction( CUIWindow* left, CUIWindow* right )
 {
-	CUIRankFaction* lpi = smart_cast<CUIRankFaction*>(left);
-	CUIRankFaction* rpi = smart_cast<CUIRankFaction*>(right);
+	CUIRankFaction* lpi = dynamic_cast<CUIRankFaction*>(left);
+	CUIRankFaction* rpi = dynamic_cast<CUIRankFaction*>(right);
 	VERIFY( lpi && rpi );
 	return ( lpi->get_faction_power() > rpi->get_faction_power() );
 }
@@ -206,7 +206,7 @@ void CUIRankingWnd::update_info()
 	bool force_rating = false;
 	for ( u8 i = 0; i < m_factions_list->GetSize() && i < max_factions; ++i )
 	{
-		CUIRankFaction* ui_faction = smart_cast<CUIRankFaction*>( m_factions_list->GetItem(i) );
+		CUIRankFaction* ui_faction = dynamic_cast<CUIRankFaction*>( m_factions_list->GetItem(i) );
 		if ( ui_faction )
 		{
 			if ( ui_faction->get_cur_sn() != i+1 )
@@ -219,7 +219,7 @@ void CUIRankingWnd::update_info()
 
 	for ( u8 i = 0; i < m_factions_list->GetSize() && i < max_factions; ++i )
 	{
-		CUIRankFaction* ui_faction = smart_cast<CUIRankFaction*>( m_factions_list->GetItem(i) );
+		CUIRankFaction* ui_faction = dynamic_cast<CUIRankFaction*>( m_factions_list->GetItem(i) );
 		if ( ui_faction )
 		{
 			ui_faction->update_info( i+1 );

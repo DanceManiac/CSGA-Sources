@@ -35,7 +35,7 @@ CUIGameSP::~CUIGameSP()
 void CUIGameSP::shedule_Update(u32 dt)
 {
 	inherited::shedule_Update			(dt);
-	CActor *pActor = smart_cast<CActor*>(Level().CurrentEntity());
+	CActor *pActor = dynamic_cast<CActor*>(Level().CurrentEntity());
 	if(!pActor)							return;
 	if(pActor->g_Alive())				return;
 
@@ -57,7 +57,7 @@ void CUIGameSP::HideShownDialogs()
 void CUIGameSP::SetClGame (game_cl_GameState* g)
 {
 	inherited::SetClGame				(g);
-	m_game = smart_cast<game_cl_Single*>(g);
+	m_game = dynamic_cast<game_cl_Single*>(g);
 	R_ASSERT							(m_game);
 }
 
@@ -68,9 +68,9 @@ bool CUIGameSP::IR_OnKeyboardPress(int dik)
 
 	if( Device.Paused()		) return false;
 
-	CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>( Level().CurrentEntity() );
+	CInventoryOwner* pInvOwner = dynamic_cast<CInventoryOwner*>( Level().CurrentEntity() );
 	if ( !pInvOwner )				return false;
-	CEntityAlive* EA			= smart_cast<CEntityAlive*>(Level().CurrentEntity());
+	CEntityAlive* EA			= dynamic_cast<CEntityAlive*>(Level().CurrentEntity());
 	if (!EA || !EA->g_Alive() )	return false;
 
 	switch ( get_binded_action(dik) )
@@ -89,7 +89,7 @@ bool CUIGameSP::IR_OnKeyboardPress(int dik)
 
 	case kSCORES:
 		{
-			CActor *pActor = smart_cast<CActor*>(pInvOwner);
+			CActor *pActor = dynamic_cast<CActor*>(pInvOwner);
 			if( !pActor ) return false;
 			if( !pActor->g_Alive() )	return false;
 

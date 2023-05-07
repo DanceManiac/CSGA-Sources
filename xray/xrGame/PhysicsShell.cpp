@@ -50,15 +50,15 @@ CPhysicsShell*	P_build_Shell			(CGameObject* obj,bool not_active_state,BONE_P_MA
 	VERIFY( obj );
 	phys_shell_verify_object_model( *obj );
 
-	IKinematics* pKinematics=smart_cast<IKinematics*>(obj->Visual());
+	IKinematics* pKinematics=dynamic_cast<IKinematics*>(obj->Visual());
 
 	CPhysicsShell* pPhysicsShell		= P_create_Shell();
 #ifdef DEBUG
-	pPhysicsShell->dbg_obj=smart_cast<CPhysicsShellHolder*>(obj);
+	pPhysicsShell->dbg_obj=dynamic_cast<CPhysicsShellHolder*>(obj);
 #endif
 	pPhysicsShell->build_FromKinematics(pKinematics,bone_map);
 
-	pPhysicsShell->set_PhysicsRefObject(smart_cast<CPhysicsShellHolder*>(obj));
+	pPhysicsShell->set_PhysicsRefObject(dynamic_cast<CPhysicsShellHolder*>(obj));
 	pPhysicsShell->mXFORM.set(obj->XFORM());
 	pPhysicsShell->Activate( not_active_state, not_set_bone_callbacks );//,
 	//m_pPhysicsShell->SmoothElementsInertia(0.3f);
@@ -88,7 +88,7 @@ void	fix_bones(LPCSTR	fixed_bones,CPhysicsShell* shell )
 CPhysicsShell*				P_build_Shell			(CGameObject* obj,bool not_active_state,BONE_P_MAP* p_bone_map,LPCSTR	fixed_bones)
 {
 	CPhysicsShell* pPhysicsShell;
-	IKinematics* pKinematics=smart_cast<IKinematics*>(obj->Visual());
+	IKinematics* pKinematics=dynamic_cast<IKinematics*>(obj->Visual());
 	if(fixed_bones)
 	{
 
@@ -127,7 +127,7 @@ CPhysicsShell*				P_build_Shell			(CGameObject* obj,bool not_active_state,LPCSTR
 {
 	U16Vec f_bones;
 	if(fixed_bones){
-		IKinematics* K		= smart_cast<IKinematics*>(obj->Visual());
+		IKinematics* K		= dynamic_cast<IKinematics*>(obj->Visual());
 		int count =			_GetItemCount(fixed_bones);
 		for (int i=0 ;i<count; ++i){
 			string64		fixed_bone;
@@ -165,13 +165,13 @@ CPhysicsShell*	P_build_SimpleShell(CGameObject* obj,float mass,bool not_active_s
 {
 	CPhysicsShell* pPhysicsShell		= P_create_Shell();
 #ifdef DEBUG
-	pPhysicsShell->dbg_obj=smart_cast<CPhysicsShellHolder*>(obj);
+	pPhysicsShell->dbg_obj=dynamic_cast<CPhysicsShellHolder*>(obj);
 #endif
 	Fobb obb; obj->Visual()->getVisData().box.get_CD(obb.m_translate,obb.m_halfsize); obb.m_rotate.identity();
 	CPhysicsElement* E = P_create_Element(); R_ASSERT(E); E->add_Box(obb);
 	pPhysicsShell->add_Element(E);
 	pPhysicsShell->setMass(mass);
-	pPhysicsShell->set_PhysicsRefObject(smart_cast<CPhysicsShellHolder*>(obj));
+	pPhysicsShell->set_PhysicsRefObject(dynamic_cast<CPhysicsShellHolder*>(obj));
 	if(!obj->H_Parent())
 		pPhysicsShell->Activate(obj->XFORM(),0,obj->XFORM(),not_active_state);
 	return pPhysicsShell;

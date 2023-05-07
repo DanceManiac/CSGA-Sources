@@ -24,10 +24,10 @@ CHudItem::CHudItem()
 
 DLL_Pure *CHudItem::_construct()
 {
-	m_object			= smart_cast<CPhysicItem*>(this);
+	m_object			= dynamic_cast<CPhysicItem*>(this);
 	VERIFY				(m_object);
 
-	m_item				= smart_cast<CInventoryItem*>(this);
+	m_item				= dynamic_cast<CInventoryItem*>(this);
 	VERIFY				(m_item);
 
 	return				(m_object);
@@ -72,9 +72,9 @@ void CHudItem::renderable_Render()
 		}else
 		if (object().H_Parent()) 
 		{
-			CInventoryOwner	*owner = smart_cast<CInventoryOwner*>(object().H_Parent());
+			CInventoryOwner	*owner = dynamic_cast<CInventoryOwner*>(object().H_Parent());
 			VERIFY			(owner);
-			CInventoryItem	*self = smart_cast<CInventoryItem*>(this);
+			CInventoryItem	*self = dynamic_cast<CInventoryItem*>(this);
 			if (owner->attached(self))
 				on_renderable_Render();
 		}
@@ -364,7 +364,7 @@ BOOL CHudItem::GetHUDmode()
 {
 	if(object().H_Parent())
 	{
-		CActor* A = smart_cast<CActor*>(object().H_Parent());
+		CActor* A = dynamic_cast<CActor*>(object().H_Parent());
 		return ( A && A->HUDview() && HudItemData() && 
 				(HudItemData())
 			);
@@ -384,7 +384,7 @@ bool CHudItem::TryPlayAnimIdle()
 {
 	if(MovingAnimAllowedNow())
 	{
-        auto pActor = smart_cast<CActor*>(object().H_Parent());
+        auto pActor = dynamic_cast<CActor*>(object().H_Parent());
 		if(pActor)
 		{
             u32 state = pActor->get_state();

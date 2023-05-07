@@ -29,7 +29,7 @@ MotionID CStalkerAnimationManager::assign_head_animation	()
 {
 	const ANIM_VECTOR		&animations = m_data_storage->m_head_animations.A;
 
-	CUIGameSP*				pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+	CUIGameSP*				pGameSP = dynamic_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 	if (pGameSP && pGameSP->TalkMenu->IsShown()) {
 		if (pGameSP->TalkMenu->OthersInvOwner() == m_object) {
 			if (pGameSP->TalkMenu->playing_sound())

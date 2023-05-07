@@ -240,7 +240,7 @@ void CWeaponMagazined::FireStart()
 
 void CWeaponMagazined::MsgGunEmpty()
 {
-	if(smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity()==H_Parent()))
+	if(dynamic_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity()==H_Parent()))
         HUD().GetUI()->AddInfoMessage("gun_empty");
 }
 
@@ -261,7 +261,7 @@ void CWeaponMagazined::Reload()
 
 bool CWeaponMagazined::TryReload() 
 {
-    CWeaponBinoculars* binoc = smart_cast<CWeaponBinoculars*>(m_pInventory->ActiveItem());
+    CWeaponBinoculars* binoc = dynamic_cast<CWeaponBinoculars*>(m_pInventory->ActiveItem());
 	if(m_pInventory && !binoc) 
 	{
 		if(IsMisfire())
@@ -277,7 +277,7 @@ bool CWeaponMagazined::TryReload()
 			Actor()->callback(GameObject::eWeaponNoAmmoAvailable)(lua_game_object(), AC);
 		}
 		if (m_ammoType < m_ammoTypes.size())
-			m_pAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[m_ammoType]));
+			m_pAmmo = dynamic_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[m_ammoType]));
 		else
 			m_pAmmo = nullptr;
 
@@ -289,7 +289,7 @@ bool CWeaponMagazined::TryReload()
 		} 
 		else for(u32 i = 0; i < m_ammoTypes.size(); ++i) 
 		{
-			m_pAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny( *m_ammoTypes[i] ));
+			m_pAmmo = dynamic_cast<CWeaponAmmo*>(m_pInventory->GetAny( *m_ammoTypes[i] ));
 			if(m_pAmmo) 
 			{ 
 				m_set_next_ammoType_on_reload = i;
@@ -309,11 +309,11 @@ bool CWeaponMagazined::TryReload()
 
 bool CWeaponMagazined::IsAmmoAvailable()
 {
-	if (smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[m_ammoType])))
+	if (dynamic_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[m_ammoType])))
 		return	(true);
 	else
 		for(u32 i = 0; i < m_ammoTypes.size(); ++i)
-			if (smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[i])))
+			if (dynamic_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[i])))
 				return	(true);
 	return		(false);
 }
@@ -353,7 +353,7 @@ void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 	xr_map<LPCSTR, u16>::iterator l_it;
 	for(l_it = l_ammo.begin(); l_ammo.end() != l_it; ++l_it) 
 	{
-		CWeaponAmmo *l_pA = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(l_it->first));
+		CWeaponAmmo *l_pA = dynamic_cast<CWeaponAmmo*>(m_pInventory->GetAny(l_it->first));
 		if(l_pA) 
 		{
 			u16 l_free = l_pA->m_boxSize - l_pA->m_boxCurr;
@@ -389,14 +389,14 @@ void CWeaponMagazined::ReloadMagazine()
 	if(!unlimited_ammo()) 
 	{
 		//попытаться найти в инвентаре патроны текущего типа 
-		m_pAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[m_ammoType]));
+		m_pAmmo = dynamic_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[m_ammoType]));
 		
 		if(!m_pAmmo && !m_bLockType) 
 		{
 			for(u32 i = 0; i < m_ammoTypes.size(); ++i) 
 			{
 				//проверить патроны всех подходящих типов
-				m_pAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[i]));
+				m_pAmmo = dynamic_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[i]));
 				if(m_pAmmo) 
 				{ 
 					m_ammoType = i; 
@@ -589,13 +589,13 @@ void CWeaponMagazined::state_Fire(float dt)
 		d.set(get_LastFD());
 
 		if (!H_Parent()) return;
-		if (smart_cast<CMPPlayersBag*>(H_Parent()) != nullptr)
+		if (dynamic_cast<CMPPlayersBag*>(H_Parent()) != nullptr)
 		{
 			Msg("! WARNING: state_Fire of object [%d][%s] while parent is CMPPlayerBag...", ID(), cNameSect().c_str());
 			return;
 		}
 
-		CInventoryOwner* io	= smart_cast<CInventoryOwner*>(H_Parent());
+		CInventoryOwner* io	= dynamic_cast<CInventoryOwner*>(H_Parent());
 		if(nullptr == io->inventory().ActiveItem())
 		{
 				Log("current_state", GetState());
@@ -604,7 +604,7 @@ void CWeaponMagazined::state_Fire(float dt)
 				Log("H_Parent", H_Parent()->cNameSect().c_str());
 		}
 
-		CEntity* E = smart_cast<CEntity*>(H_Parent());
+		CEntity* E = dynamic_cast<CEntity*>(H_Parent());
 		E->g_fireParams	(this, p1,d);
 
 		if(!E->g_stateFire())
@@ -685,7 +685,7 @@ void CWeaponMagazined::switch2_LookMisfire()
 	PlayAnimLookMis();
     SetPending(true);
 
-	if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
+	if (dynamic_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
 		HUD().GetUI()->AddInfoMessage("gun_jammed");
 
 	attachable_hud_item* i1 = g_player_hud->attached_item(1);
@@ -703,7 +703,7 @@ void CWeaponMagazined::switch2_LightMisfire()
     PlayAnimLightMis();
     SetPending(true);
 
-	if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
+	if (dynamic_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
 		HUD().GetUI()->AddInfoMessage("gun_misfire");
 
 	attachable_hud_item* i1 = g_player_hud->attached_item(1);
@@ -739,7 +739,7 @@ void CWeaponMagazined::PlayAnimLightMis()
 
 void CWeaponMagazined::PlayAnimLookMis()
 {
-    auto bm = smart_cast<CWeaponBM16*>(this);
+    auto bm = dynamic_cast<CWeaponBM16*>(this);
 
 	if (!bm)
 	{
@@ -810,12 +810,12 @@ void CWeaponMagazined::PlaySoundLowAmmo()
 	if (m_u32ACPlaySnd == 0)
         return;
 
-    CWeaponKnife* knf = smart_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
+    CWeaponKnife* knf = dynamic_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
 
 	if (knf)
 		return;
 
-    CWeaponBinoculars* binoc = smart_cast<CWeaponBinoculars*>(m_pInventory->ActiveItem());
+    CWeaponBinoculars* binoc = dynamic_cast<CWeaponBinoculars*>(m_pInventory->ActiveItem());
 
 	if (binoc)
 		return;
@@ -902,7 +902,7 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		break;  // Keep showing idle
 		case eShowingDet:
 		{
-		    auto det = smart_cast<CCustomDetector*>(m_pInventory->ItemFromSlot(DETECTOR_SLOT));
+		    auto det = dynamic_cast<CCustomDetector*>(m_pInventory->ItemFromSlot(DETECTOR_SLOT));
 		    if (det) 
 			{
 				det->SwitchState(CCustomDetector::eShowing);
@@ -942,8 +942,8 @@ void CWeaponMagazined::switch2_Idle()
 #endif
 void CWeaponMagazined::switch2_Fire()
 {
-	CInventoryOwner* io	= smart_cast<CInventoryOwner*>(H_Parent());
-	CInventoryItem* ii = smart_cast<CInventoryItem*>(this);
+	CInventoryOwner* io	= dynamic_cast<CInventoryOwner*>(H_Parent());
+	CInventoryItem* ii = dynamic_cast<CInventoryItem*>(this);
 #ifdef DEBUG
 	VERIFY2					(io,make_string("no inventory owner, item %s",*cName()));
 
@@ -952,7 +952,7 @@ void CWeaponMagazined::switch2_Fire()
 
 	if ( !(io && (ii == io->inventory().ActiveItem())) ) 
 	{
-		CAI_Stalker			*stalker = smart_cast<CAI_Stalker*>(H_Parent());
+		CAI_Stalker			*stalker = dynamic_cast<CAI_Stalker*>(H_Parent());
 		if (stalker) {
 			stalker->planner().show						();
 			stalker->planner().show_current_world_state	();
@@ -1088,10 +1088,10 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 
 bool CWeaponMagazined::CanAttach(PIItem pIItem)
 {
-	CScope*	pScope = smart_cast<CScope*>(pIItem);
-	CSilencer* pSilencer = smart_cast<CSilencer*>(pIItem);
-	CGrenadeLauncher* pGrenadeLauncher = smart_cast<CGrenadeLauncher*>(pIItem);
-	CHandler* pHandler = smart_cast<CHandler*>(pIItem);
+	CScope*	pScope = dynamic_cast<CScope*>(pIItem);
+	CSilencer* pSilencer = dynamic_cast<CSilencer*>(pIItem);
+	CGrenadeLauncher* pGrenadeLauncher = dynamic_cast<CGrenadeLauncher*>(pIItem);
+	CHandler* pHandler = dynamic_cast<CHandler*>(pIItem);
 
 	if(pScope && m_eScopeStatus == ALife::eAddonAttachable && (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonScope) == 0 && (m_sScopeName == pIItem->object().cNameSect()) )
        return true;
@@ -1123,10 +1123,10 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 {
 	bool result = false;
 
-	CScope*	pScope = smart_cast<CScope*>(pIItem);
-	CSilencer* pSilencer = smart_cast<CSilencer*>(pIItem);
-	CGrenadeLauncher* pGrenadeLauncher = smart_cast<CGrenadeLauncher*>(pIItem);
-	CHandler* pHandler = smart_cast<CHandler*>(pIItem);
+	CScope*	pScope = dynamic_cast<CScope*>(pIItem);
+	CSilencer* pSilencer = dynamic_cast<CSilencer*>(pIItem);
+	CGrenadeLauncher* pGrenadeLauncher = dynamic_cast<CGrenadeLauncher*>(pIItem);
+	CHandler* pHandler = dynamic_cast<CHandler*>(pIItem);
 	
 	if(pScope && m_eScopeStatus == ALife::eAddonAttachable && (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonScope) == 0 && (m_sScopeName == pIItem->object().cNameSect()))
 	{
@@ -1556,7 +1556,7 @@ void CWeaponMagazined::PlayAnimAimStart()
 {
     VERIFY(GetState() == eZoomStart);
 
-	auto bm = smart_cast<CWeaponBM16*>(this);
+	auto bm = dynamic_cast<CWeaponBM16*>(this);
 
 	if(!bm)
 	{
@@ -1791,7 +1791,7 @@ void CWeaponMagazined::PlayAnimAimEnd()
 {
     VERIFY(GetState() == eZoomEnd);
 
-	auto bm = smart_cast<CWeaponBM16*>(this);
+	auto bm = dynamic_cast<CWeaponBM16*>(this);
 
 	if(!bm)
 	{
@@ -1891,7 +1891,7 @@ void CWeaponMagazined::EmptyMove()
 
 const char* CWeaponMagazined::GetAnimAimName()
 {
-	auto pActor = smart_cast<const CActor*>(H_Parent());
+	auto pActor = dynamic_cast<const CActor*>(H_Parent());
 	if (pActor)
 	{
         u32 state = pActor->get_state();
@@ -2065,10 +2065,10 @@ void CWeaponMagazined::OnZoomIn()
 		PlayAnimIdle();
 
 
-	CActor* pActor = smart_cast<CActor*>(H_Parent());
+	CActor* pActor = dynamic_cast<CActor*>(H_Parent());
 	if(pActor)
 	{
-		CEffectorZoomInertion* S = smart_cast<CEffectorZoomInertion*>	(pActor->Cameras().GetCamEffector(eCEZoom));
+		CEffectorZoomInertion* S = dynamic_cast<CEffectorZoomInertion*>	(pActor->Cameras().GetCamEffector(eCEZoom));
 		if (!S)	
 		{
 			S = (CEffectorZoomInertion*)pActor->Cameras().AddCamEffector(xr_new<CEffectorZoomInertion>());
@@ -2088,7 +2088,7 @@ void CWeaponMagazined::OnZoomOut()
 	if(GetState()==eIdle)
 		PlayAnimIdle();
 
-	CActor* pActor = smart_cast<CActor*>(H_Parent());
+	CActor* pActor = dynamic_cast<CActor*>(H_Parent());
 
 	if(pActor)
 		pActor->Cameras().RemoveCamEffector	(eCEZoom);
@@ -2171,7 +2171,7 @@ void CWeaponMagazined::OnH_A_Chield()
 {
 	if (m_bHasDifferentFireModes)
 	{
-		CActor	*actor = smart_cast<CActor*>(H_Parent());
+		CActor	*actor = dynamic_cast<CActor*>(H_Parent());
 		if (!actor) SetQueueSize(-1);
 		else SetQueueSize(GetCurrentFireMode());
 	};	
@@ -2264,7 +2264,7 @@ void CWeaponMagazined::UpdateAddonsVisibility()
 {
 	inherited::UpdateAddonsVisibility();
 
-	IKinematics* pWeaponVisual = smart_cast<IKinematics*>(Visual()); R_ASSERT(pWeaponVisual);
+	IKinematics* pWeaponVisual = dynamic_cast<IKinematics*>(Visual()); R_ASSERT(pWeaponVisual);
 
 	u16 bone_id;
 

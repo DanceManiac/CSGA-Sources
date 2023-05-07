@@ -72,15 +72,15 @@ void	CWeaponMounted::Load(LPCSTR section)
 BOOL	CWeaponMounted::net_Spawn(CSE_Abstract* DC)
 {
 	CSE_Abstract			*e	= (CSE_Abstract*)(DC);
-	CSE_ALifeMountedWeapon	*mw	= smart_cast<CSE_ALifeMountedWeapon*>(e);
+	CSE_ALifeMountedWeapon	*mw	= dynamic_cast<CSE_ALifeMountedWeapon*>(e);
 	R_ASSERT				(mw);
 
 	if (!inherited::net_Spawn(DC))
 		return			(FALSE);
 
-	R_ASSERT				(Visual() && smart_cast<IKinematics*>(Visual()));
+	R_ASSERT				(Visual() && dynamic_cast<IKinematics*>(Visual()));
 
-	IKinematics* K			= smart_cast<IKinematics*>(Visual());
+	IKinematics* K			= dynamic_cast<IKinematics*>(Visual());
 	CInifile* pUserData		= K->LL_UserData(); 
 
 	R_ASSERT3				(pUserData,"Empty MountedWeapon user data!",mw->get_visual());
@@ -134,7 +134,7 @@ void	CWeaponMounted::UpdateCL()
 {
 	inherited::UpdateCL	();
 	if (Owner()){
-		IKinematics* K		= smart_cast<IKinematics*>(Visual());
+		IKinematics* K		= dynamic_cast<IKinematics*>(Visual());
 		K->CalculateBones	();
 		// update fire pos & fire_dir
 		fire_bone_xform		= K->LL_GetTransform(fire_bone);
@@ -219,7 +219,7 @@ void	CWeaponMounted::cam_Update			(float dt, float fov)
 	Fvector							P,Da;
 	Da.set							(0,0,0);
 
-	IKinematics* K					= smart_cast<IKinematics*>(Visual());
+	IKinematics* K					= dynamic_cast<IKinematics*>(Visual());
 	K->CalculateBones_Invalidate	();
 	K->CalculateBones				();
 	const Fmatrix& C				= K->LL_GetTransform(camera_bone);
@@ -242,14 +242,14 @@ bool	CWeaponMounted::attach_Actor		(CGameObject* actor)
 {
 	m_dAngle.set(0.0f,0.0f);
 	CHolderCustom::attach_Actor(actor);
-	IKinematics* K		= smart_cast<IKinematics*>(Visual());
+	IKinematics* K		= dynamic_cast<IKinematics*>(Visual());
 	// убрать оружие из рук	
 	// disable shell callback
 	m_pPhysicsShell->EnabledCallbacks(FALSE);
 	// enable actor rotate callback
-	CBoneInstance& biX		= smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(rotate_x_bone);	
+	CBoneInstance& biX		= dynamic_cast<IKinematics*>(Visual())->LL_GetBoneInstance(rotate_x_bone);	
 	biX.set_callback		(bctCustom,BoneCallbackX,this);
-	CBoneInstance& biY		= smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(rotate_y_bone);	
+	CBoneInstance& biY		= dynamic_cast<IKinematics*>(Visual())->LL_GetBoneInstance(rotate_y_bone);	
 	biY.set_callback		(bctCustom,BoneCallbackY,this);
 	// set actor to mounted position
 	const Fmatrix& A	= K->LL_GetTransform(actor_bone);
@@ -264,9 +264,9 @@ void	CWeaponMounted::detach_Actor		()
 {
 	CHolderCustom::detach_Actor();
 	// disable actor rotate callback
-	CBoneInstance& biX		= smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(rotate_x_bone);	
+	CBoneInstance& biX		= dynamic_cast<IKinematics*>(Visual())->LL_GetBoneInstance(rotate_x_bone);	
 	biX.reset_callback		();
-	CBoneInstance& biY		= smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(rotate_y_bone);	
+	CBoneInstance& biY		= dynamic_cast<IKinematics*>(Visual())->LL_GetBoneInstance(rotate_y_bone);	
 	biY.reset_callback		();
 	// enable shell callback
 	m_pPhysicsShell->EnabledCallbacks(TRUE);
@@ -319,7 +319,7 @@ void CWeaponMounted::OnShot		()
 	StartSmokeParticles(fire_pos, zero_vel);
 	OnShellDrop(fire_pos, zero_vel);
 
-	bool b_hud_mode = (Level().CurrentEntity() == smart_cast<CObject*>(Owner()));
+	bool b_hud_mode = (Level().CurrentEntity() == dynamic_cast<CObject*>(Owner()));
 	HUD_SOUND::PlaySound(sndShot, fire_pos, Owner(), b_hud_mode);
 
 	//добавить эффектор стрельбы
@@ -359,7 +359,7 @@ void CWeaponMounted::AddShotEffector				()
 {
 	if(OwnerActor())
 	{
-		CCameraShotEffector* S	= smart_cast<CCameraShotEffector*>(OwnerActor()->Cameras().GetCamEffector(eCEShot)); 
+		CCameraShotEffector* S	= dynamic_cast<CCameraShotEffector*>(OwnerActor()->Cameras().GetCamEffector(eCEShot)); 
 		if (!S)	S				= (CCameraShotEffector*)OwnerActor()->Cameras().AddCamEffector(xr_new<CCameraShotEffector> (camMaxAngle,camRelaxSpeed, 0.25f, 0.01f, 0.7f));
 		R_ASSERT				(S);
 		S->Shot					(0.01f);

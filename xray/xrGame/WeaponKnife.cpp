@@ -164,7 +164,7 @@ void CWeaponKnife::OnMotionMark(u32 state, const motion_marks& M)
 
 		if(H_Parent())
 		{
-			smart_cast<CEntity*>(H_Parent())->g_fireParams(this, p1,d);
+			dynamic_cast<CEntity*>(H_Parent())->g_fireParams(this, p1,d);
 			KnifeStrike(p1,d,state);
 		}
 	}

@@ -215,7 +215,7 @@ u32	CLevel::Objects_net_Save	(NET_Packet* _Packet, u32 start, u32 max_object_siz
 	u32			position;
 	for (; start<Objects.o_count(); start++)	{
 		CObject		*_P = Objects.o_get_by_iterator(start);
-		CGameObject *P = smart_cast<CGameObject*>(_P);
+		CGameObject *P = dynamic_cast<CGameObject*>(_P);
 //		Msg			("save:iterating:%d:%s",P->ID(),*P->cName());
 		if (P && !P->getDestroy() && P->net_SaveRelevant())	{
 			Packet.w_u16			(u16(P->ID())	);

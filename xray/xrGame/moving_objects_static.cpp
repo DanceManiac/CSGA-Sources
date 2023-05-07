@@ -58,7 +58,7 @@ void moving_objects::fill_static			(obstacles_query &query)
 	NEAREST_STATIC::const_iterator	I = m_nearest_static.begin();
 	NEAREST_STATIC::const_iterator	E = m_nearest_static.end();
 	for ( ; I != E; ++I)
-		query.add			(smart_cast<const CGameObject*>(*I));
+		query.add			(dynamic_cast<const CGameObject*>(*I));
 }
 
 void moving_objects::fill_static			(obstacles_query &query, const Fvector &position, const float &radius)
@@ -69,7 +69,7 @@ void moving_objects::fill_static			(obstacles_query &query, const Fvector &posit
 		if (!collided(*I,position,radius))
 			continue;
 
-		query.add			(smart_cast<const CGameObject*>(*I));
+		query.add			(dynamic_cast<const CGameObject*>(*I));
 	}
 }
 
@@ -109,7 +109,7 @@ public:
 		if (m_object->ignored(object))
 			return			(true);
 
-		const CGameObject	*game_object = smart_cast<const CGameObject*>(object);
+		const CGameObject	*game_object = dynamic_cast<const CGameObject*>(object);
 		VERIFY				(game_object);
 		if (!game_object->is_ai_obstacle())
 			return			(true);

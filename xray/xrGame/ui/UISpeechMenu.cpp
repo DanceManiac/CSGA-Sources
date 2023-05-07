@@ -62,7 +62,7 @@ bool CUISpeechMenu::OnKeyboard(int dik, EUIMessages keyboard_action){
     if (dik < DIK_1 || dik > DIK_0)
 		return CUIDialogWnd::OnKeyboard(dik, keyboard_action);
 
-	game_cl_mp* game = smart_cast<game_cl_mp*>(&Game());
+	game_cl_mp* game = dynamic_cast<game_cl_mp*>(&Game());
 
 	Game().StartStopMenu(this,true);
 	game->OnMessageSelected(this, static_cast<u8>(dik - DIK_1));

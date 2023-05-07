@@ -55,7 +55,7 @@ BOOL CLevelChanger::net_Spawn	(CSE_Abstract* DC)
 	collidable.model			= l_pShape;
 	
 	CSE_Abstract				*l_tpAbstract = (CSE_Abstract*)(DC);
-	CSE_ALifeLevelChanger		*l_tpALifeLevelChanger = smart_cast<CSE_ALifeLevelChanger*>(l_tpAbstract);
+	CSE_ALifeLevelChanger		*l_tpALifeLevelChanger = dynamic_cast<CSE_ALifeLevelChanger*>(l_tpAbstract);
 	R_ASSERT					(l_tpALifeLevelChanger);
 
 	if (l_tpALifeLevelChanger->m_caLevelToChange == ZONE_EXIT) {
@@ -121,7 +121,7 @@ void start_tutorial(LPCSTR name);
 #include "patrol_path_storage.h"
 void CLevelChanger::feel_touch_new	(CObject *tpObject)
 {
-	CActor*			l_tpActor = smart_cast<CActor*>(tpObject);
+	CActor*			l_tpActor = dynamic_cast<CActor*>(tpObject);
 	VERIFY			(l_tpActor);
 	if (!l_tpActor->g_Alive())
 		return;
@@ -146,7 +146,7 @@ void CLevelChanger::feel_touch_new	(CObject *tpObject)
 	Fvector			p,r;
 	bool			b = get_reject_pos(p,r);
 	p.add(offset);
-	CUIGameSP		*pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+	CUIGameSP		*pGameSP = dynamic_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 	if (pGameSP)
 		pGameSP->ChangeLevel(m_game_vertex_id, m_level_vertex_id, nextPosition, m_angles, p, r, b, m_invite_str, m_b_enabled, m_isExit);
 
@@ -183,7 +183,7 @@ bool CLevelChanger::get_reject_pos(Fvector& p, Fvector& r)
 BOOL CLevelChanger::feel_touch_contact	(CObject *object)
 {
 	BOOL bRes	= (((CCF_Shape*)CFORM())->Contact(object));
-	bRes		= bRes && smart_cast<CActor*>(object) && smart_cast<CActor*>(object)->g_Alive();
+	bRes		= bRes && dynamic_cast<CActor*>(object) && dynamic_cast<CActor*>(object)->g_Alive();
 	return		bRes;
 }
 
@@ -194,14 +194,14 @@ void CLevelChanger::update_actor_invitation()
 	xr_vector<CObject*>::iterator it_e		= feel_touch.end();
 
 	for(;it!=it_e;++it){
-		CActor*			l_tpActor = smart_cast<CActor*>(*it);
+		CActor*			l_tpActor = dynamic_cast<CActor*>(*it);
 		VERIFY			(l_tpActor);
 		
 		if(!l_tpActor->g_Alive())
 			continue;
 
 		if(m_entrance_time+5.0f < Device.fTimeGlobal){
-			CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+			CUIGameSP* pGameSP = dynamic_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 			Fvector p,r;
 			bool b = get_reject_pos(p,r);
 			auto offset = Fvector().sub(l_tpActor->Position(), Position());

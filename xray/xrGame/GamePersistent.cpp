@@ -106,7 +106,7 @@ void CGamePersistent::RegisterModel(IRenderVisual* V)
 	case MT_SKELETON_RIGID:{
 		u16 def_idx		= GMLib.GetMaterialIdx("default_object");
 		R_ASSERT2		(GMLib.GetMaterialByIdx(def_idx)->Flags.is(SGameMtl::flDynamic),"'default_object' - must be dynamic");
-		IKinematics* K	= smart_cast<IKinematics*>(V); VERIFY(K);
+		IKinematics* K	= dynamic_cast<IKinematics*>(V); VERIFY(K);
 		int cnt = K->LL_BoneCount();
 		for (u16 k=0; k<cnt; k++){
 			CBoneData& bd	= K->LL_GetData(k); 
@@ -261,7 +261,7 @@ void CGamePersistent::WeathersUpdate()
 {
 	if (g_pGameLevel && !g_dedicated_server)
 	{
-		CActor* actor				= smart_cast<CActor*>(Level().CurrentViewEntity());
+		CActor* actor				= dynamic_cast<CActor*>(Level().CurrentViewEntity());
 		BOOL bIndoor				= TRUE;
 		if (actor) bIndoor			= actor->renderable_ROS()->get_luminocity_hemi()<0.05f;
 
@@ -512,7 +512,7 @@ void CGamePersistent::OnFrame	()
 	{
 		if (Level().IsDemoPlay())
 		{
-			CSpectator* tmp_spectr = smart_cast<CSpectator*>(Level().CurrentControlEntity());
+			CSpectator* tmp_spectr = dynamic_cast<CSpectator*>(Level().CurrentControlEntity());
 			if (tmp_spectr)
 			{
 				tmp_spectr->UpdateCL();	//updating spectator in pause (pause ability of demo play)
@@ -521,7 +521,7 @@ void CGamePersistent::OnFrame	()
 #ifndef MASTER_GOLD
 		if (Level().CurrentViewEntity() && IsGameTypeSingle()) {
 			if (!g_actor || (g_actor->ID() != Level().CurrentViewEntity()->ID())) {
-				CCustomMonster	*custom_monster = smart_cast<CCustomMonster*>(Level().CurrentViewEntity());
+				CCustomMonster	*custom_monster = dynamic_cast<CCustomMonster*>(Level().CurrentViewEntity());
 				if (custom_monster) // can be spectator in multiplayer
 					custom_monster->UpdateCamera();
 			}
@@ -608,7 +608,7 @@ void CGamePersistent::OnEvent(EVENT E, u64 P1, u64 P2)
 		LPSTR		saved_name	= (LPSTR)(P1);
 
 		Level().remove_objects	();
-		game_sv_Single			*game = smart_cast<game_sv_Single*>(Level().Server->game);
+		game_sv_Single			*game = dynamic_cast<game_sv_Single*>(Level().Server->game);
 		R_ASSERT				(game);
 		game->restart_simulator	(saved_name);
 		xr_free					(saved_name);

@@ -90,7 +90,7 @@ bool CUIChangeWeather::OnKeyboard(int dik, EUIMessages keyboard_action){
 #include "../../xrEngine/xr_ioconsole.h"
 
 void CUIChangeWeather::OnBtn(int i){
-	game_cl_mp* game		= smart_cast<game_cl_mp*>(&Game());
+	game_cl_mp* game		= dynamic_cast<game_cl_mp*>(&Game());
 	string1024				command;
 	sprintf_s					(command, "cl_votestart changeweather %s %s", *m_data[i].m_weather_name, *m_data[i].m_weather_time);
 	Console->Execute		(command);
@@ -98,7 +98,7 @@ void CUIChangeWeather::OnBtn(int i){
 }
 
 void CUIChangeWeather::OnBtnCancel(){
-	game_cl_mp* game = smart_cast<game_cl_mp*>(&Game());
+	game_cl_mp* game = dynamic_cast<game_cl_mp*>(&Game());
 	game->StartStopMenu(this, true);
 }
 
@@ -147,7 +147,7 @@ void CUIChangeGameType::InitChangeGameType(CUIXml& xml_doc)
 
 void CUIChangeGameType::OnBtn(int i)
 {
-	game_cl_mp* game		= smart_cast<game_cl_mp*>(&Game());
+	game_cl_mp* game		= dynamic_cast<game_cl_mp*>(&Game());
 	string1024				command;
 	sprintf_s				(command, "cl_votestart changegametype %s", m_data[i].m_weather_name.c_str());
 	Console->Execute		(command);

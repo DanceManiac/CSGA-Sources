@@ -36,7 +36,7 @@ void game_cl_CaptureTheArtefact::OnBuyMenu_Ok()
 	}
 	
 	
-	CGameObject* pPlayer = smart_cast<CGameObject*>(Level().CurrentEntity());
+	CGameObject* pPlayer = dynamic_cast<CGameObject*>(Level().CurrentEntity());
 	VERIFY(pPlayer);
 	
 	NET_Packet P;

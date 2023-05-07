@@ -696,7 +696,7 @@ BOOL CBulletManager::firetrace_callback	(collide::rq_result& result, LPVOID para
 
 	//динамический объект
 	VERIFY							( !(result.O->ID() == bullet.parent_id &&  bullet.fly_dist < parent_ignore_distance) );
-	IKinematics* const kinematics	= smart_cast<IKinematics*>(result.O->Visual());
+	IKinematics* const kinematics	= dynamic_cast<IKinematics*>(result.O->Visual());
 	if (!kinematics)
 		return						(FALSE);
 
@@ -1064,7 +1064,7 @@ void CBulletManager::RegisterEvent			(EventType Type, BOOL _dynamic, SBullet* bu
 				{
 					if (bullet->targetID != R.O->ID())
 					{
-						CGameObject* pGO = smart_cast<CGameObject*>(R.O);
+						CGameObject* pGO = dynamic_cast<CGameObject*>(R.O);
 						if (!pGO || !pGO->BonePassBullet(R.element))
 							bullet->targetID = R.O->ID();						
 					}

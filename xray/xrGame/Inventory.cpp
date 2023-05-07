@@ -111,7 +111,7 @@ void CInventory::Clear()
 
 void CInventory::Take(CGameObject *pObj, bool bNotActivate, bool strict_placement)
 {
-	CInventoryItem *pIItem				= smart_cast<CInventoryItem*>(pObj);
+	CInventoryItem *pIItem				= dynamic_cast<CInventoryItem*>(pObj);
 	VERIFY								(pIItem);
 	VERIFY								(pIItem->m_pInventory==NULL);
 	VERIFY								(CanTakeItem(pIItem));
@@ -196,7 +196,7 @@ void CInventory::Take(CGameObject *pObj, bool bNotActivate, bool strict_placemen
 	CUI* ui				= HUD().GetUI();
 	if( ui && ui->UIGame() )
 	{
-		CObject* pActor_owner = smart_cast<CObject*>(m_pOwner);
+		CObject* pActor_owner = dynamic_cast<CObject*>(m_pOwner);
 
 		if (Level().CurrentViewEntity() == pActor_owner)
 			ui->UIGame()->OnInventoryAction(pIItem, GE_OWNERSHIP_TAKE);
@@ -205,7 +205,7 @@ void CInventory::Take(CGameObject *pObj, bool bNotActivate, bool strict_placemen
 
 bool CInventory::DropItem(CGameObject *pObj, bool just_before_destroy) 
 {
-	CInventoryItem *pIItem				= smart_cast<CInventoryItem*>(pObj);
+	CInventoryItem *pIItem				= dynamic_cast<CInventoryItem*>(pObj);
 	VERIFY								(pIItem);
 	VERIFY								(pIItem->m_pInventory);
 	VERIFY								(pIItem->m_pInventory==this);
@@ -242,7 +242,7 @@ bool CInventory::DropItem(CGameObject *pObj, bool just_before_destroy)
 			VERIFY			(InSlot(pIItem));
 			if(m_iActiveSlot == pIItem->GetSlot())
 			{
-				CActor* pActor	= smart_cast<CActor*>(m_pOwner);
+				CActor* pActor	= dynamic_cast<CActor*>(m_pOwner);
 				if (!pActor || pActor->g_Alive())
 				{
 					if (just_before_destroy)
@@ -275,7 +275,7 @@ bool CInventory::DropItem(CGameObject *pObj, bool just_before_destroy)
 	pIItem->m_pInventory = NULL;
 
 
-	m_pOwner->OnItemDrop	(smart_cast<CInventoryItem*>(pObj));
+	m_pOwner->OnItemDrop	(dynamic_cast<CInventoryItem*>(pObj));
 
 	CalcTotalWeight					();
 	InvalidateState					();
@@ -284,7 +284,7 @@ bool CInventory::DropItem(CGameObject *pObj, bool just_before_destroy)
 	CUI* ui				= HUD().GetUI();
 	if( ui && ui->UIGame() )
 	{
-		CObject* pActor_owner = smart_cast<CObject*>(m_pOwner);
+		CObject* pActor_owner = dynamic_cast<CObject*>(m_pOwner);
 
 		if (Level().CurrentViewEntity() == pActor_owner)
 			ui->UIGame()->OnInventoryAction(pIItem, GE_OWNERSHIP_REJECT);
@@ -536,7 +536,7 @@ bool CInventory::ActivateNextItemInActiveSlot()
 		return false;
 	}
 	
-	CObject* pActor_owner = smart_cast<CObject*>(m_pOwner);
+	CObject* pActor_owner = dynamic_cast<CObject*>(m_pOwner);
 	if ( Level().CurrentViewEntity() != pActor_owner )
 	{
 		return false;
@@ -688,7 +688,7 @@ PIItem CInventory::ItemFromSlot(u32 slot) const
 
 void CInventory::SendActionEvent(s32 cmd, u32 flags) 
 {
-	CActor *pActor = smart_cast<CActor*>(m_pOwner);
+	CActor *pActor = dynamic_cast<CActor*>(m_pOwner);
 	if (!pActor) return;
 
 	NET_Packet		P;
@@ -702,7 +702,7 @@ void CInventory::SendActionEvent(s32 cmd, u32 flags)
 
 bool CInventory::Action(s32 cmd, u32 flags) 
 {
-	CActor *pActor = smart_cast<CActor*>(m_pOwner);
+	CActor *pActor = dynamic_cast<CActor*>(m_pOwner);
 	
 	if (pActor)
 	{
@@ -888,7 +888,7 @@ void CInventory::Update()
 	{
 		if(m_iActiveSlot!=m_iNextActiveSlot)
 		{
-			CObject* pActor_owner = smart_cast<CObject*>(m_pOwner);
+			CObject* pActor_owner = dynamic_cast<CObject*>(m_pOwner);
 			if (Level().CurrentViewEntity() == pActor_owner)
 			{
 				if(	(m_iNextActiveSlot!=NO_ACTIVE_SLOT) && 
@@ -1150,13 +1150,13 @@ CInventoryItem *CInventory::get_object_by_id(ALife::_OBJECT_ID tObjectID)
 bool CInventory::Eat(PIItem pIItem)
 {
 	//устанаовить съедобна ли вещь
-	CEatableItem* pItemToEat = smart_cast<CEatableItem*>(pIItem);
+	CEatableItem* pItemToEat = dynamic_cast<CEatableItem*>(pIItem);
 	if ( !pItemToEat )			return false;
 
-	CEntityAlive *entity_alive = smart_cast<CEntityAlive*>(m_pOwner);
+	CEntityAlive *entity_alive = dynamic_cast<CEntityAlive*>(m_pOwner);
 	if ( !entity_alive )		return false;
 
-	CInventoryOwner* IO	= smart_cast<CInventoryOwner*>(entity_alive);
+	CInventoryOwner* IO	= dynamic_cast<CInventoryOwner*>(entity_alive);
 	if ( !IO )					return false;
 	
 	CInventory* pInventory = pItemToEat->m_pInventory;
@@ -1171,7 +1171,7 @@ bool CInventory::Eat(PIItem pIItem)
 #endif // MP_LOGGING
 
 	if(IsGameTypeSingle() && Actor()->m_inventory == this)
-		Actor()->callback(GameObject::eUseObject)((smart_cast<CGameObject*>(pIItem))->lua_game_object());
+		Actor()->callback(GameObject::eUseObject)((dynamic_cast<CGameObject*>(pIItem))->lua_game_object());
 
 	if(pItemToEat->Empty())
 	{
@@ -1282,7 +1282,7 @@ bool CInventory::CanTakeItem(CInventoryItem *inventory_item) const
 		if((*it)->object().ID() == inventory_item->object().ID()) break;
 	VERIFY3(it == m_all.end(), "item already exists in inventory",*inventory_item->object().cName());
 
-	CActor* pActor = smart_cast<CActor*>(m_pOwner);
+	CActor* pActor = dynamic_cast<CActor*>(m_pOwner);
 	//актер всегда может взять вещь
 	if(!pActor && (TotalWeight() + inventory_item->Weight() > m_pOwner->MaxCarryWeight()))
 		return	false;
@@ -1293,7 +1293,7 @@ bool CInventory::CanTakeItem(CInventoryItem *inventory_item) const
 
 u32  CInventory::BeltWidth() const
 {
-	CActor* pActor = smart_cast<CActor*>( m_pOwner );
+	CActor* pActor = dynamic_cast<CActor*>( m_pOwner );
 	if ( pActor )
 	{
 		CCustomOutfit* outfit = pActor->GetOutfit();
@@ -1358,7 +1358,7 @@ void CInventory::Items_SetCurrentEntityHud(bool current_entity)
 	for(it = m_all.begin(); m_all.end() != it; ++it) 
 	{
 		PIItem pIItem = *it;
-		CWeapon* pWeapon = smart_cast<CWeapon*>(pIItem);
+		CWeapon* pWeapon = dynamic_cast<CWeapon*>(pIItem);
 		if (pWeapon)
 		{
 			pWeapon->InitAddons();

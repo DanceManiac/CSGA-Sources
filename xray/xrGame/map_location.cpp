@@ -726,26 +726,26 @@ bool CRelationMapLocation::Update()
 	{
 		CSE_ALifeTraderAbstract*	pEnt = NULL;
 		CSE_ALifeTraderAbstract*	pAct = NULL;
-		pEnt = smart_cast<CSE_ALifeTraderAbstract*>(m_owner_se_object);
-		pAct = smart_cast<CSE_ALifeTraderAbstract*>(ai().alife().objects().object(m_pInvOwnerActorID,true));
+		pEnt = dynamic_cast<CSE_ALifeTraderAbstract*>(m_owner_se_object);
+		pAct = dynamic_cast<CSE_ALifeTraderAbstract*>(ai().alife().objects().object(m_pInvOwnerActorID,true));
 		if(!pEnt || !pAct)	
 			return false;
 
 		m_last_relation =  RELATION_REGISTRY().GetRelationType(pEnt, pAct);
-		CSE_ALifeCreatureAbstract*		pCreature = smart_cast<CSE_ALifeCreatureAbstract*>(m_owner_se_object);
+		CSE_ALifeCreatureAbstract*		pCreature = dynamic_cast<CSE_ALifeCreatureAbstract*>(m_owner_se_object);
 		if(pCreature) //maybe trader ?
 			bAlive = pCreature->g_Alive		();
 	}else{
 		CInventoryOwner*			pEnt = NULL;
 		CInventoryOwner*			pAct = NULL;
 
-		pEnt = smart_cast<CInventoryOwner*>(Level().Objects.net_Find(m_objectID));
-		pAct = smart_cast<CInventoryOwner*>(Level().Objects.net_Find(m_pInvOwnerActorID));
+		pEnt = dynamic_cast<CInventoryOwner*>(Level().Objects.net_Find(m_objectID));
+		pAct = dynamic_cast<CInventoryOwner*>(Level().Objects.net_Find(m_pInvOwnerActorID));
 		if(!pEnt || !pAct)	
 			return false;
 
 		m_last_relation =  RELATION_REGISTRY().GetRelationType(pEnt, pAct);
-		CEntityAlive* pEntAlive = smart_cast<CEntityAlive*>(pEnt);
+		CEntityAlive* pEntAlive = dynamic_cast<CEntityAlive*>(pEnt);
 		if(pEntAlive)
 			bAlive = !!pEntAlive->g_Alive		();
 	}
@@ -767,10 +767,10 @@ bool CRelationMapLocation::Update()
 		CObject* _object_ = Level().Objects.net_Find(m_objectID);
 		if(_object_)
 		{
-			CEntityAlive* ea = smart_cast<CEntityAlive*>(_object_);
+			CEntityAlive* ea = dynamic_cast<CEntityAlive*>(_object_);
 			if(ea&&!ea->g_Alive()) return true;
 
-			vis_res =  Actor()->memory().visual().visible_now(smart_cast<const CGameObject*>(_object_));
+			vis_res =  Actor()->memory().visual().visible_now(dynamic_cast<const CGameObject*>(_object_));
 		}
 		else
 			vis_res = false;

@@ -94,7 +94,7 @@ void CHitMemoryManager::reload				(LPCSTR section)
 void CHitMemoryManager::add					(float amount, const Fvector &vLocalDir, const CObject *who, s16 element)
 {
 #ifndef MASTER_GOLD
-	if (who && smart_cast<CActor const*>(who) && psAI_Flags.test(aiIgnoreActor))
+	if (who && dynamic_cast<CActor const*>(who) && psAI_Flags.test(aiIgnoreActor))
 		return;
 #endif // MASTER_GOLD
 
@@ -114,14 +114,14 @@ void CHitMemoryManager::add					(float amount, const Fvector &vLocalDir, const C
 		m_object->lua_game_object(), 
 		amount,
 		vLocalDir,
-		smart_cast<const CGameObject*>(who)->lua_game_object(),
+		dynamic_cast<const CGameObject*>(who)->lua_game_object(),
 		element
 	);
 
 	Fvector						direction;
 	m_object->XFORM().transform_dir	(direction,vLocalDir);
 
-	const CEntityAlive			*entity_alive = smart_cast<const CEntityAlive*>(who);
+	const CEntityAlive			*entity_alive = dynamic_cast<const CEntityAlive*>(who);
 	if (!entity_alive || (m_object->tfGetRelationType(entity_alive) == ALife::eRelationTypeFriend))
 		return;
 
@@ -156,7 +156,7 @@ void CHitMemoryManager::add					(float amount, const Fvector &vLocalDir, const C
 void CHitMemoryManager::add					(const CHitObject &_hit_object)
 {
 #ifndef MASTER_GOLD
-	if (_hit_object.m_object && smart_cast<CActor const*>(_hit_object.m_object) && psAI_Flags.test(aiIgnoreActor))
+	if (_hit_object.m_object && dynamic_cast<CActor const*>(_hit_object.m_object) && psAI_Flags.test(aiIgnoreActor))
 		return;
 #endif // MASTER_GOLD
 
@@ -317,7 +317,7 @@ void CHitMemoryManager::load	(IReader &packet)
 		delayed_object.m_object_id	= packet.r_u16();
 
 		CHitObject					&object = delayed_object.m_hit_object;
-		object.m_object				= smart_cast<CEntityAlive*>(Level().Objects.net_Find(delayed_object.m_object_id));
+		object.m_object				= dynamic_cast<CEntityAlive*>(Level().Objects.net_Find(delayed_object.m_object_id));
 		// object params
 		object.m_object_params.m_level_vertex_id	= packet.r_u32();
 		packet.r_fvector3			(object.m_object_params.m_position);
@@ -398,7 +398,7 @@ void CHitMemoryManager::on_requested_spawn	(CObject *object)
 			continue;
 		
 		if (m_object->g_Alive()) {
-			(*I).m_hit_object.m_object= smart_cast<CEntityAlive*>(object);
+			(*I).m_hit_object.m_object= dynamic_cast<CEntityAlive*>(object);
 			VERIFY						((*I).m_hit_object.m_object);
 			add							((*I).m_hit_object);
 		}

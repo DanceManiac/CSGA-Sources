@@ -323,7 +323,7 @@ void CCustomMonster::shedule_Update	( u32 DT )
 			Device.seqParallel.push_back	(fastdelegate::FastDelegate0<>(this,&CCustomMonster::Exec_Visibility));
 #else // DEBUG
 		{
-			if (!psAI_Flags.test(aiStalker) || !!smart_cast<CActor*>(Level().CurrentEntity()))
+			if (!psAI_Flags.test(aiStalker) || !!dynamic_cast<CActor*>(Level().CurrentEntity()))
 				Device.seqParallel.push_back(fastdelegate::FastDelegate0<>(this,&CCustomMonster::Exec_Visibility));
 			else
 				Exec_Visibility				();
@@ -437,7 +437,7 @@ void CCustomMonster::UpdateCL	()
 	/*	//. hack just to skip 'CalculateBones'
 	if (sound().need_bone_data()) {
 		// we do this because we know here would be virtual function call
-		IKinematics					*kinematics = smart_cast<IKinematics*>(Visual());
+		IKinematics					*kinematics = dynamic_cast<IKinematics*>(Visual());
 		VERIFY						(kinematics);
 		kinematics->CalculateBones	();
 	}
@@ -560,7 +560,7 @@ void CCustomMonster::UpdatePositionAnimation()
 
 BOOL CCustomMonster::feel_visible_isRelevant (CObject* O)
 {
-	CEntityAlive* E = smart_cast<CEntityAlive*>		(O);
+	CEntityAlive* E = dynamic_cast<CEntityAlive*>		(O);
 	if (0==E)								return FALSE;
 	if (E->g_Team() == g_Team())			return FALSE;
 	return TRUE;
@@ -569,7 +569,7 @@ BOOL CCustomMonster::feel_visible_isRelevant (CObject* O)
 void CCustomMonster::eye_pp_s0			( )
 {
 	// Eye matrix
-	IKinematics* V							= smart_cast<IKinematics*>(Visual());
+	IKinematics* V							= dynamic_cast<IKinematics*>(Visual());
 	V->CalculateBones						();
 	Fmatrix&	mEye						= V->LL_GetTransform(u16(eye_bone));
 	Fmatrix		X;							X.mul_43	(XFORM(),mEye);
@@ -686,7 +686,7 @@ BOOL CCustomMonster::net_Spawn	(CSE_Abstract* DC)
 	if (!movement().net_Spawn(DC) || !inherited::net_Spawn(DC) || !CScriptEntity::net_Spawn(DC))
 		return					(FALSE);
 
-	ISpatial					*self = smart_cast<ISpatial*> (this);
+	ISpatial					*self = dynamic_cast<ISpatial*> (this);
 	if (self) {
 		self->spatial.type		|= STYPE_VISIBLEFORAI;
 		// enable react to sound only if alive
@@ -695,7 +695,7 @@ BOOL CCustomMonster::net_Spawn	(CSE_Abstract* DC)
 	}
 
 	CSE_Abstract				*e	= (CSE_Abstract*)(DC);
-	CSE_ALifeMonsterAbstract	*E	= smart_cast<CSE_ALifeMonsterAbstract*>(e);
+	CSE_ALifeMonsterAbstract	*E	= dynamic_cast<CSE_ALifeMonsterAbstract*>(e);
 
 	eye_matrix.identity			();
 	movement().m_body.current.yaw		= movement().m_body.target.yaw		= -E->o_torso.yaw;
@@ -735,7 +735,7 @@ BOOL CCustomMonster::net_Spawn	(CSE_Abstract* DC)
 	}
 
 	// Eyes
-	eye_bone					= smart_cast<IKinematics*>(Visual())->LL_BoneID(pSettings->r_string(cNameSect(),"bone_head"));
+	eye_bone					= dynamic_cast<IKinematics*>(Visual())->LL_BoneID(pSettings->r_string(cNameSect(),"bone_head"));
 
 	// weapons
 	if (Local()) {
@@ -846,7 +846,7 @@ void CCustomMonster::PitchCorrection()
 
 BOOL CCustomMonster::feel_touch_on_contact	(CObject *O)
 {
-	CCustomZone	*custom_zone = smart_cast<CCustomZone*>(O);
+	CCustomZone	*custom_zone = dynamic_cast<CCustomZone*>(O);
 	if (!custom_zone)
 		return	(TRUE);
 
@@ -861,7 +861,7 @@ BOOL CCustomMonster::feel_touch_on_contact	(CObject *O)
 
 BOOL CCustomMonster::feel_touch_contact		(CObject *O)
 {
-	CCustomZone	*custom_zone = smart_cast<CCustomZone*>(O);
+	CCustomZone	*custom_zone = dynamic_cast<CCustomZone*>(O);
 	if (!custom_zone)
 		return	(TRUE);
 
@@ -1008,7 +1008,7 @@ LPCSTR CCustomMonster::visual_name	(CSE_Abstract *server_entity)
 {
 	m_already_dead				= false;
 
-	CSE_ALifeCreatureAbstract	*creature = smart_cast<CSE_ALifeCreatureAbstract*>(server_entity);
+	CSE_ALifeCreatureAbstract	*creature = dynamic_cast<CSE_ALifeCreatureAbstract*>(server_entity);
 	VERIFY						(creature);
 
 	if (creature->g_Alive())
@@ -1189,7 +1189,7 @@ void CCustomMonster::OnRender()
 			character_physics_support()->movement()->dbg_Draw();
 	
 	if (bDebug)
-		smart_cast<IKinematics*>(Visual())->DebugRender(XFORM());
+		dynamic_cast<IKinematics*>(Visual())->DebugRender(XFORM());
 }
 #endif // DEBUG
 

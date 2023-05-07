@@ -276,7 +276,7 @@ void CActor::Load	(LPCSTR section )
 	if (GameID() == eGameIDSingle)
 		OnDifficultyChanged		();
 	//////////////////////////////////////////////////////////////////////////
-	ISpatial*		self			=	smart_cast<ISpatial*> (this);
+	ISpatial*		self			=	dynamic_cast<ISpatial*> (this);
 	if (self)	{
 		self->spatial.type	|=	STYPE_VISIBLEFORAI;
 		self->spatial.type	&= ~STYPE_REACTTOSOUND;
@@ -674,8 +674,8 @@ void CActor::HitSignal(float perc, Fvector& vLocalDir, CObject* who, s16 element
 		float	yaw, pitch;
 		D.getHP(yaw,pitch);
 		IRenderVisual *pV = Visual();
-		IKinematicsAnimated *tpKinematics = smart_cast<IKinematicsAnimated*>(pV);
-		IKinematics *pK = smart_cast<IKinematics*>(pV);
+		IKinematicsAnimated *tpKinematics = dynamic_cast<IKinematicsAnimated*>(pV);
+		IKinematics *pK = dynamic_cast<IKinematics*>(pV);
 		VERIFY(tpKinematics);
 #pragma todo("Dima to Dima : forward-back bone impulse direction has been determined incorrectly!")
 		MotionID motion_ID = m_anims->m_normal.m_damage[iFloor(pK->LL_GetBoneInstance(element).get_param(1) + (angle_difference(r_model_yaw + r_model_yaw_delta,yaw) <= PI_DIV_2 ? 0 : 1))];
@@ -720,7 +720,7 @@ void CActor::Die	(CObject* who)
 			}
 			else
 			{
-				CCustomOutfit *pOutfit = smart_cast<CCustomOutfit *> ((*I).m_pIItem);
+				CCustomOutfit *pOutfit = dynamic_cast<CCustomOutfit *> ((*I).m_pIItem);
 				if (pOutfit) continue;
 			};
 			if((*I).m_pIItem) 
@@ -741,7 +741,7 @@ void CActor::Die	(CObject* who)
 			{
 				if (GameID() == eGameIDArtefactHunt)
 				{
-					CArtefact* pArtefact = smart_cast<CArtefact*> (*l_it);
+					CArtefact* pArtefact = dynamic_cast<CArtefact*> (*l_it);
 					if (pArtefact)
 					{
 						(*l_it)->SetDropManual(TRUE);
@@ -850,7 +850,7 @@ float CActor::currentFOV()
 
 	if (eacFirstEye == cam_active)
 	{
-		CWeapon* pWeapon = smart_cast<CWeapon*>(inventory().ActiveItem());
+		CWeapon* pWeapon = dynamic_cast<CWeapon*>(inventory().ActiveItem());
 		if (pWeapon && pWeapon->IsZoomed())
 		{
 			if (!pWeapon->ZoomTexture())
@@ -871,7 +871,7 @@ void CActor::UpdateCL	()
 	{
 		for(xr_vector<CObject*>::iterator it = feel_touch.begin(); it != feel_touch.end(); it++)
 		{
-			CPhysicsShellHolder	*sh = smart_cast<CPhysicsShellHolder*>(*it);
+			CPhysicsShellHolder	*sh = dynamic_cast<CPhysicsShellHolder*>(*it);
 			if(sh&&sh->character_physics_support())
 			{
 				sh->character_physics_support()->movement()->UpdateObjectBox(character_physics_support()->movement()->PHCharacter());
@@ -893,7 +893,7 @@ void CActor::UpdateCL	()
 	PickupModeUpdate_COD();
 
 	SetZoomAimingMode		(false);
-	CWeapon* pWeapon		= smart_cast<CWeapon*>(inventory().ActiveItem());	
+	CWeapon* pWeapon		= dynamic_cast<CWeapon*>(inventory().ActiveItem());	
 
 	cam_Update(float(Device.dwTimeDelta)/1000.0f, currentFOV());
 
@@ -908,7 +908,7 @@ void CActor::UpdateCL	()
 		{
 			float full_fire_disp = pWeapon->GetFireDispersion(true);
 
-			CEffectorZoomInertion* S = smart_cast<CEffectorZoomInertion*>	(Cameras().GetCamEffector(eCEZoom));
+			CEffectorZoomInertion* S = dynamic_cast<CEffectorZoomInertion*>	(Cameras().GetCamEffector(eCEZoom));
 			if(S) 
 				S->SetParams(full_fire_disp);
 
@@ -1033,7 +1033,7 @@ void CActor::shedule_Update	(u32 DT)
 			CInventoryItem* pInvItem	= inventory().ActiveItem();	
 			if( pInvItem )
 			{
-				CHudItem* pHudItem		= smart_cast<CHudItem*>(pInvItem);	
+				CHudItem* pHudItem		= dynamic_cast<CHudItem*>(pInvItem);	
 				if(pHudItem)
 				{
 					if( pHudItem->IsHidden() )
@@ -1247,14 +1247,14 @@ void CActor::shedule_Update	(u32 DT)
 
 	if(!input_external_handler_installed() && RQ.O && RQ.O->getVisible() &&  RQ.range<2.0f) 
 	{
-		m_pObjectWeLookingAt			= smart_cast<CGameObject*>(RQ.O);
+		m_pObjectWeLookingAt			= dynamic_cast<CGameObject*>(RQ.O);
 		
-		CGameObject						*game_object = smart_cast<CGameObject*>(RQ.O);
-		m_pUsableObject					= smart_cast<CUsableScriptObject*>(game_object);
-		m_pInvBoxWeLookingAt			= smart_cast<CInventoryBox*>(game_object);
-		m_pPersonWeLookingAt			= smart_cast<CInventoryOwner*>(game_object);
-		m_pVehicleWeLookingAt			= smart_cast<CHolderCustom*>(game_object);
-		CEntityAlive* pEntityAlive		= smart_cast<CEntityAlive*>(game_object);
+		CGameObject						*game_object = dynamic_cast<CGameObject*>(RQ.O);
+		m_pUsableObject					= dynamic_cast<CUsableScriptObject*>(game_object);
+		m_pInvBoxWeLookingAt			= dynamic_cast<CInventoryBox*>(game_object);
+		m_pPersonWeLookingAt			= dynamic_cast<CInventoryOwner*>(game_object);
+		m_pVehicleWeLookingAt			= dynamic_cast<CHolderCustom*>(game_object);
+		CEntityAlive* pEntityAlive		= dynamic_cast<CEntityAlive*>(game_object);
 		
 		if (GameID() == eGameIDSingle )
 		{
@@ -1409,9 +1409,9 @@ void CActor::RenderIndicator			(Fvector dpos, float r1, float r2, const ui_shade
 
 	UIRender->StartPrimitive(4, IUIRender::ptTriStrip, IUIRender::pttLIT);
 
-	CBoneInstance& BI = smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(u16(m_head));
+	CBoneInstance& BI = dynamic_cast<IKinematics*>(Visual())->LL_GetBoneInstance(u16(m_head));
 	Fmatrix M;
-	smart_cast<IKinematics*>(Visual())->CalculateBones	();
+	dynamic_cast<IKinematics*>(Visual())->CalculateBones	();
 	M.mul						(XFORM(),BI.mTransform);
 
 	Fvector pos = M.c; pos.add(dpos);
@@ -1459,9 +1459,9 @@ void CActor::RenderText				(LPCSTR Text, Fvector dpos, float* pdup, u32 color)
 {
 	if (!g_Alive()) return;
 	
-	CBoneInstance& BI = smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(u16(m_head));
+	CBoneInstance& BI = dynamic_cast<IKinematics*>(Visual())->LL_GetBoneInstance(u16(m_head));
 	Fmatrix M;
-	smart_cast<IKinematics*>(Visual())->CalculateBones	();
+	dynamic_cast<IKinematics*>(Visual())->CalculateBones	();
 	M.mul						(XFORM(),BI.mTransform);
 	//------------------------------------------------
 	Fvector v0, v1;
@@ -1523,7 +1523,7 @@ void CActor::ForceTransform(const Fmatrix& m)
 float CActor::Radius()const
 { 
 	float R		= inherited::Radius();
-	CWeapon* W	= smart_cast<CWeapon*>(inventory().ActiveItem());
+	CWeapon* W	= dynamic_cast<CWeapon*>(inventory().ActiveItem());
 	if (W) R	+= W->Radius();
 	return R;
 }
@@ -1572,11 +1572,11 @@ void CActor::OnItemDrop(CInventoryItem *inventory_item)
 {
 	CInventoryOwner::OnItemDrop(inventory_item);
 
-	CArtefact* artefact = smart_cast<CArtefact*>(inventory_item);
+	CArtefact* artefact = dynamic_cast<CArtefact*>(inventory_item);
 	if(artefact && artefact->m_eItemCurrPlace == eItemPlaceBelt)
 		MoveArtefactBelt(artefact, false);
 
-	CCustomOutfit* outfit		= smart_cast<CCustomOutfit*>(inventory_item);
+	CCustomOutfit* outfit		= dynamic_cast<CCustomOutfit*>(inventory_item);
 	if(outfit && inventory_item->m_eItemCurrPlace==eItemPlaceSlot)
 	{
 		outfit->ApplySkinModel	(this, false, false);
@@ -1620,7 +1620,7 @@ void CActor::OnItemRuck(CInventoryItem *inventory_item, EItemPlace previous_plac
 {
 	CInventoryOwner::OnItemRuck(inventory_item, previous_place);
 
-	CArtefact* artefact = smart_cast<CArtefact*>(inventory_item);
+	CArtefact* artefact = dynamic_cast<CArtefact*>(inventory_item);
 	if(artefact && previous_place == eItemPlaceBelt)
 		MoveArtefactBelt(artefact, false);
 
@@ -1634,7 +1634,7 @@ void CActor::OnItemBelt(CInventoryItem *inventory_item, EItemPlace previous_plac
 {
 	CInventoryOwner::OnItemBelt(inventory_item, previous_place);
 
-	CArtefact* artefact = smart_cast<CArtefact*>(inventory_item);
+	CArtefact* artefact = dynamic_cast<CArtefact*>(inventory_item);
 	if(artefact)
 		MoveArtefactBelt(artefact, true);
 }
@@ -1680,7 +1680,7 @@ void CActor::UpdateArtefactsOnBeltAndOutfit()
 	for(TIItemContainer::iterator it = inventory().m_belt.begin(); 
 		inventory().m_belt.end() != it; ++it) 
 	{
-		CArtefact*	artefact = smart_cast<CArtefact*>(*it);
+		CArtefact*	artefact = dynamic_cast<CArtefact*>(*it);
 		if(artefact)
 		{
 			conditions().ChangeBleeding		(artefact->m_fBleedingRestoreSpeed  * f_update_time);
@@ -1707,7 +1707,7 @@ float	CActor::HitArtefactsOnBelt(float hit_power, ALife::EHitType hit_type)
 	TIItemContainer::iterator ite = inventory().m_belt.end() ;
 	for( ; it != ite; ++it )
 	{
-		CArtefact*	artefact = smart_cast<CArtefact*>(*it);
+		CArtefact*	artefact = dynamic_cast<CArtefact*>(*it);
 		if ( artefact )
 		{
 			hit_power -= artefact->m_ArtefactHitImmunities.AffectHit( 1.0f, hit_type );
@@ -1724,7 +1724,7 @@ float	CActor::HitArtefactsOnBelt(float hit_power, ALife::EHitType hit_type)
 	for(TIItemContainer::iterator it = inventory().m_belt.begin(); 
 		inventory().m_belt.end() != it; ++it) 
 	{
-		CArtefact*	artefact = smart_cast<CArtefact*>(*it);
+		CArtefact*	artefact = dynamic_cast<CArtefact*>(*it);
 		if(artefact){
 			res_hit_power_k	+= artefact->m_ArtefactHitImmunities.AffectHit(1.0f, hit_type);
 			_af_count		+= 1.0f;
@@ -1743,7 +1743,7 @@ float CActor::GetProtection_ArtefactsOnBelt( ALife::EHitType hit_type )
 	TIItemContainer::iterator ite = inventory().m_belt.end() ;
 	for( ; it != ite; ++it )
 	{
-		CArtefact*	artefact = smart_cast<CArtefact*>(*it);
+		CArtefact*	artefact = dynamic_cast<CArtefact*>(*it);
 		if ( artefact )
 		{
 			sum += artefact->m_ArtefactHitImmunities.AffectHit( 1.0f, hit_type );
@@ -1832,7 +1832,7 @@ void CActor::UpdateMotionIcon(u32 mstate_rl)
 
 CPHDestroyable*	CActor::ph_destroyable	()
 {
-	return smart_cast<CPHDestroyable*>(character_physics_support());
+	return dynamic_cast<CPHDestroyable*>(character_physics_support());
 }
 
 CEntityConditionSimple *CActor::create_entity_condition	(CEntityConditionSimple* ec)
@@ -1840,7 +1840,7 @@ CEntityConditionSimple *CActor::create_entity_condition	(CEntityConditionSimple*
 	if(!ec)
 		m_entity_condition		= xr_new<CActorCondition>(this);
 	else
-		m_entity_condition		= smart_cast<CActorCondition*>(ec);
+		m_entity_condition		= dynamic_cast<CActorCondition*>(ec);
 	
 	return		(inherited::create_entity_condition(m_entity_condition));
 }
@@ -1862,7 +1862,7 @@ bool CActor::use_center_to_aim			() const
 
 bool CActor::can_attach			(const CInventoryItem *inventory_item) const
 {
-	const CAttachableItem	*item = smart_cast<const CAttachableItem*>(inventory_item);
+	const CAttachableItem	*item = dynamic_cast<const CAttachableItem*>(inventory_item);
 	if (!item || /*!item->enabled() ||*/ !item->can_be_attached())
 		return			(false);
 
@@ -1908,7 +1908,7 @@ bool CActor::is_on_ground()
 CCustomOutfit* CActor::GetOutfit() const
 {
 	PIItem _of	= inventory().m_slots[OUTFIT_SLOT].m_pIItem;
-	return _of?smart_cast<CCustomOutfit*>(_of):NULL;
+	return _of?dynamic_cast<CCustomOutfit*>(_of):NULL;
 }
 
 bool CActor::is_ai_obstacle				() const
@@ -1930,7 +1930,7 @@ float CActor::GetRestoreSpeed( ALife::EConditionRestoreType const& type )
 		TIItemContainer::iterator ite = inventory().m_belt.end();
 		for( ; itb != ite; ++itb ) 
 		{
-			CArtefact*	artefact = smart_cast<CArtefact*>( *itb );
+			CArtefact*	artefact = dynamic_cast<CArtefact*>( *itb );
 			if ( artefact )
 			{
 				res += artefact->m_fHealthRestoreSpeed;
@@ -1949,7 +1949,7 @@ float CActor::GetRestoreSpeed( ALife::EConditionRestoreType const& type )
 		TIItemContainer::iterator ite = inventory().m_belt.end();
 		for( ; itb != ite; ++itb ) 
 		{
-			CArtefact*	artefact = smart_cast<CArtefact*>( *itb );
+			CArtefact*	artefact = dynamic_cast<CArtefact*>( *itb );
 			if ( artefact )
 			{
 				res += artefact->m_fRadiationRestoreSpeed;
@@ -1970,7 +1970,7 @@ float CActor::GetRestoreSpeed( ALife::EConditionRestoreType const& type )
 		TIItemContainer::iterator ite = inventory().m_belt.end();
 		for( ; itb != ite; ++itb ) 
 		{
-			CArtefact*	artefact = smart_cast<CArtefact*>( *itb );
+			CArtefact*	artefact = dynamic_cast<CArtefact*>( *itb );
 			if ( artefact )
 			{
 				res += artefact->m_fSatietyRestoreSpeed;
@@ -1991,7 +1991,7 @@ float CActor::GetRestoreSpeed( ALife::EConditionRestoreType const& type )
 		TIItemContainer::iterator ite = inventory().m_belt.end();
 		for( ; itb != ite; ++itb ) 
 		{
-			CArtefact*	artefact = smart_cast<CArtefact*>( *itb );
+			CArtefact*	artefact = dynamic_cast<CArtefact*>( *itb );
 			if ( artefact )
 			{
 				res += artefact->m_fPowerRestoreSpeed;
@@ -2012,7 +2012,7 @@ float CActor::GetRestoreSpeed( ALife::EConditionRestoreType const& type )
 		TIItemContainer::iterator ite = inventory().m_belt.end();
 		for( ; itb != ite; ++itb ) 
 		{
-			CArtefact*	artefact = smart_cast<CArtefact*>( *itb );
+			CArtefact*	artefact = dynamic_cast<CArtefact*>( *itb );
 			if ( artefact )
 			{
 				res += artefact->m_fBleedingRestoreSpeed;
@@ -2069,7 +2069,7 @@ void CActor::SwitchNightVision(bool vision_on, bool use_sounds, bool send_event)
 
 	bool bIsActiveNow = m_night_vision->IsActive();
 
-	CCustomOutfit* pOutfit = smart_cast<CCustomOutfit*>(inventory().ItemFromSlot(OUTFIT_SLOT));
+	CCustomOutfit* pOutfit = dynamic_cast<CCustomOutfit*>(inventory().ItemFromSlot(OUTFIT_SLOT));
 	if (pOutfit && pOutfit->m_NightVisionSect.size())
 	{
 		if (m_bNightVisionAllow)
@@ -2087,7 +2087,7 @@ void CActor::SwitchNightVision(bool vision_on, bool use_sounds, bool send_event)
 	}
 	else
 	{
-		CCustomOutfit* pOutfit = smart_cast<CCustomOutfit*>(inventory().ItemFromSlot(OUTFIT_SLOT));
+		CCustomOutfit* pOutfit = dynamic_cast<CCustomOutfit*>(inventory().ItemFromSlot(OUTFIT_SLOT));
 		if (pOutfit && pOutfit->m_NightVisionSect.size())
 		{
 			if (m_bNightVisionAllow)
@@ -2114,7 +2114,7 @@ void CActor::SwitchNightVision(bool vision_on, bool use_sounds, bool send_event)
 	if (send_event)
 	{
 		m_trader_flags.set(CSE_ALifeTraderAbstract::eTraderFlagNightVisionActive, m_bNightVisionOn);
-		CGameObject *object = smart_cast<CGameObject*>(this);
+		CGameObject *object = dynamic_cast<CGameObject*>(this);
 		NET_Packet packet;
 		object->u_EventGen(packet, GE_TRADER_FLAGS, object->ID());
 		packet.w_u32(m_trader_flags.get());

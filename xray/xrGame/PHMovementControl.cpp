@@ -1034,7 +1034,7 @@ void CPHMovementControl::JumpV(const Fvector &jump_velocity)
 void CPHMovementControl::Jump(const Fvector &end_point, float time)
 {
 	//vPosition
-	Jump(smart_cast<CGameObject*>(m_character->PhysicsRefObject())->Position(),end_point,time);
+	Jump(dynamic_cast<CGameObject*>(m_character->PhysicsRefObject())->Position(),end_point,time);
 }
 
 
@@ -1049,7 +1049,7 @@ void CPHMovementControl::Jump(const Fvector &start_point,const Fvector &end_poin
 float CPHMovementControl::Jump(const Fvector &end_point)
 {
 	float time =JumpMinVelTime(end_point);
-	Jump(smart_cast<CGameObject*>(m_character->PhysicsRefObject())->Position(),end_point,time);
+	Jump(dynamic_cast<CGameObject*>(m_character->PhysicsRefObject())->Position(),end_point,time);
 	return time;
 }
 void CPHMovementControl::GetJumpMinVelParam(Fvector &min_vel,float &time,JumpType &type,const Fvector &end_point)
@@ -1060,12 +1060,12 @@ void CPHMovementControl::GetJumpMinVelParam(Fvector &min_vel,float &time,JumpTyp
 
 float CPHMovementControl::JumpMinVelTime(const Fvector &end_point)
 {
-	return ThrowMinVelTime(Fvector().sub(end_point,smart_cast<CGameObject*>(m_character->PhysicsRefObject())->Position()),ph_world->Gravity());
+	return ThrowMinVelTime(Fvector().sub(end_point,dynamic_cast<CGameObject*>(m_character->PhysicsRefObject())->Position()),ph_world->Gravity());
 }
 
 void CPHMovementControl::GetJumpParam(Fvector &velocity, JumpType &type,const Fvector &end_point, float time)
 {
-	Fvector velosity;velosity.sub(smart_cast<CGameObject*>(m_character->PhysicsRefObject())->Position(),end_point);
+	Fvector velosity;velosity.sub(dynamic_cast<CGameObject*>(m_character->PhysicsRefObject())->Position(),end_point);
 	TransferenceToThrowVel(velosity,time,ph_world->Gravity());
 	if(velocity.y<0.f)
 	{
@@ -1119,7 +1119,7 @@ void CPHMovementControl::CreateCharacter()
 }
 CPHSynchronize*	CPHMovementControl::GetSyncItem()
 {
-	if(m_character)	return smart_cast<CPHSynchronize*>(m_character);
+	if(m_character)	return dynamic_cast<CPHSynchronize*>(m_character);
 	else			return 0;
 }
 void CPHMovementControl::Freeze()

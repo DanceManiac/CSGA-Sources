@@ -20,7 +20,7 @@ BOOL CWeaponShotgun::net_Spawn(CSE_Abstract* DC)
 {
 	BOOL r = inherited::net_Spawn(DC);
 
-	CSE_ALifeItemWeaponShotGun* _dc = smart_cast<CSE_ALifeItemWeaponShotGun*>(DC);
+	CSE_ALifeItemWeaponShotGun* _dc = dynamic_cast<CSE_ALifeItemWeaponShotGun*>(DC);
 	xr_vector<u8> ammo_ids = _dc->m_AmmoIDs;
 
 	for (u32 i = 0; i < ammo_ids.size(); i++)
@@ -313,14 +313,14 @@ bool CWeaponShotgun::HaveCartridgeInInventory(u8 cnt)
 	if(m_pInventory) 
 	{
 		//попытаться найти в инвентаре патроны текущего типа 
-		m_pAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[m_ammoType]));
+		m_pAmmo = dynamic_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[m_ammoType]));
 		
 		if(!m_pAmmo )
 		{
 			for(u32 i = 0; i < m_ammoTypes.size(); ++i) 
 			{
 				//проверить патроны всех подходящих типов
-				m_pAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[i]));
+				m_pAmmo = dynamic_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[i]));
 				if(m_pAmmo) 
 				{ 
 					m_ammoType = i; 

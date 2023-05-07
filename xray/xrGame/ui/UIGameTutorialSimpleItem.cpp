@@ -117,7 +117,7 @@ void CUISequenceSimpleItem::Load(CUIXml* xml, int idx)
 		_si->m_start				= xml->ReadAttribFlt("auto_static",i,"start_time",0);
 		_si->m_length				= xml->ReadAttribFlt("auto_static",i,"length_sec",0);
 		_si->m_visible				= false;
-		_si->m_wnd					= smart_cast<CUIStatic*>(find_child_window(m_UIWindow, sname)); VERIFY(_si->m_wnd);
+		_si->m_wnd					= dynamic_cast<CUIStatic*>(find_child_window(m_UIWindow, sname)); VERIFY(_si->m_wnd);
 		_si->m_wnd->SetTextComplexMode(true);
 		_si->m_wnd->Show			(false);
 		if(UI().is_widescreen())
@@ -154,7 +154,7 @@ void CUISequenceSimpleItem::Update			()
 	}
 	
 	if (g_pGameLevel){
-	CUIGameSP* ui_game_sp	= smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+	CUIGameSP* ui_game_sp	= dynamic_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 
 	if(ui_game_sp)
 	{
@@ -200,7 +200,7 @@ void CUISequenceSimpleItem::Start()
 	if (g_pGameLevel)
 	{
 		bool bShowPda			= false;
-		CUIGameSP* ui_game_sp	= smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+		CUIGameSP* ui_game_sp	= dynamic_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 
 /*		if(!stricmp(m_pda_section,"pda_contacts"))
 		{
@@ -275,7 +275,7 @@ bool CUISequenceSimpleItem::Stop			(bool bForce)
 
 	if ( g_pGameLevel )
 	{
-		CUIGameSP* ui_game_sp	= smart_cast<CUIGameSP*>( HUD().GetUI()->UIGame() );
+		CUIGameSP* ui_game_sp	= dynamic_cast<CUIGameSP*>( HUD().GetUI()->UIGame() );
 		if ( ui_game_sp && ui_game_sp->PdaMenu().IsShown() )
 		{
 			HUD().GetUI()->StartStopMenu( &ui_game_sp->PdaMenu(), true );

@@ -457,7 +457,7 @@ bool game_sv_TeamDeathmatch::checkForFragLimit()
 
 u32 game_sv_TeamDeathmatch::RP_2_Use(CSE_Abstract* E)
 {
-	CSE_ALifeCreatureActor	*pA	=	smart_cast<CSE_ALifeCreatureActor*>(E);
+	CSE_ALifeCreatureActor	*pA	=	dynamic_cast<CSE_ALifeCreatureActor*>(E);
 	if (!pA) return 0;
 
 

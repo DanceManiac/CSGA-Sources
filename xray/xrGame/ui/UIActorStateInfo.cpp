@@ -71,7 +71,7 @@ void ui_actor_state_wnd::init_from_xml( CUIXml& xml, LPCSTR path )
 
 void ui_actor_state_wnd::UpdateActorInfo( CInventoryOwner* owner )
 {
-	CActor* actor = smart_cast<CActor*>( owner );
+	CActor* actor = dynamic_cast<CActor*>( owner );
 	if ( !actor )
 	{
 		return;
@@ -90,7 +90,7 @@ void ui_actor_state_wnd::UpdateActorInfo( CInventoryOwner* owner )
 	{
 		value = outfit->GetCondition();								m_state[stt_armor]->set_progress( value );
 
-		IKinematics* ikv = smart_cast<IKinematics*>( actor->Visual() );
+		IKinematics* ikv = dynamic_cast<IKinematics*>( actor->Visual() );
 		VERIFY( ikv );
 		u16 spine_bone = ikv->LL_BoneID( "bip01_spine" );
 		value *= outfit->GetBoneArmor( spine_bone );					m_state[stt_armor]->set_text( value );

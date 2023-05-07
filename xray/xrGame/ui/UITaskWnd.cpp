@@ -318,7 +318,7 @@ void CUITaskWnd::TaskShowMapSpot( CGameTask* task, bool show )
 
 void CUITaskWnd::OnTask1DbClicked( CUIWindow* ui, void* d )
 {
-//	CUITaskItem* task_item = smart_cast<CUITaskItem*>( ui );
+//	CUITaskItem* task_item = dynamic_cast<CUITaskItem*>( ui );
 //	if ( task_item && task_item == m_pStoryLineTaskItem )
 	{
 		CGameTask* task = Level().GameTaskManager().ActiveTask( eTaskTypeStoryline );
@@ -328,7 +328,7 @@ void CUITaskWnd::OnTask1DbClicked( CUIWindow* ui, void* d )
 
 void CUITaskWnd::OnTask2DbClicked( CUIWindow* ui, void* d )
 {
-//	CUITaskItem* task_item = smart_cast<CUITaskItem*>( ui );
+//	CUITaskItem* task_item = dynamic_cast<CUITaskItem*>( ui );
 //	if ( task_item && task_item == m_pSecondaryTaskItem )
 	{
 		CGameTask* task = Level().GameTaskManager().ActiveTask( eTaskTypeAdditional );

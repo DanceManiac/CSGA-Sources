@@ -255,7 +255,7 @@ CUIWindow*	CUILogsWnd::CreateItem()
 
 void CUILogsWnd::ItemToCache(CUIWindow* w)
 {
-	CUINewsItemWnd* itm = smart_cast<CUINewsItemWnd*>(w);
+	CUINewsItemWnd* itm = dynamic_cast<CUINewsItemWnd*>(w);
 	VERIFY				(w);
 	m_items_cache.push_back(itm);
 }
@@ -277,7 +277,7 @@ CUIWindow* CUILogsWnd::ItemFromCache()
 void CUILogsWnd::AddNewsItem( GAME_NEWS_DATA& news_data, CUIWindow* exist_item )
 {
 	CUIWindow*	news_itm_w		= (exist_item)?exist_item:ItemFromCache();
-	CUINewsItemWnd*	news_itm	= smart_cast<CUINewsItemWnd*>(news_itm_w);
+	CUINewsItemWnd*	news_itm	= dynamic_cast<CUINewsItemWnd*>(news_itm_w);
 	news_itm->Setup				( news_data );
 	
 	if(exist_item==NULL)

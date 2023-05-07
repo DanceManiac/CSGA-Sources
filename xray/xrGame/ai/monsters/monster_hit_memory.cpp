@@ -56,7 +56,7 @@ struct predicate_old_hit {
 	IC bool	operator() (const SMonsterHit &hit_info) {
 		if ((mem_time + hit_info.time) < cur_time) return true;
 		if (hit_info.object) {
-			CEntityAlive *entity = smart_cast<CEntityAlive *>(hit_info.object);
+			CEntityAlive *entity = dynamic_cast<CEntityAlive *>(hit_info.object);
 			if (entity && !entity->g_Alive()) return true;
 		}
 		return false;

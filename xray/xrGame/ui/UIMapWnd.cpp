@@ -193,10 +193,10 @@ void CUIMapWnd::Init(LPCSTR xml_name, LPCSTR start_from)
 	GameMaps::iterator it = m_GameMaps.begin();
 	GameMaps::iterator it2;
 	for(;it!=m_GameMaps.end();++it){
-		CUILevelMap* l = smart_cast<CUILevelMap*>(it->second);VERIFY(l);
+		CUILevelMap* l = dynamic_cast<CUILevelMap*>(it->second);VERIFY(l);
 		for(it2=it; it2!=m_GameMaps.end();++it2){
 			if(it==it2) continue;
-			CUILevelMap* l2 = smart_cast<CUILevelMap*>(it2->second);VERIFY(l2);
+			CUILevelMap* l2 = dynamic_cast<CUILevelMap*>(it2->second);VERIFY(l2);
 			if(l->GlobalRect().intersected(l2->GlobalRect())){
 				Msg(" --error-incorrect map definition global rect of map [%s] intersects with [%s]", *l->MapName(), *l2->MapName());
 			}
@@ -286,7 +286,7 @@ void CUIMapWnd::AddMapToRender			(CUICustomMap* m)
 void CUIMapWnd::RemoveMapToRender		(CUICustomMap* m)
 {
 	if( m!=GlobalMap() )
-		m_UILevelFrame->DetachChild			(smart_cast<CUIWindow*>(m));
+		m_UILevelFrame->DetachChild			(dynamic_cast<CUIWindow*>(m));
 }
 
 void CUIMapWnd::SetTargetMap			(const shared_str& name, const Fvector2& pos, bool bZoomIn)
@@ -367,7 +367,7 @@ void CUIMapWnd::MapLocationRelcase(CMapLocation* ml)
 	CUIWindow*	owner = m_map_location_hint->GetOwner();
 	if (owner)
 	{
-		CMapSpot* ms = smart_cast<CMapSpot*>(owner);
+		CMapSpot* ms = dynamic_cast<CMapSpot*>(owner);
 		if(ms && ms->MapLocation()==ml) //CUITaskItem also can be a HintOwner
 			m_map_location_hint->SetOwner(NULL);
 	}
@@ -378,7 +378,7 @@ void CUIMapWnd::DrawHint()
 	CUIWindow*	owner = m_map_location_hint->GetOwner();
 	if ( owner )
 	{
-		CMapSpot* ms = smart_cast<CMapSpot*>(owner);
+		CMapSpot* ms = dynamic_cast<CMapSpot*>(owner);
 		if ( ms )
 		{
 			if ( ms->MapLocation() && ms->MapLocation()->get_hint_enable() ) 
@@ -699,7 +699,7 @@ void CUIMapWnd::ShowHintSpot( CMapSpot* spot )
 		return;
 	}
 
-	CMapSpot* prev_spot = smart_cast<CMapSpot*>( owner );
+	CMapSpot* prev_spot = dynamic_cast<CMapSpot*>( owner );
 	if ( prev_spot && ( prev_spot->get_location_level() < spot->get_location_level() ) )
 	{
 		m_map_location_hint->SetInfoMSpot( spot );
@@ -774,7 +774,7 @@ void CUIMapWnd::Reset()
 
 void CUIMapWnd::SpotSelected(CUIWindow* w)
 {
-	CMapSpot* sp		= smart_cast<CMapSpot*>(w);
+	CMapSpot* sp		= dynamic_cast<CMapSpot*>(w);
 	if(NULL==sp)		return;
 	
 	CGameTask* t		= Level().GameTaskManager().HasGameTask(sp->MapLocation(), true);

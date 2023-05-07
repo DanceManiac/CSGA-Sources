@@ -62,7 +62,7 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 				if (randF(1.f) < p) {
 					CSE_Abstract* E = alife().spawn_item	(N,o_Position,m_tNodeID,m_tGraphID,ID);
 					//подсоединить аддоны к оружию, если включены соответствующие флажки
-					CSE_ALifeItemWeapon* W =  smart_cast<CSE_ALifeItemWeapon*>(E);
+					CSE_ALifeItemWeapon* W =  dynamic_cast<CSE_ALifeItemWeapon*>(E);
 					if (W)
 					{
 						if (W->m_scope_status == ALife::eAddonAttachable)
@@ -74,7 +74,7 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 						if (W->m_handler_status == ALife::eAddonAttachable)
 							W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonHandler, bHandler);
 					}
-					CSE_ALifeInventoryItem* IItem = smart_cast<CSE_ALifeInventoryItem*>(E);
+					CSE_ALifeInventoryItem* IItem = dynamic_cast<CSE_ALifeInventoryItem*>(E);
 					if(IItem)
 						IItem->m_fCondition				= f_cond;
 				}

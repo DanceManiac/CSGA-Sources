@@ -60,7 +60,7 @@ xrServer::EConnect xrServer::Connect(shared_str &session_name, GameDescriptionDa
 	game					= NULL;
 
 	CLASS_ID clsid			= game_GameState::getCLASS_ID(type,true);
-	game					= smart_cast<game_sv_GameState*> (NEW_INSTANCE(clsid));
+	game					= dynamic_cast<game_sv_GameState*> (NEW_INSTANCE(clsid));
 	
 	// Options
 	if (0==game)			return ErrConnect;
@@ -202,7 +202,7 @@ void xrServer::RequestClientDigest(IClient* CL)
 		Check_BuildVersion_Success(CL);	
 		return;
 	}
-	xrClientData* tmp_client	= smart_cast<xrClientData*>(CL);
+	xrClientData* tmp_client	= dynamic_cast<xrClientData*>(CL);
 	VERIFY						(tmp_client);
 	PerformSecretKeysSync		(tmp_client);
 
@@ -216,7 +216,7 @@ void xrServer::ProcessClientDigest(xrClientData* xrCL, NET_Packet* P)
 {
 	R_ASSERT(xrCL);
 	IClient* tmp_client		= static_cast<IClient*>(xrCL);
-	game_sv_mp* server_game = smart_cast<game_sv_mp*>(game);
+	game_sv_mp* server_game = dynamic_cast<game_sv_mp*>(game);
 	
 	shared_str	admin_name;
 	shared_str	secondary_cdkey;

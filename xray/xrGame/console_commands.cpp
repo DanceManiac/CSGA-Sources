@@ -63,9 +63,9 @@ string_path		g_last_saved_game;
 	extern float air_resistance_epsilon;
 #endif // #ifdef DEBUG
 
-//extern void show_smart_cast_stats		();
-//extern void clear_smart_cast_stats		();
-//extern void release_smart_cast_stats	();
+//extern void show_dynamic_cast_stats		();
+//extern void clear_dynamic_cast_stats		();
+//extern void release_dynamic_cast_stats	();
 
 extern	u64		g_qwStartGameTime;
 extern	u64		g_qwEStartGameTime;
@@ -196,7 +196,7 @@ public:
 			};
 //#endif
 
-			game_cl_Single* game		= smart_cast<game_cl_Single*>(Level().game); VERIFY(game);
+			game_cl_Single* game		= dynamic_cast<game_cl_Single*>(Level().game); VERIFY(game);
 			game->OnDifficultyChanged	();
 		}
 	}
@@ -284,7 +284,7 @@ public:
 	CCC_ALifeProcessTime(LPCSTR N) : IConsole_Command(N)  { };
 	virtual void Execute(LPCSTR args) {
 		if ((GameID() == eGameIDSingle)  &&ai().get_alife()) {
-			game_sv_Single	*tpGame = smart_cast<game_sv_Single *>(Level().Server->game);
+			game_sv_Single	*tpGame = dynamic_cast<game_sv_Single *>(Level().Server->game);
 			VERIFY			(tpGame);
 			int id1 = 0;
 			sscanf(args ,"%d",&id1);
@@ -304,7 +304,7 @@ public:
 	CCC_ALifeObjectsPerUpdate(LPCSTR N) : IConsole_Command(N)  { };
 	virtual void Execute(LPCSTR args) {
 		if ((GameID() == eGameIDSingle)  &&ai().get_alife()) {
-			game_sv_Single	*tpGame = smart_cast<game_sv_Single *>(Level().Server->game);
+			game_sv_Single	*tpGame = dynamic_cast<game_sv_Single *>(Level().Server->game);
 			VERIFY			(tpGame);
 			int id1 = 0;
 			sscanf(args ,"%d",&id1);
@@ -320,7 +320,7 @@ public:
 	CCC_ALifeSwitchFactor(LPCSTR N) : IConsole_Command(N)  { };
 	virtual void Execute(LPCSTR args) {
 		if ((GameID() == eGameIDSingle)  &&ai().get_alife()) {
-			game_sv_Single	*tpGame = smart_cast<game_sv_Single *>(Level().Server->game);
+			game_sv_Single	*tpGame = dynamic_cast<game_sv_Single *>(Level().Server->game);
 			VERIFY			(tpGame);
 			float id1 = 0;
 			sscanf(args ,"%f",&id1);
@@ -590,7 +590,7 @@ public:
 
 			Level().remove_objects	();
 
-			game_sv_Single			*game = smart_cast<game_sv_Single*>(Level().Server->game);
+			game_sv_Single			*game = dynamic_cast<game_sv_Single*>(Level().Server->game);
 			R_ASSERT				(game);
 			game->restart_simulator	(saved_game);
 
@@ -863,7 +863,7 @@ class CCC_DumpInfos : public IConsole_Command {
 public:
 	CCC_DumpInfos	(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = true; };
 	virtual void	Execute				(LPCSTR args) {
-		CActor* A =smart_cast<CActor*>(Level().CurrentEntity());
+		CActor* A =dynamic_cast<CActor*>(Level().CurrentEntity());
 		if(A)
 			A->DumpInfo();
 	}
@@ -876,7 +876,7 @@ class CCC_DumpTasks : public IConsole_Command {
 public:
 	CCC_DumpTasks	(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = true; };
 	virtual void	Execute				(LPCSTR args) {
-		CActor* A =smart_cast<CActor*>(Level().CurrentEntity());
+		CActor* A =dynamic_cast<CActor*>(Level().CurrentEntity());
 		if(A)
 			A->DumpTasks();
 	}
@@ -910,7 +910,7 @@ public:
 		const_iterator I = ai().alife().graph().level().objects().begin();
 		const_iterator E = ai().alife().graph().level().objects().end();
 		for ( ; I != E; ++I) {
-			CSE_ALifeCreatureAbstract *obj = smart_cast<CSE_ALifeCreatureAbstract *>(I->second);
+			CSE_ALifeCreatureAbstract *obj = dynamic_cast<CSE_ALifeCreatureAbstract *>(I->second);
 			if (obj) {
 				Msg("\"%s\",",obj->name_replace());
 			}
@@ -971,7 +971,7 @@ public:
 		_GetItem(args,1,param2,' ');
 
 		CObject			*obj = Level().Objects.FindObjectByName(param1);
-		CBaseMonster	*monster = smart_cast<CBaseMonster *>(obj);
+		CBaseMonster	*monster = dynamic_cast<CBaseMonster *>(obj);
 		if (!monster)	return;
 		
 		u32				value2;
@@ -1090,7 +1090,7 @@ struct CCC_LuaHelp : public IConsole_Command {
 //	CCC_ShowSmartCastStats(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = true; };
 //
 //	virtual void Execute(LPCSTR args) {
-//		show_smart_cast_stats();
+//		show_dynamic_cast_stats();
 //	}
 //};
 //
@@ -1098,7 +1098,7 @@ struct CCC_LuaHelp : public IConsole_Command {
 //	CCC_ClearSmartCastStats(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = true; };
 //
 //	virtual void Execute(LPCSTR args) {
-//		clear_smart_cast_stats();
+//		clear_dynamic_cast_stats();
 //	}
 //};
 #endif
@@ -1323,7 +1323,7 @@ public:
 			Msg("!Failed to load section!");
 			return;
 		}
-		if (auto* pCurActor = smart_cast<CActor*>(Level().CurrentControlEntity()))
+		if (auto* pCurActor = dynamic_cast<CActor*>(Level().CurrentControlEntity()))
 			for (int i = 0; i < count; ++i)
 				Level().spawn_item(string, pCurActor->Position(), pCurActor->ai_location().level_vertex_id(), pCurActor->ID());
 	}
@@ -1347,7 +1347,7 @@ public:
 		CCC_Mask::Execute(args);
 		if (!g_pGameLevel) return;
 		if (!Level().CurrentControlEntity()) return;
-		if(CActor* pAct = smart_cast<CActor*>(Level().CurrentControlEntity()))
+		if(CActor* pAct = dynamic_cast<CActor*>(Level().CurrentControlEntity()))
 		{
 			if (psActorFlags.test(AF_FPBODY))
 				pAct->FPBodyChangeVisual();
@@ -1355,7 +1355,7 @@ public:
 			{
 				Render->model_Delete(g_player_hud->m_FpBody);
 				g_player_hud->m_FpBody = NULL;
-				if(CCameraFirstEye* cam_1 = smart_cast<CCameraFirstEye*>(pAct->cam_FirstEye()))
+				if(CCameraFirstEye* cam_1 = dynamic_cast<CCameraFirstEye*>(pAct->cam_FirstEye()))
 					cam_1->m_cam1_offset = Fvector().set(0.f, 0.f, 0.f);
 			}
 		}
@@ -1369,7 +1369,7 @@ public:
 	{
 		if (!g_pGameLevel) return;
 		int val = atoi(args);
-		CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
+		CActor* pActor = dynamic_cast<CActor*>(Level().CurrentEntity());
 		if (pActor)
 			pActor->set_money(val,true);
 	}
@@ -1542,7 +1542,7 @@ public		:
 		};
 
 		CObject* obj = Level().CurrentViewEntity();	VERIFY(obj);
-		CAttachmentOwner* owner = smart_cast<CAttachmentOwner*>(obj);
+		CAttachmentOwner* owner = dynamic_cast<CAttachmentOwner*>(obj);
 		shared_str ssss = args;
 		CAttachableItem* itm = owner->attachedItem(ssss);
 		if(itm){
@@ -1616,7 +1616,7 @@ public:
 		}
 
 		IRenderVisual			*visual = Render->model_Create(arguments);
-		IKinematics				*kinematics = smart_cast<IKinematics*>(visual);
+		IKinematics				*kinematics = dynamic_cast<IKinematics*>(visual);
 		if (!kinematics) {
 			Render->model_Delete(visual);
 			Msg					("! Invalid visual type \"%s\" (not a IKinematics)",arguments);
@@ -1666,7 +1666,7 @@ public:
 		{
 			return;
 		}
-		CUIGameSP* ui_game_sp = smart_cast<CUIGameSP*>( HUD().GetUI()->UIGame() );
+		CUIGameSP* ui_game_sp = dynamic_cast<CUIGameSP*>( HUD().GetUI()->UIGame() );
 		if ( !ui_game_sp )
 		{
 			return;
@@ -1694,7 +1694,7 @@ public:
 		{
 			return;
 		}
-		CUIGameSP* ui_game_sp = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+		CUIGameSP* ui_game_sp = dynamic_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 		if (!ui_game_sp)
 		{
 			return;
@@ -1989,8 +1989,8 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 
 #ifdef DEBUG
 	CMD1(CCC_LuaHelp,				"lua_help");
-	//CMD1(CCC_ShowSmartCastStats,	"show_smart_cast_stats");
-	//CMD1(CCC_ClearSmartCastStats,	"clear_smart_cast_stats");
+	//CMD1(CCC_ShowSmartCastStats,	"show_dynamic_cast_stats");
+	//CMD1(CCC_ClearSmartCastStats,	"clear_dynamic_cast_stats");
 
 	CMD3(CCC_Mask,		"dbg_draw_actor_alive",		&dbg_net_Draw_Flags,	dbg_draw_actor_alive);
 	CMD3(CCC_Mask,		"dbg_draw_actor_dead",		&dbg_net_Draw_Flags,	dbg_draw_actor_dead );

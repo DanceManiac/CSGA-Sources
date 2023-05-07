@@ -54,7 +54,7 @@ void CObjectHandlerPlanner::set_goal	(MonsterSpace::EObjectAction object_action,
 	u32						condition_id = goal;
 
 	if (game_object && (eWorldPropertyNoItemsIdle != goal)) {
-		CWeapon				*weapon = smart_cast<CWeapon*>(game_object);
+		CWeapon				*weapon = dynamic_cast<CWeapon*>(game_object);
 		if (weapon && (goal == eWorldPropertyIdleStrap) && !weapon->can_be_strapped())
 			goal			= eWorldPropertyIdle;
 		condition_id		= uid(game_object->ID(), goal);
@@ -75,7 +75,7 @@ void CObjectHandlerPlanner::set_goal	(MonsterSpace::EObjectAction object_action,
 	if (!game_object || (min_queue_size < 0))
 		return;
 
-	CWeaponMagazined		*weapon = smart_cast<CWeaponMagazined*>(game_object);
+	CWeaponMagazined		*weapon = dynamic_cast<CWeaponMagazined*>(game_object);
 	if (!weapon)
 		return;
 
@@ -281,14 +281,14 @@ void CObjectHandlerPlanner::setup	(CAI_Stalker *object)
 
 void CObjectHandlerPlanner::add_item			(CInventoryItem *inventory_item)
 {
-	CWeapon						*weapon		= smart_cast<CWeapon*>		(inventory_item);
+	CWeapon						*weapon		= dynamic_cast<CWeapon*>		(inventory_item);
 	if (weapon) {
 		add_evaluators			(weapon);
 		add_operators			(weapon);
 		return;
 	}
 
-	CMissile					*missile	= smart_cast<CMissile*>		(inventory_item);
+	CMissile					*missile	= dynamic_cast<CMissile*>		(inventory_item);
 	if (missile) {
 		add_evaluators			(missile);
 		add_operators			(missile);

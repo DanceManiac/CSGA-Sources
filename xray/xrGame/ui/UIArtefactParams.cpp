@@ -150,7 +150,7 @@ void CUIArtefactParams::SetInfo( shared_str const& af_section )
 	DetachAll();
 	float h = 0.0f;
 
-	CActor* actor = smart_cast<CActor*>( Level().CurrentViewEntity() );
+	CActor* actor = dynamic_cast<CActor*>( Level().CurrentViewEntity() );
 	if ( !actor )
 	{
 		return;

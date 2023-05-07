@@ -285,10 +285,10 @@ void CUIActorMenu::UpdateActor()
 		UpdateActorMP();
 	}
 	
-	CActor* actor = smart_cast<CActor*>( m_pActorInvOwner );
+	CActor* actor = dynamic_cast<CActor*>( m_pActorInvOwner );
 	if ( actor )
 	{
-		CWeapon* wp = smart_cast<CWeapon*>( actor->inventory().ActiveItem() );
+		CWeapon* wp = dynamic_cast<CWeapon*>( actor->inventory().ActiveItem() );
 		if ( wp ) 
 		{
 			wp->ForceUpdateAmmo();
@@ -312,7 +312,7 @@ void CUIActorMenu::UpdatePartnerBag()
 {
 	string64 buf;
 
-	CBaseMonster* monster = smart_cast<CBaseMonster*>( m_pPartnerInvOwner );
+	CBaseMonster* monster = dynamic_cast<CBaseMonster*>( m_pPartnerInvOwner );
 	if ( monster || m_pPartnerInvOwner->use_simplified_visual() ) 
 	{
 		m_PartnerWeight->SetText( "" );

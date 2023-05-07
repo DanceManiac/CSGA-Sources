@@ -15,11 +15,7 @@ xrCriticalSection	UCalc_Mutex
 #endif // PROFILE_CRITICAL_SECTIONS
 ;
 
-#ifndef _EDITOR
-#include "../../xrServerEntities/smart_cast.h"
-#else
 #include "../../Include/xrAPI/xrAPI.h"
-#endif
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

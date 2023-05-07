@@ -438,7 +438,7 @@ bool CAI_Rat::can_stand_in_position()
 	xr_vector<CObject*>::iterator		I = tpNearestList.begin();
 	xr_vector<CObject*>::iterator		E = tpNearestList.end();
 	for ( ; I != E; ++I) {
-		if (!smart_cast<CAI_Rat*>(*I))
+		if (!dynamic_cast<CAI_Rat*>(*I))
 			continue;
 
 		(*I)->Visual()->getVisData().box.get_CD	(c,d);
@@ -470,7 +470,7 @@ bool CAI_Rat::can_stand_here	()
 	xr_vector<CObject*>::iterator		I = tpNearestList.begin();
 	xr_vector<CObject*>::iterator		E = tpNearestList.end();
 	for ( ; I != E; ++I) {
-		if (!smart_cast<CAI_Rat*>(*I))
+		if (!dynamic_cast<CAI_Rat*>(*I))
 			continue;
 		
 		(*I)->Visual()->getVisData().box.get_CD	(c,d);

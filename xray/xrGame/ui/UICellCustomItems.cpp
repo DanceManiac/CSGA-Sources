@@ -43,7 +43,7 @@ CUIInventoryCellItem::CUIInventoryCellItem(CInventoryItem* itm)
 
 bool CUIInventoryCellItem::EqualTo(CUICellItem* itm)
 {
-	CUIInventoryCellItem* ci = smart_cast<CUIInventoryCellItem*>( itm );
+	CUIInventoryCellItem* ci = dynamic_cast<CUIInventoryCellItem*>( itm );
 	if ( !itm )
 	{
 		return false;
@@ -61,9 +61,9 @@ bool CUIInventoryCellItem::EqualTo(CUICellItem* itm)
 		return false;
 	}
 
-	auto eatable = smart_cast<CEatableItem*>(object());
+	auto eatable = dynamic_cast<CEatableItem*>(object());
 
-	if (eatable && eatable->GetPortionsNum() != smart_cast<CEatableItem*>(ci->object())->GetPortionsNum())
+	if (eatable && eatable->GetPortionsNum() != dynamic_cast<CEatableItem*>(ci->object())->GetPortionsNum())
 		return false;
 
 	return true;
@@ -138,7 +138,7 @@ bool CUIAmmoCellItem::EqualTo(CUICellItem* itm)
 {
 	if(!inherited::EqualTo(itm))	return false;
 
-	CUIAmmoCellItem* ci				= smart_cast<CUIAmmoCellItem*>(itm);
+	CUIAmmoCellItem* ci				= dynamic_cast<CUIAmmoCellItem*>(itm);
 	if(!ci)							return false;
 
 	return					( (object()->cNameSect() == ci->object()->cNameSect()) );
@@ -495,7 +495,7 @@ bool CUIWeaponCellItem::EqualTo(CUICellItem* itm)
 {
 	if(!inherited::EqualTo(itm))	return false;
 
-	CUIWeaponCellItem* ci			= smart_cast<CUIWeaponCellItem*>(itm);
+	CUIWeaponCellItem* ci			= dynamic_cast<CUIWeaponCellItem*>(itm);
 	if(!ci)							return false;
 
 //	bool b_addons					= ( (object()->GetAddonsState() == ci->object()->GetAddonsState()) );

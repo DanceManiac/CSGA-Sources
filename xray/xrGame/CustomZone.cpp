@@ -87,7 +87,7 @@ void CCustomZone::Load(LPCSTR section)
 	m_StateTime[eZoneStateAccumulate]	= pSettings->r_s32(section, "accamulate_time");
 	
 //////////////////////////////////////////////////////////////////////////
-	ISpatial*		self				=	smart_cast<ISpatial*> (this);
+	ISpatial*		self				=	dynamic_cast<ISpatial*> (this);
 	if (self)		self->spatial.type	|=	(STYPE_COLLIDEABLE|STYPE_SHAPE);
 //////////////////////////////////////////////////////////////////////////
 
@@ -280,7 +280,7 @@ BOOL CCustomZone::net_Spawn(CSE_Abstract* DC)
 		return					(FALSE);
 
 	CSE_Abstract				*e = (CSE_Abstract*)(DC);
-	CSE_ALifeCustomZone			*Z = smart_cast<CSE_ALifeCustomZone*>(e);
+	CSE_ALifeCustomZone			*Z = dynamic_cast<CSE_ALifeCustomZone*>(e);
 	VERIFY						(Z);
 	
 	m_fMaxPower					= pSettings->r_float(cNameSect(),"max_start_power");
@@ -493,7 +493,7 @@ void CCustomZone::shedule_Update(u32 dt)
 		{
 			CGameObject* pObject		= (*it).object;
 			if (!pObject)				continue;
-			CEntityAlive* pEntityAlive	= smart_cast<CEntityAlive*>(pObject);
+			CEntityAlive* pEntityAlive	= dynamic_cast<CEntityAlive*>(pObject);
 			SZoneObjectInfo& info		= (*it);
 
 			info.dw_time_in_zone += dt;
@@ -550,12 +550,12 @@ void CCustomZone::CheckForAwaking()
 
 void CCustomZone::feel_touch_new	(CObject* O) 
 {
-//	if(smart_cast<CActor*>(O) && O == Level().CurrentEntity())
-//					m_pLocalActor	= smart_cast<CActor*>(O);
+//	if(dynamic_cast<CActor*>(O) && O == Level().CurrentEntity())
+//					m_pLocalActor	= dynamic_cast<CActor*>(O);
 
-	CGameObject*	pGameObject		= smart_cast<CGameObject*>(O);
-	CEntityAlive*	pEntityAlive	= smart_cast<CEntityAlive*>(pGameObject);
-	CArtefact*		pArtefact		= smart_cast<CArtefact*>(pGameObject);
+	CGameObject*	pGameObject		= dynamic_cast<CGameObject*>(O);
+	CEntityAlive*	pEntityAlive	= dynamic_cast<CEntityAlive*>(pGameObject);
+	CArtefact*		pArtefact		= dynamic_cast<CArtefact*>(pGameObject);
 	
 	SZoneObjectInfo object_info		;
 	object_info.object = pGameObject;
@@ -588,7 +588,7 @@ void CCustomZone::feel_touch_new	(CObject* O)
 
 void CCustomZone::feel_touch_delete(CObject* O) 
 {
-	CGameObject* pGameObject =smart_cast<CGameObject*>(O);
+	CGameObject* pGameObject =dynamic_cast<CGameObject*>(O);
 	if(!pGameObject->getDestroy())
 	{
 		StopObjectIdleParticles(pGameObject);
@@ -604,14 +604,14 @@ void CCustomZone::feel_touch_delete(CObject* O)
 
 BOOL CCustomZone::feel_touch_contact(CObject* O) 
 {
-	if (smart_cast<CCustomZone*>(O))				return FALSE;
-	if (smart_cast<CBreakableObject*>(O))			return FALSE;
-	if (0==smart_cast<IKinematics*>(O->Visual()))	return FALSE;
+	if (dynamic_cast<CCustomZone*>(O))				return FALSE;
+	if (dynamic_cast<CBreakableObject*>(O))			return FALSE;
+	if (0==dynamic_cast<IKinematics*>(O->Visual()))	return FALSE;
 
 	if (O->ID() == ID())
 		return		(FALSE);
 
-	CGameObject *object = smart_cast<CGameObject*>(O);
+	CGameObject *object = dynamic_cast<CGameObject*>(O);
     if (!object || !object->IsVisibleForZones())
 		return		(FALSE);
 
@@ -742,7 +742,7 @@ void CCustomZone::PlayHitParticles(CGameObject* pObject)
 
 	if( particle_str.size() )
 	{
-		CParticlesPlayer* PP = smart_cast<CParticlesPlayer*>(pObject);
+		CParticlesPlayer* PP = dynamic_cast<CParticlesPlayer*>(pObject);
 		if (PP){
 			u16 play_bone = PP->GetRandomBone(); 
 			if (play_bone!=BI_NONE)
@@ -773,14 +773,14 @@ void CCustomZone::PlayEntranceParticles(CGameObject* pObject)
 	}
 
 	Fvector							vel;
-	CPhysicsShellHolder* shell_holder=smart_cast<CPhysicsShellHolder*>(pObject);
+	CPhysicsShellHolder* shell_holder=dynamic_cast<CPhysicsShellHolder*>(pObject);
 	if(shell_holder)
 		shell_holder->PHGetLinearVell(vel);
 	else 
 		vel.set						(0,0,0);
 	
 	//выбрать случайную косточку на объекте
-	CParticlesPlayer* PP			= smart_cast<CParticlesPlayer*>(pObject);
+	CParticlesPlayer* PP			= dynamic_cast<CParticlesPlayer*>(pObject);
 	if (PP)
 	{
 		u16 play_bone				= PP->GetRandomBone(); 
@@ -803,7 +803,7 @@ void CCustomZone::PlayEntranceParticles(CGameObject* pObject)
 			pParticles->Play		(false);
 		}
 	}
-	if(m_zone_flags.test(eBoltEntranceParticles) && smart_cast<CBolt*>(pObject))
+	if(m_zone_flags.test(eBoltEntranceParticles) && dynamic_cast<CBolt*>(pObject))
 		PlayBoltEntranceParticles();
 }
 
@@ -886,7 +886,7 @@ void CCustomZone::PlayBulletParticles(Fvector& pos)
 
 void CCustomZone::PlayObjectIdleParticles(CGameObject* pObject)
 {
-	CParticlesPlayer* PP = smart_cast<CParticlesPlayer*>(pObject);
+	CParticlesPlayer* PP = dynamic_cast<CParticlesPlayer*>(pObject);
 	if(!PP) return;
 
 	shared_str particle_str = NULL;
@@ -918,7 +918,7 @@ void CCustomZone::StopObjectIdleParticles(CGameObject* pObject)
 	if (m_zone_flags.test(eIdleObjectParticlesDontStop) && !pObject->cast_actor())
 		return;
 
-	CParticlesPlayer* PP = smart_cast<CParticlesPlayer*>(pObject);
+	CParticlesPlayer* PP = dynamic_cast<CParticlesPlayer*>(pObject);
 	if(!PP) return;
 
 
@@ -1246,7 +1246,7 @@ void CCustomZone::CreateHit	(	u16 id_to,
 
 void CCustomZone::net_Relcase(CObject* O)
 {
-	CGameObject* GO				= smart_cast<CGameObject*>(O);
+	CGameObject* GO				= dynamic_cast<CGameObject*>(O);
 	OBJECT_INFO_VEC_IT it		= std::find(m_ObjectInfoMap.begin(),m_ObjectInfoMap.end(), GO);
 	if(it!=m_ObjectInfoMap.end())
 	{

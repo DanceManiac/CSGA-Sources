@@ -490,7 +490,7 @@ void InventoryUtilities::SendInfoToActor(LPCSTR info_id)
 {
 	if (GameID() != eGameIDSingle) return;
 	
-	CActor* actor = smart_cast<CActor*>(Level().CurrentEntity());
+	CActor* actor = dynamic_cast<CActor*>(Level().CurrentEntity());
 	if(actor)
 	{
 		actor->TransferInfo(info_id, true);

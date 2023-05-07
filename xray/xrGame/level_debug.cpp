@@ -52,7 +52,7 @@ void   CLevelDebug::draw_debug_text ()
 	int y_start = 50;
 	int x_start = 5;
 
-	if ( !smart_cast<CBaseMonster*>( Level().CurrentEntity() ) )
+	if ( !dynamic_cast<CBaseMonster*>( Level().CurrentEntity() ) )
 	{
 		return;
 	}

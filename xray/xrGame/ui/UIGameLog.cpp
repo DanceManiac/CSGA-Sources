@@ -105,7 +105,7 @@ void CUIGameLog::Update()
 
 	for(WINDOW_LIST_it it = begin_it; it!=end_it; ++it)
 	{
-		CUIStatic* pItem = smart_cast<CUIStatic*>(*it);
+		CUIStatic* pItem = dynamic_cast<CUIStatic*>(*it);
 		VERIFY(pItem);
 		pItem->Update();
 

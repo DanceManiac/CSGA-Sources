@@ -30,7 +30,7 @@ void object::Load			(LPCSTR section)
 
 BOOL object::net_Spawn		(CSE_Abstract *server_entity)
 {
-	CSE_SmartCover					*smart_cover = smart_cast<CSE_SmartCover*>(server_entity);
+	CSE_SmartCover					*smart_cover = dynamic_cast<CSE_SmartCover*>(server_entity);
 	VERIFY							(smart_cover);
 
 	if (!smart_cover->m_description.size())

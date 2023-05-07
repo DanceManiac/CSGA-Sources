@@ -144,8 +144,8 @@ void UISecondTaskWnd::UpdateList()
 
 bool UISecondTaskWnd::SortingLessFunction( CUIWindow* left, CUIWindow* right )
 {
-	UISecondTaskItem* lpi = smart_cast<UISecondTaskItem*>(left);
-	UISecondTaskItem* rpi = smart_cast<UISecondTaskItem*>(right);
+	UISecondTaskItem* lpi = dynamic_cast<UISecondTaskItem*>(left);
+	UISecondTaskItem* rpi = dynamic_cast<UISecondTaskItem*>(right);
 	VERIFY( lpi && rpi );
 	return ( lpi->get_priority_task() > rpi->get_priority_task() );
 }

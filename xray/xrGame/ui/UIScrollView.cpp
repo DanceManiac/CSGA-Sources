@@ -200,7 +200,7 @@ void CUIScrollView::Draw				()
 		std::advance					(it,m_visible_rgn.x);
 		for(int idx=m_visible_rgn.x; idx<=m_visible_rgn.y; ++it,++idx)
 		{
-			CUIScrollView* sw			= smart_cast<CUIScrollView*>(*it);
+			CUIScrollView* sw			= dynamic_cast<CUIScrollView*>(*it);
 			VERIFY						(sw==NULL);
 
 			if ((*it)->GetVisible())
@@ -373,7 +373,7 @@ void CUIScrollView::SetSelected			(CUIWindow* w)
 
 	for(WINDOW_LIST_it it = m_pad->GetChildWndList().begin(); m_pad->GetChildWndList().end()!=it; ++it)
 	{
-		smart_cast<CUISelectable*>(*it)->SetSelected(*it==w);
+		dynamic_cast<CUISelectable*>(*it)->SetSelected(*it==w);
 	}
 }
 
@@ -383,7 +383,7 @@ CUIWindow* CUIScrollView::GetSelected(){
 
 	for(WINDOW_LIST_it it = m_pad->GetChildWndList().begin(); m_pad->GetChildWndList().end()!=it; ++it)
 	{
-		if (smart_cast<CUISelectable*>(*it)->GetSelected())
+		if (dynamic_cast<CUISelectable*>(*it)->GetSelected())
 			return *it;
 	}
 

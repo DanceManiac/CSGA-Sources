@@ -23,10 +23,10 @@
 
 void CSE_ALifeTraderAbstract::spawn_supplies	()
 {
-	CSE_ALifeDynamicObject		*dynamic_object = smart_cast<CSE_ALifeDynamicObject*>(this);
+	CSE_ALifeDynamicObject		*dynamic_object = dynamic_cast<CSE_ALifeDynamicObject*>(this);
 	VERIFY						(dynamic_object);
 	CSE_Abstract				*abstract = dynamic_object->alife().spawn_item("device_pda",base()->o_Position,dynamic_object->m_tNodeID,dynamic_object->m_tGraphID,base()->ID);
-	CSE_ALifeItemPDA			*pda = smart_cast<CSE_ALifeItemPDA*>(abstract);
+	CSE_ALifeItemPDA			*pda = dynamic_cast<CSE_ALifeItemPDA*>(abstract);
 	pda->m_original_owner		= base()->ID;
 
 #ifdef XRGAME_EXPORTS
@@ -78,7 +78,7 @@ bool CSE_ALifeTraderAbstract::check_inventory_consistency	()
 		if (!object)
 			continue;
 
-		CSE_ALifeInventoryItem	*item = smart_cast<CSE_ALifeInventoryItem*>(object);
+		CSE_ALifeInventoryItem	*item = dynamic_cast<CSE_ALifeInventoryItem*>(object);
 		if (!item)
 			continue;
 
@@ -120,7 +120,7 @@ void CSE_ALifeDynamicObject::attach	(CSE_ALifeInventoryItem *tpALifeInventoryIte
 
 void CSE_ALifeDynamicObject::detach(CSE_ALifeInventoryItem *tpALifeInventoryItem, ALife::OBJECT_IT *I, bool bALifeRequest, bool bRemoveChildren)
 {
-	CSE_ALifeDynamicObject					*l_tpALifeDynamicObject1 = smart_cast<CSE_ALifeDynamicObject*>(tpALifeInventoryItem);
+	CSE_ALifeDynamicObject					*l_tpALifeDynamicObject1 = dynamic_cast<CSE_ALifeDynamicObject*>(tpALifeInventoryItem);
 	R_ASSERT2								(l_tpALifeDynamicObject1,"Invalid children objects");
 	l_tpALifeDynamicObject1->o_Position		= o_Position;
 	l_tpALifeDynamicObject1->m_tNodeID		= m_tNodeID;
@@ -159,10 +159,10 @@ void add_online_impl						(CSE_ALifeDynamicObject *object, const bool &update_re
 //			continue;
 //
 		CSE_ALifeDynamicObject	*l_tpALifeDynamicObject = ai().alife().objects().object(*I);
-		CSE_ALifeInventoryItem	*l_tpALifeInventoryItem = smart_cast<CSE_ALifeInventoryItem*>(l_tpALifeDynamicObject);
+		CSE_ALifeInventoryItem	*l_tpALifeInventoryItem = dynamic_cast<CSE_ALifeInventoryItem*>(l_tpALifeDynamicObject);
 		R_ASSERT2				(l_tpALifeInventoryItem,"Non inventory item object has parent?!");
 		l_tpALifeInventoryItem->base()->s_flags.or_(M_SPAWN_UPDATE);
-		CSE_Abstract			*l_tpAbstract = smart_cast<CSE_Abstract*>(l_tpALifeInventoryItem);
+		CSE_Abstract			*l_tpAbstract = dynamic_cast<CSE_Abstract*>(l_tpALifeInventoryItem);
 		object->alife().server().entity_Destroy(l_tpAbstract);
 
 #ifdef DEBUG
@@ -197,7 +197,7 @@ void add_online_impl						(CSE_ALifeDynamicObject *object, const bool &update_re
 
 void CSE_ALifeTraderAbstract::add_online	(const bool &update_registries)
 {
-	CSE_ALifeDynamicObject		*object = smart_cast<CSE_ALifeDynamicObject*>(this);
+	CSE_ALifeDynamicObject		*object = dynamic_cast<CSE_ALifeDynamicObject*>(this);
 	VERIFY						(object);
 
 	add_online_impl				(object,update_registries);
@@ -206,11 +206,11 @@ void CSE_ALifeTraderAbstract::add_online	(const bool &update_registries)
 void add_offline_impl						(CSE_ALifeDynamicObject *object, const xr_vector<ALife::_OBJECT_ID> &saved_children, const bool &update_registries)
 {
 	for (u32 i=0, n=saved_children.size(); i<n; ++i) {
-		CSE_ALifeDynamicObject	*child = smart_cast<CSE_ALifeDynamicObject*>(ai().alife().objects().object(saved_children[i],true));
+		CSE_ALifeDynamicObject	*child = dynamic_cast<CSE_ALifeDynamicObject*>(ai().alife().objects().object(saved_children[i],true));
 		R_ASSERT				(child);
 		child->m_bOnline		= false;
 
-		CSE_ALifeInventoryItem	*inventory_item = smart_cast<CSE_ALifeInventoryItem*>(child);
+		CSE_ALifeInventoryItem	*inventory_item = dynamic_cast<CSE_ALifeInventoryItem*>(child);
 		VERIFY2					(inventory_item,"Non inventory item object has parent?!");
 #ifdef DEBUG
 //		if (psAI_Flags.test(aiALife))
@@ -256,7 +256,7 @@ void add_offline_impl						(CSE_ALifeDynamicObject *object, const xr_vector<ALif
 
 void CSE_ALifeTraderAbstract::add_offline	(const xr_vector<ALife::_OBJECT_ID> &saved_children, const bool &update_registries)
 {
-	CSE_ALifeDynamicObject		*object = smart_cast<CSE_ALifeDynamicObject*>(this);
+	CSE_ALifeDynamicObject		*object = dynamic_cast<CSE_ALifeDynamicObject*>(this);
 	VERIFY						(object);
 	add_offline_impl			(object,saved_children,update_registries);
 }

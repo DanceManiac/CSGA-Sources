@@ -40,7 +40,7 @@ bool CAmebaZone::BlowoutState()
 
 void  CAmebaZone::Affect(SZoneObjectInfo* O) 
 {
-	CPhysicsShellHolder *pGameObject = smart_cast<CPhysicsShellHolder*>(O->object);
+	CPhysicsShellHolder *pGameObject = dynamic_cast<CPhysicsShellHolder*>(O->object);
 	if(!pGameObject) return;
 
 	if(O->zone_ignore) return;
@@ -74,7 +74,7 @@ void CAmebaZone::PhTune(dReal step)
 	OBJECT_INFO_VEC_IT it;
 	for(it = m_ObjectInfoMap.begin(); m_ObjectInfoMap.end() != it; ++it) 
 	{
-		CEntityAlive* EA			= smart_cast<CEntityAlive*>((*it).object);
+		CEntityAlive* EA			= dynamic_cast<CEntityAlive*>((*it).object);
 		if(EA)
 		{
 			CPHMovementControl* mc	= EA->character_physics_support()->movement();

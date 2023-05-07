@@ -21,5 +21,3 @@
 #include "../xrEngine/gamefont.h"
 #include "../xrEngine/xr_object.h"
 #include "../xrEngine/igame_level.h"
-
-#include "smart_cast.h"

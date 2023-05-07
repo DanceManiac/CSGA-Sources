@@ -73,7 +73,7 @@ void CWeapon::FireTrace		(const Fvector& P, const Fvector& D)
 	CActor* tmp_actor = NULL;
 	if (!IsGameTypeSingle())
 	{
-		tmp_actor = smart_cast<CActor*>(Level().CurrentControlEntity());
+		tmp_actor = dynamic_cast<CActor*>(Level().CurrentControlEntity());
 		if (tmp_actor)
 		{
 			CEntity::SEntityState state;
@@ -87,7 +87,7 @@ void CWeapon::FireTrace		(const Fvector& P, const Fvector& D)
 	}
 	if (fsimilar(fire_disp, 0.f))
 	{
-		//CActor* tmp_actor = smart_cast<CActor*>(Level().CurrentControlEntity());
+		//CActor* tmp_actor = dynamic_cast<CActor*>(Level().CurrentControlEntity());
 		if (H_Parent() && (H_Parent() == tmp_actor))
 		{
 			fire_disp = tmp_actor->GetFireDispertion();

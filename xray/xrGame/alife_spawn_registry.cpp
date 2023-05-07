@@ -117,7 +117,7 @@ void CALifeSpawnRegistry::load				(IReader &file_stream, xrGUID *save_guid)
 	SPAWN_GRAPH::vertex_iterator			I = m_spawns.vertices().begin();
 	SPAWN_GRAPH::vertex_iterator			E = m_spawns.vertices().end();
 	for ( ; I != E; ++I) {
-		luabind::wrap_base		*base = smart_cast<luabind::wrap_base*>(&(*I).second->data()->object());
+		luabind::wrap_base		*base = dynamic_cast<luabind::wrap_base*>(&(*I).second->data()->object());
 		if (!base)
 			continue;
 
@@ -222,7 +222,7 @@ void CALifeSpawnRegistry::build_story_spawns()
 	SPAWN_GRAPH::const_vertex_iterator	I = m_spawns.vertices().begin();
 	SPAWN_GRAPH::const_vertex_iterator	E = m_spawns.vertices().end();
 	for ( ; I != E; ++I) {
-		CSE_ALifeObject					*object = smart_cast<CSE_ALifeObject*>(&(*I).second->data()->object());
+		CSE_ALifeObject					*object = dynamic_cast<CSE_ALifeObject*>(&(*I).second->data()->object());
 		VERIFY							(object);
 		if (object->m_spawn_story_id == INVALID_SPAWN_STORY_ID)
 			continue;

@@ -1382,7 +1382,7 @@ void ShowLogicEditor(bool& show)
     if (wnd.Collapsed)
         return;
 
-    CGameObject* gameObject = smart_cast<CGameObject*>(object);
+    CGameObject* gameObject = dynamic_cast<CGameObject*>(object);
     if (!gameObject || !gameObject->object()) {
         ImGui::Text("no logic");
         return;

@@ -108,7 +108,7 @@ void CWeapon::UpdateXForm()
 		return;
 
 	// Get access to entity and its visual
-	CEntityAlive*			E = smart_cast<CEntityAlive*>(H_Parent());
+	CEntityAlive*			E = dynamic_cast<CEntityAlive*>(H_Parent());
 	
 	if (!E) {
 		if (!IsGameTypeSingle())
@@ -117,14 +117,14 @@ void CWeapon::UpdateXForm()
 		return;
 	}
 
-	const CInventoryOwner	*parent = smart_cast<const CInventoryOwner*>(E);
+	const CInventoryOwner	*parent = dynamic_cast<const CInventoryOwner*>(E);
 	if (parent && parent->use_simplified_visual())
 		return;
 
 	if (parent->attached(this))
 		return;
 
-	IKinematics*			V = smart_cast<IKinematics*>	(E->Visual());
+	IKinematics*			V = dynamic_cast<IKinematics*>	(E->Visual());
 	VERIFY					(V);
 
 	// Get matrices
@@ -205,7 +205,7 @@ void CWeapon::ForceUpdateFireParticles()
 		if (!H_Parent())		return;
 
 		Fvector					p, d; 
-		smart_cast<CEntity*>(H_Parent())->g_fireParams	(this, p,d);
+		dynamic_cast<CEntity*>(H_Parent())->g_fireParams	(this, p,d);
 
 		Fmatrix						_pxf;
 		_pxf.k						= d;
@@ -633,7 +633,7 @@ BOOL CWeapon::net_Spawn		(CSE_Abstract* DC)
 	m_fRTZoomFactor					= m_zoom_params.m_fScopeZoomFactor;
 	BOOL bResult					= inherited::net_Spawn(DC);
 	CSE_Abstract					*e	= (CSE_Abstract*)(DC);
-	CSE_ALifeItemWeapon			    *E	= smart_cast<CSE_ALifeItemWeapon*>(e);
+	CSE_ALifeItemWeapon			    *E	= dynamic_cast<CSE_ALifeItemWeapon*>(e);
 
 	//iAmmoCurrent					= E->a_current;
 	iAmmoElapsed					= E->a_elapsed;
@@ -940,7 +940,7 @@ void CWeapon::UpdateCL		()
 
 	if (!m_bDisableBore && (GetNextState() == GetState()) && IsGameTypeSingle() && H_Parent() == Level().CurrentEntity())
 	{
-		CActor* pActor	= smart_cast<CActor*>(H_Parent());
+		CActor* pActor	= dynamic_cast<CActor*>(H_Parent());
 		if(pActor && !pActor->AnyMove() && this==pActor->inventory().ActiveItem())
 		{
 			if (hud_adj_mode==0 && GetState()==eIdle && (Device.dwTimeGlobal-m_dw_curr_substate_time>20000) && !IsZoomed() && g_player_hud->attached_item(1)==NULL)
@@ -979,7 +979,7 @@ void CWeapon::UpdateFlashlight()
 {
 	if (flashlight_render)
 	{
-		auto io = smart_cast<CInventoryOwner*>(H_Parent());
+		auto io = dynamic_cast<CInventoryOwner*>(H_Parent());
 		if (!flashlight_render->get_active() && IsFlashlightOn() && (!H_Parent() || (io && this == io->inventory().ActiveItem()))) {
 			flashlight_render->set_active(true);
 			flashlight_omni->set_active(true);
@@ -1279,7 +1279,7 @@ void CWeapon::SpawnAmmo(u32 boxCurr, LPCSTR ammoSect, u32 ParentID)
 		D->m_tClassID==CLSID_OBJECT_A_VOG25	||
 		D->m_tClassID==CLSID_OBJECT_A_OG7B)
 	{	
-		CSE_ALifeItemAmmo *l_pA		= smart_cast<CSE_ALifeItemAmmo*>(D);
+		CSE_ALifeItemAmmo *l_pA		= dynamic_cast<CSE_ALifeItemAmmo*>(D);
 		R_ASSERT					(l_pA);
 		l_pA->m_boxSize				= (u16)pSettings->r_s32(ammoSect, "box_size");
 		D->s_name					= ammoSect;
@@ -1334,7 +1334,7 @@ int CWeapon::GetSuitableAmmoTotal(bool use_item_to_spawn) const
 
 		for(TIItemContainer::iterator l_it = m_pInventory->m_belt.begin(); m_pInventory->m_belt.end() != l_it; ++l_it) 
 		{
-			CWeaponAmmo *l_pAmmo = smart_cast<CWeaponAmmo*>(*l_it);
+			CWeaponAmmo *l_pAmmo = dynamic_cast<CWeaponAmmo*>(*l_it);
 
 			if(l_pAmmo && !xr_strcmp(l_pAmmo->cNameSect(), l_ammoType)) 
 			{
@@ -1344,7 +1344,7 @@ int CWeapon::GetSuitableAmmoTotal(bool use_item_to_spawn) const
 
 		for(TIItemContainer::iterator l_it = m_pInventory->m_ruck.begin(); m_pInventory->m_ruck.end() != l_it; ++l_it) 
 		{
-			CWeaponAmmo *l_pAmmo = smart_cast<CWeaponAmmo*>(*l_it);
+			CWeaponAmmo *l_pAmmo = dynamic_cast<CWeaponAmmo*>(*l_it);
 			if(l_pAmmo && !xr_strcmp(l_pAmmo->cNameSect(), l_ammoType)) 
 			{
 				iAmmoCurrent = iAmmoCurrent + l_pAmmo->m_boxCurr;
@@ -1385,7 +1385,7 @@ int CWeapon::GetCurrentTypeAmmoTotal() const
 
 		for(TIItemContainer::iterator l_it = m_pInventory->m_belt.begin(); m_pInventory->m_belt.end() != l_it; ++l_it) 
 		{
-			CWeaponAmmo *l_pAmmo = smart_cast<CWeaponAmmo*>(*l_it);
+			CWeaponAmmo *l_pAmmo = dynamic_cast<CWeaponAmmo*>(*l_it);
 
 			if(l_pAmmo && !xr_strcmp(l_pAmmo->cNameSect(), l_ammoType)) 
 			{
@@ -1395,7 +1395,7 @@ int CWeapon::GetCurrentTypeAmmoTotal() const
 
 		for(TIItemContainer::iterator l_it = m_pInventory->m_ruck.begin(); m_pInventory->m_ruck.end() != l_it; ++l_it) 
 		{
-			CWeaponAmmo *l_pAmmo = smart_cast<CWeaponAmmo*>(*l_it);
+			CWeaponAmmo *l_pAmmo = dynamic_cast<CWeaponAmmo*>(*l_it);
 			if(l_pAmmo && !xr_strcmp(l_pAmmo->cNameSect(), l_ammoType)) 
 			{
 				iAmmoCurrent = iAmmoCurrent + l_pAmmo->m_boxCurr;
@@ -1662,7 +1662,7 @@ void CWeapon::UpdateHUDAddonsVisibility()
 
 void CWeapon::UpdateAddonsVisibility()
 {
-	IKinematics* pWeaponVisual = smart_cast<IKinematics*>(Visual()); R_ASSERT(pWeaponVisual);
+	IKinematics* pWeaponVisual = dynamic_cast<IKinematics*>(Visual()); R_ASSERT(pWeaponVisual);
 
 	u16  bone_id;
 	UpdateHUDAddonsVisibility								();	
@@ -2009,7 +2009,7 @@ CInventoryItem *CWeapon::can_kill	(CInventory *inventory) const
 	TIItemContainer::iterator I = inventory->m_all.begin();
 	TIItemContainer::iterator E = inventory->m_all.end();
 	for ( ; I != E; ++I) {
-		CInventoryItem	*inventory_item = smart_cast<CInventoryItem*>(*I);
+		CInventoryItem	*inventory_item = dynamic_cast<CInventoryItem*>(*I);
 		if (!inventory_item)
 			continue;
 		
@@ -2029,7 +2029,7 @@ const CInventoryItem *CWeapon::can_kill	(const xr_vector<const CGameObject*> &it
 	xr_vector<const CGameObject*>::const_iterator I = items.begin();
 	xr_vector<const CGameObject*>::const_iterator E = items.end();
 	for ( ; I != E; ++I) {
-		const CInventoryItem	*inventory_item = smart_cast<const CInventoryItem*>(*I);
+		const CInventoryItem	*inventory_item = dynamic_cast<const CInventoryItem*>(*I);
 		if (!inventory_item)
 			continue;
 
@@ -2052,7 +2052,7 @@ bool CWeapon::ready_to_kill	() const
 
 u8 CWeapon::GetCurrentHudOffsetIdx()
 {
-    CActor* pActor = smart_cast<CActor*>(H_Parent());
+    CActor* pActor = dynamic_cast<CActor*>(H_Parent());
     if (!pActor)
         return 0;
 
@@ -2068,7 +2068,7 @@ u8 CWeapon::GetCurrentHudOffsetIdx()
 
 void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 {
-    auto pActor = smart_cast<const CActor*>(H_Parent());
+    auto pActor = dynamic_cast<const CActor*>(H_Parent());
 	if(!pActor)
 		return;
 
@@ -2344,14 +2344,14 @@ float CWeapon::GetConditionToShow	() const
 BOOL CWeapon::ParentMayHaveAimBullet	()
 {
 	CObject* O=H_Parent();
-	CEntityAlive* EA=smart_cast<CEntityAlive*>(O);
+	CEntityAlive* EA=dynamic_cast<CEntityAlive*>(O);
 	return EA->cast_actor()!=0;
 }
 
 BOOL CWeapon::ParentIsActor	()
 {
 	CObject* O=H_Parent();
-	CEntityAlive* EA=smart_cast<CEntityAlive*>(O);
+	CEntityAlive* EA=dynamic_cast<CEntityAlive*>(O);
 	return EA->cast_actor()!=0;
 }
 
@@ -2474,7 +2474,7 @@ void CWeapon::UpdateSecondVP()
 	bool b_is_active_item = (m_pInventory != NULL) && (m_pInventory->ActiveItem() == this);
 	R_ASSERT(ParentIsActor() && b_is_active_item); // Эта функция должна вызываться только для оружия в руках нашего игрока
 
-	CActor* pActor = smart_cast<CActor*>(H_Parent());
+	CActor* pActor = dynamic_cast<CActor*>(H_Parent());
 	
 	bool bCond_1 = m_zoom_params.m_fZoomRotationFactor > 0.05f;							// Мы должны целиться
 
@@ -2526,6 +2526,6 @@ void CWeapon::ZoomDec()
 
 bool CWeapon::IsGrenadeLauncherMode()
 {
-    CWeaponMagazinedWGrenade* maggl = smart_cast<CWeaponMagazinedWGrenade*>(this);
+    CWeaponMagazinedWGrenade* maggl = dynamic_cast<CWeaponMagazinedWGrenade*>(this);
     return !!(maggl && maggl->m_bGrenadeMode);
 }

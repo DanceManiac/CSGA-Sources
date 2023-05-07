@@ -35,7 +35,7 @@ BOOL CPhysicsSkeletonObject::net_Spawn(CSE_Abstract* DC)
 void	CPhysicsSkeletonObject::SpawnInitPhysics	(CSE_Abstract	*D)
 {
 	CreatePhysicsShell(D);
-	IKinematics* K=smart_cast<IKinematics*>	(Visual());
+	IKinematics* K=dynamic_cast<IKinematics*>	(Visual());
 	if(K)	
 	{	
 		K->CalculateBones_Invalidate();
@@ -59,7 +59,7 @@ void CPhysicsSkeletonObject::Load(LPCSTR section)
 
 void CPhysicsSkeletonObject::CreatePhysicsShell(CSE_Abstract* e)
 {
-	CSE_PHSkeleton	*po=smart_cast<CSE_PHSkeleton*>(e);
+	CSE_PHSkeleton	*po=dynamic_cast<CSE_PHSkeleton*>(e);
 	if(m_pPhysicsShell) return;
 	if (!Visual()) return;
 	m_pPhysicsShell=P_build_Shell(this,!po->_flags.test(CSE_PHSkeleton::flActive));

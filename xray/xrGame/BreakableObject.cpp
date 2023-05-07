@@ -36,13 +36,13 @@ void CBreakableObject::Load(LPCSTR section)
 BOOL CBreakableObject::net_Spawn(CSE_Abstract* DC)
 {
 	CSE_Abstract* e = (CSE_Abstract*)(DC);
-	CSE_ALifeObjectBreakable* obj = smart_cast<CSE_ALifeObjectBreakable*>(e);
+	CSE_ALifeObjectBreakable* obj = dynamic_cast<CSE_ALifeObjectBreakable*>(e);
 	R_ASSERT(obj);
 	bool res = inherited::net_Spawn(DC);
 	xr_delete(collidable.model);
 	collidable.model = xr_new<CCF_Skeleton>(this);
 	// set bone id
-	R_ASSERT(Visual()&&smart_cast<IKinematics*>(Visual()));
+	R_ASSERT(Visual()&&dynamic_cast<IKinematics*>(Visual()));
 	fHealth	= obj->m_health;
 	processing_deactivate();
 	setVisible(TRUE);
@@ -107,7 +107,7 @@ BOOL CBreakableObject::UsedAI_Locations()
 
 void CBreakableObject::CreateUnbroken()
 {
-	m_pUnbrokenObject=P_BuildStaticGeomShell(smart_cast<CGameObject*>(this),ObjectContactCallback);
+	m_pUnbrokenObject=P_BuildStaticGeomShell(dynamic_cast<CGameObject*>(this),ObjectContactCallback);
 }
 void CBreakableObject::DestroyUnbroken()
 {
@@ -119,7 +119,7 @@ void CBreakableObject::DestroyUnbroken()
 //void CBreakableObject::CreateBroken()
 //{
 	//CPhysicsShell* shell=P_create_splited_Shell();
-	//shell->preBuild_FromKinematics(smart_cast<IKinematics*>(Visual()));
+	//shell->preBuild_FromKinematics(dynamic_cast<IKinematics*>(Visual()));
 	//shell->mXFORM.set(XFORM());
 	//shell->set_PhysicsRefObject(this);
 	////m_Shell->Build();
@@ -146,7 +146,7 @@ void CBreakableObject::CreateBroken()
 	phys_shell_verify_object_model ( *this );
 	processing_activate();
 	m_Shell=P_create_splited_Shell();
-	m_Shell->preBuild_FromKinematics(smart_cast<IKinematics*>(Visual()));
+	m_Shell->preBuild_FromKinematics(dynamic_cast<IKinematics*>(Visual()));
 	m_Shell->mXFORM.set(XFORM());
 	//m_Shell->SetAirResistance(0.002f*skel_airr_lin_factor,
 	//	0.3f*skel_airr_ang_factor);
@@ -166,7 +166,7 @@ void CBreakableObject::CreateBroken()
 void CBreakableObject::ActivateBroken()
 {
 	m_pPhysicsShell=m_Shell;
-	IKinematics* K=smart_cast<IKinematics*>(Visual());
+	IKinematics* K=dynamic_cast<IKinematics*>(Visual());
 	m_pPhysicsShell->set_Kinematics(K);
 	m_pPhysicsShell->RunSimulation();
 	m_pPhysicsShell->SetCallbacks( );
@@ -245,8 +245,8 @@ void CBreakableObject::ObjectContactCallback(bool&/**do_colide/**/,bool bo1,dCon
 	dBodyID	body;
 	float norm_sign;
 
-	this_object1 = smart_cast<CBreakableObject*>( usr_data_1->ph_ref_object );
-	this_object2 = smart_cast<CBreakableObject*>( usr_data_2->ph_ref_object );
+	this_object1 = dynamic_cast<CBreakableObject*>( usr_data_1->ph_ref_object );
+	this_object2 = dynamic_cast<CBreakableObject*>( usr_data_2->ph_ref_object );
 	if(
 		usr_data_1&&
 		usr_data_1->ph_ref_object&&

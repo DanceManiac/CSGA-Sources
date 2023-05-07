@@ -154,7 +154,7 @@ void SArtefactActivation::ChangeEffects()
 												iFloor(state_def.m_time*1000) );
 	};
 	if(state_def.m_animation.size()){
-		IKinematicsAnimated	*K=smart_cast<IKinematicsAnimated*>(m_af->Visual());
+		IKinematicsAnimated	*K=dynamic_cast<IKinematicsAnimated*>(m_af->Visual());
 		if(K)K->PlayCycle(*state_def.m_animation);
 	}
 
@@ -186,7 +186,7 @@ void SArtefactActivation::SpawnAnomaly()
 															0xffff,
 															true
 		);
-		CSE_ALifeAnomalousZone*		AlifeZone = smart_cast<CSE_ALifeAnomalousZone*>(object);
+		CSE_ALifeAnomalousZone*		AlifeZone = dynamic_cast<CSE_ALifeAnomalousZone*>(object);
 		VERIFY(AlifeZone);
 		CShapeData::shape_def		_shape;
 		_shape.data.sphere.P.set	(0.0f,0.0f,0.0f);

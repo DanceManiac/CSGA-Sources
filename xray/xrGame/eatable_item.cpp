@@ -34,7 +34,7 @@ CEatableItem::~CEatableItem()
 
 DLL_Pure *CEatableItem::_construct	()
 {
-	m_physic_item	= smart_cast<CPhysicItem*>(this);
+	m_physic_item	= dynamic_cast<CPhysicItem*>(this);
 	return			(inherited::_construct());
 }
 
@@ -134,7 +134,7 @@ void CEatableItem::load				(IReader &packet)
 
 void CEatableItem::UseBy (CEntityAlive* entity_alive)
 {
-	CInventoryOwner* IO	= smart_cast<CInventoryOwner*>(entity_alive);
+	CInventoryOwner* IO	= dynamic_cast<CInventoryOwner*>(entity_alive);
 	R_ASSERT		(IO);
 	R_ASSERT		(m_pInventory==IO->m_inventory);
 	R_ASSERT		(object().H_Parent()->ID()==entity_alive->ID());

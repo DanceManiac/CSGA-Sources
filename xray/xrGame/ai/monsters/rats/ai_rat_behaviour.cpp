@@ -23,7 +23,7 @@ void CAI_Rat::update_home_position	()
 	VERIFY						(leader);
 
 	if (ID() != leader->ID())	{
-		CAI_Rat					*rat_leader = smart_cast<CAI_Rat*>(leader);
+		CAI_Rat					*rat_leader = dynamic_cast<CAI_Rat*>(leader);
 		VERIFY					(rat_leader);
 		if (m_home_position.distance_to(rat_leader->m_home_position) > EPS_L)
 			add_active_member	(true);

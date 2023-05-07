@@ -267,9 +267,6 @@
     <ClInclude Include="..\..\xrServerEntities\object_item_single_inline.h">
       <Filter>Common\ObjectFactory\object_item_single</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\xrServerEntities\smart_cast.h">
-      <Filter>Common\SmartCast</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\xrServerEntities\associative_vector.h">
       <Filter>Common\associative_vector</Filter>
     </ClInclude>

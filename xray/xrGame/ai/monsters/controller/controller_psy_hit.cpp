@@ -22,7 +22,7 @@ void CControllerPsyHit::reinit()
 {
 	inherited::reinit();
 
-	IKinematicsAnimated	*skel = smart_cast<IKinematicsAnimated *>(m_object->Visual());
+	IKinematicsAnimated	*skel = dynamic_cast<IKinematicsAnimated *>(m_object->Visual());
 	m_stage[0] = skel->ID_Cycle_Safe("psy_attack_0"); VERIFY(m_stage[0]);
 	m_stage[1] = skel->ID_Cycle_Safe("psy_attack_1"); VERIFY(m_stage[1]);
 	m_stage[2] = skel->ID_Cycle_Safe("psy_attack_2"); VERIFY(m_stage[2]);
@@ -36,7 +36,7 @@ void CControllerPsyHit::reinit()
 bool CControllerPsyHit::tube_ready () const
 {
 	u32 tube_condition_min_delay	=	5000;
-	if ( CController* controller = smart_cast<CController*>(m_object) )
+	if ( CController* controller = dynamic_cast<CController*>(m_object) )
 		tube_condition_min_delay	=	u32(controller->m_tube_condition_min_delay);
 
 	return m_time_last_tube + tube_condition_min_delay < time();
@@ -210,7 +210,7 @@ void CControllerPsyHit::death_glide_start()
 	target_pos.mad		(src_pos,dir,dist-4.8f);
 	
 	Actor()->Cameras().AddCamEffector(xr_new<CControllerPsyHitCamEffector>(eCEControllerPsyHit, src_pos,target_pos, m_man->animation().motion_time(m_stage[1], m_object->Visual())));
-	smart_cast<CController *>(m_object)->draw_fire_particles();
+	dynamic_cast<CController *>(m_object)->draw_fire_particles();
 
 	dir.sub(src_pos,target_pos);
 	dir.normalize();
@@ -246,7 +246,7 @@ void CControllerPsyHit::death_glide_end()
 	CEffectorCam* ce = Actor()->Cameras().GetCamEffector(eCEControllerPsyHit);
 	VERIFY(ce);
 	Actor()->Cameras().RemoveCamEffector(eCEControllerPsyHit);
-	CController *monster = smart_cast<CController *>(m_object);
+	CController *monster = dynamic_cast<CController *>(m_object);
 	monster->draw_fire_particles();
 
 
@@ -262,7 +262,7 @@ void CControllerPsyHit::death_glide_end()
 void CControllerPsyHit::update_frame()
 {
 	//if (m_sound_state == eStart) {
-	//	CController *monster = smart_cast<CController *>(m_object);
+	//	CController *monster = dynamic_cast<CController *>(m_object);
 	//	if (!monster->m_sound_tube_start._feedback()) {
 	//		m_sound_state = ePull;
 	//		monster->m_sound_tube_pull.play_at_pos(Actor(), Fvector().set(0.f, 0.f, 0.f), sm_2D);
@@ -272,7 +272,7 @@ void CControllerPsyHit::update_frame()
 
 void CControllerPsyHit::set_sound_state(ESoundState state)
 {
-	CController *monster = smart_cast<CController *>(m_object);
+	CController *monster = dynamic_cast<CController *>(m_object);
 	if (state == ePrepare) {
 		monster->m_sound_tube_prepare.play_at_pos(Actor(), Fvector().set(0.f, 0.f, 0.f), sm_2D);
 	} else 
@@ -300,7 +300,7 @@ void CControllerPsyHit::set_sound_state(ESoundState state)
 
 void CControllerPsyHit::hit()
 {
-	//CController *monster	= smart_cast<CController *>(m_object);
+	//CController *monster	= dynamic_cast<CController *>(m_object);
 	
 	set_sound_state			(eHit);
 	//m_object->Hit_Psy		(Actor(), monster->m_tube_damage);

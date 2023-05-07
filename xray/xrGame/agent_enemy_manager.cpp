@@ -77,7 +77,7 @@ struct CEnemyFiller {
 struct remove_wounded_predicate {
 	IC	bool	operator()						(const CMemberEnemy &enemy) const
 	{
-		const CAI_Stalker			*stalker = smart_cast<const CAI_Stalker*>(enemy.m_object);
+		const CAI_Stalker			*stalker = dynamic_cast<const CAI_Stalker*>(enemy.m_object);
 		if (!stalker)
 			return					(false);
 
@@ -127,7 +127,7 @@ void CAgentEnemyManager::fill_enemies			()
 		ENEMIES::iterator				E = enemies().end();
 		for ( ; I != E; ++I) {
 			if (m_only_wounded_left) {
-				const CAI_Stalker			*stalker = smart_cast<const CAI_Stalker*>((*I).m_object);
+				const CAI_Stalker			*stalker = dynamic_cast<const CAI_Stalker*>((*I).m_object);
 				if (!stalker || !stalker->wounded())
 					m_only_wounded_left	= false;
 				else
@@ -135,7 +135,7 @@ void CAgentEnemyManager::fill_enemies			()
 			}
 			else {
 				if (!m_is_any_wounded) {
-					const CAI_Stalker		*stalker = smart_cast<const CAI_Stalker*>((*I).m_object);
+					const CAI_Stalker		*stalker = dynamic_cast<const CAI_Stalker*>((*I).m_object);
 					if (stalker && stalker->wounded())
 						m_is_any_wounded	= true;
 				}

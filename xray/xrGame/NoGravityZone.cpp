@@ -26,7 +26,7 @@ void CNoGravityZone::UpdateWorkload(u32 dt)
 void CNoGravityZone::switchGravity(SZoneObjectInfo& io, bool val)
 {
 	if(io.object->getDestroy()) return;
-	CPhysicsShellHolder* sh= smart_cast<CPhysicsShellHolder*>(io.object);
+	CPhysicsShellHolder* sh= dynamic_cast<CPhysicsShellHolder*>(io.object);
 	if(!sh)return;
 	CPhysicsShell* shell=sh->PPhysicsShell();
 	if(shell&&shell->isActive())
@@ -47,7 +47,7 @@ void CNoGravityZone::switchGravity(SZoneObjectInfo& io, bool val)
 	}
 	if(!io.nonalive_object)
 	{
-		CEntityAlive* ea=smart_cast<CEntityAlive*>(io.object);
+		CEntityAlive* ea=dynamic_cast<CEntityAlive*>(io.object);
 		CPHMovementControl*mc=ea->character_physics_support()->movement();
 		mc->SetApplyGravity(BOOL(val));
 		mc->SetForcedPhysicsControl(!val);

@@ -34,7 +34,7 @@ void ShowPropEditor(bool& show)
             ImGui::Text("Visual: %s", object->cNameVisual().c_str());
         }
     }
-    CGameObject* gameObject = smart_cast<CGameObject*>(object);
+    CGameObject* gameObject = dynamic_cast<CGameObject*>(object);
     if (gameObject) {
         ImGui::Spacing();
         if (ImGui::CollapsingHeader("CGameObject")) {
@@ -70,7 +70,7 @@ void ShowPropEditor(bool& show)
                 show_logic_editor = true;
         }
     }
-    CEntity* entity = smart_cast<CEntity*>(object);
+    CEntity* entity = dynamic_cast<CEntity*>(object);
     if (entity) {
         ImGui::Spacing();
         if (ImGui::CollapsingHeader("CEntityAlive")) {
@@ -79,7 +79,7 @@ void ShowPropEditor(bool& show)
                 entity->SetfHealth(health);
         }
     }
-    CInventoryOwner* invOwner = smart_cast<CInventoryOwner*>(object);
+    CInventoryOwner* invOwner = dynamic_cast<CInventoryOwner*>(object);
     if (invOwner) {
         ImGui::Spacing();
         if (ImGui::CollapsingHeader("CInventoryOwner")) {
@@ -103,7 +103,7 @@ void ShowLuaBinder(bool& show)
     if (wnd.Collapsed)
         return;
 
-    CGameObject* gameObject = smart_cast<CGameObject*>(object);
+    CGameObject* gameObject = dynamic_cast<CGameObject*>(object);
     if (!gameObject || !gameObject->object()) {
         ImGui::Text("no lua binder");
         return;

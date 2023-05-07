@@ -60,9 +60,9 @@ void CWeaponRG6::FireStart ()
 		p1.set(get_LastFP()); 
 		d.set(get_LastFD());
 
-		CEntity* E = smart_cast<CEntity*>(H_Parent());
+		CEntity* E = dynamic_cast<CEntity*>(H_Parent());
 		if (E){
-			CInventoryOwner* io		= smart_cast<CInventoryOwner*>(H_Parent());
+			CInventoryOwner* io		= dynamic_cast<CInventoryOwner*>(H_Parent());
 			if(NULL == io->inventory().ActiveItem())
 			{
 			Log("current_state", GetState() );
@@ -80,7 +80,7 @@ void CWeaponRG6::FireStart ()
 											launch_matrix.j, launch_matrix.i);
 		launch_matrix.c.set(p1);
 
-		if (IsZoomed() && smart_cast<CActor*>(H_Parent()))
+		if (IsZoomed() && dynamic_cast<CActor*>(H_Parent()))
 		{
 			H_Parent()->setEnabled(FALSE);
 			setEnabled(FALSE);
@@ -121,7 +121,7 @@ void CWeaponRG6::FireStart ()
 		VERIFY2(_valid(launch_matrix),"CWeaponRG6::FireStart. Invalid launch_matrix");
 		CRocketLauncher::LaunchRocket(launch_matrix, d, zero_vel);
 
-		CExplosiveRocket* pGrenade = smart_cast<CExplosiveRocket*>(getCurrentRocket());
+		CExplosiveRocket* pGrenade = dynamic_cast<CExplosiveRocket*>(getCurrentRocket());
 		VERIFY(pGrenade);
 		pGrenade->SetInitiator(H_Parent()->ID());
 

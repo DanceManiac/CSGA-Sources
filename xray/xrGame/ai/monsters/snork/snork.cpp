@@ -286,7 +286,7 @@ void CSnork::on_activate_control(ControlCom::EControlType type)
 #ifdef _DEBUG
 void CSnork::debug_on_key(int key)
 {
-	CActor *actor = smart_cast<CActor *>(Level().CurrentEntity());
+	CActor *actor = dynamic_cast<CActor *>(Level().CurrentEntity());
 	if (!actor) return;
 
 	switch (key){

@@ -76,7 +76,7 @@ void CDialogHolder::StartMenu (CUIDialogWnd* pDialog, bool bDoHideIndicators)
 
 	if(g_pGameLevel)
 	{
-		CActor* A	= smart_cast<CActor*>( Level().CurrentViewEntity() );
+		CActor* A	= dynamic_cast<CActor*>( Level().CurrentViewEntity() );
 		if ( A && pDialog->StopAnyMove() )
 		{
 			A->StopAnyMove				();

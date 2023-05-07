@@ -17,13 +17,13 @@ bool CCustomDetector::CheckCompatibilityInt(CHudItem* itm)
 	u32 slot						= iitm.GetSlot();
 	bool bres = (slot==PISTOL_SLOT || slot==KNIFE_SLOT || slot==BOLT_SLOT);
 
-	CWeaponKnife* WK = smart_cast<CWeaponKnife*>(itm);
+	CWeaponKnife* WK = dynamic_cast<CWeaponKnife*>(itm);
 	if(!WK && itm->GetState()!=CHUDState::eShowing)
 		bres = bres && !itm->IsPending();
 
 	if(bres)
 	{
-		CWeapon* W = smart_cast<CWeapon*>(itm);
+		CWeapon* W = dynamic_cast<CWeapon*>(itm);
 		if (W)
 			bres = bres
 				&& (W->GetState() != CHUDState::eBore)
@@ -64,8 +64,8 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
 {
     m_bFastAnimMode = bFastMode;
 
-    CWeapon* wpn = smart_cast<CWeapon*>(m_pInventory->ActiveItem());
-    CWeaponKnife* knf = smart_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
+    CWeapon* wpn = dynamic_cast<CWeapon*>(m_pInventory->ActiveItem());
+    CWeaponKnife* knf = dynamic_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
 
     if (GetState() == eHidden)
 	{
@@ -229,7 +229,7 @@ bool CCustomDetector::TryPlayAnimIdle()
 
 const char* CCustomDetector::GetAnimAimName()
 {
-	auto pActor = smart_cast<const CActor*>(H_Parent());
+	auto pActor = dynamic_cast<const CActor*>(H_Parent());
 	if (pActor)
 	{
         u32 state = pActor->get_state();
@@ -273,12 +273,12 @@ void CCustomDetector::PlayAnimIdle()
 
 void CCustomDetector::SetHideDetStateInWeapon()
 {
-	CWeapon* wpn = smart_cast<CWeapon*>(m_pInventory->ActiveItem());
+	CWeapon* wpn = dynamic_cast<CWeapon*>(m_pInventory->ActiveItem());
 
 	if (!wpn)
 		return;
 
-	CWeaponKnife* knf = smart_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
+	CWeaponKnife* knf = dynamic_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
 
 	if (knf)
 		return;
@@ -488,7 +488,7 @@ BOOL CAfList::feel_touch_contact	(CObject* O)
 	bool res					 = (it!=m_TypesMap.end());
 	if(res)
 	{
-		CArtefact*	pAf				= smart_cast<CArtefact*>(O);
+		CArtefact*	pAf				= dynamic_cast<CArtefact*>(O);
 		
 		if(pAf->GetAfRank()>m_af_rank)
 			res = false;

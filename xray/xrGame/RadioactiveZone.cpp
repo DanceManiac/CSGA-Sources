@@ -83,7 +83,7 @@ void CRadioactiveZone::feel_touch_new					(CObject* O	)
 	inherited::feel_touch_new(O);
 	if (GameID() != eGameIDSingle)
 	{
-		if (smart_cast<CActor*>(O))
+		if (dynamic_cast<CActor*>(O))
 		{
 			CreateHit(O->ID(),ID(),Fvector().set(0, 0, 0),0.0f,0.0f,BI_NONE,Fvector().set(0, 0, 0),0.0f,m_eHitTypeBlowout);// ALife::eHitTypeRadiation
 		}
@@ -94,7 +94,7 @@ void CRadioactiveZone::feel_touch_new					(CObject* O	)
 BOOL CRadioactiveZone::feel_touch_contact(CObject* O)
 {
 
-	CActor* A = smart_cast<CActor*>(O);
+	CActor* A = dynamic_cast<CActor*>(O);
 	if ( A )
 	{ 
 		if (!((CCF_Shape*)CFORM())->Contact(O))		return	FALSE;
@@ -112,7 +112,7 @@ void CRadioactiveZone::UpdateWorkload					(u32	dt)
 		XFORM().transform_tiny(pos,CFORM()->getSphere().P);
 		for(it = m_ObjectInfoMap.begin(); m_ObjectInfoMap.end() != it; ++it) 
 		{
-			if( !(*it).object->getDestroy() && smart_cast<CActor*>((*it).object))
+			if( !(*it).object->getDestroy() && dynamic_cast<CActor*>((*it).object))
 			{
 				//=====================================
 				NET_Packet	l_P;

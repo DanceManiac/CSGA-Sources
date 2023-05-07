@@ -304,7 +304,7 @@ void	CEntityAlive::Hit							(SHit* pHDS)
 	inherited::Hit(&HDS);
 
 	if (g_Alive()&&IsGameTypeSingle()) {
-		CEntityAlive* EA = smart_cast<CEntityAlive*>(HDS.who);
+		CEntityAlive* EA = dynamic_cast<CEntityAlive*>(HDS.who);
 		if(EA && EA->g_Alive() && EA->ID() != ID())
 		{
 			RELATION_REGISTRY().FightRegister(EA->ID(), ID(), this->tfGetRelationType(EA), HDS.damage());
@@ -317,10 +317,10 @@ void	CEntityAlive::Hit							(SHit* pHDS)
 void CEntityAlive::Die	(CObject* who)
 {
 	if(IsGameTypeSingle())
-		RELATION_REGISTRY().Action(smart_cast<CEntityAlive*>(who), this, RELATION_REGISTRY::KILL);
+		RELATION_REGISTRY().Action(dynamic_cast<CEntityAlive*>(who), this, RELATION_REGISTRY::KILL);
 	inherited::Die(who);
 	
-	const CGameObject *who_object = smart_cast<const CGameObject*>(who);
+	const CGameObject *who_object = dynamic_cast<const CGameObject*>(who);
 	callback(GameObject::eDeath)(lua_game_object(), who_object ? who_object->lua_game_object() : 0);
 
 	if (!getDestroy() && (GameID() == eGameIDSingle)) {
@@ -331,7 +331,7 @@ void CEntityAlive::Die	(CObject* who)
 	}
 
 	// disable react to sound
-	ISpatial* self	= smart_cast<ISpatial*> (this);
+	ISpatial* self	= dynamic_cast<ISpatial*> (this);
 	if (self)		self->spatial.type &=~STYPE_REACTTOSOUND;
 	if(character_physics_support())
 		character_physics_support()->in_Die();
@@ -377,7 +377,7 @@ void CEntityAlive::BloodyWallmarks (float P, const Fvector &dir, s16 element,
 		return;
 
 	//вычислить координаты попадания
-	IKinematics* V = smart_cast<IKinematics*>(Visual());
+	IKinematics* V = dynamic_cast<IKinematics*>(Visual());
 		
 	Fvector start_pos = position_in_object_space;
 	if(V)
@@ -460,7 +460,7 @@ void CEntityAlive::StartFireParticles(CWound* pWound)
 			m_ParticleWounds.push_back(pWound);
 		}
 
-		IKinematics* V = smart_cast<IKinematics*>(Visual());
+		IKinematics* V = dynamic_cast<IKinematics*>(Visual());
 
 		u16 particle_bone = CParticlesPlayer::GetNearestBone(V, pWound->GetBoneNum());
 		VERIFY(particle_bone  < 64 || BI_NONE == particle_bone);
@@ -617,7 +617,7 @@ CEntityConditionSimple* CEntityAlive::create_entity_condition	(CEntityConditionS
 	if(!ec)
 		m_entity_condition		= xr_new<CEntityCondition>(this);
 	else
-		m_entity_condition		= smart_cast<CEntityCondition*>(ec);
+		m_entity_condition		= dynamic_cast<CEntityCondition*>(ec);
 	
 	return		(inherited::create_entity_condition(m_entity_condition));
 }

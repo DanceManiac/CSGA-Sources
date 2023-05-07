@@ -11,7 +11,7 @@ void CActorInputHandler::reinit()
 
 void CActorInputHandler::install()
 {
-	m_actor = smart_cast<CActor*>	(Level().CurrentEntity());
+	m_actor = dynamic_cast<CActor*>	(Level().CurrentEntity());
 	VERIFY(m_actor);
 
 	m_actor->set_input_external_handler(this);

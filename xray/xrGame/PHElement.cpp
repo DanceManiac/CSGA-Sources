@@ -1349,7 +1349,7 @@ const Fvector& CPHElement::mass_Center()const
 
 CPhysicsShell* CPHElement::PhysicsShell()
 {
-	return smart_cast<CPhysicsShell*>(m_shell);
+	return dynamic_cast<CPhysicsShell*>(m_shell);
 }
 
 CPHShell* CPHElement::PHShell()

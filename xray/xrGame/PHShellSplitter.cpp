@@ -27,7 +27,7 @@ shell_root CPHShellSplitterHolder::SplitJoint(u16 aspl)
 	//create _new physics shell 
 
 	CPhysicsShell *new_shell=P_create_Shell();
-	CPHShell	  *new_shell_desc=smart_cast<CPHShell*>(new_shell);
+	CPHShell	  *new_shell_desc=dynamic_cast<CPHShell*>(new_shell);
 	new_shell_desc->mXFORM.set(m_pShell->mXFORM);
 	new_shell_desc->m_object_in_root.set(m_pShell->m_object_in_root);
 	SPLITTER_I splitter=m_splitters.begin()+aspl;
@@ -274,7 +274,7 @@ shell_root CPHShellSplitterHolder::ElementSingleSplit(const element_fracture &sp
 	//const CPHShellSplitter& splitter=m_splitters[aspl];
 	//CPHElement* element=m_pShell->elements[splitter.m_element];
 	CPhysicsShell *new_shell_last=P_create_Shell();
-	CPHShell	  *new_shell_last_desc=smart_cast<CPHShell*>(new_shell_last);
+	CPHShell	  *new_shell_last_desc=dynamic_cast<CPHShell*>(new_shell_last);
 	new_shell_last->mXFORM.set(m_pShell->mXFORM);	const u16 start_joint=split_elem.second.m_start_jt_num;
 	R_ASSERT(_valid(new_shell_last->mXFORM));
 	const u16 end_joint=split_elem.second.m_end_jt_num;

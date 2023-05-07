@@ -34,7 +34,7 @@ CPhysicObject::~CPhysicObject(void)
 BOOL CPhysicObject::net_Spawn(CSE_Abstract* DC)
 {
 	CSE_Abstract			*e	= (CSE_Abstract*)(DC);
-	CSE_ALifeObjectPhysic	*po	= smart_cast<CSE_ALifeObjectPhysic*>(e);
+	CSE_ALifeObjectPhysic	*po	= dynamic_cast<CSE_ALifeObjectPhysic*>(e);
 	R_ASSERT				(po);
 	m_type					= EPOType(po->type);
 	m_mass					= po->mass;
@@ -135,21 +135,21 @@ void	CPhysicObject::SpawnInitPhysics	(CSE_Abstract* D)
 }
 void CPhysicObject::RunStartupAnim(CSE_Abstract *D)
 {
-	if(Visual()&&smart_cast<IKinematics*>(Visual()))
+	if(Visual()&&dynamic_cast<IKinematics*>(Visual()))
 	{
-		//		CSE_PHSkeleton	*po	= smart_cast<CSE_PHSkeleton*>(D);
+		//		CSE_PHSkeleton	*po	= dynamic_cast<CSE_PHSkeleton*>(D);
 		IKinematicsAnimated*	PKinematicsAnimated=NULL;
-		R_ASSERT			(Visual()&&smart_cast<IKinematics*>(Visual()));
-		PKinematicsAnimated	=smart_cast<IKinematicsAnimated*>(Visual());
+		R_ASSERT			(Visual()&&dynamic_cast<IKinematics*>(Visual()));
+		PKinematicsAnimated	=dynamic_cast<IKinematicsAnimated*>(Visual());
 		if(PKinematicsAnimated)
 		{
-			CSE_Visual					*visual = smart_cast<CSE_Visual*>(D);
+			CSE_Visual					*visual = dynamic_cast<CSE_Visual*>(D);
 			R_ASSERT					(visual);
 			R_ASSERT2					(*visual->startup_animation,"no startup animation");
 			m_anim_blend				= m_anim_script_callback.play_cycle( PKinematicsAnimated, visual->startup_animation );
 		}
-		smart_cast<IKinematics*>(Visual())->CalculateBones_Invalidate();
-		smart_cast<IKinematics*>(Visual())->CalculateBones	(TRUE);
+		dynamic_cast<IKinematics*>(Visual())->CalculateBones_Invalidate();
+		dynamic_cast<IKinematics*>(Visual())->CalculateBones	(TRUE);
 	}
 }
 IC	bool check_blend(CBlend * b, LPCSTR name, LPCSTR sect, LPCSTR visual)
@@ -199,12 +199,12 @@ void	CPhysicObject::		anim_time_set					( float time )
 	if( time < 0.f || time > m_anim_blend->timeTotal )
 	{
 #ifdef	DEBUG	
-		Msg( " ! can not set blend time %f - it must be in range 0 - %f(timeTotal) obj: %s, model: %s, anim: %s", time, m_anim_blend->timeTotal, cName().c_str(), cNameVisual().c_str(), smart_cast<IKinematicsAnimated*>( PPhysicsShell()->PKinematics() )->LL_MotionDefName_dbg( m_anim_blend->motionID ).first );
+		Msg( " ! can not set blend time %f - it must be in range 0 - %f(timeTotal) obj: %s, model: %s, anim: %s", time, m_anim_blend->timeTotal, cName().c_str(), cNameVisual().c_str(), dynamic_cast<IKinematicsAnimated*>( PPhysicsShell()->PKinematics() )->LL_MotionDefName_dbg( m_anim_blend->motionID ).first );
 #endif
 		return;
 	}
 	m_anim_blend->timeCurrent = time;
-	IKinematics *K = smart_cast<IKinematics*>(Visual());
+	IKinematics *K = dynamic_cast<IKinematics*>(Visual());
 	VERIFY( K );
 	K->CalculateBones_Invalidate();
 	K->CalculateBones(TRUE);
@@ -231,7 +231,7 @@ void CPhysicObject::net_Save(NET_Packet& P)
 }
 void CPhysicObject::CreatePhysicsShell(CSE_Abstract* e)
 {
-	CSE_ALifeObjectPhysic	*po	= smart_cast<CSE_ALifeObjectPhysic*>(e);
+	CSE_ALifeObjectPhysic	*po	= dynamic_cast<CSE_ALifeObjectPhysic*>(e);
 	CreateBody(po);
 }
 
@@ -242,7 +242,7 @@ void CPhysicObject::CreateSkeleton(CSE_ALifeObjectPhysic* po)
 	LPCSTR	fixed_bones=*po->fixed_bones;
 	m_pPhysicsShell=P_build_Shell(this,!po->_flags.test(CSE_PHSkeleton::flActive),fixed_bones);
 	ApplySpawnIniToPhysicShell(&po->spawn_ini(),m_pPhysicsShell,fixed_bones[0]!='\0');
-	ApplySpawnIniToPhysicShell(smart_cast<IKinematics*>(Visual())->LL_UserData(),m_pPhysicsShell,fixed_bones[0]!='\0');
+	ApplySpawnIniToPhysicShell(dynamic_cast<IKinematics*>(Visual())->LL_UserData(),m_pPhysicsShell,fixed_bones[0]!='\0');
 }
 
 void CPhysicObject::Load(LPCSTR section)
@@ -308,7 +308,7 @@ void CPhysicObject::PHObjectPositionUpdate	()
 
 void CPhysicObject::AddElement(CPhysicsElement* root_e, int id)
 {
-	IKinematics* K		= smart_cast<IKinematics*>(Visual());
+	IKinematics* K		= dynamic_cast<IKinematics*>(Visual());
 
 	CPhysicsElement* E	= P_create_Element();
 	CBoneInstance& B	= K->LL_GetBoneInstance(u16(id));
@@ -348,7 +348,7 @@ void CPhysicObject::AddElement(CPhysicsElement* root_e, int id)
 void CPhysicObject::CreateBody(CSE_ALifeObjectPhysic* po) {
 
 	if(m_pPhysicsShell) return;
-	IKinematics* pKinematics=smart_cast<IKinematics*>(Visual());
+	IKinematics* pKinematics=dynamic_cast<IKinematics*>(Visual());
 	switch(m_type) {
 		case epotBox : {
 			m_pPhysicsShell=P_build_SimpleShell(this,m_mass,!po->_flags.test(CSE_ALifeObjectPhysic::flActive));
@@ -408,7 +408,7 @@ BOOL CPhysicObject::UsedAI_Locations()
 void CPhysicObject::InitServerObject(CSE_Abstract * D)
 {
 	CPHSkeleton::InitServerObject(D);
-	CSE_ALifeObjectPhysic		*l_tpALifePhysicObject = smart_cast<CSE_ALifeObjectPhysic*>(D);
+	CSE_ALifeObjectPhysic		*l_tpALifePhysicObject = dynamic_cast<CSE_ALifeObjectPhysic*>(D);
 	if(!l_tpALifePhysicObject)return;
 	l_tpALifePhysicObject->type			= u32(m_type);
 }

@@ -97,7 +97,7 @@ void CUIKickPlayer::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 {
 	if (LIST_ITEM_SELECT == msg && pWnd == m_ui_players_list)
 	{		
-		CUIListBoxItem* itm		= smart_cast<CUIListBoxItem*>(m_ui_players_list->GetSelected());
+		CUIListBoxItem* itm		= dynamic_cast<CUIListBoxItem*>(m_ui_players_list->GetSelected());
 		m_selected_item_text	= itm->m_text.GetText();
 	}
 	else if (BUTTON_CLICKED == msg)
@@ -112,7 +112,7 @@ void CUIKickPlayer::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 
 void CUIKickPlayer::OnBtnOk()
 {
-	CUIListBoxItem* item = smart_cast<CUIListBoxItem*>(m_ui_players_list->GetSelected());
+	CUIListBoxItem* item = dynamic_cast<CUIListBoxItem*>(m_ui_players_list->GetSelected());
 	if (item)
 	{
 		string512 command;	
@@ -127,7 +127,7 @@ void CUIKickPlayer::OnBtnOk()
 				}break;
 		}
 		Console->Execute			(command);
-		game_cl_mp* game			= smart_cast<game_cl_mp*>(&Game());
+		game_cl_mp* game			= dynamic_cast<game_cl_mp*>(&Game());
 		game->StartStopMenu			(this, true);
 	}
 	else
@@ -136,7 +136,7 @@ void CUIKickPlayer::OnBtnOk()
 
 void CUIKickPlayer::OnBtnCancel()
 {
-    game_cl_mp* game				= smart_cast<game_cl_mp*>(&Game());
+    game_cl_mp* game				= dynamic_cast<game_cl_mp*>(&Game());
 	game->StartStopMenu				(this, true);
 }
 

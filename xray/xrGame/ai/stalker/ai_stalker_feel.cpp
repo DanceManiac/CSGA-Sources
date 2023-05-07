@@ -24,8 +24,8 @@ BOOL CAI_Stalker::feel_vision_isRelevant(CObject* O)
 {
 	if (!g_Alive())
 		return		FALSE;
-	CEntityAlive*	E = smart_cast<CEntityAlive*>		(O);
-	CInventoryItem*	I = smart_cast<CInventoryItem*>	(O);
+	CEntityAlive*	E = dynamic_cast<CEntityAlive*>		(O);
+	CInventoryItem*	I = dynamic_cast<CInventoryItem*>	(O);
 	if (!E && !I)	return	(FALSE);
 //	if (E && (E->g_Team() == g_Team()))			return FALSE;
 	return(TRUE);
@@ -67,7 +67,7 @@ BOOL CAI_Stalker::feel_touch_contact	(CObject *O)
 	if (!inherited::feel_touch_contact(O))
 		return						(FALSE);
 
-	CGameObject						*game_object = smart_cast<CGameObject*>(O);
+	CGameObject						*game_object = dynamic_cast<CGameObject*>(O);
 	if (!game_object)
 		return						(FALSE);
 

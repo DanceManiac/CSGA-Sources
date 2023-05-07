@@ -104,7 +104,7 @@ void CStalkerCombatPlanner::update				()
 
 //	const CEntityAlive				*enemy = object().memory().enemy().selected();
 //	VERIFY							(enemy);
-//	const CAI_Stalker				*stalker = smart_cast<const CAI_Stalker*>(enemy);
+//	const CAI_Stalker				*stalker = dynamic_cast<const CAI_Stalker*>(enemy);
 //	m_last_wounded					= stalker && stalker->wounded();
 }
 

@@ -60,9 +60,9 @@ CScriptGameObject *tpfGetActor()
 		ai().script_engine().script_log(eLuaMessageTypeError,"Do not use level.actor function!");
 	first_time = false;
 	
-	CActor *l_tpActor = smart_cast<CActor*>(Level().CurrentEntity());
+	CActor *l_tpActor = dynamic_cast<CActor*>(Level().CurrentEntity());
 	if (l_tpActor)
-		return	(smart_cast<CGameObject*>(l_tpActor)->lua_game_object());
+		return	(dynamic_cast<CGameObject*>(l_tpActor)->lua_game_object());
 	else
 		return	(0);
 }
@@ -74,7 +74,7 @@ CScriptGameObject *get_object_by_name(LPCSTR caObjectName)
 		ai().script_engine().script_log(eLuaMessageTypeError,"Do not use level.object function!");
 	first_time = false;
 	
-	CGameObject		*l_tpGameObject	= smart_cast<CGameObject*>(Level().Objects.FindObjectByName(caObjectName));
+	CGameObject		*l_tpGameObject	= dynamic_cast<CGameObject*>(Level().Objects.FindObjectByName(caObjectName));
 	if (l_tpGameObject)
 		return		(l_tpGameObject->lua_game_object());
 	else
@@ -84,7 +84,7 @@ CScriptGameObject *get_object_by_name(LPCSTR caObjectName)
 
 CScriptGameObject *get_object_by_id(u16 id)
 {
-	CGameObject* pGameObject = smart_cast<CGameObject*>(Level().Objects.net_Find(id));
+	CGameObject* pGameObject = dynamic_cast<CGameObject*>(Level().Objects.net_Find(id));
 	if(!pGameObject)
 		return NULL;
 
@@ -142,7 +142,7 @@ float get_time_factor()
 void set_game_difficulty(ESingleGameDifficulty dif)
 {
 	g_SingleGameDifficulty		= dif;
-	game_cl_Single* game		= smart_cast<game_cl_Single*>(Level().game); VERIFY(game);
+	game_cl_Single* game		= dynamic_cast<game_cl_Single*>(Level().game); VERIFY(game);
 	game->OnDifficultyChanged	();
 }
 ESingleGameDifficulty get_game_difficulty()
@@ -565,7 +565,7 @@ void add_pp_effector(LPCSTR fn, int id, bool cyclic)
 
 void remove_pp_effector(int id)
 {
-	CPostprocessAnimator*	pp	= smart_cast<CPostprocessAnimator*>(Actor()->Cameras().GetPPEffector((EEffectorPPType)id));
+	CPostprocessAnimator*	pp	= dynamic_cast<CPostprocessAnimator*>(Actor()->Cameras().GetPPEffector((EEffectorPPType)id));
 
 	if(pp) pp->Stop(1.0f);
 
@@ -573,14 +573,14 @@ void remove_pp_effector(int id)
 
 void set_pp_effector_factor(int id, float f, float f_sp)
 {
-	CPostprocessAnimator*	pp	= smart_cast<CPostprocessAnimator*>(Actor()->Cameras().GetPPEffector((EEffectorPPType)id));
+	CPostprocessAnimator*	pp	= dynamic_cast<CPostprocessAnimator*>(Actor()->Cameras().GetPPEffector((EEffectorPPType)id));
 
 	if(pp) pp->SetDesiredFactor(f,f_sp);
 }
 
 void set_pp_effector_factor2(int id, float f)
 {
-	CPostprocessAnimator*	pp	= smart_cast<CPostprocessAnimator*>(Actor()->Cameras().GetPPEffector((EEffectorPPType)id));
+	CPostprocessAnimator*	pp	= dynamic_cast<CPostprocessAnimator*>(Actor()->Cameras().GetPPEffector((EEffectorPPType)id));
 
 	if(pp) pp->SetCurrentFactor(f);
 }

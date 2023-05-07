@@ -116,7 +116,7 @@ void CPHCapture::PullingUpdate()
 
 	Fvector dir;
 	Fvector capture_bone_position;
-	CObject* object=smart_cast<CObject*>(m_character->PhysicsRefObject());
+	CObject* object=dynamic_cast<CObject*>(m_character->PhysicsRefObject());
 	capture_bone_position.set(m_capture_bone->mTransform.c);
 	object->XFORM().transform_tiny(capture_bone_position);
 	m_taget_element->GetGlobalPositionDynamic(&dir);
@@ -273,7 +273,7 @@ void CPHCapture::CapturedUpdate()
 	}
 
 	Fvector capture_bone_position;
-	CObject* object=smart_cast<CObject*>(m_character->PhysicsRefObject());
+	CObject* object=dynamic_cast<CObject*>(m_character->PhysicsRefObject());
 	capture_bone_position.set(m_capture_bone->mTransform.c);
 	object->XFORM().transform_tiny(capture_bone_position);
 	dBodySetPosition(m_body,capture_bone_position.x,capture_bone_position.y,capture_bone_position.z);
@@ -308,7 +308,7 @@ void CPHCapture::object_contactCallbackFun(bool& do_colide,bool bo1,dContact& c,
 	if(! l_pUD1) return;
 	if(!l_pUD2) return;
 
-	CEntityAlive* capturer=smart_cast<CEntityAlive*>(l_pUD1->ph_ref_object);
+	CEntityAlive* capturer=dynamic_cast<CEntityAlive*>(l_pUD1->ph_ref_object);
 	if(capturer)
 	{
 		CPHCapture* capture=capturer->character_physics_support()->movement()->PHCapture();
@@ -326,7 +326,7 @@ void CPHCapture::object_contactCallbackFun(bool& do_colide,bool bo1,dContact& c,
 
 	}
 
-	capturer=smart_cast<CEntityAlive*>(l_pUD2->ph_ref_object);
+	capturer=dynamic_cast<CEntityAlive*>(l_pUD2->ph_ref_object);
 	if(capturer)
 	{
 		CPHCapture* capture=capturer->character_physics_support()->movement()->PHCapture();

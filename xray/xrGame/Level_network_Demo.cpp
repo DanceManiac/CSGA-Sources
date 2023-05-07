@@ -173,10 +173,10 @@ void CLevel::SpawnDemoSpectator()
 {
 	R_ASSERT(Server && Server->game);
 	m_current_spectator = NULL;
-	game_sv_mp*	tmp_sv_game		= smart_cast<game_sv_mp*>(Server->game);
-	game_cl_mp*	mp_cl_game		= smart_cast<game_cl_mp*>(Level().game);
+	game_sv_mp*	tmp_sv_game		= dynamic_cast<game_sv_mp*>(Server->game);
+	game_cl_mp*	mp_cl_game		= dynamic_cast<game_cl_mp*>(Level().game);
 
-	CSE_Spectator* specentity = smart_cast<CSE_Spectator*>(
+	CSE_Spectator* specentity = dynamic_cast<CSE_Spectator*>(
 		tmp_sv_game->spawn_begin("spectator"));
 	R_ASSERT						(specentity);
 	mp_cl_game->local_player		= mp_cl_game->createPlayerState();
@@ -192,14 +192,14 @@ void CLevel::SpawnDemoSpectator()
 
 void CLevel::SetDemoSpectator(CObject* spectator)
 {
-	R_ASSERT2	(smart_cast<CSpectator*>(spectator),
+	R_ASSERT2	(dynamic_cast<CSpectator*>(spectator),
 		"tried to set not an spectator object to demo spectator");
 	m_current_spectator = spectator;
 }
 
 CObject*CLevel::GetDemoSpectator() const
 {
-	return m_current_spectator ? smart_cast<CGameObject*>(m_current_spectator) : NULL;
+	return m_current_spectator ? dynamic_cast<CGameObject*>(m_current_spectator) : NULL;
 }
 
 float CLevel::GetDemoPlayPos() const

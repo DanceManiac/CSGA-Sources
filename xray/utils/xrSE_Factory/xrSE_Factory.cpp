@@ -37,7 +37,7 @@ extern "C" {
 
 	FACTORY_API	void		__stdcall destroy_entity	(ISE_Abstract *&abstract)
 	{
-		CSE_Abstract			*object = smart_cast<CSE_Abstract*>(abstract);
+		CSE_Abstract			*object = dynamic_cast<CSE_Abstract*>(abstract);
 		F_entity_Destroy		(object);
 		abstract				= 0;
 	}

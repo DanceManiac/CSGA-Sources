@@ -17,7 +17,7 @@ void renderSpawnElements()
         return;
     auto& registry = alife->objects();
     for (auto el : registry.objects()) {
-        auto lc = smart_cast<CSE_ALifeLevelChanger*>(el.second);
+        auto lc = dynamic_cast<CSE_ALifeLevelChanger*>(el.second);
         if (lc)
             renderLevelChanger(lc);
     }

@@ -830,10 +830,10 @@ static void DBG_DrawTarckObj()
 	if( !v )
 		return;
 	DBG_OutText( "visual name: %s ", *trace_object->cNameVisual() );
-	IKinematics *k = smart_cast<IKinematics *>( v );
+	IKinematics *k = dynamic_cast<IKinematics *>( v );
 	if( !k )
 		return;
-	IKinematicsAnimated* ka = smart_cast<IKinematicsAnimated*>( k );
+	IKinematicsAnimated* ka = dynamic_cast<IKinematicsAnimated*>( k );
 	if(!ka)
 		return;
 	DBG_AnimState( *ka );
@@ -866,7 +866,7 @@ void	DBG_DrawBones( const Fmatrix &xform,  IKinematics *K )
 }
 void	DBG_DrawBones( CObject &O )
 {
-	IKinematics *K = smart_cast<IKinematics*> ( O.Visual() );
+	IKinematics *K = dynamic_cast<IKinematics*> ( O.Visual() );
 
 	//K->CalculateBones_Invalidate();
 	//K->CalculateBones();
@@ -877,7 +877,7 @@ void	DBG_DrawBones( CObject &O )
 void	DBG_PhysBones( CObject &O )
 {
 
-	CPhysicsShellHolder	*sh = smart_cast<CPhysicsShellHolder*>(&O);
+	CPhysicsShellHolder	*sh = dynamic_cast<CPhysicsShellHolder*>(&O);
 	VERIFY( sh );
 	CPhysicsShell* shell = sh->PPhysicsShell();
 	if(!shell)
@@ -888,7 +888,7 @@ void	DBG_PhysBones( CObject &O )
 		CPhysicsElement		*e	=  shell->get_ElementByStoreOrder(i);
 
 		DBG_DrawMatrix( e->XFORM(), 0.1f );//Fmatrix().mul_43( O.XFORM(),e->XFORM())
-		CPHElement* pE = smart_cast<CPHElement*>( e )->parent_element();
+		CPHElement* pE = dynamic_cast<CPHElement*>( e )->parent_element();
 		if( pE )
 			DBG_DrawLine( e->XFORM().c, pE->XFORM().c, D3DCOLOR_XRGB( 255, 100, 0 ) );
 		
@@ -898,7 +898,7 @@ void	DBG_PhysBones( CObject &O )
 
 void	DBG_DrawBind( CObject &O )
 {
-	IKinematics *K = smart_cast<IKinematics*> ( O.Visual() );
+	IKinematics *K = dynamic_cast<IKinematics*> ( O.Visual() );
 
 	
 	u16 nbb = K->LL_BoneCount();

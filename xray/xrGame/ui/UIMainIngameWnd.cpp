@@ -247,7 +247,7 @@ void CUIMainIngameWnd::Init()
 float UIStaticDiskIO_start_time = 0.0f;
 void CUIMainIngameWnd::Draw()
 {
-	CActor* m_pActor		= smart_cast<CActor*>(Level().CurrentViewEntity());
+	CActor* m_pActor		= dynamic_cast<CActor*>(Level().CurrentViewEntity());
 #ifndef MASTER_GOLD
 	test_draw				();
 #endif
@@ -265,7 +265,7 @@ void CUIMainIngameWnd::Draw()
 
 	if(!IsGameTypeSingle())
 	{
-		float		luminocity = smart_cast<CGameObject*>(Level().CurrentEntity())->ROS()->get_luminocity();
+		float		luminocity = dynamic_cast<CGameObject*>(Level().CurrentEntity())->ROS()->get_luminocity();
 		float		power = log(luminocity > .001f ? luminocity : .001f)*(1.f/*luminocity_factor*/);
 		luminocity	= exp(power);
 
@@ -302,7 +302,7 @@ void CUIMainIngameWnd::SetMPChatLog(CUIWindow* pChat, CUIWindow* pLog){
 void CUIMainIngameWnd::Update()
 {
 	CUIWindow::Update();
-	CActor* m_pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+	CActor* m_pActor = dynamic_cast<CActor*>(Level().CurrentViewEntity());
 
 	if ( m_pMPChatWnd )
 	{
@@ -412,7 +412,7 @@ void CUIMainIngameWnd::Update()
 				PIItem item = m_pActor->inventory().ActiveItem();
 				if ( item )
 				{
-					CWeapon* pWeapon = smart_cast<CWeapon*>( item );
+					CWeapon* pWeapon = dynamic_cast<CWeapon*>( item );
 					if ( pWeapon )
 					{
 						value = _max( 0.0f, 1.0f - pWeapon->GetConditionToShow() );
@@ -511,7 +511,7 @@ bool CUIMainIngameWnd::OnKeyboardPress(int dik)
 
 void CUIMainIngameWnd::RenderQuickInfos()
 {
-	CActor* m_pActor		= smart_cast<CActor*>(Level().CurrentViewEntity());
+	CActor* m_pActor		= dynamic_cast<CActor*>(Level().CurrentViewEntity());
 	if (!m_pActor)
 		return;
 
@@ -684,7 +684,7 @@ void CUIMainIngameWnd::SetPickUpItem	(CInventoryItem* PickUpItem)
 
 void CUIMainIngameWnd::UpdatePickUpItem	()
 {
-	if (!m_pPickUpItem || !Level().CurrentViewEntity() || !smart_cast<CActor*>(Level().CurrentViewEntity())) 
+	if (!m_pPickUpItem || !Level().CurrentViewEntity() || !dynamic_cast<CActor*>(Level().CurrentViewEntity())) 
 	{
 		UIPickUpItemIcon->Show(false);
 		return;

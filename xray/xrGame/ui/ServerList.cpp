@@ -159,7 +159,7 @@ void CServerList::SendMessage(CUIWindow* pWnd, s16 msg, void* pData){
 		if (-1 == sel)
 			return;
 
-		CUIListItemServer* item		= smart_cast<CUIListItemServer*>(m_list[LST_SERVER].GetItem(sel));
+		CUIListItemServer* item		= dynamic_cast<CUIListItemServer*>(m_list[LST_SERVER].GetItem(sel));
 		xr_string					command;
 
 		item->CreateConsoleCommand	(command, m_playerName.c_str(), m_message_box->m_pMessageBox->GetUserPassword(), m_message_box->GetPassword() );
@@ -492,7 +492,7 @@ void CServerList::ConnectToSelected()
 	if (!MainMenu()->ValidateCDKey()) return;	
 	//-----------------------------------------
 
-	CUIListItemServer* item = smart_cast<CUIListItemServer*>(m_list[LST_SERVER].GetItem(sel));
+	CUIListItemServer* item = dynamic_cast<CUIListItemServer*>(m_list[LST_SERVER].GetItem(sel));
 	if (!browser().CheckDirectConnection(item->GetInfo()->info.Index))
 	{
 		Msg("! Direct connection to this server is not available -> its behind firewall");

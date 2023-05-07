@@ -121,7 +121,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			PIItem det_active					= inventory().ItemFromSlot(DETECTOR_SLOT);
 			if(det_active)
 			{
-				CCustomDetector* det			= smart_cast<CCustomDetector*>(det_active);
+				CCustomDetector* det			= dynamic_cast<CCustomDetector*>(det_active);
 				det->ToggleDetector				(g_player_hud->attached_item(0)!=NULL);
 				return;
 			}
@@ -161,7 +161,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 		}break;
 	case kFLASHLIGHT:
 		{
-			if (auto wpn = smart_cast<CWeapon*>(inventory().ActiveItem()))
+			if (auto wpn = dynamic_cast<CWeapon*>(inventory().ActiveItem()))
 				wpn->SwitchFlashlight(!wpn->IsFlashlightOn());
 		}break;
 	}
@@ -310,24 +310,24 @@ bool CActor::use_Holder				(CHolderCustom* holder)
 
 	if(m_holder){
 		bool b = false;
-		CGameObject* holderGO			= smart_cast<CGameObject*>(m_holder);
+		CGameObject* holderGO			= dynamic_cast<CGameObject*>(m_holder);
 		
-		if(smart_cast<CCar*>(holderGO))
+		if(dynamic_cast<CCar*>(holderGO))
 			b = use_Vehicle(0);
 		else
 			if (holderGO->CLS_ID==CLSID_OBJECT_W_STATMGUN)
 				b = use_MountedWeapon(0);
 
 		if(inventory().ActiveItem()){
-			CHudItem* hi = smart_cast<CHudItem*>(inventory().ActiveItem());
+			CHudItem* hi = dynamic_cast<CHudItem*>(inventory().ActiveItem());
 			if(hi) hi->OnAnimationEnd(hi->GetState());
 		}
 
 		return b;
 	}else{
 		bool b = false;
-		CGameObject* holderGO			= smart_cast<CGameObject*>(holder);
-		if(smart_cast<CCar*>(holder))
+		CGameObject* holderGO			= dynamic_cast<CGameObject*>(holder);
+		if(dynamic_cast<CCar*>(holder))
 			b = use_Vehicle(holder);
 
 		if (holderGO->CLS_ID==CLSID_OBJECT_W_STATMGUN)
@@ -337,13 +337,13 @@ bool CActor::use_Holder				(CHolderCustom* holder)
 			// switch off torch...
 			CAttachableItem *I = CAttachmentOwner::attachedItem(CLSID_DEVICE_TORCH);
 			if (I){
-				CTorch* torch = smart_cast<CTorch*>(I);
+				CTorch* torch = dynamic_cast<CTorch*>(I);
 				if (torch) torch->Switch(false);
 			}
 		}
 
 		if(inventory().ActiveItem()){
-			CHudItem* hi = smart_cast<CHudItem*>(inventory().ActiveItem());
+			CHudItem* hi = dynamic_cast<CHudItem*>(inventory().ActiveItem());
 			if(hi) hi->OnAnimationEnd(hi->GetState());
 		}
 
@@ -359,7 +359,7 @@ void CActor::ActorUse()
 		
 	if (m_holder)
 	{
-		CGameObject*	GO			= smart_cast<CGameObject*>(m_holder);
+		CGameObject*	GO			= dynamic_cast<CGameObject*>(m_holder);
 		NET_Packet		P;
 		CGameObject::u_EventGen		(P, GEG_PLAYER_DETACH_HOLDER, ID());
 		P.w_u16						(GO->ID());
@@ -376,7 +376,7 @@ void CActor::ActorUse()
 	
 	if(m_pInvBoxWeLookingAt && m_pInvBoxWeLookingAt->nonscript_usable())
 	{
-		CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+		CUIGameSP* pGameSP = dynamic_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 		if(pGameSP) pGameSP->StartCarBody(this, m_pInvBoxWeLookingAt );
 		return;
 	}
@@ -386,7 +386,7 @@ void CActor::ActorUse()
 		if(m_pPersonWeLookingAt)
 		{
 			CEntityAlive* pEntityAliveWeLookingAt = 
-				smart_cast<CEntityAlive*>(m_pPersonWeLookingAt);
+				dynamic_cast<CEntityAlive*>(m_pPersonWeLookingAt);
 
 			VERIFY(pEntityAliveWeLookingAt);
 
@@ -402,7 +402,7 @@ void CActor::ActorUse()
 				if(!Level().IR_GetKeyState(DIK_LSHIFT))
 				{
 					//только если находимся в режиме single
-					CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+					CUIGameSP* pGameSP = dynamic_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 					if(pGameSP)
 						pGameSP->StartCarBody(this, m_pPersonWeLookingAt );
 				}
@@ -410,7 +410,7 @@ void CActor::ActorUse()
 		}
 
 		collide::rq_result& RQ = HUD().GetCurrentRayQuery();
-		CPhysicsShellHolder* object = smart_cast<CPhysicsShellHolder*>(RQ.O);
+		CPhysicsShellHolder* object = dynamic_cast<CPhysicsShellHolder*>(RQ.O);
 		u16 element = BI_NONE;
 		if(object) 
 			element = (u16)RQ.element;
@@ -427,7 +427,7 @@ void CActor::ActorUse()
 		}
 		else
 		{
-			if (object && smart_cast<CHolderCustom*>(object))
+			if (object && dynamic_cast<CHolderCustom*>(object))
 			{
 					NET_Packet		P;
 					CGameObject::u_EventGen		(P, GEG_PLAYER_ATTACH_HOLDER, ID());
@@ -561,7 +561,7 @@ void CActor::SwitchTorch()
 	xr_vector<CAttachableItem*>::const_iterator it_e = all.end();
 	for ( ; it != it_e; ++it )
 	{
-		CTorch* torch = smart_cast<CTorch*>(*it);
+		CTorch* torch = dynamic_cast<CTorch*>(*it);
 		if ( torch )
 		{		
 			torch->Switch();

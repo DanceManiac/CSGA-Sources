@@ -149,7 +149,7 @@ CSE_ALifeDynamicObject *CALifeSimulator__create	(CALifeSimulator *self, ALife::_
 	const CALifeSpawnRegistry::SPAWN_GRAPH::CVertex	*vertex = ai().alife().spawns().spawns().vertex(spawn_id);
 	THROW2								(vertex,"Invalid spawn id!");
 
-	CSE_ALifeDynamicObject				*spawn = smart_cast<CSE_ALifeDynamicObject*>(&vertex->data()->object());
+	CSE_ALifeDynamicObject				*spawn = dynamic_cast<CSE_ALifeDynamicObject*>(&vertex->data()->object());
 	THROW								(spawn);
 
 	CSE_ALifeDynamicObject				*object;
@@ -212,7 +212,7 @@ CSE_Abstract *CALifeSimulator__spawn_ammo		(CALifeSimulator *self, LPCSTR sectio
 	if (!object || !object->m_bOnline) {
 		CSE_Abstract					*item = self->spawn_item(section,position,level_vertex_id,game_vertex_id,id_parent);
 
-		CSE_ALifeItemAmmo				*ammo = smart_cast<CSE_ALifeItemAmmo*>(item);
+		CSE_ALifeItemAmmo				*ammo = dynamic_cast<CSE_ALifeItemAmmo*>(item);
 		THROW							(ammo);
 		THROW							(ammo->m_boxSize >= ammo_to_spawn);
 		ammo->a_elapsed					= (u16)ammo_to_spawn;
@@ -226,7 +226,7 @@ CSE_Abstract *CALifeSimulator__spawn_ammo		(CALifeSimulator *self, LPCSTR sectio
 	
 	CSE_Abstract						*item = self->spawn_item(section,position,level_vertex_id,game_vertex_id,id_parent,false);
 
-	CSE_ALifeItemAmmo					*ammo = smart_cast<CSE_ALifeItemAmmo*>(item);
+	CSE_ALifeItemAmmo					*ammo = dynamic_cast<CSE_ALifeItemAmmo*>(item);
 	THROW								(ammo);
 	THROW								(ammo->m_boxSize >= ammo_to_spawn);
 	ammo->a_elapsed						= (u16)ammo_to_spawn;
@@ -255,7 +255,7 @@ void CALifeSimulator__release					(CALifeSimulator *self, CSE_Abstract *object, 
 //	self->release						(object,true);
 
 	THROW								(object);
-	CSE_ALifeObject						*alife_object = smart_cast<CSE_ALifeObject*>(object);
+	CSE_ALifeObject						*alife_object = dynamic_cast<CSE_ALifeObject*>(object);
 	THROW								(alife_object);
 	if (!alife_object->m_bOnline) {
 		self->release					(object,true);
@@ -424,7 +424,7 @@ void CALifeSimulator::validate			()
 	const_vertex_iterator		I = spawns().spawns().vertices().begin();
 	const_vertex_iterator		E = spawns().spawns().vertices().end();
 	for ( ; I != E; ++I) {
-		luabind::wrap_base		*base = smart_cast<luabind::wrap_base*>(&(*I).second->data()->object());
+		luabind::wrap_base		*base = dynamic_cast<luabind::wrap_base*>(&(*I).second->data()->object());
 		if (!base)
 			continue;
 

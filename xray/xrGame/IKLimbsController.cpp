@@ -29,7 +29,7 @@ void CIKLimbsController::Create( CGameObject* O )
 	VERIFY( O );
 	m_legs_blend	 = 0;
 	
-	IKinematics* K=smart_cast<IKinematics*>(O->Visual());
+	IKinematics* K=dynamic_cast<IKinematics*>(O->Visual());
 	m_object = O;
 	VERIFY( K );
 	u16 sz = 2;
@@ -182,7 +182,7 @@ void	CIKLimbsController::ObjectShift	( float static_shift, const SCalculateData 
 			if( cd[j].m_limb->foot_step() )
 					++cnt_in_step;
 
-	CPhysicsShellHolder *sh = smart_cast<CPhysicsShellHolder*>(m_object);
+	CPhysicsShellHolder *sh = dynamic_cast<CPhysicsShellHolder*>(m_object);
 	VERIFY( sh );
 	//CCharacterPhysicsSupport *ch = sh->character_physics_support();	
 	_object_shift.freeze(  !!Device.Paused() );//ch->interactive_motion() ||
@@ -288,7 +288,7 @@ void CIKLimbsController::Calculate( )
 void CIKLimbsController::Destroy(CGameObject* O)
 {
 #ifdef _DEBUG
-	CPhysicsShellHolder*	Sh = smart_cast<CPhysicsShellHolder*>(O);
+	CPhysicsShellHolder*	Sh = dynamic_cast<CPhysicsShellHolder*>(O);
 	VERIFY(Sh);
 	CIKLimbsController* ik = Sh->character_ik_controller();
 	VERIFY( ik );
@@ -313,7 +313,7 @@ void _stdcall CIKLimbsController:: IKVisualCallback( IKinematics* K )
 #endif
 	
 	CGameObject* O=( ( CGameObject* )K->GetUpdateCallbackParam());
-	CPhysicsShellHolder*	Sh = smart_cast<CPhysicsShellHolder*>( O );
+	CPhysicsShellHolder*	Sh = dynamic_cast<CPhysicsShellHolder*>( O );
 	VERIFY( Sh );
 	CIKLimbsController* ik = Sh->character_ik_controller( );
 	VERIFY( ik );

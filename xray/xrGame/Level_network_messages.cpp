@@ -165,14 +165,14 @@ void CLevel::ClientReceive()
 				if (OnClient()) break;
 				P->r_u16		(ID);
 				u32 Ping = P->r_u32();
-				CGameObject*	O	= smart_cast<CGameObject*>(Objects.net_Find		(ID));
+				CGameObject*	O	= dynamic_cast<CGameObject*>(Objects.net_Find		(ID));
 				if (0 == O)		break;
 				O->net_Import(*P);
 		//---------------------------------------------------
 				UpdateDeltaUpd(timeServer());
 				if (pObjects4CrPr.empty() && pActors4CrPr.empty())
 					break;
-				if (!smart_cast<CActor*>(O))
+				if (!dynamic_cast<CActor*>(O))
 					break;
 
 				u32 dTime = 0;
@@ -216,7 +216,7 @@ void CLevel::ClientReceive()
 					u16 ID = P->r_u16();					
 					Fvector NewPos;
 					P->r_vec3(NewPos);
-					CArtefact * OArtefact = smart_cast<CArtefact*>(Objects.net_Find(ID));
+					CArtefact * OArtefact = dynamic_cast<CArtefact*>(Objects.net_Find(ID));
 					if (!OArtefact)		break;
 					OArtefact->MoveTo(NewPos);
 					//destroy_physics_shell(OArtefact->PPhysicsShell());

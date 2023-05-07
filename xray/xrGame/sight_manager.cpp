@@ -208,7 +208,7 @@ Fvector CSightManager::object_position				() const
 	Fvector				look_pos;
 	object->Center		(look_pos);
 
-	const CEntityAlive	*entity_alive = smart_cast<const CEntityAlive*>(object);
+	const CEntityAlive	*entity_alive = dynamic_cast<const CEntityAlive*>(object);
 	if (!entity_alive || entity_alive->g_Alive()) {
 		look_pos.x		= object->Position().x;
 		look_pos.z		= object->Position().z;
@@ -231,7 +231,7 @@ Fvector	CSightManager::aiming_position				() const
 
 #if 0
 	Fmatrix								player_head;
-	IKinematics* actor_kinematics		= smart_cast<IKinematics*>(Actor()->Visual());
+	IKinematics* actor_kinematics		= dynamic_cast<IKinematics*>(Actor()->Visual());
 	actor_kinematics->Bone_GetAnimPos	(player_head, actor_kinematics->LL_BoneID("bip01_head"), 1, false);
 	player_head.mulA_43					(Actor()->XFORM());
 	return								( player_head.c );
@@ -598,7 +598,7 @@ void CSightManager::compute_aiming					(float const time_delta, float const angu
 			bool backward_blend_callbacks	= object().animation().backward_blend_callbacks();
 			object().animation().remove_bone_callbacks();
 			VERIFY				(object().best_weapon());
-			VERIFY				(smart_cast<CWeapon const*>(object().best_weapon()));
+			VERIFY				(dynamic_cast<CWeapon const*>(object().best_weapon()));
 			VERIFY			( _valid(aiming_position()) );
 			aimers::weapon		aimer(
 				&object(),
@@ -609,7 +609,7 @@ void CSightManager::compute_aiming					(float const time_delta, float const angu
 				pSettings->r_string(object().cNameSect().c_str(),"bone_shoulder"),
 				pSettings->r_string(object().cNameSect().c_str(),"weapon_bone0"),
 				pSettings->r_string(object().cNameSect().c_str(),"weapon_bone2"),
-				*smart_cast<CWeapon const*>(object().best_weapon())
+				*dynamic_cast<CWeapon const*>(object().best_weapon())
 			);
 			if (forward_blend_callbacks)
 				object().animation().assign_bone_blend_callbacks(true);

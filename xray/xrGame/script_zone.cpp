@@ -59,7 +59,7 @@ void CScriptZone::shedule_Update(u32 dt)
 
 void CScriptZone::feel_touch_new	(CObject *tpObject)
 {
-	CGameObject					*l_tpGameObject = smart_cast<CGameObject*>(tpObject);
+	CGameObject					*l_tpGameObject = dynamic_cast<CGameObject*>(tpObject);
 	if (!l_tpGameObject)
 		return;
 	
@@ -68,7 +68,7 @@ void CScriptZone::feel_touch_new	(CObject *tpObject)
 
 void CScriptZone::feel_touch_delete	(CObject *tpObject)
 {
-	CGameObject					*l_tpGameObject = smart_cast<CGameObject*>(tpObject);
+	CGameObject					*l_tpGameObject = dynamic_cast<CGameObject*>(tpObject);
 	
 	if (!l_tpGameObject || l_tpGameObject->getDestroy())
 		return;
@@ -78,7 +78,7 @@ void CScriptZone::feel_touch_delete	(CObject *tpObject)
 
 void CScriptZone::net_Relcase			(CObject *O)
 {
-	CGameObject					*l_tpGameObject = smart_cast<CGameObject*>(O);
+	CGameObject					*l_tpGameObject = dynamic_cast<CGameObject*>(O);
 	if (!l_tpGameObject)
 		return;
 

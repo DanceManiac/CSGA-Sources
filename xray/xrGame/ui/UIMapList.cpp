@@ -365,7 +365,7 @@ CUIListBoxItem* CUIMapList::GetMapItem_fromList1( shared_str const& map_name )
 		map_name1._set( m_pList1->GetText( i ) );
 		if ( map_name1 == map_name )
 		{
-			return smart_cast<CUIListBoxItem*>( m_pList1->GetItem(i) );
+			return dynamic_cast<CUIListBoxItem*>( m_pList1->GetItem(i) );
 		}
 	}
 	return NULL;

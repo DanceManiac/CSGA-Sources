@@ -47,7 +47,7 @@ void CInventoryBox::OnEvent(NET_Packet& P, u16 type)
 
 			if( m_in_use )
 			{
-				CGameObject* GO		= smart_cast<CGameObject*>(itm);
+				CGameObject* GO		= dynamic_cast<CGameObject*>(itm);
 				Actor()->callback(GameObject::eInvBoxItemTake)( this->lua_game_object(), GO->lua_game_object() );
 			}
 		}break;
@@ -85,7 +85,7 @@ void CInventoryBox::AddAvailableItems(TIItemContainer& items_container) const
 
 	for(;it!=it_e;++it)
 	{
-		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(*it));VERIFY(itm);
+		PIItem itm = dynamic_cast<PIItem>(Level().Objects.net_Find(*it));VERIFY(itm);
 		items_container.push_back	(itm);
 	}
 }
