@@ -206,8 +206,8 @@ CActor::CActor() : CEntityAlive()
 	m_bNightVisionOn		= false;
 
 	bTrySprint				= false;
+	bSafemode				= false;
 }
-
 
 CActor::~CActor()
 {
@@ -2121,4 +2121,10 @@ void CActor::SwitchNightVision(bool vision_on, bool use_sounds, bool send_event)
 		object->u_EventSend(packet);
 		//Msg("GE_TRADER_FLAGS event sent %d", m_trader_flags.get());
 	}
+}
+
+void CActor::SetSafemodeStatus(bool status)
+{
+	if(bSafemode != status)
+		bSafemode = status;
 }

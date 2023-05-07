@@ -421,6 +421,10 @@ public:
 	u32						mstate_wishful;
 	u32						mstate_old;
 	u32						mstate_real;
+
+	bool					IsSafemode				() const {return bSafemode;}
+	void					SetSafemodeStatus		(bool status);
+
 protected:
 	BOOL					m_bJumpKeyPressed;
 
@@ -440,6 +444,9 @@ protected:
     float					m_fTurningSpeed;
 	float					fpb_smooth_y;
 	float					fpb_smooth_z;
+
+	bool					bSafemode;
+
 	//////////////////////////////////////////////////////////////////////////
 	// User input/output
 	//////////////////////////////////////////////////////////////////////////

@@ -26,6 +26,7 @@ struct STorsoWpn{
 	MotionID	attack_zoom;
 	MotionID	fire_idle;
 	MotionID	fire_end;
+	MotionID	safemode;
 
 	//анимации для атаки для всего тела (когда мы стоим на месте)
 	MotionID	all_attack_0;

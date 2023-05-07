@@ -1061,6 +1061,12 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 						return false;
 				}
 
+				if (Actor()->IsSafemode())
+				{
+					Actor()->SetSafemodeStatus(false);
+					return false;
+				}
+
 				if(iAmmoElapsed < iMagazineSize || (IsMisfire() && !IsGrenadeLauncherMode())) 
 					Reload();
 			}
@@ -1068,6 +1074,12 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 		return true;
 	case kWPN_FIREMODE_PREV:
 		{
+			if (Actor()->IsSafemode())
+			{
+				Actor()->SetSafemodeStatus(false);
+				return false;
+			}
+
 			if(flags&CMD_START) 
 			{
 				OnPrevFireMode();
@@ -1076,6 +1088,12 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 		}break;
 	case kWPN_FIREMODE_NEXT:
 		{
+			if (Actor()->IsSafemode())
+			{
+				Actor()->SetSafemodeStatus(false);
+				return false;
+			}
+
 			if(flags&CMD_START) 
 			{
 				OnNextFireMode();

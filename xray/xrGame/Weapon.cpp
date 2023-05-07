@@ -81,6 +81,8 @@ CWeapon::CWeapon(): m_fLR_MovingFactor(0.f), m_strafe_offset{}
 
 	bSwitchAmmoType = false;
 	bIsNeedCallDet = false;
+
+	m_fSafemodeRotationFactor  = 0.f;
 }
 
 CWeapon::~CWeapon()
@@ -578,6 +580,11 @@ void CWeapon::Load		(LPCSTR section)
 
 	m_bUseSilHud = READ_IF_EXISTS(pSettings, r_bool, section, "use_sil_hud", false);
 
+	m_bCanBeLowered = pSettings->r_bool(section, "can_be_lowered");
+
+	if (m_bCanBeLowered)
+		m_fSafemodeRotateTime = READ_IF_EXISTS(pSettings, r_float, section, "safemode_rotate_time", 1.f);
+
 	////////////////////////////////////////////
 	//--#SM+# Begin--
 	string16 _prefix = { "" };
@@ -837,6 +844,8 @@ void CWeapon::OnH_B_Independent	(bool just_before_destroy)
 	m_strapped_mode				= false;
 	m_zoom_params.m_bIsZoomModeNow	= false;
 	UpdateXForm					();
+	if (Actor()->IsSafemode())
+		Actor()->SetSafemodeStatus(false);
 
 }
 
@@ -938,7 +947,7 @@ void CWeapon::UpdateCL		()
 			SwitchState(eZoomEnd);
 	}
 
-	if (!m_bDisableBore && (GetNextState() == GetState()) && IsGameTypeSingle() && H_Parent() == Level().CurrentEntity())
+	if (!m_bDisableBore && !Actor()->IsSafemode() && (GetNextState() == GetState()) && IsGameTypeSingle() && H_Parent() == Level().CurrentEntity())
 	{
 		CActor* pActor	= dynamic_cast<CActor*>(H_Parent());
 		if(pActor && !pActor->AnyMove() && this==pActor->inventory().ActiveItem())
@@ -1104,6 +1113,12 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 					if(IsPending())		
 						return false;
 
+					if (Actor()->IsSafemode())
+					{
+						Actor()->SetSafemodeStatus(false);
+						return false;
+					}
+
 					if(flags&CMD_START) 
 						FireStart();
 					else 
@@ -1112,7 +1127,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 			} 
 			return true;
 		case kWPN_NEXT: 
-				return SwitchAmmoType(flags);
+			return SwitchAmmoType(flags);
 		case kWPN_ZOOM:
 			return TryZoom(flags);
 		case kWPN_ALT_ZOOM:
@@ -1129,6 +1144,31 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 			}
 			else
 				return false;
+		case kSAFEMODE:
+			{
+				if (!m_bCanBeLowered)
+					return false;
+
+				if (IsPending())
+					return false;
+
+				if (GetState() != eIdle)
+					return false;
+
+				if (IsZoomed())
+					return false;
+
+				if (flags&CMD_START)
+				{
+					if(Actor()->IsSafemode())
+						Actor()->SetSafemodeStatus(false);
+					else
+						Actor()->SetSafemodeStatus(true);
+
+					ResetSubStateTime();
+				}
+			}
+			return true;
 		case kWPN_ZOOM_INC:
 		case kWPN_ZOOM_DEC:
 			if(IsZoomEnabled() && IsZoomed() && (flags&CMD_START))
@@ -1151,6 +1191,12 @@ bool CWeapon::TryZoom(u32 flags)
 		return false;
 
 	auto binoc = dynamic_cast<CWeaponBinoculars*>(Actor()->inventory().ActiveItem());
+
+	if (!IsZoomed() && Actor()->IsSafemode())
+	{
+		Actor()->SetSafemodeStatus(false);
+		return false;
+	}
 
 	if (b_toggle_weapon_aim)
 	{
@@ -2052,13 +2098,16 @@ bool CWeapon::ready_to_kill	() const
 
 u8 CWeapon::GetCurrentHudOffsetIdx()
 {
-    CActor* pActor = dynamic_cast<CActor*>(H_Parent());
+    auto pActor = dynamic_cast<CActor*>(H_Parent());
     if (!pActor)
         return 0;
 
     bool b_aiming = ((IsZoomed() && m_zoom_params.m_fZoomRotationFactor <= 1.f) || (!IsZoomed() && m_zoom_params.m_fZoomRotationFactor > 0.f));
+	bool b_safemode = ((pActor->IsSafemode() && m_fSafemodeRotationFactor <= 1.f) || (!pActor->IsSafemode() && m_fSafemodeRotationFactor > 0.f));
 
-    if (!b_aiming)
+	if (m_bCanBeLowered && b_safemode)
+        return 4;
+    else if (!b_aiming)
         return 0;
     else if (bAltOffset)
         return 3;
@@ -2072,41 +2121,47 @@ void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 	if(!pActor)
 		return;
 
-	u8 idx = GetCurrentHudOffsetIdx();
+	auto idx = GetCurrentHudOffsetIdx();
 
-	if((IsZoomed() && m_zoom_params.m_fZoomRotationFactor<=1.f) || (!IsZoomed() && m_zoom_params.m_fZoomRotationFactor>0.f))
-	{
-		attachable_hud_item*		hi = HudItemData();
-		R_ASSERT					(hi);
-		Fvector						curr_offs, curr_rot;
-		curr_offs = hi->m_measures.m_hands_offset[0][idx];//pos,aim
-		curr_rot = hi->m_measures.m_hands_offset[1][idx];//rot,aim
-		curr_offs.mul				(m_zoom_params.m_fZoomRotationFactor);
-		curr_rot.mul				(m_zoom_params.m_fZoomRotationFactor);
+	bool b_safemode = ((pActor->IsSafemode() && m_fSafemodeRotationFactor <= 1.f) || (!pActor->IsSafemode() && m_fSafemodeRotationFactor > 0.f));
 
-		Fmatrix						hud_rotation;
-		hud_rotation.identity		();
-		hud_rotation.rotateX		(curr_rot.x);
+	attachable_hud_item*		hi = HudItemData();
+	R_ASSERT					(hi);
+	Fvector						curr_offs, curr_rot;
+	curr_offs = hi->m_measures.m_hands_offset[0][idx];//pos,aim
+	curr_rot = hi->m_measures.m_hands_offset[1][idx];//rot,aim
+	curr_offs.mul				(b_safemode ? m_fSafemodeRotationFactor : m_zoom_params.m_fZoomRotationFactor);
+	curr_rot.mul				(b_safemode ? m_fSafemodeRotationFactor : m_zoom_params.m_fZoomRotationFactor);
 
-		Fmatrix						hud_rotation_y;
-		hud_rotation_y.identity		();
-		hud_rotation_y.rotateY		(curr_rot.y);
-		hud_rotation.mulA_43		(hud_rotation_y);
+	Fmatrix						hud_rotation;
+	hud_rotation.identity		();
+	hud_rotation.rotateX		(curr_rot.x);
 
-		hud_rotation_y.identity		();
-		hud_rotation_y.rotateZ		(curr_rot.z);
-		hud_rotation.mulA_43		(hud_rotation_y);
+	Fmatrix						hud_rotation_y;
+	hud_rotation_y.identity		();
+	hud_rotation_y.rotateY		(curr_rot.y);
+	hud_rotation.mulA_43		(hud_rotation_y);
 
-		hud_rotation.translate_over	(curr_offs);
-		trans.mulB_43				(hud_rotation);
+	hud_rotation_y.identity		();
+	hud_rotation_y.rotateZ		(curr_rot.z);
+	hud_rotation.mulA_43		(hud_rotation_y);
 
-		if(pActor->IsZoomAimingMode())
-			m_zoom_params.m_fZoomRotationFactor += Device.fTimeDelta/m_zoom_params.m_fZoomRotateTime;
-		else
-			m_zoom_params.m_fZoomRotationFactor -= Device.fTimeDelta/m_zoom_params.m_fZoomRotateTime;
+	hud_rotation.translate_over	(curr_offs);
+	trans.mulB_43				(hud_rotation);
 
-		clamp(m_zoom_params.m_fZoomRotationFactor, 0.f, 1.f);
-	}
+	if(pActor->IsZoomAimingMode())
+		m_zoom_params.m_fZoomRotationFactor += Device.fTimeDelta/m_zoom_params.m_fZoomRotateTime;
+	else
+		m_zoom_params.m_fZoomRotationFactor -= Device.fTimeDelta/m_zoom_params.m_fZoomRotateTime;
+
+	clamp(m_zoom_params.m_fZoomRotationFactor, 0.f, 1.f);
+
+	if(pActor->IsSafemode())
+		m_fSafemodeRotationFactor += Device.fTimeDelta/m_fSafemodeRotateTime;
+	else
+		m_fSafemodeRotationFactor -= Device.fTimeDelta/m_fSafemodeRotateTime;
+
+	clamp(m_fSafemodeRotationFactor, 0.f, 1.f);
 
 	// Боковой стрейф с оружием
 	clamp(idx, 0ui8, 1ui8);
@@ -2435,6 +2490,9 @@ void CWeapon::OnStateSwitch	(u32 S)
 			}
 		}
 	}
+
+	if (GetState() == eHiding && Actor()->IsSafemode())
+		Actor()->SetSafemodeStatus(false);
 }
 
 void CWeapon::OnAnimationEnd(u32 state) 
@@ -2470,7 +2528,6 @@ float CWeapon::GetSecondVPFov() const
 // Вызывается только для активного оружия игрока
 void CWeapon::UpdateSecondVP()
 {
-	// + CActor::UpdateCL();
 	bool b_is_active_item = (m_pInventory != NULL) && (m_pInventory->ActiveItem() == this);
 	R_ASSERT(ParentIsActor() && b_is_active_item); // Эта функция должна вызываться только для оружия в руках нашего игрока
 

@@ -31,6 +31,8 @@
 #include "alife_simulator.h"
 #include "alife_time_manager.h"
 #include "../xrEngine/Environment.h"
+#include "Weapon.h"
+#include "Inventory.h"
 
 using namespace luabind;
 
@@ -634,6 +636,24 @@ u32 vertex_id	(Fvector position)
 	return	(ai().level_graph().vertex_id(position));
 }
 
+bool actor_safemode()
+{
+	return Actor()->IsSafemode();
+}
+
+void actor_set_safemode(bool status)
+{
+	if (Actor()->IsSafemode() != status)
+	{
+		auto wep = dynamic_cast<CWeapon*>(Actor()->inventory().ActiveItem());
+		if (wep && wep->m_bCanBeLowered)
+		{
+			wep->Action(kSAFEMODE, CMD_START);
+			Actor()->SetSafemodeStatus(status);
+		}
+	}
+}
+
 u32 render_get_dx_level()
 {
 	return ::Render->get_dx_level();
@@ -734,7 +754,10 @@ void CLevel::script_register(lua_State *L)
 		
 		def("vertex_id",						&vertex_id),
 
-		def("game_id",							&GameID)
+		def("game_id",							&GameID),
+
+		def("actor_weapon_lowered", 			actor_safemode),
+		def("actor_lower_weapon", 				actor_set_safemode)
 	],
 	
 	module(L,"actor_stats")

@@ -182,9 +182,14 @@ void CWeaponMagazinedWGrenade::OnShot()
 
 bool CWeaponMagazinedWGrenade::SwitchMode() 
 {
-
 	if(!IsGrenadeLauncherAttached()) 
 		return false;
+
+	if (Actor()->IsSafemode())
+	{
+		Actor()->SetSafemodeStatus(false);
+		return false;
+	}
 
 	bool bUsefulStateToSwitch = (GetState() == eIdle && !IsZoomed() && !IsPending());
 
@@ -226,6 +231,12 @@ bool CWeaponMagazinedWGrenade::Action(s32 cmd, u32 flags)
 	{
 		if(IsPending())		
 			return false;
+
+		if (Actor()->IsSafemode())
+		{
+			Actor()->SetSafemodeStatus(false);
+			return false;
+		}
 
 		if(flags&CMD_START)
 		{
@@ -1466,9 +1477,15 @@ bool CWeaponMagazinedWGrenade::IsNecessaryItem	    (const shared_str& item_sect)
 
 u8 CWeaponMagazinedWGrenade::GetCurrentHudOffsetIdx()
 {
-	bool b_aiming = ((IsZoomed() && m_zoom_params.m_fZoomRotationFactor<=1.f) || (!IsZoomed() && m_zoom_params.m_fZoomRotationFactor>0.f));
+    auto pActor = dynamic_cast<CActor*>(H_Parent());
+    if (!pActor)
+        return 0;
 	
-	if(!b_aiming)
+	bool b_aiming = ((IsZoomed() && m_zoom_params.m_fZoomRotationFactor<=1.f) || (!IsZoomed() && m_zoom_params.m_fZoomRotationFactor>0.f));
+
+	if (m_bCanBeLowered && pActor->IsSafemode())
+		return 4;
+	else if(!b_aiming)
 		return 0;
 	else if (!m_bGrenadeMode && bAltOffset)
 		return 3;

@@ -122,6 +122,7 @@ void STorsoWpn::Create(IKinematicsAnimated* K, LPCSTR base0, LPCSTR base1)
 	all_attack_0	= K->ID_Cycle_Safe(strconcat(sizeof(buf),buf,base0,"_all",base1,"_attack_0"));
 	all_attack_1	= K->ID_Cycle_Safe(strconcat(sizeof(buf),buf,base0,"_all",base1,"_attack_1"));
 	all_attack_2	= K->ID_Cycle_Safe(strconcat(sizeof(buf),buf,base0,"_all",base1,"_attack_2"));
+	safemode		= K->ID_Cycle_Safe(strconcat(sizeof(buf), buf, base0, "_torso", base1, "_idle_1"));
 }
 void SAnimState::Create(IKinematicsAnimated* K, LPCSTR base0, LPCSTR base1)
 {
@@ -173,7 +174,6 @@ void SActorState::CreateClimb(IKinematicsAnimated* K)
 	for (int k=0; k<12; ++k)
 		m_damage[k]	= K->ID_FX(strconcat(sizeof(buf),buf,base,"_damage_",itoa(k,buf1,10)));
 }
-
 
 void SActorState::Create(IKinematicsAnimated* K, LPCSTR base)
 {
@@ -423,7 +423,7 @@ void CActor::g_SetAnimation( u32 mstate_rl )
 						if(K)
 						{
 							switch (W->GetState()){
-							case CWeapon::eIdle:		M_torso	= TW->moving[moving_idx];		break;
+							case CWeapon::eIdle: M_torso = W->IsZoomed() ? TW->zoom : (bSafemode && moving_idx != STorsoWpn::eSprint) ? TW->safemode : TW->moving[moving_idx];
 							
 							case CWeapon::eFire:	
 								if(is_standing)

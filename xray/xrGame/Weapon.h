@@ -241,6 +241,9 @@ public:
 	bool m_bUseSilHud; //запрос на юз hud_silencer
     bool bIsNeedCallDet; //нужно ли вызывать детектор без eShowingDet состояния
 	bool bZoomKeyPressed; //нажали мы кнопку зума или нет
+    bool m_bCanBeLowered; //разрешение на сейфмод у пушки
+    float m_fSafemodeRotateTime; //время сейфмода
+	float m_fSafemodeRotationFactor; //фактор вращения в сейфмод позицию
 
 	bool IsGrenadeLauncherMode();
 	bool NoSprintStates();
