@@ -1158,6 +1158,10 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 				if (IsZoomed())
 					return false;
 
+				auto state = Actor()->get_state();
+				if (state & mcSprint)
+					return false;
+
 				if (flags&CMD_START)
 				{
 					if(Actor()->IsSafemode())

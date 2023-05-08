@@ -100,7 +100,11 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			if (mstate_wishful & mcSprint)
 				mstate_wishful &=~mcSprint;
 			else
+			{
+				if(bSafemode)
+					SetSafemodeStatus(false);
 				mstate_wishful |= mcSprint;
+			}
 		}break;
 	case kCAM_1:	cam_Set			(eacFirstEye);				break;
 	case kCAM_2:	cam_Set			(eacLookAt);				break;
