@@ -1273,6 +1273,12 @@ bool CWeapon::SwitchAmmoType(u32 flags)
 		return false;
 	}
 
+	if (Actor()->IsSafemode())
+	{
+        Actor()->SetSafemodeStatus(false);
+        return false;
+    }
+
 	attachable_hud_item* i1 = g_player_hud->attached_item(1);
 	if (i1 && HudItemData())
 	{
