@@ -82,14 +82,13 @@ void CDialogHolder::StartMenu (CUIDialogWnd* pDialog, bool bDoHideIndicators)
 			A->StopAnyMove				();
 			A->PickupModeOff			();
 		};
-		if(A)
-		{	
+		if(A && !A->IsSafemode())
+		{
 			A->IR_OnKeyboardRelease		(kWPN_ZOOM);
 			A->IR_OnKeyboardRelease		(kWPN_FIRE);
 		}
 	}
 }
-
 
 void CDialogHolder::StopMenu (CUIDialogWnd* pDialog)
 {
