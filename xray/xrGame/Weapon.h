@@ -230,7 +230,7 @@ protected:
 
 public:
 	bool m_bUseLowAmmoSnd;
-	int  m_u32ACPlaySnd;
+	int  m_iACPlaySnd;
     bool bSwitchAmmoType;
 	bool m_bUseAltScope;
     bool bAltOffset;
@@ -340,7 +340,7 @@ protected:
 
 	float m_fLR_MovingFactor; // !!!!
 	Fvector m_strafe_offset[3][2]; //pos,rot,data/ normal,aim-GL --#SM+#--
-	virtual void			UpdateHudAdditonal		(Fmatrix&);
+	virtual void			UpdateHudAdditional		(Fmatrix&);
 
 	IC		void			UpdateFireDependencies	()			{ if (dwFP_Frame==Device.dwFrame) return; UpdateFireDependencies_internal(); };
 

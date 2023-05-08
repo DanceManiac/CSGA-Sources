@@ -700,10 +700,10 @@ void player_hud::update(const Fmatrix& cam_trans)
 	Fmatrix trans_2 = trans;
 
 	if (m_attached_items[0])
-		m_attached_items[0]->m_parent_hud_item->UpdateHudAdditonal(trans);
+		m_attached_items[0]->m_parent_hud_item->UpdateHudAdditional(trans);
 		
 	if (m_attached_items[1])
-		m_attached_items[1]->m_parent_hud_item->UpdateHudAdditonal(trans_2);
+		m_attached_items[1]->m_parent_hud_item->UpdateHudAdditional(trans_2);
 	else
 		trans_2 = trans;
 

@@ -807,7 +807,7 @@ void CWeaponMagazined::PlaySoundLowAmmo()
     if (iAmmoElapsed == 0)
         return;
 
-	if (m_u32ACPlaySnd == 0)
+	if (m_iACPlaySnd == 0)
         return;
 
     CWeaponKnife* knf = dynamic_cast<CWeaponKnife*>(m_pInventory->ActiveItem());
@@ -820,7 +820,7 @@ void CWeaponMagazined::PlaySoundLowAmmo()
 	if (binoc)
 		return;
 
-	if (iAmmoElapsed <= m_u32ACPlaySnd)
+	if (iAmmoElapsed <= m_iACPlaySnd)
 		PlaySound("sndLowAmmo", get_LastSP());
 }
 

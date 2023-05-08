@@ -566,7 +566,7 @@ void CWeapon::Load		(LPCSTR section)
 
 	m_bUseLowAmmoSnd = READ_IF_EXISTS(pSettings, r_bool, section, "use_lowammo_snd", false);
 
-	m_u32ACPlaySnd = READ_IF_EXISTS(pSettings, r_s32, section, "lowammo_snd_ammo_count", 0);
+	m_iACPlaySnd = READ_IF_EXISTS(pSettings, r_s32, section, "lowammo_snd_ammo_count", 0);
 
 	m_bUseAltScope = READ_IF_EXISTS(pSettings, r_bool, hud_sect, "alt_scope_enabled", false);
 
@@ -2125,7 +2125,7 @@ u8 CWeapon::GetCurrentHudOffsetIdx()
         return 1;
 }
 
-void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
+void CWeapon::UpdateHudAdditional(Fmatrix& trans)
 {
     auto pActor = dynamic_cast<const CActor*>(H_Parent());
 	if(!pActor)

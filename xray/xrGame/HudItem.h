@@ -127,7 +127,7 @@ public:
 	virtual void				renderable_Render	();
 
 
-	virtual void				UpdateHudAdditonal	(Fmatrix&);
+	virtual void				UpdateHudAdditional	(Fmatrix&);
 
 
 	virtual	void				UpdateXForm			()						= 0;
