@@ -174,14 +174,6 @@ void attachable_hud_item::update(bool bForce)
 	}
 }
 
-void attachable_hud_item::update_hud_additional(Fmatrix& trans)
-{
-	if(m_parent_hud_item)
-	{
-		m_parent_hud_item->UpdateHudAdditonal(trans);
-	}
-}
-
 void attachable_hud_item::setup_firedeps(firedeps& fd)
 {
 	update							(false);
@@ -465,6 +457,8 @@ player_hud::player_hud()
 	m_FpBody				= NULL;
 	m_attached_items[0]		= NULL;
 	m_attached_items[1]		= NULL;
+	m_attach_offset.identity();
+	m_attach_offset_2.identity();
 	m_transform.identity	();
 	m_transform_2.identity	();
 }
@@ -705,10 +699,16 @@ void player_hud::update(const Fmatrix& cam_trans)
 
 	Fmatrix trans_2 = trans;
 
+	if (m_attached_items[0])
+		m_attached_items[0]->m_parent_hud_item->UpdateHudAdditonal(trans);
+		
+	if (m_attached_items[1])
+		m_attached_items[1]->m_parent_hud_item->UpdateHudAdditonal(trans_2);
+	else
+		trans_2 = trans;
+
 	update_inertion(trans);
-	update_additional(trans);
 	update_inertion(trans_2);
-	update_additional(trans_2);
 
 	m1rot.mul(PI / 180.f);
 	m_attach_offset.setHPB(m1rot.x, m1rot.y, m1rot.z);
@@ -796,15 +796,6 @@ u32 player_hud::anim_play(u16 part, const MotionID& M, BOOL bMixIn, const CMotio
 	}
 
 	return motion_length(M, md, speed);
-}
-
-void player_hud::update_additional	(Fmatrix& trans)
-{
-	if(m_attached_items[0])
-		m_attached_items[0]->update_hud_additional(trans);
-
-	if(m_attached_items[1])
-		m_attached_items[1]->update_hud_additional(trans);
 }
 
 void player_hud::update_inertion(Fmatrix& trans)

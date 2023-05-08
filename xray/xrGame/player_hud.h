@@ -83,7 +83,6 @@ struct attachable_hud_item
 			~attachable_hud_item	();
 	void load						(const shared_str& sect_name);
 	void update						(bool bForce);
-	void update_hud_additional		(Fmatrix& trans);
 	void setup_firedeps				(firedeps& fd);
 	void render						();	
 	void render_item_ui				();
@@ -154,7 +153,6 @@ public:
 
 private:
 	void			update_inertion		(Fmatrix& trans);
-	void			update_additional	(Fmatrix& trans);
 	bool			inertion_allowed	();
 
 private:
