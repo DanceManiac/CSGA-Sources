@@ -583,7 +583,7 @@ void CWeapon::Load		(LPCSTR section)
 	m_bCanBeLowered = pSettings->r_bool(section, "can_be_lowered");
 
 	if (m_bCanBeLowered)
-		m_fSafemodeRotateTime = READ_IF_EXISTS(pSettings, r_float, section, "safemode_rotate_time", 1.f);
+		m_fSafemodeRotateTime = pSettings->r_float(section, "safemode_rotate_time");
 
 	////////////////////////////////////////////
 	//--#SM+# Begin--
