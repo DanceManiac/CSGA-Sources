@@ -1482,8 +1482,9 @@ u8 CWeaponMagazinedWGrenade::GetCurrentHudOffsetIdx()
         return 0;
 	
 	bool b_aiming = ((IsZoomed() && m_zoom_params.m_fZoomRotationFactor<=1.f) || (!IsZoomed() && m_zoom_params.m_fZoomRotationFactor>0.f));
+	bool b_safemode = ((pActor->IsSafemode() && m_fSafemodeRotationFactor <= 1.f) || (!pActor->IsSafemode() && m_fSafemodeRotationFactor > 0.f));
 
-	if (m_bCanBeLowered && pActor->IsSafemode())
+	if (m_bCanBeLowered && b_safemode)
 		return 4;
 	else if(!b_aiming)
 		return 0;
