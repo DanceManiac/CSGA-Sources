@@ -221,7 +221,7 @@ void player_hud::tune(Ivector _values)
 		
 		float _curr_dr	= _delta_rot;
 
-		u8 idx			= m_attached_items[hud_adj_item_idx]->m_parent_hud_item->GetCurrentHudOffsetIdx();
+		auto idx = m_attached_items[hud_adj_item_idx]->m_parent_hud_item->GetCurrentHudOffsetIdx();
 		if(idx)
 			_curr_dr	/= 20.0f;
 
@@ -273,6 +273,13 @@ void player_hud::tune(Ivector _values)
 				Msg("[%s]", m_attached_items[hud_adj_item_idx]->m_sect_name.c_str());
 				Msg("alt_aim_hud_offset_pos%s				= %f,%f,%f",(is_16x9)?"_16x9":"",  pos_.x, pos_.y, pos_.z);
 				Msg("alt_aim_hud_offset_rot%s				= %f,%f,%f",(is_16x9)?"_16x9":"",  rot_.x, rot_.y, rot_.z);
+				Log("-----------");
+			}
+			else if(idx==4)
+			{
+				Msg("[%s]", m_attached_items[hud_adj_item_idx]->m_sect_name.c_str());
+				Msg("lowered_hud_offset_pos%s				= %f,%f,%f",(is_16x9)?"_16x9":"",  pos_.x, pos_.y, pos_.z);
+				Msg("lowered_hud_offset_rot%s				= %f,%f,%f",(is_16x9)?"_16x9":"",  rot_.x, rot_.y, rot_.z);
 				Log("-----------");
 			}
 		}
