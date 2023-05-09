@@ -1061,7 +1061,7 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 						return false;
 				}
 
-				if (Actor()->IsSafemode())
+				if (ParentIsActor() && Actor()->IsSafemode())
 				{
 					Actor()->SetSafemodeStatus(false);
 					return false;
@@ -1074,7 +1074,7 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 		return true;
 	case kWPN_FIREMODE_PREV:
 		{
-			if (Actor()->IsSafemode())
+			if (ParentIsActor() && Actor()->IsSafemode())
 			{
 				Actor()->SetSafemodeStatus(false);
 				return false;
@@ -1088,7 +1088,7 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 		}break;
 	case kWPN_FIREMODE_NEXT:
 		{
-			if (Actor()->IsSafemode())
+			if (ParentIsActor() && Actor()->IsSafemode())
 			{
 				Actor()->SetSafemodeStatus(false);
 				return false;

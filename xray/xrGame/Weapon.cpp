@@ -844,9 +844,14 @@ void CWeapon::OnH_B_Independent	(bool just_before_destroy)
 	m_strapped_mode				= false;
 	m_zoom_params.m_bIsZoomModeNow	= false;
 	UpdateXForm					();
-	if (Actor()->IsSafemode())
-		Actor()->SetSafemodeStatus(false);
+	m_fSafemodeRotationFactor	= 0.f;
 
+	if (ParentIsActor())
+	{
+		auto active = Actor()->inventory().ActiveItem();
+		if (this == active)
+			Actor()->SetSafemodeStatus(false);
+	}
 }
 
 void CWeapon::OnH_A_Independent	()
@@ -863,7 +868,7 @@ void CWeapon::OnH_A_Chield		()
 	UpdateAddonsVisibility		();
 };
 
-void CWeapon::OnActiveItem ()
+void CWeapon::OnActiveItem()
 {
 	//. from Activate
 	UpdateAddonsVisibility();
@@ -873,10 +878,10 @@ void CWeapon::OnActiveItem ()
 	SwitchState					(eShowing);
 //-
 
-	inherited::OnActiveItem		();
-	//если мы занружаемся и оружие было в руках
-//.	SetState					(eIdle);
-//.	SetNextState				(eIdle);
+	if (ParentIsActor())
+		Actor()->SetSafemodeStatus(false);
+
+	inherited::OnActiveItem();
 }
 
 void CWeapon::OnHiddenItem ()
@@ -890,8 +895,9 @@ void CWeapon::OnHiddenItem ()
 	OnZoomOut();
 //-
 	inherited::OnHiddenItem		();
-//.	SetState					(eHidden);
-//.	SetNextState				(eHidden);
+
+	if (ParentIsActor())
+		Actor()->SetSafemodeStatus(false);
 
 	m_set_next_ammoType_on_reload = u32(-1);
 }
@@ -1113,7 +1119,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 					if(IsPending())		
 						return false;
 
-					if (Actor()->IsSafemode())
+					if (ParentIsActor() && Actor()->IsSafemode())
 					{
 						Actor()->SetSafemodeStatus(false);
 						return false;
@@ -1164,7 +1170,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 
 				if (flags&CMD_START)
 				{
-					if(Actor()->IsSafemode())
+					if(Actor() && Actor()->IsSafemode())
 						Actor()->SetSafemodeStatus(false);
 					else
 						Actor()->SetSafemodeStatus(true);
@@ -1196,7 +1202,7 @@ bool CWeapon::TryZoom(u32 flags)
 
 	auto binoc = dynamic_cast<CWeaponBinoculars*>(Actor()->inventory().ActiveItem());
 
-	if (!IsZoomed() && Actor()->IsSafemode())
+	if (!IsZoomed() && ParentIsActor() && Actor()->IsSafemode())
 	{
 		Actor()->SetSafemodeStatus(false);
 		return false;
@@ -1268,20 +1274,14 @@ bool CWeapon::SwitchAmmoType(u32 flags)
 	if (!(flags & CMD_START))
 		return false;
 
-	if(IsZoomed())
-		return false;
-
-	if (IsMisfire() && !IsGrenadeLauncherMode())
-	{
-		Reload();
-		return false;
-	}
-
-	if (Actor()->IsSafemode())
+	if (ParentIsActor() && Actor()->IsSafemode())
 	{
         Actor()->SetSafemodeStatus(false);
         return false;
     }
+
+	if(IsZoomed())
+		return false;
 
 	attachable_hud_item* i1 = g_player_hud->attached_item(1);
 	if (i1 && HudItemData())
@@ -1289,6 +1289,12 @@ bool CWeapon::SwitchAmmoType(u32 flags)
 		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
 		if (det && (det->GetState() != CCustomDetector::eIdle || det->m_bNeedActivation))
 			return false;
+	}
+
+	if (IsMisfire() && !IsGrenadeLauncherMode())
+	{
+		Reload();
+		return false;
 	}
 
 	bSwitchAmmoType = true;
@@ -2413,11 +2419,11 @@ BOOL CWeapon::ParentMayHaveAimBullet	()
 	return EA->cast_actor()!=0;
 }
 
-BOOL CWeapon::ParentIsActor	()
+BOOL CWeapon::ParentIsActor()
 {
-	CObject* O=H_Parent();
-	CEntityAlive* EA=dynamic_cast<CEntityAlive*>(O);
-	return EA->cast_actor()!=0;
+	CObject* O = H_Parent();
+	CEntityAlive* EA = dynamic_cast<CEntityAlive*>(O);
+	return EA->cast_actor() != 0;
 }
 
 void CWeapon::debug_draw_firedeps()
@@ -2501,7 +2507,7 @@ void CWeapon::OnStateSwitch	(u32 S)
 		}
 	}
 
-	if (GetState() == eHiding && Actor()->IsSafemode())
+	if (current_actor && GetState() == eHiding && current_actor->IsSafemode())
 		Actor()->SetSafemodeStatus(false);
 }
 
