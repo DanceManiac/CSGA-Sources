@@ -67,6 +67,7 @@
 #include "ai_object_location.h"
 #include "embedded_editor/embedded_editor_prop.h"
 #include "CustomDetector.h"
+#include "Missile.h"
 
 const u32		patch_frames	= 50;
 const float		respawn_delay	= 1.f;
@@ -893,7 +894,8 @@ void CActor::UpdateCL	()
 	PickupModeUpdate_COD();
 
 	SetZoomAimingMode		(false);
-	CWeapon* pWeapon		= dynamic_cast<CWeapon*>(inventory().ActiveItem());	
+	auto pWeapon = dynamic_cast<CWeapon*>(inventory().ActiveItem());
+	auto pMissile = dynamic_cast<CMissile*>(inventory().ActiveItem());
 
 	cam_Update(float(Device.dwTimeDelta)/1000.0f, currentFOV());
 
@@ -902,7 +904,19 @@ void CActor::UpdateCL	()
 		psHUD_Flags.set( HUD_CROSSHAIR_RT2, true );
 		psHUD_Flags.set( HUD_DRAW_RT, true );
 	}
-	if(pWeapon )
+	if (pMissile)
+	{
+		if (!pMissile->NoSprintStatesMissile())
+		{
+			BreakSprint();
+			bTrySprint = false;
+		}
+		else
+			bTrySprint = true;
+	}
+	else
+		bTrySprint = true;
+	if (pWeapon)
 	{
 		if(pWeapon->IsZoomed())
 		{
@@ -921,6 +935,14 @@ void CActor::UpdateCL	()
 			m_fdisp_controller.SetDispertion(fire_disp_full);
 			
 			fire_disp_full = m_fdisp_controller.GetCurrentDispertion();
+
+			if (!pWeapon->NoSprintStates())
+			{
+				BreakSprint();
+				bTrySprint = false;
+			}
+			else
+				bTrySprint = true;
 
 			//--#SM+#-- +SecondVP+ Чтобы перекрестие не скакало из за смены FOV (Sin!) [fix for crosshair shaking while SecondVP]
 			if (!Device.m_SecondViewport.IsSVPFrame())
@@ -960,6 +982,8 @@ void CActor::UpdateCL	()
 		{
 			HUD().SetCrosshairDisp(0.f);
 			HUD().ShowCrosshair(false);
+
+			bTrySprint = true;
 
 			// Обновляем информацию об оружии в шейдерах
 			g_pGamePersistent->m_pGShaderConstants->hud_params.set(0.f, 0.f, 0.f, 0.f); //--#SM+#--

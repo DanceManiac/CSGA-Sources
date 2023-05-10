@@ -380,19 +380,6 @@ void CMissile::State(u32 state, u32 old_state)
 			SwitchState			(eShowing); 
 		} break;
 	}
-
-	auto pActor = dynamic_cast<CActor*>(H_Parent());
-
-	if (pActor)
-	{
-		if (!NoSprintStatesMissile() && this == pActor->inventory().ActiveItem())
-		{
-			Actor()->BreakSprint();
-			Actor()->bTrySprint = false;
-		}
-		else
-			Actor()->bTrySprint = true;
-	}
 }
 
 void CMissile::OnStateSwitch	(u32 S)

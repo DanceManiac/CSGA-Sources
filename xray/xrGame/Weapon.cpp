@@ -2479,17 +2479,6 @@ void CWeapon::OnStateSwitch	(u32 S)
 				current_actor->Cameras().AddCamEffector(xr_new<CEffectorDOF>(m_zoom_params.m_ReloadDof) );
 		}
 	}
-	
-	if (current_actor)
-	{
-		if (!NoSprintStates() && this == current_actor->inventory().ActiveItem())
-		{
-			Actor()->BreakSprint();
-			Actor()->bTrySprint = false;
-		}
-		else
-			Actor()->bTrySprint = true;
-	}
 
 	if (GetState() == eHiding || GetState() == eShowing)
 	{
