@@ -352,21 +352,28 @@ void CRender::ScreenshotImpl	(ScreenshotMode mode, LPCSTR name, CMemoryWriter* m
 				string_path			buf;
 				D3DXIMAGE_FILEFORMAT format = D3DXIFF_JPG;
 				char* ext = ".jpg";
-				if (screenshot_type == 0) {
-					format = D3DXIFF_JPG;
-					ext = ".jpg";
-				}
-				else if (screenshot_type == 1) {
-					format = D3DXIFF_BMP;
-					ext = ".bmp";
-				}
-				else if (screenshot_type == 2) {
-					format = D3DXIFF_TGA;
-					ext = ".tga";
-				}
-				else if (screenshot_type == 3) {
-					format = D3DXIFF_PNG;
-					ext = ".png";
+				switch (screenshot_type) 
+				{
+					case 0:
+					{
+						format = D3DXIFF_JPG;
+						ext = ".jpg";
+					}break;
+					case 1:
+					{
+						format = D3DXIFF_BMP;
+						ext = ".bmp";
+					}break;
+					case 2:
+					{
+						format = D3DXIFF_TGA;
+						ext = ".tga";
+					}break;
+					case 3:
+					{
+						format = D3DXIFF_PNG;
+						ext = ".png";
+					}break;
 				}
 				sprintf_s			(buf,sizeof(buf),"ss_%s_%s_(%s)%s",Core.UserName,timestamp(t_stemp),(g_pGameLevel)?g_pGameLevel->name().c_str():"mainmenu", ext);
 				ID3DBlob*		saved	= 0;
