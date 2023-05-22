@@ -286,9 +286,7 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	//. P.BackBufferHeight		= dwHeight;
 	//	TODO: DX10: implement dynamic format selection
 	//sd.BufferDesc.Format		= fTarget;
-	sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8X8_UNORM;
-	// sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//со старым была проблема в появлении альфа-канала у скриншота,
-	//  но с другим - bmp не сейвится, как я понял
+	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	sd.BufferCount = 1;
 
 	// Multisample
