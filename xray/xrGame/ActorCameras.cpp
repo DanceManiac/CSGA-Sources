@@ -22,6 +22,9 @@
 
 #include "PHMovementControl.h"
 
+ENGINE_API extern float psHUD_FOV;
+ENGINE_API extern float psHUD_FOV_def;
+
 extern BOOL dbg_draw_camera_collision;
 void	collide_camera( CCameraBase & camera, float _viewport_near  );
 
@@ -277,7 +280,29 @@ static void smoothvector(float &fixed, float dynamic, float dt)
 }
 void CActor::cam_Update(float dt, float fFOV)
 {
-	if(m_holder)		return;
+	if(m_holder)
+		return;
+
+	// HUD FOV Update
+	if (this == Level().CurrentControlEntity())
+	{
+		if (eacFirstEye == cam_active)
+		{
+			CHudItem* pItem = dynamic_cast<CHudItem*>(inventory().ActiveItem());
+			CHudItem* pDevice = dynamic_cast<CHudItem*>(inventory().ItemFromSlot(DETECTOR_SLOT));
+
+			if (pItem && pItem->HudItemData() && pDevice && pDevice->HudItemData())
+				psHUD_FOV = fminf(pItem->GetHudFov(), pDevice->GetHudFov());
+			else if (pItem && pItem->HudItemData())
+				psHUD_FOV = pItem->GetHudFov();
+			else if (pDevice && pDevice->HudItemData())
+				psHUD_FOV = pDevice->GetHudFov();
+			else
+				psHUD_FOV = psHUD_FOV_def;
+		}
+		else
+			psHUD_FOV = psHUD_FOV_def;
+	}
 
 	if( (mstate_real & mcClimb) && (cam_active!=eacFreeLook) )
 		camUpdateLadder(dt);

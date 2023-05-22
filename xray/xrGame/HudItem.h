@@ -155,6 +155,9 @@ public:
 public:
 	bool m_bDisableBore; // отключение анимаций "скуки"
 	bool SprintType;
+	float m_fHudFov;
+
+	float GetHudFov();
 
 protected:
 
