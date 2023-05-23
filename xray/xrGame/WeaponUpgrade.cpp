@@ -32,6 +32,7 @@ bool CWeapon::install_upgrade_impl( LPCSTR section, bool test )
 	result |= install_upgrade_addon      ( section, test );
 	result |= install_upgrade_show_bones ( section, test );
 	result |= install_upgrade_hide_bones ( section, test );
+	result |= install_upgrade_hud_sect	 ( section, test );
 	return result;
 }
 
@@ -312,6 +313,28 @@ bool CWeapon::install_upgrade_hide_bones( LPCSTR section, bool test )
 	}
 
 	result |= result2;
+	UpdateHUDAddonsVisibility();
+	UpdateAddonsVisibility();
+
+	return result;
+}
+
+bool CWeapon::install_upgrade_hud_sect(LPCSTR section, bool test)
+{
+	LPCSTR str;
+
+	bool result = process_if_exists( section, "fire_dispersion_condition_factor", &CInifile::r_float, fireDispersionConditionFactor, test );
+
+	bool result2 = process_if_exists_set( section, "hud", &CInifile::r_string, str, test );
+
+	if (result2 && !test)
+	{
+		hud_sect = pSettings->r_string(section, "hud");
+		hud_sect_cache = hud_sect;
+	}
+
+	result |= result2;
+	InitAddons();
 	UpdateHUDAddonsVisibility();
 	UpdateAddonsVisibility();
 

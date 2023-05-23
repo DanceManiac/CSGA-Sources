@@ -1617,6 +1617,16 @@ void CWeapon::UpdateHUDAddonsVisibility()
 		SetBoneVisible(bone, TRUE);
 	}
 
+	for (const shared_str& bone : m_upgShowBones)
+	{
+		SetBoneVisible(bone, TRUE);
+	}
+
+	for (const shared_str& bone : m_upgHideBones)
+	{
+		SetBoneVisible(bone, FALSE);
+	}
+
 	if (IsGrenadeLauncherAttached())
 	{
 		for (const shared_str& bone : m_defGLHiddenBones)
@@ -1631,16 +1641,6 @@ void CWeapon::UpdateHUDAddonsVisibility()
 		{
 			SetBoneVisible(bone, FALSE);
 		}
-	}
-
-	for (const shared_str& bone : m_upgShowBones)
-	{
-		SetBoneVisible(bone, TRUE);
-	}
-
-	for (const shared_str& bone : m_upgHideBones)
-	{
-		SetBoneVisible(bone, FALSE);
 	}
 
 	if (IsZoomed())
@@ -1745,6 +1745,20 @@ void CWeapon::UpdateAddonsVisibility()
 			pWeaponVisual->LL_SetBoneVisible(bone_id, TRUE, TRUE);
 	}
 
+	for (const auto& boneName : m_upgHideBones)
+	{
+		bone_id = pWeaponVisual->LL_BoneID(boneName);
+		if (bone_id != BI_NONE)
+			pWeaponVisual->LL_SetBoneVisible(bone_id, FALSE, TRUE);
+	}
+
+	for (const auto& boneName : m_upgShowBones)
+	{
+		bone_id = pWeaponVisual->LL_BoneID(boneName);
+		if (bone_id != BI_NONE)
+			pWeaponVisual->LL_SetBoneVisible(bone_id, TRUE, TRUE);
+	}
+
 	if (IsGrenadeLauncherAttached())
 	{
 		for (const auto& boneName : m_defGLHiddenBones)
@@ -1763,20 +1777,6 @@ void CWeapon::UpdateAddonsVisibility()
 			if (bone_id != BI_NONE && pWeaponVisual->LL_GetBoneVisible(bone_id))
 				pWeaponVisual->LL_SetBoneVisible(bone_id, FALSE, TRUE);
 		}
-	}
-
-	for (const auto& boneName : m_upgHideBones)
-	{
-		bone_id = pWeaponVisual->LL_BoneID(boneName);
-		if (bone_id != BI_NONE)
-			pWeaponVisual->LL_SetBoneVisible(bone_id, FALSE, TRUE);
-	}
-
-	for (const auto& boneName : m_upgShowBones)
-	{
-		bone_id = pWeaponVisual->LL_BoneID(boneName);
-		if (bone_id != BI_NONE)
-			pWeaponVisual->LL_SetBoneVisible(bone_id, TRUE, TRUE);
 	}
 
 	bone_id = pWeaponVisual->LL_BoneID(wpn_scope);

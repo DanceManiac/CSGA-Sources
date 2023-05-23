@@ -95,6 +95,7 @@ public:
 	virtual bool	CanDetach(const char* item_section_name);
 
 	virtual void	InitAddons();
+	virtual void	HudSelector();
 
 	virtual bool	Action			(s32 cmd, u32 flags);
 	bool			IsAmmoAvailable	();

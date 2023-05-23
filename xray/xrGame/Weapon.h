@@ -533,6 +533,7 @@ private:
 			bool			install_upgrade_addon		( LPCSTR section, bool test );
 			bool			install_upgrade_show_bones  ( LPCSTR section, bool test );
 			bool			install_upgrade_hide_bones  ( LPCSTR section, bool test );
+			bool			install_upgrade_hud_sect	( LPCSTR section, bool test );
 protected:
 	virtual bool			install_upgrade_impl		( LPCSTR section, bool test );
 
