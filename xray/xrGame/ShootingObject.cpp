@@ -492,7 +492,7 @@ void CShootingObject::FireBullet(const Fvector& pos,
 
 	float l_fHitPower = 0.0f;
 	float l_fHitPowerCritical = 0.0f;
-	if (ParentIsActor())//если из оружия стреляет актёр(игрок)
+	if (SOParentIsActor())//если из оружия стреляет актёр(игрок)
 	{
 		if (GameID() == eGameIDSingle)
 		{

@@ -495,8 +495,24 @@ attachable_hud_item* CHudItem::HudItemData()
 
 float CHudItem::GetHudFov()
 {
+	if (!ParentIsActor())
+		return psHUD_FOV_def;
+
 	auto base = m_fHudFov ? m_fHudFov : psHUD_FOV_def;
 	clamp(base, 0.1f, 1.0f);
 
 	return base;
+}
+
+BOOL CHudItem::ParentIsActor()
+{
+	auto O = object().H_Parent();
+	if (!O)
+		return false;
+
+	auto EA = dynamic_cast<CEntityAlive*>(O);
+	if (!EA)
+		return false;
+
+	return !!EA->cast_actor();
 }

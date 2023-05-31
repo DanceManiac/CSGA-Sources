@@ -524,7 +524,7 @@ public:
 			bool			show_crosshair				();
 			bool			show_indicators				();
 	virtual BOOL			ParentMayHaveAimBullet		();
-	virtual BOOL			ParentIsActor				();
+	virtual BOOL			SOParentIsActor				() { return ParentIsActor(); }
 	
 private:
 	virtual	bool			install_upgrade_ammo_class	( LPCSTR section, bool test );

@@ -152,6 +152,7 @@ public:
 	virtual bool				render_item_3d_ui_query	()					{return false;}
 
 	virtual bool				CheckCompatibility		(CHudItem*)			{return true;}
+	virtual BOOL				ParentIsActor			();
 public:
 	bool m_bDisableBore; // отключение анимаций "скуки"
 	bool SprintType;

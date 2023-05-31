@@ -2419,13 +2419,6 @@ BOOL CWeapon::ParentMayHaveAimBullet	()
 	return EA->cast_actor()!=0;
 }
 
-BOOL CWeapon::ParentIsActor()
-{
-	CObject* O = H_Parent();
-	CEntityAlive* EA = dynamic_cast<CEntityAlive*>(O);
-	return EA->cast_actor() != 0;
-}
-
 void CWeapon::debug_draw_firedeps()
 {
 #ifdef DEBUG
