@@ -168,6 +168,13 @@ public:
 		SM_FOR_MPSENDING			= 4,
 		SM_forcedword				= u32(-1)
 	};
+
+	enum RRT
+	{
+		rtPDA = 1,
+		rtSVP,
+	};
+
 public:
 	// options
 	s32								m_skinning;
@@ -273,10 +280,6 @@ public:
 	// Main
 	virtual void					Calculate				()											= 0;
 	virtual void					Render					()											= 0;
-
-	// [FFT++]
-	virtual void					BeforeWorldRender		() = 0; //--#SM+#-- +SecondVP+ Вызывается перед началом рендера мира и пост-эффектов
-	virtual void					AfterWorldRender		() = 0; //--#SM+#-- +SecondVP+ Вызывается после рендера мира и перед UI
 	
 	virtual void					Screenshot				(ScreenshotMode mode=SM_NORMAL, LPCSTR name = 0) = 0;
 	virtual	void					Screenshot				(ScreenshotMode mode, CMemoryWriter& memory_writer) = 0;
@@ -288,6 +291,7 @@ public:
 	virtual void					rmFar					()											= 0;
 	virtual void					rmNormal				()											= 0;
 	virtual u32						memory_usage			()											= 0;
+	virtual void					RenderToTarget			(RRT target)								= 0;
 
 	// Constructor/destructor
 	virtual ~IRender_interface();

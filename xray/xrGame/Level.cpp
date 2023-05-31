@@ -775,7 +775,6 @@ extern void draw_wnds_rects();
 
 void CLevel::OnRender()
 {
-	::Render->BeforeWorldRender();	//--#SM+#-- +SecondVP+
 
 	//Level().rend
 
@@ -785,11 +784,13 @@ void CLevel::OnRender()
 		return;
 
 	Game().OnRender();
+
 	//отрисовать трассы пуль
-	//Statistic.TEST1.Begin();
 	BulletManager().Render();
-	//Statistic.TEST1.End();
-	::Render->AfterWorldRender(); //--#SM+#-- +SecondVP+
+
+	if (Device.m_SecondViewport.IsSVPFrame())
+		Render->RenderToTarget(Render->rtSVP);
+
 	//отрисовать интерфейc пользователя
 	HUD().RenderUI();
 

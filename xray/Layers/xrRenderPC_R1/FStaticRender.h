@@ -213,14 +213,11 @@ public:
 	virtual void					ScreenshotAsyncEnd		(CMemoryWriter& memory_writer);
 	virtual void					OnFrame					();
 
-	// [FFT++]
-	virtual void					BeforeWorldRender		(); //--#SM+#-- +SecondVP+ Вызывается перед началом рендера мира и пост-эффектов
-	virtual void					AfterWorldRender		(); //--#SM+#-- +SecondVP+ Вызывается после рендера мира и перед UI
-
 	// Render mode
 	virtual void					rmNear					();
 	virtual void					rmFar					();
 	virtual void					rmNormal				();
+	void							RenderToTarget			(RRT target) override;
 
 	// Constructor/destructor/loader
 	CRender							();
