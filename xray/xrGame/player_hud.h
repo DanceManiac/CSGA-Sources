@@ -30,6 +30,25 @@ struct player_hud_motion_container
 	void		load				(IKinematicsAnimated* model, const shared_str& sect);
 };
 
+struct BoneCallbackParams
+{
+	Fvector m_current;
+	Fvector m_target;
+
+	BoneCallbackParams()
+	{
+		m_current = { 0,0,0 };
+		m_target = { 0,0,0 };
+	}
+};
+
+enum EBoneCallbackParam
+{
+	r_finger0 = 0,
+	r_finger01,
+	r_finger02,
+};
+
 struct hud_item_measures
 {
 	enum{e_fire_point=(1<<0), e_fire_point2=(1<<1), e_shell_point=(1<<2), e_16x9_mode_now=(1<<3)};
@@ -135,6 +154,7 @@ public:
 	u32				motion_length		(const shared_str& anim_name, const shared_str& hud_name, const CMotionDef*& md);
 	void			OnMovementChanged	(ACTOR_DEFS::EMoveCommand cmd);
 	void			re_sync_anim		(u8 part);
+	xr_map<EBoneCallbackParam, BoneCallbackParams*> m_bone_callback_params; // bonename,params
 
 	IRenderVisual*						m_FpBody;
 	static void _stdcall FPBone_Callback(CBoneInstance* B);
@@ -151,6 +171,20 @@ public:
 		u16 bone_id;
 	};
 
+	void reset_thumb(bool bForce)
+	{
+		if (bForce)
+		{
+			m_bone_callback_params[r_finger0]->m_current.set(0.f, 0.f, 0.f);
+			m_bone_callback_params[r_finger01]->m_current.set(0.f, 0.f, 0.f);
+			m_bone_callback_params[r_finger02]->m_current.set(0.f, 0.f, 0.f);
+		}
+		
+		m_bone_callback_params[r_finger0]->m_target.set(0.f, 0.f, 0.f);
+		m_bone_callback_params[r_finger01]->m_target.set(0.f, 0.f, 0.f);
+		m_bone_callback_params[r_finger02]->m_target.set(0.f, 0.f, 0.f);
+	}
+
 private:
 	void			update_inertion		(Fmatrix& trans);
 	bool			inertion_allowed	();
@@ -158,6 +192,7 @@ private:
 private:
 	const Fvector& attach_rot(u8 part) const;
 	const Fvector& attach_pos(u8 part) const;
+	static void _BCL FingerCallback(CBoneInstance* B);
 
 	shared_str							m_sect_name;
 

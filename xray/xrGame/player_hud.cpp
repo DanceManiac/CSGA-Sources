@@ -461,8 +461,12 @@ player_hud::player_hud()
 	m_attach_offset_2.identity();
 	m_transform.identity	();
 	m_transform_2.identity	();
-}
 
+	//Bone Callback Params
+	m_bone_callback_params.insert(mk_pair(r_finger0, xr_new<BoneCallbackParams>()));
+	m_bone_callback_params.insert(mk_pair(r_finger01, xr_new<BoneCallbackParams>()));
+	m_bone_callback_params.insert(mk_pair(r_finger02, xr_new<BoneCallbackParams>()));
+}
 
 player_hud::~player_hud()
 {
@@ -488,7 +492,43 @@ player_hud::~player_hud()
 		xr_delete				(a);
 	}
 	m_pool.clear				();
+	delete_data(m_bone_callback_params);
 }
+
+void player_hud::FingerCallback(CBoneInstance* B)
+{
+	BoneCallbackParams* params = static_cast<BoneCallbackParams*>(B->callback_param());
+
+	Fvector& target = params->m_target;
+	Fvector& current = params->m_current;
+
+	if (!target.similar(current))
+	{
+		Fvector diff[2];
+		diff[0] = target;
+		diff[0].sub(current);
+		diff[0].mul(Device.fTimeDelta / .1f);
+		current.add(diff[0]);
+	}
+	else
+		current.set(target);
+
+	Fmatrix rotation;
+	rotation.identity();
+	rotation.rotateX(current.x);
+
+	Fmatrix rotation_y;
+	rotation_y.identity();
+	rotation_y.rotateY(current.y);
+	rotation.mulA_43(rotation_y);
+
+	rotation_y.identity();
+	rotation_y.rotateZ(current.z);
+	rotation.mulA_43(rotation_y);
+
+	B->mTransform.mulB_43(rotation);
+}
+
 
 void player_hud::load(const shared_str& player_hud_sect)
 {
@@ -515,6 +555,14 @@ void player_hud::load(const shared_str& player_hud_sect)
 
 	u16 l_arm = m_model->dcast_PKinematics()->LL_BoneID("l_clavicle");
 	u16 r_arm = m_model_2->dcast_PKinematics()->LL_BoneID("r_clavicle");
+
+	u16 bone_r_finger0 = m_model->dcast_PKinematics()->LL_BoneID("r_finger0");
+	u16 bone_r_finger01 = m_model->dcast_PKinematics()->LL_BoneID("r_finger01");
+	u16 bone_r_finger02 = m_model->dcast_PKinematics()->LL_BoneID("r_finger02");
+
+	m_model->dcast_PKinematics()->LL_GetBoneInstance(bone_r_finger0).set_callback(bctCustom, FingerCallback, m_bone_callback_params[r_finger0]);
+	m_model->dcast_PKinematics()->LL_GetBoneInstance(bone_r_finger01).set_callback(bctCustom, FingerCallback, m_bone_callback_params[r_finger01]);
+	m_model->dcast_PKinematics()->LL_GetBoneInstance(bone_r_finger02).set_callback(bctCustom, FingerCallback, m_bone_callback_params[r_finger02]);
 
 	// hides the unused arm meshes
 	m_model->dcast_PKinematics()->LL_SetBoneVisible(l_arm, FALSE, TRUE);
