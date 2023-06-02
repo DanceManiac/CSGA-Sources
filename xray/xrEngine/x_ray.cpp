@@ -793,22 +793,19 @@ int stack_overflow_exception_filter	(int exception_code)
        return EXCEPTION_CONTINUE_SEARCH;
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     char *    lpCmdLine,
-                     int       nCmdShow)
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lpCmdLine, int nCmdShow)
 {
-	__try 
+	for (unsigned i = 0; i < 1; i++) 
 	{
-		WinMain_impl		(hInstance,hPrevInstance,lpCmdLine,nCmdShow);
+		WinMain_impl(hInstance,hPrevInstance,lpCmdLine,nCmdShow);
 	}
-	__except(stack_overflow_exception_filter(GetExceptionCode()))
+	/*__except(stack_overflow_exception_filter(GetExceptionCode()))
 	{
 		_resetstkoflw		();
 		FATAL				("stack overflow");
-	}
+	}*/
 
-	return					(0);
+	return (0);
 }
 
 LPCSTR _GetFontTexName (LPCSTR section)
