@@ -733,7 +733,7 @@ void CWeaponMagazinedWGrenade::PlayAnimReload()
 
 		if(m_bGrenadeMode)
 		{
-			if(bSwitchAmmoType)
+			if(IsChangeAmmoType())
 			{
 				if (iAmmoElapsed == 0)
 				{
@@ -770,9 +770,9 @@ void CWeaponMagazinedWGrenade::PlayAnimReload()
 				anm_name += "_empty_w_gl";
 			else if(IsMisfire())
 				anm_name += "_jammed_w_gl";
-			else if (bSwitchAmmoType)
+			else if (IsChangeAmmoType())
 				anm_name += "_ammochange_w_gl";
-			else if (bSwitchAmmoType && iAmmoElapsed == 0)
+			else if (IsChangeAmmoType() && iAmmoElapsed == 0)
 				anm_name += "_empty_ammochange_w_gl";
 			else
 				anm_name += "_w_gl";

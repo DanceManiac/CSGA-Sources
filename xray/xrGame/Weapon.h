@@ -231,7 +231,6 @@ protected:
 public:
 	bool m_bUseLowAmmoSnd;
 	int  m_iACPlaySnd;
-    bool bSwitchAmmoType;
 	bool m_bUseAltScope;
     bool bAltOffset;
 	bool m_bDisableShellParticles;
@@ -249,6 +248,7 @@ public:
 	bool NoSprintStates();
 	bool StatesNoHideCrosshair();
 	bool TryZoom(u32 flags);
+	bool IsChangeAmmoType() {return (m_set_next_ammoType_on_reload != u32(-1) || m_ammoType == m_set_next_ammoType_on_reload);};
 
 protected:
 

@@ -25,7 +25,7 @@ void CWeaponBM16::PlayReloadSound()
 		{
 			if(IsMisfire())
 				PlaySound("sndReloadJammed", get_LastFP());
-			else if (bSwitchAmmoType)
+			else if (IsChangeAmmoType())
 				PlaySound("sndChangeCartridgeOne", get_LastFP());
 			else
 				PlaySound("sndReload", get_LastFP());
@@ -141,18 +141,18 @@ void CWeaponBM16::PlayAnimReload()
 	{
 		if(IsMisfire())
 			PlayHUDMotion("anm_reload_jammed_1", true, this, GetState());
-		else if (bSwitchAmmoType)
+		else if (IsChangeAmmoType())
 			PlayHUDMotion("anm_reload_ammochange_1", true, this, GetState());
 		else
 			PlayHUDMotion("anm_reload_1", true, this, GetState());
 	}
-	else if (m_magazine.size() == 0 && bSwitchAmmoType)
+	else if (m_magazine.size() == 0 && IsChangeAmmoType())
 		PlayHUDMotion("anm_reload_0", true, this, GetState());
 	else
 	{
 		if(IsMisfire())
 			PlayHUDMotion("anm_reload_jammed_2", true, this, GetState());
-		else if (bSwitchAmmoType)
+		else if (IsChangeAmmoType())
 			PlayHUDMotion("anm_reload_ammochange_2", true, this, GetState());
 		else
 			PlayHUDMotion("anm_reload_2", true, this, GetState());

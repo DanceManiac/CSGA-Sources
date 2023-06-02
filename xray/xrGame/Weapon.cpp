@@ -79,7 +79,6 @@ CWeapon::CWeapon(): m_fLR_MovingFactor(0.f), m_strafe_offset{}
 	m_set_next_ammoType_on_reload = u32(-1);
 	m_crosshair_inertion	= 0.f;
 
-	bSwitchAmmoType = false;
 	bIsNeedCallDet = false;
 
 	m_fSafemodeRotationFactor  = 0.f;
@@ -1296,8 +1295,6 @@ bool CWeapon::SwitchAmmoType(u32 flags)
 		Reload();
 		return false;
 	}
-
-	bSwitchAmmoType = true;
 
 	u32 l_newType = m_ammoType;
 	bool b1, b2;

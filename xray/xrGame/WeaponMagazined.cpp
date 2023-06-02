@@ -885,18 +885,10 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 				ReloadMagazine();
 
 		    SwitchState(eIdle);
-		    bSwitchAmmoType = false;
 		}break; // End of reload animation
 		case eHiding:
-		{
 		    SwitchState(eHidden);
-		    bSwitchAmmoType = false;
-		} break; // End of Hide
-		case eShowing:
-		{
-			SwitchState(eIdle);
-			bSwitchAmmoType = false;
-		} break;	// End of Show
+		break; // End of Hide
 		case eIdle:
 			switch2_Idle();
 		break;  // Keep showing idle
@@ -919,6 +911,7 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		case eSwitchMode:
 		case eSwitch:
 		case eHideDet:
+		case eShowing:
 			SwitchState(eIdle);
 		break;
 	}
@@ -975,13 +968,13 @@ void CWeaponMagazined::switch2_Fire()
 
 void CWeaponMagazined::PlayReloadSound()
 {
-    if (!IsMisfire() && iAmmoElapsed == 0 || bSwitchAmmoType && iAmmoElapsed == 0 && !IsMisfire())
+    if (!IsMisfire() && iAmmoElapsed == 0 || IsChangeAmmoType() && iAmmoElapsed == 0 && !IsMisfire())
 		PlaySound("sndReloadEmpty", get_LastFP());
     else if (IsMisfire() && iAmmoElapsed == 0)
         PlaySound("sndReloadJammedLast", get_LastFP());
 	else if(IsMisfire())
 		PlaySound("sndReloadJammed", get_LastFP());
-    else if (bSwitchAmmoType && iAmmoElapsed != 0)
+    else if (IsChangeAmmoType() && iAmmoElapsed != 0)
         PlaySound("sndAmmoChange", get_LastFP());
 	else
 		PlaySound("sndReload", get_LastFP());
@@ -1545,9 +1538,9 @@ void CWeaponMagazined::PlayAnimReload()
 		anm_name += "_jammed";
 	else if (IsMisfire() && iAmmoElapsed == 0)
 		anm_name += "_jammed_last";
-	else if (bSwitchAmmoType)
+	else if (IsChangeAmmoType())
 		anm_name += "_ammochange";
-	else if(bSwitchAmmoType && iAmmoElapsed == 0)
+	else if(IsChangeAmmoType() && iAmmoElapsed == 0)
 		anm_name += "_empty_ammochange";
 	else
 		anm_name += "";
