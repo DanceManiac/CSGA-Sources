@@ -213,6 +213,14 @@ void CWeaponMagazined::FireStart()
 				if(GetState()==eHiding) return;
 				if(GetState()==eMisfire) return;
 
+				attachable_hud_item* i1 = g_player_hud->attached_item(1);
+				if (i1 && HudItemData())
+				{
+					auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
+					if (m_bDisableLMDet && det && det->GetState() == CCustomDetector::eShowing)
+						return;
+				}
+
 				inherited::FireStart();
 
 				R_ASSERT(H_Parent());
@@ -710,7 +718,7 @@ void CWeaponMagazined::switch2_LightMisfire()
 	if (i1 && HudItemData())
 	{
 		auto det = dynamic_cast<CCustomDetector*>(i1->m_parent_hud_item);
-		if (det && det->GetState() == CCustomDetector::eIdle)
+		if (!m_bDisableLMDet && det && det->GetState() == CCustomDetector::eIdle)
 			det->SwitchState(CCustomDetector::eUnLightMisDet);
 	}
 }

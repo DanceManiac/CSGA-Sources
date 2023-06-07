@@ -242,6 +242,7 @@ public:
     bool m_bCanBeLowered; //разрешение на сейфмод у пушки
     float m_fSafemodeRotateTime; //время сейфмода
 	float m_fSafemodeRotationFactor; //фактор вращения в сейфмод позицию
+    bool m_bDisableLMDet;
 
 	bool IsGrenadeLauncherMode();
 	bool NoSprintStates();

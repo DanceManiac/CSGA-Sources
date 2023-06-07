@@ -398,8 +398,9 @@ void CCustomDetector::UpdateVisibility()
 		{
 			u32 state = wpn->GetState();
 			bool bClimb	 = ((Actor()->MovingState()&mcClimb) != 0);
-			if(bClimb || state==CWeapon::eReload || state==CWeapon::eSwitch || (state == CWeapon::eSwitchMode && wpn->m_magazine.size() == 0))
+			if(bClimb || state==CWeapon::eReload || state==CWeapon::eSwitch || (state == CWeapon::eSwitchMode && wpn->m_magazine.size() == 0) || (wpn->m_bDisableLMDet && state == CWeapon::eUnLightMis))
 			{
+				bZoomed = false;
 				HideDetector(true);
 				m_bNeedActivation = true;
 			}
@@ -411,8 +412,11 @@ void CCustomDetector::UpdateVisibility()
 		if(!bClimb)
 		{
 			auto wpn = (i0) ? dynamic_cast<CWeapon*>(i0->m_parent_hud_item) : NULL;
-			if(!wpn || (!wpn->IsZoomed() && wpn->GetState() != CWeapon::eReload && wpn->GetState() != CWeapon::eSwitch && wpn->GetState() != CWeapon::eSwitchMode))
+			if(!wpn || (!wpn->IsZoomed() && wpn->GetState() != CWeapon::eReload && wpn->GetState() != CWeapon::eSwitch && wpn->GetState() != CWeapon::eSwitchMode) && wpn->GetState() != CWeapon::eUnLightMis)
+			{
+				bZoomed = false;
 				ShowDetector(true);
+			}
 		}
 	}
 }

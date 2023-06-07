@@ -582,6 +582,9 @@ void CWeapon::Load		(LPCSTR section)
 	if (m_bCanBeLowered)
 		m_fSafemodeRotateTime = pSettings->r_float(section, "safemode_rotate_time");
 
+	if (pSettings->line_exist(hud_sect, "disable_light_misfires_with_detector"))
+		m_bDisableLMDet = pSettings->r_bool(hud_sect, "disable_light_misfires_with_detector");
+
 	////////////////////////////////////////////
 	//--#SM+# Begin--
 	string16 _prefix = { "" };
