@@ -569,8 +569,6 @@ void CWeapon::Load		(LPCSTR section)
 
 	m_bUseAltScope = READ_IF_EXISTS(pSettings, r_bool, hud_sect, "alt_scope_enabled", false);
 
-	m_bDisableShellParticles = READ_IF_EXISTS(pSettings, r_bool, hud_sect, "disable_shell_particles", false);
-
 	m_bHideMarkInAlt = READ_IF_EXISTS(pSettings, r_bool, section, "hide_collimator_sights_in_alter_zoom", false);
 
 	m_bJamNotShot = READ_IF_EXISTS(pSettings, r_bool, hud_sect, "no_jam_fire", false);

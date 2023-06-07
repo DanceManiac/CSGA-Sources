@@ -848,8 +848,7 @@ void CWeaponMagazined::OnShot()
 	// Shell Drop
 	Fvector vel;
 	PHGetLinearVell(vel);
-	if(!IsMisfire() && !m_bDisableShellParticles)
-		OnShellDrop(get_LastSP(), vel);
+	OnShellDrop(get_LastSP(), vel);
 
 	// Огонь из ствола
 	StartFlameParticles();
